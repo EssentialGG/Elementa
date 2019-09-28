@@ -10,13 +10,17 @@ abstract class UIComponent {
         children.add(component)
     }
 
-    open fun getLeft(): Int {
-        return parent.getLeft() + constraints.getX()
-    }
+    open fun getLeft() = constraints.getX()
 
-    open fun getTop(): Int {
-        return parent.getTop() + constraints.getY()
-    }
+    open fun getTop() = constraints.getY()
+
+    open fun getRight() = getLeft() + constraints.getWidth()
+
+    open fun getBottom() = getTop() + constraints.getHeight()
+
+    open fun getWidth() = constraints.getWidth()
+
+    open fun getHeight() = constraints.getHeight()
 
     open fun draw() {
         this.children.forEach(UIComponent::draw)

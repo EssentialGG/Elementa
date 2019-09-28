@@ -3,13 +3,18 @@ package com.example.examplemod;
 import club.sk1er.elementa.UIConstraints;
 import club.sk1er.elementa.components.UIBlock;
 import club.sk1er.elementa.components.Window;
+import club.sk1er.elementa.constraints.AspectConstraint;
+import club.sk1er.elementa.constraints.CenterConstraint;
 import club.sk1er.elementa.constraints.PixelConstraint;
+import club.sk1er.elementa.constraints.RelativeConstraint;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+
+import java.awt.*;
 
 @Mod(modid = ExampleMod.MODID, version = ExampleMod.VERSION)
 public class ExampleMod {
@@ -20,9 +25,21 @@ public class ExampleMod {
     public void init(FMLInitializationEvent event) {
         MinecraftForge.EVENT_BUS.register(this);
 
-        UIBlock rectangle = new UIBlock();
+        UIBlock rectangle = new UIBlock(new Color(255, 255, 255));
         UIConstraints constraints = rectangle.getConstraints();
-        constraints.setX(new PixelConstraint(20));
+        constraints.setX(new CenterConstraint());
+        constraints.setY(new PixelConstraint(20));
+        constraints.setWidth(new RelativeConstraint(0.1f));
+        constraints.setHeight(new AspectConstraint(1));
+
+        UIBlock anotherOne = new UIBlock(new Color(0, 0, 0));
+        constraints = anotherOne.getConstraints();
+        constraints.setX(new PixelConstraint(5));
+        constraints.setY(new CenterConstraint());
+        constraints.setWidth(new AspectConstraint(0.5f));
+        constraints.setHeight(new RelativeConstraint(0.5f));
+
+        rectangle.addChild(anotherOne);
 
         Window.INSTANCE.addChild(rectangle);
     }
