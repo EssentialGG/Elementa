@@ -31,7 +31,7 @@ class UIBlock(private val color: Color) : UIComponent() {
 
         GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0)
 
-        GlStateManager.color(color.red.toFloat(), color.green.toFloat(), color.blue.toFloat(), color.alpha.toFloat() / 255f)
+        GlStateManager.color(color.red.toFloat() / 255f, color.green.toFloat() / 255f, color.blue.toFloat() / 255f, color.alpha.toFloat() / 255f)
 
         worldRenderer.begin(7, DefaultVertexFormats.POSITION)
         worldRenderer.pos(pos[0], pos[3], 0.0).endVertex()
@@ -39,6 +39,7 @@ class UIBlock(private val color: Color) : UIComponent() {
         worldRenderer.pos(pos[2], pos[1], 0.0).endVertex()
         worldRenderer.pos(pos[0], pos[1], 0.0).endVertex()
         tessellator.draw()
+
         GlStateManager.color(1f, 1f, 1f, 1f)
 
         GlStateManager.enableTexture2D()

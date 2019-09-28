@@ -16,7 +16,6 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
 
 @Mod(modid = ExampleMod.MODID, version = ExampleMod.VERSION)
 public class ExampleMod {
@@ -27,30 +26,37 @@ public class ExampleMod {
     public void init(FMLInitializationEvent event) {
         MinecraftForge.EVENT_BUS.register(this);
 
-        UIBlock rectangle = new UIBlock(new Color(255, 255, 255, 100));
-        UIConstraints constraints = rectangle.getConstraints();
-        constraints.setX(new CenterConstraint());
-        constraints.setY(new PixelConstraint(20));
-        constraints.setWidth(new RelativeConstraint(0.1f));
-        constraints.setHeight(new AspectConstraint(1));
-
-        UIBlock anotherOne = new UIBlock(new Color(0, 0, 0, 100));
-        constraints = anotherOne.getConstraints();
+        UIBlock settings = new UIBlock(new Color(0, 172, 193, 255));
+        UIConstraints constraints = settings.getConstraints();
         constraints.setX(new PixelConstraint(5));
         constraints.setY(new CenterConstraint());
-        constraints.setHeight(new RelativeConstraint(0.5f));
-        constraints.setWidth(new AspectConstraint(0.5f));
+        constraints.setWidth(new RelativeConstraint(0.3f));
+        constraints.setHeight(new PixelConstraint(-10));
 
-        rectangle.addChild(anotherOne);
+        UIBlock top = new UIBlock(new Color(0, 124, 145, 255));
+        constraints = top.getConstraints();
+        constraints.setWidth(new RelativeConstraint(1));
+        constraints.setHeight(new PixelConstraint(20));
 
-        UIImage image = new UIImage("./images/", "https://avatars3.githubusercontent.com/u/10331479?s=460&v=4");
+        UIBlock button = new UIBlock(new Color(93, 222, 244, 255));
+        constraints = button.getConstraints();
+        constraints.setX(new PixelConstraint(-20));
+        constraints.setY(new PixelConstraint(5));
+        constraints.setWidth(new PixelConstraint(10));
+        constraints.setHeight(new PixelConstraint(10));
+
+        top.addChild(button);
+        settings.addChild(top);
+
+        Window.INSTANCE.addChild(settings);
+
+        UIImage image = new UIImage("./images/logo.png", "https://avatars3.githubusercontent.com/u/10331479?s=460&v=4");
         constraints = image.getConstraints();
-        constraints.setX(new PixelConstraint(5));
-        constraints.setY(new CenterConstraint());
+        constraints.setX(new CenterConstraint());
+        constraints.setY(new PixelConstraint(5));
         constraints.setWidth(new RelativeConstraint(0.2f));
         constraints.setHeight(new AspectConstraint(1));
 
-        Window.INSTANCE.addChild(rectangle);
         Window.INSTANCE.addChild(image);
     }
 
