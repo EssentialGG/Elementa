@@ -2,16 +2,12 @@ package club.sk1er.elementa.constraints
 
 import club.sk1er.elementa.UIComponent
 
-class PixelConstraint(private val value: Float) : PositionConstraint, SizeConstraint {
-    override fun getXPosition(component: UIComponent, parent: UIComponent): Float {
+class PixelConstraint(private val value: Float) : GeneralConstraint {
+    override fun getXValue(component: UIComponent, parent: UIComponent): Float {
         return parent.getLeft() + value
     }
 
-    override fun getYPosition(component: UIComponent, parent: UIComponent): Float {
+    override fun getYValue(component: UIComponent, parent: UIComponent): Float {
         return parent.getTop() + value
     }
-
-    override fun getXSize(component: UIComponent, parent: UIComponent) = getXPosition(component, parent)
-
-    override fun getYSize(component: UIComponent, parent: UIComponent) = getYPosition(component, parent)
 }
