@@ -31,7 +31,7 @@ class UIBlock(private val color: Color) : UIComponent() {
 
         GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0)
 
-        GlStateManager.color(color.red.toFloat(), color.green.toFloat(), color.blue.toFloat(), color.alpha.toFloat())
+        GlStateManager.color(color.red.toFloat(), color.green.toFloat(), color.blue.toFloat(), color.alpha.toFloat() / 255f)
 
         worldRenderer.begin(7, DefaultVertexFormats.POSITION)
         worldRenderer.pos(pos[0].toDouble(), pos[3].toDouble(), 0.0).endVertex()

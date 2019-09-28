@@ -25,14 +25,14 @@ public class ExampleMod {
     public void init(FMLInitializationEvent event) {
         MinecraftForge.EVENT_BUS.register(this);
 
-        UIBlock rectangle = new UIBlock(new Color(255, 255, 255));
+        UIBlock rectangle = new UIBlock(new Color(255, 255, 255, 100));
         UIConstraints constraints = rectangle.getConstraints();
         constraints.setX(new CenterConstraint());
         constraints.setY(new PixelConstraint(20));
         constraints.setWidth(new RelativeConstraint(0.1f));
         constraints.setHeight(new AspectConstraint(1));
 
-        UIBlock anotherOne = new UIBlock(new Color(0, 0, 0));
+        UIBlock anotherOne = new UIBlock(new Color(0, 0, 0, 100));
         constraints = anotherOne.getConstraints();
         constraints.setX(new PixelConstraint(5));
         constraints.setY(new CenterConstraint());
