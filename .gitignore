@@ -18,7 +18,6 @@ classes
 # gradle
 build
 .gradle
-gradle
 
 #Netbeans
 .nb-gradle
