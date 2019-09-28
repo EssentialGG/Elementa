@@ -36,8 +36,8 @@ public class ExampleMod {
         constraints = anotherOne.getConstraints();
         constraints.setX(new PixelConstraint(5));
         constraints.setY(new CenterConstraint());
-        constraints.setWidth(new AspectConstraint(0.5f));
         constraints.setHeight(new RelativeConstraint(0.5f));
+        constraints.setWidth(new AspectConstraint(0.5f));
 
         rectangle.addChild(anotherOne);
 
