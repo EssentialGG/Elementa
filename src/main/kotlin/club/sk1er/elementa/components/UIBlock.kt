@@ -10,10 +10,10 @@ import java.util.*
 
 class UIBlock(private val color: Color) : UIComponent() {
     override fun draw() {
-        val x = this.getLeft()
-        val y = this.getTop()
-        val width = this.getWidth()
-        val height = this.getHeight()
+        val x = this.getLeft().toDouble()
+        val y = this.getTop().toDouble()
+        val width = this.getWidth().toDouble()
+        val height = this.getHeight().toDouble()
 
         GL11.glPushMatrix()
 
@@ -34,10 +34,10 @@ class UIBlock(private val color: Color) : UIComponent() {
         GlStateManager.color(color.red.toFloat(), color.green.toFloat(), color.blue.toFloat(), color.alpha.toFloat() / 255f)
 
         worldRenderer.begin(7, DefaultVertexFormats.POSITION)
-        worldRenderer.pos(pos[0].toDouble(), pos[3].toDouble(), 0.0).endVertex()
-        worldRenderer.pos(pos[2].toDouble(), pos[3].toDouble(), 0.0).endVertex()
-        worldRenderer.pos(pos[2].toDouble(), pos[1].toDouble(), 0.0).endVertex()
-        worldRenderer.pos(pos[0].toDouble(), pos[1].toDouble(), 0.0).endVertex()
+        worldRenderer.pos(pos[0], pos[3], 0.0).endVertex()
+        worldRenderer.pos(pos[2], pos[3], 0.0).endVertex()
+        worldRenderer.pos(pos[2], pos[1], 0.0).endVertex()
+        worldRenderer.pos(pos[0], pos[1], 0.0).endVertex()
         tessellator.draw()
         GlStateManager.color(1f, 1f, 1f, 1f)
 
