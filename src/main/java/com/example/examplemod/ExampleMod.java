@@ -3,6 +3,7 @@ package com.example.examplemod;
 import club.sk1er.elementa.UIConstraints;
 import club.sk1er.elementa.components.UIBlock;
 import club.sk1er.elementa.components.UIImage;
+import club.sk1er.elementa.components.UIText;
 import club.sk1er.elementa.components.Window;
 import club.sk1er.elementa.constraints.*;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
@@ -35,6 +36,11 @@ public class ExampleMod {
         constraints.setWidth(new FillConstraint());
         constraints.setHeight(new PixelConstraint(20));
 
+        UIText title = new UIText("Settings");
+        constraints = title.getConstraints();
+        constraints.setX(new PixelConstraint(5));
+        constraints.setY(new CenterConstraint());
+
         UIBlock button = new UIBlock(new Color(93, 222, 244, 255));
         constraints = button.getConstraints();
         constraints.setX(new FillConstraint(-10));
@@ -43,6 +49,8 @@ public class ExampleMod {
         constraints.setHeight(new PixelConstraint(10));
 
         top.addChild(button);
+        top.addChild(title);
+
         settings.addChild(top);
         settings.addChild(createSlider(new PixelConstraint(40)));
         settings.addChild(createSlider(new PixelConstraint(60)));

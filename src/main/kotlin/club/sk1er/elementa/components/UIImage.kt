@@ -1,6 +1,7 @@
 package club.sk1er.elementa.components
 
 import club.sk1er.elementa.UIComponent
+import club.sk1er.elementa.constraints.PixelConstraint
 import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.client.renderer.Tessellator
 import net.minecraft.client.renderer.texture.DynamicTexture
@@ -18,6 +19,9 @@ class UIImage @JvmOverloads constructor(name: String, url: String? = null) : UIC
     init {
         image = getBufferedImage(name, url)
         texture = DynamicTexture(image)
+
+        constraints.setWidth(PixelConstraint(image.width.toFloat()))
+        constraints.setHeight(PixelConstraint(image.height.toFloat()))
     }
 
     override fun draw() {
