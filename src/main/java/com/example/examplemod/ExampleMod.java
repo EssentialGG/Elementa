@@ -4,10 +4,7 @@ import club.sk1er.elementa.UIConstraints;
 import club.sk1er.elementa.components.UIBlock;
 import club.sk1er.elementa.components.UIImage;
 import club.sk1er.elementa.components.Window;
-import club.sk1er.elementa.constraints.AspectConstraint;
-import club.sk1er.elementa.constraints.CenterConstraint;
-import club.sk1er.elementa.constraints.PixelConstraint;
-import club.sk1er.elementa.constraints.RelativeConstraint;
+import club.sk1er.elementa.constraints.*;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
@@ -31,16 +28,16 @@ public class ExampleMod {
         constraints.setX(new PixelConstraint(5));
         constraints.setY(new CenterConstraint());
         constraints.setWidth(new RelativeConstraint(0.3f));
-        constraints.setHeight(new PixelConstraint(-10));
+        constraints.setHeight(new FillConstraint(-10));
 
         UIBlock top = new UIBlock(new Color(0, 124, 145, 255));
         constraints = top.getConstraints();
-        constraints.setWidth(new RelativeConstraint(1));
+        constraints.setWidth(new FillConstraint());
         constraints.setHeight(new PixelConstraint(20));
 
         UIBlock button = new UIBlock(new Color(93, 222, 244, 255));
         constraints = button.getConstraints();
-        constraints.setX(new PixelConstraint(-20));
+        constraints.setX(new FillConstraint(-15));
         constraints.setY(new PixelConstraint(5));
         constraints.setWidth(new PixelConstraint(10));
         constraints.setHeight(new PixelConstraint(10));

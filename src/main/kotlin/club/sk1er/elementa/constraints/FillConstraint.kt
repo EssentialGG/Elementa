@@ -2,12 +2,12 @@ package club.sk1er.elementa.constraints
 
 import club.sk1er.elementa.UIComponent
 
-class PixelConstraint(private val value: Float) : GeneralConstraint {
+class FillConstraint @JvmOverloads constructor(private val value: Float = 0f) : GeneralConstraint {
     override fun getXValue(component: UIComponent, parent: UIComponent): Float {
-        return parent.getLeft() + value
+        return parent.getWidth() + value
     }
 
     override fun getYValue(component: UIComponent, parent: UIComponent): Float {
-        return parent.getTop() + value
+        return parent.getHeight() + value
     }
 }
