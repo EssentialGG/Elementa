@@ -2,7 +2,7 @@ package club.sk1er.elementa.constraints
 
 import club.sk1er.elementa.UIComponent
 
-class PixelConstraint(private val value: Float) : GeneralConstraint {
+class PixelConstraint(private val value: Float) : PositionConstraint, SizeConstraint {
     override fun getXPosition(component: UIComponent, parent: UIComponent): Float {
         return parent.getLeft() + value
     }
