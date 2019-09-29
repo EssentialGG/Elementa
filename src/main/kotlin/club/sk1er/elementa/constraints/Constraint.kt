@@ -3,9 +3,9 @@ package club.sk1er.elementa.constraints
 import club.sk1er.elementa.UIComponent
 
 interface GeneralConstraint : PositionConstraint, SizeConstraint {
-    fun getXValue(component: UIComponent, parent: UIComponent): Float
+    fun getXValue(component: UIComponent, parent: UIComponent): Float = 0f
 
-    fun getYValue(component: UIComponent, parent: UIComponent): Float
+    fun getYValue(component: UIComponent, parent: UIComponent): Float = 0f
 
     override fun getXPosition(component: UIComponent, parent: UIComponent) = getXValue(component, parent)
 
