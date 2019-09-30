@@ -21,10 +21,10 @@ class UIImage @JvmOverloads constructor(name: String, url: String? = null) : UIC
     }
 
     override fun draw() {
-        val x = constraints.getX().toDouble()
-        val y = constraints.getY().toDouble()
-        val width = constraints.getWidth().toDouble()
-        val height = constraints.getHeight().toDouble()
+        val x = this.getLeft().toDouble()
+        val y = this.getLeft().toDouble()
+        val width = this.getWidth().toDouble()
+        val height = this.getHeight().toDouble()
 
         GL11.glPushMatrix()
 
@@ -50,6 +50,7 @@ class UIImage @JvmOverloads constructor(name: String, url: String? = null) : UIC
     }
 
     private fun getBufferedImage(name: String, url: String? = null): BufferedImage {
+        // TODO: fix this
         val resourceFile = File(name)
 
         if (resourceFile.exists()) {
@@ -57,6 +58,8 @@ class UIImage @JvmOverloads constructor(name: String, url: String? = null) : UIC
         }
 
         val image = ImageIO.read(URL(url))
+        resourceFile.parentFile.mkdirs()
+        resourceFile.createNewFile()
         ImageIO.write(image, "png", resourceFile)
         return image
     }

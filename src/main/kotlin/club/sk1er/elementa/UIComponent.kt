@@ -1,8 +1,10 @@
 package club.sk1er.elementa
 
+import club.sk1er.elementa.animations.AnimationPhase
+
 abstract class UIComponent {
     private val children = mutableListOf<UIComponent>()
-    val constraints: UIConstraints = UIConstraints(this)
+    private val animator = Animator()
     open lateinit var parent: UIComponent
 
     fun addChild(component: UIComponent) {
@@ -10,17 +12,28 @@ abstract class UIComponent {
         children.add(component)
     }
 
-    open fun getLeft() = constraints.getX()
+    fun addAnimationPhase(phase: AnimationPhase) {
+        animator.animations.add(phase)
+    }
 
-    open fun getTop() = constraints.getY()
+    fun makeDefaultConstraints() = UIConstraints(this)
 
-    open fun getRight() = getLeft() + constraints.getWidth()
+    fun setConstraints(constraints: UIConstraints) {
+        animator.animations.clear()
+        animator.animations.add(AnimationPhase(constraints))
+    }
 
-    open fun getBottom() = getTop() + constraints.getHeight()
+    open fun getLeft() = animator.getCurrentX()
 
-    open fun getWidth() = constraints.getWidth()
+    open fun getTop() = animator.getCurrentY()
 
-    open fun getHeight() = constraints.getHeight()
+    open fun getRight() = getLeft() + animator.getCurrentWidth()
+
+    open fun getBottom() = getTop() + animator.getCurrentHeight()
+
+    open fun getWidth() = animator.getCurrentWidth()
+
+    open fun getHeight() = animator.getCurrentHeight()
 
     open fun draw() {
         this.children.forEach(UIComponent::draw)
