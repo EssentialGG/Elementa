@@ -38,4 +38,11 @@ class UIConstraints(private val component: UIComponent) {
     fun setHeight(constraint: SizeConstraint) {
         heightConstraint = constraint
     }
+
+    fun copy() = UIConstraints(component).apply {
+        this.xConstraint = this@UIConstraints.xConstraint
+        this.yConstraint = this@UIConstraints.yConstraint
+        this.widthConstraint = this@UIConstraints.widthConstraint
+        this.heightConstraint = this@UIConstraints.heightConstraint
+    }
 }

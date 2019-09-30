@@ -13,7 +13,7 @@ abstract class UIComponent {
     }
 
     fun addAnimationPhase(phase: AnimationPhase) {
-        animator.animations.add(phase)
+        animator.animations.add(phase.copy(constraints = phase.constraints.copy()))
     }
 
     open fun makeDefaultConstraints() = UIConstraints(this)

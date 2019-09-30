@@ -11,7 +11,7 @@ import java.util.*
 class UIBlock(private val color: Color) : UIComponent() {
     override fun draw() {
         val x = this.getLeft().toDouble()
-        val y = this.getLeft().toDouble()
+        val y = this.getTop().toDouble()
         val width = this.getWidth().toDouble()
         val height = this.getHeight().toDouble()
 

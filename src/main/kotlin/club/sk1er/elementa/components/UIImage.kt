@@ -31,7 +31,7 @@ class UIImage @JvmOverloads constructor(name: String, url: String? = null) : UIC
 
     override fun draw() {
         val x = this.getLeft().toDouble()
-        val y = this.getLeft().toDouble()
+        val y = this.getTop().toDouble()
         val width = this.getWidth().toDouble()
         val height = this.getHeight().toDouble()
 

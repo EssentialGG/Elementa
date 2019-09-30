@@ -1,6 +1,8 @@
 package com.example.examplemod;
 
 import club.sk1er.elementa.UIConstraints;
+import club.sk1er.elementa.animations.AnimationPhase;
+import club.sk1er.elementa.animations.NoAnimationStrategy;
 import club.sk1er.elementa.components.UIBlock;
 import club.sk1er.elementa.components.UIImage;
 import club.sk1er.elementa.components.UIText;
@@ -30,7 +32,9 @@ public class ExampleMod {
         constraints.setY(new CenterConstraint());
         constraints.setWidth(new RelativeConstraint(0.3f));
         constraints.setHeight(new FillConstraint(-10));
-        settings.setConstraints(constraints);
+        settings.addAnimationPhase(new AnimationPhase(constraints, new NoAnimationStrategy()));
+        constraints.setX(new PixelConstraint(10));
+        settings.addAnimationPhase(new AnimationPhase(constraints, new NoAnimationStrategy()));
 
         UIBlock top = new UIBlock(new Color(0, 124, 145, 255));
         constraints = top.makeDefaultConstraints();
