@@ -39,9 +39,10 @@ public class ExampleMod {
         top.setConstraints(constraints);
 
         UIText title = new UIText("Settings");
-        constraints = title.getConstraints();
+        constraints = title.makeDefaultConstraints();
         constraints.setX(new PixelConstraint(5));
         constraints.setY(new CenterConstraint());
+        title.setConstraints(constraints);
 
         UIBlock button = new UIBlock(new Color(93, 222, 244, 255));
         constraints = button.makeDefaultConstraints();

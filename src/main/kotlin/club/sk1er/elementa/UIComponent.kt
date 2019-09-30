@@ -16,7 +16,7 @@ abstract class UIComponent {
         animator.animations.add(phase)
     }
 
-    fun makeDefaultConstraints() = UIConstraints(this)
+    open fun makeDefaultConstraints() = UIConstraints(this)
 
     fun setConstraints(constraints: UIConstraints) {
         animator.animations.clear()

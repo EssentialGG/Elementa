@@ -1,18 +1,20 @@
 package club.sk1er.elementa.components
 
 import club.sk1er.elementa.UIComponent
+import club.sk1er.elementa.UIConstraints
 import club.sk1er.elementa.constraints.PixelConstraint
 import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.GlStateManager
-import java.awt.SystemColor.text
 
 class UIText @JvmOverloads constructor(private val text: String, private val color: Int = 0xffffffff.toInt(), private val shadow: Boolean = true) : UIComponent() {
 
     private val textWidth: Float = Minecraft.getMinecraft().fontRendererObj.getStringWidth(text).toFloat()
 
-    init {
-        constraints.setWidth(PixelConstraint(textWidth))
-        constraints.setHeight(PixelConstraint(9f))
+    override fun makeDefaultConstraints(): UIConstraints {
+        val superConstraints = super.makeDefaultConstraints()
+        superConstraints.setWidth(PixelConstraint(textWidth))
+        superConstraints.setHeight(PixelConstraint(9f))
+        return superConstraints
     }
 
     override fun draw() {
