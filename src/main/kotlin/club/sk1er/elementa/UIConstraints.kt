@@ -14,28 +14,28 @@ class UIConstraints(private val component: UIComponent) {
     fun getX(): Float {
         return xConstraint.getXPosition(component, component.parent)
     }
-    fun setX(constraint: PositionConstraint) {
+    fun setX(constraint: PositionConstraint) = apply {
         xConstraint = constraint
     }
 
     fun getY(): Float {
         return yConstraint.getYPosition(component, component.parent)
     }
-    fun setY(constraint: PositionConstraint) {
+    fun setY(constraint: PositionConstraint) = apply {
         yConstraint = constraint
     }
 
     fun getWidth(): Float {
         return widthConstraint.getXSize(component, component.parent)
     }
-    fun setWidth(constraint: SizeConstraint) {
+    fun setWidth(constraint: SizeConstraint) = apply {
         widthConstraint = constraint
     }
 
     fun getHeight(): Float {
         return heightConstraint.getYSize(component, component.parent)
     }
-    fun setHeight(constraint: SizeConstraint) {
+    fun setHeight(constraint: SizeConstraint) = apply {
         heightConstraint = constraint
     }
 

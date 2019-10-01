@@ -1,13 +1,13 @@
 package com.example.examplemod;
 
+import club.sk1er.elementa.UIComponent;
 import club.sk1er.elementa.UIConstraints;
 import club.sk1er.elementa.animations.AnimationPhase;
 import club.sk1er.elementa.animations.NoAnimationStrategy;
-import club.sk1er.elementa.components.UIBlock;
-import club.sk1er.elementa.components.UIImage;
-import club.sk1er.elementa.components.UIText;
+import club.sk1er.elementa.components.*;
 import club.sk1er.elementa.components.Window;
 import club.sk1er.elementa.constraints.*;
+import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
@@ -25,6 +25,22 @@ public class ExampleMod {
     @EventHandler
     public void init(FMLInitializationEvent event) {
         MinecraftForge.EVENT_BUS.register(this);
+
+        createUI();
+    }
+
+    @SubscribeEvent
+    public void chat(ClientChatReceivedEvent event) {
+        createUI();
+    }
+
+    @SubscribeEvent
+    public void overlay(RenderGameOverlayEvent event) {
+        Window.INSTANCE.draw();
+    }
+
+    private void createUI() {
+        Window.INSTANCE.clearChildren();
 
         UIBlock settings = new UIBlock(new Color(0, 172, 193, 255));
         UIConstraints constraints = settings.makeDefaultConstraints();
@@ -60,8 +76,8 @@ public class ExampleMod {
         top.addChild(title);
 
         settings.addChild(top);
-        settings.addChild(createSlider(new PixelConstraint(40)));
-        settings.addChild(createSlider(new PixelConstraint(60)));
+        settings.addChild(createSlider("Slider 1", new PixelConstraint(30)));
+        settings.addChild(createSlider("Second Slider", new PixelConstraint(60)));
 
         Window.INSTANCE.addChild(settings);
 
@@ -76,19 +92,25 @@ public class ExampleMod {
         Window.INSTANCE.addChild(image);
     }
 
-    @SubscribeEvent
-    public void overlay(RenderGameOverlayEvent event) {
-        Window.INSTANCE.draw();
-    }
-
-    private UIBlock createSlider(PositionConstraint yConstraint) {
-        UIBlock slider = new UIBlock(new Color(64, 64, 64, 255));
-        UIConstraints constraints = slider.makeDefaultConstraints();
+    private UIComponent createSlider(String text, PositionConstraint yConstraint) {
+        UIContainer container = new UIContainer();
+        UIConstraints constraints = container.makeDefaultConstraints();
         constraints.setX(new CenterConstraint());
         constraints.setY(yConstraint);
         constraints.setWidth(new FillConstraint(-30));
+        constraints.setHeight(new PixelConstraint(30));
+        container.setConstraints(constraints);
+
+        UIText title = new UIText(text);
+        title.setConstraints(title.makeDefaultConstraints().setX(new CenterConstraint()));
+
+        UIBlock back = new UIBlock(new Color(64, 64, 64, 255));
+        constraints = back.makeDefaultConstraints();
+        constraints.setX(new CenterConstraint());
+        constraints.setY(new PixelConstraint(12));
+        constraints.setWidth(new FillConstraint());
         constraints.setHeight(new PixelConstraint(5));
-        slider.setConstraints(constraints);
+        back.setConstraints(constraints);
 
         UIBlock grab = new UIBlock(new Color(0, 0, 0, 255));
         constraints = grab.makeDefaultConstraints();
@@ -98,8 +120,8 @@ public class ExampleMod {
         constraints.setHeight(new PixelConstraint(9));
         grab.setConstraints(constraints);
 
-        slider.addChild(grab);
+        container.addChildren(title, back.addChild(grab));
 
-        return slider;
+        return container;
     }
 }
