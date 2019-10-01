@@ -1,5 +1,6 @@
 package club.sk1er.elementa.shaders
 
+import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.client.renderer.OpenGlHelper.*
 import org.lwjgl.opengl.ARBShaderObjects
 import org.lwjgl.opengl.GL20
@@ -15,11 +16,16 @@ open class Shader(private val name: String) {
     }
 
     fun bindIfUsable() {
-        if (usable) glUseProgram(program)
+        if (usable) {
+            glUseProgram(program)
+            GlStateManager.disableBlend()
+        }
     }
 
     fun unbindIfUsable() {
-        if (usable) glUseProgram(0)
+        if (usable) {
+            glUseProgram(0)
+        }
     }
 
     private fun createShader() {
