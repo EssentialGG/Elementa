@@ -21,13 +21,8 @@ class UIImage @JvmOverloads constructor(name: String, url: String? = null) : UIC
     init {
         image = getBufferedImage(name, url)
         texture = DynamicTexture(image)
-    }
-
-    override fun makeDefaultConstraints(): UIConstraints {
-        val superConstraints = super.makeDefaultConstraints()
-        superConstraints.setWidth(PixelConstraint(image.width.toFloat()))
-        superConstraints.setHeight(PixelConstraint(image.height.toFloat()))
-        return superConstraints
+        super.getConstraints().setWidth(PixelConstraint(image.width.toFloat()))
+        super.getConstraints().setHeight(PixelConstraint(image.height.toFloat()))
     }
 
     override fun draw() {

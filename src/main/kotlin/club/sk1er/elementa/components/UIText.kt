@@ -10,11 +10,9 @@ class UIText @JvmOverloads constructor(private val text: String, private val col
 
     private val textWidth: Float = Minecraft.getMinecraft().fontRendererObj.getStringWidth(text).toFloat()
 
-    override fun makeDefaultConstraints(): UIConstraints {
-        val superConstraints = super.makeDefaultConstraints()
-        superConstraints.setWidth(PixelConstraint(textWidth))
-        superConstraints.setHeight(PixelConstraint(9f))
-        return superConstraints
+    init {
+        super.getConstraints().setWidth(PixelConstraint(textWidth))
+        super.getConstraints().setHeight(PixelConstraint(9f))
     }
 
     override fun draw() {
