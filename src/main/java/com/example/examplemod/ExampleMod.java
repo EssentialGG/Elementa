@@ -12,6 +12,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import org.lwjgl.input.Mouse;
 
 import java.awt.*;
 
@@ -19,6 +20,8 @@ import java.awt.*;
 public class ExampleMod {
     public static final String MODID = "examplemod";
     public static final String VERSION = "1.0";
+
+    private boolean mouseState = false;
 
     @EventHandler
     public void init(FMLInitializationEvent event) {
@@ -35,6 +38,11 @@ public class ExampleMod {
     @SubscribeEvent
     public void overlay(RenderGameOverlayEvent event) {
         Window.INSTANCE.draw();
+
+        if (!Mouse.isCreated()) return;
+        if (Mouse.isButtonDown(0) == mouseState) return;
+        Window.INSTANCE.click();
+        mouseState = Mouse.isButtonDown(0);
     }
 
     private void createUI() {
@@ -63,6 +71,11 @@ public class ExampleMod {
         constraints.setY(new PixelConstraint(5));
         constraints.setWidth(new PixelConstraint(10));
         constraints.setHeight(new PixelConstraint(10));
+        button.onClick(() -> {
+            Window.INSTANCE.removeChild(settings);
+            System.out.println("CLICKED");
+            return true;
+        });
 
         top.addChild(button);
         top.addChild(title);

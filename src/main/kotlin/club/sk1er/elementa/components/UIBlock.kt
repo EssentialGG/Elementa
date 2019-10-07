@@ -8,7 +8,12 @@ import org.lwjgl.opengl.GL11
 import java.awt.Color
 import java.util.*
 
-class UIBlock(private val color: Color) : UIComponent() {
+class UIBlock(private var color: Color) : UIComponent() {
+    fun getColor() = color
+    fun setColor(color: Color) = apply {
+        this.color = color
+    }
+
     override fun draw() {
         val x = this.getLeft().toDouble()
         val y = this.getTop().toDouble()
