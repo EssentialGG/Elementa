@@ -3,13 +3,12 @@ package club.sk1er.elementa
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.ScaledResolution
 import org.lwjgl.input.Mouse
-import java.util.function.Supplier
 
 abstract class UIComponent {
     private val children = mutableListOf<UIComponent>()
     private val constraints = UIConstraints(this)
     open lateinit var parent: UIComponent
-    private var clickAction = Supplier<Any> {}
+    private var clickAction: () -> Unit = {}
 
     fun addChild(component: UIComponent) = apply {
         component.parent = this
@@ -61,12 +60,12 @@ abstract class UIComponent {
 
     open fun click() {
         if (isHovered()) {
-            clickAction.get()
+            clickAction()
         }
         this.children.forEach(UIComponent::click)
     }
 
-    public fun onClick(method: Supplier<Any>) {
+    fun onClick(method: () -> Unit) {
         clickAction = method
     }
 }
