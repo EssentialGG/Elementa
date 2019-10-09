@@ -1,7 +1,6 @@
 package com.example.examplemod;
 
 import club.sk1er.elementa.UIComponent;
-import club.sk1er.elementa.UIConstraints;
 import club.sk1er.elementa.components.Window;
 import club.sk1er.elementa.components.*;
 import club.sk1er.elementa.constraints.*;
@@ -49,28 +48,28 @@ public class ExampleMod {
         Window.INSTANCE.clearChildren();
 
         UIBlock settings = new UIBlock(new Color(0, 172, 193, 255));
-        UIConstraints constraints = settings.getConstraints();
-        constraints.setX(new PixelConstraint(5));
-        constraints.setY(new CenterConstraint());
-        constraints.setWidth(new RelativeConstraint(0.3f));
-        constraints.setHeight(new FillConstraint(-10));
+        settings.getConstraints()
+                .setX(new PixelConstraint(5))
+                .setY(new PixelConstraint(5))
+                .setWidth(new RelativeConstraint(0.3f))
+                .setHeight(new FillConstraint(-5));
 
         UIBlock top = new UIBlock(new Color(0, 124, 145, 255));
-        constraints = top.getConstraints();
-        constraints.setWidth(new FillConstraint());
-        constraints.setHeight(new PixelConstraint(20));
+        top.getConstraints()
+                .setWidth(new FillConstraint())
+                .setHeight(new PixelConstraint(20));
 
         UIText title = new UIText("Settings");
-        constraints = title.getConstraints();
-        constraints.setX(new PixelConstraint(5));
-        constraints.setY(new CenterConstraint());
+        title.getConstraints()
+                .setX(new PixelConstraint(5))
+                .setY(new CenterConstraint());
 
         UIBlock button = new UIBlock(new Color(93, 222, 244, 255));
-        constraints = button.getConstraints();
-        constraints.setX(new PixelConstraint(-10, true));
-        constraints.setY(new PixelConstraint(5));
-        constraints.setWidth(new PixelConstraint(10));
-        constraints.setHeight(new PixelConstraint(10));
+        button.getConstraints()
+                .setX(new PixelConstraint(-5, true))
+                .setY(new PixelConstraint(5))
+                .setWidth(new PixelConstraint(10))
+                .setHeight(new PixelConstraint(10));
         button.onClick(() -> {
             Window.INSTANCE.removeChild(settings);
             System.out.println("CLICKED");
@@ -81,43 +80,42 @@ public class ExampleMod {
 
         settings.addChild(top);
         settings.addChild(createSlider("Slider 1", new PixelConstraint(30)));
-        settings.addChild(createSlider("Second Slider", new PixelConstraint(60)));
+        settings.addChild(createSlider("Second Slider", new PixelConstraint(65)));
 
         Window.INSTANCE.addChild(settings);
 
         UIImage image = new UIImage("./images/logo.png", "https://avatars3.githubusercontent.com/u/10331479?s=460&v=4");
-        constraints = image.getConstraints();
-        constraints.setX(new CenterConstraint());
-        constraints.setY(new PixelConstraint(3));
-        constraints.setWidth(new RelativeConstraint(0.2f));
-        constraints.setHeight(new AspectConstraint(1));
+        image.getConstraints()
+                .setX(new CenterConstraint())
+                .setY(new PixelConstraint(3))
+                .setWidth(new RelativeConstraint(0.2f))
+                .setHeight(new AspectConstraint(1));
 
         Window.INSTANCE.addChild(image);
     }
 
     private UIComponent createSlider(String text, PositionConstraint yConstraint) {
         UIContainer container = new UIContainer();
-        UIConstraints constraints = container.getConstraints();
-        constraints.setX(new CenterConstraint());
-        constraints.setY(yConstraint);
-        constraints.setWidth(new FillConstraint(-30));
-        constraints.setHeight(new PixelConstraint(30));
+        container.getConstraints()
+                .setX(new PixelConstraint(15))
+                .setY(yConstraint)
+                .setWidth(new FillConstraint(-15))
+                .setHeight(new PixelConstraint(30));
 
         UIText title = new UIText(text);
 
         UIBlock back = new UIBlock(new Color(64, 64, 64, 255));
-        constraints = back.getConstraints();
-        constraints.setX(new CenterConstraint());
-        constraints.setY(new PixelConstraint(12));
-        constraints.setWidth(new FillConstraint());
-        constraints.setHeight(new PixelConstraint(5));
+        back.getConstraints()
+                .setY(new PixelConstraint(12))
+                .setWidth(new FillConstraint())
+                .setHeight(new PixelConstraint(5));
 
         UIBlock grab = new UIBlock(new Color(0, 0, 0, 255));
-        constraints = grab.getConstraints();
-        constraints.setX(new PixelConstraint(0));
-        constraints.setY(new PixelConstraint(-2));
-        constraints.setWidth(new PixelConstraint(3));
-        constraints.setHeight(new PixelConstraint(9));
+        grab.getConstraints()
+                .setX(new PixelConstraint(0))
+                .setY(new PixelConstraint(-2))
+                .setWidth(new PixelConstraint(3))
+                .setHeight(new PixelConstraint(9));
 
         container.addChildren(title, back.addChild(grab));
 
