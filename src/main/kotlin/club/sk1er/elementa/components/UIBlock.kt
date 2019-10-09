@@ -54,4 +54,6 @@ class UIBlock(private var color: Color) : UIComponent() {
 
         super.draw()
     }
+
+    fun copy() = UIBlock(color).getConstraints()
 }

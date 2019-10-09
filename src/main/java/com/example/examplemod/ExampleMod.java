@@ -5,6 +5,7 @@ import club.sk1er.elementa.UIConstraints;
 import club.sk1er.elementa.components.Window;
 import club.sk1er.elementa.components.*;
 import club.sk1er.elementa.constraints.*;
+import club.sk1er.elementa.helpers.Padding;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -67,7 +68,7 @@ public class ExampleMod {
 
         UIBlock button = new UIBlock(new Color(93, 222, 244, 255));
         constraints = button.getConstraints();
-        constraints.setX(new PixelConstraint(-10, true));
+        constraints.setX(new PixelConstraint(10, true));
         constraints.setY(new PixelConstraint(5));
         constraints.setWidth(new PixelConstraint(10));
         constraints.setHeight(new PixelConstraint(10));
@@ -82,6 +83,39 @@ public class ExampleMod {
         settings.addChild(top);
         settings.addChild(createSlider("Slider 1", new PixelConstraint(30)));
         settings.addChild(createSlider("Second Slider", new PixelConstraint(60)));
+
+        UIBlock blocky = new UIBlock(Color.RED);
+        constraints = blocky.getConstraints();
+        constraints.setX(new SiblingConstraint());
+        constraints.setY(new SiblingConstraint(new Padding(5)));
+        constraints.setWidth(new PixelConstraint(15));
+        constraints.setHeight(new PixelConstraint(15));
+
+        UIBlock blocky2 = new UIBlock(Color.GREEN);
+        constraints = blocky2.getConstraints();
+        constraints.setX(new SiblingConstraint());
+        constraints.setY(new SiblingConstraint(new Padding(5)));
+        constraints.setWidth(new PixelConstraint(15));
+        constraints.setHeight(new PixelConstraint(15));
+
+        UIBlock blocky3 = new UIBlock(Color.GRAY);
+        constraints = blocky3.getConstraints();
+        constraints.setX(new SiblingConstraint());
+        constraints.setY(new SiblingConstraint(new Padding(5)));
+        constraints.setWidth(new PixelConstraint(15));
+        constraints.setHeight(new PixelConstraint(15));
+
+        UIContainer cont = new UIContainer();
+        constraints = cont.getConstraints();
+        constraints.setHeight(new ChildBasedSizeConstraint());
+        constraints.setWidth(new ChildBasedSizeConstraint());
+        constraints.setX(new SiblingConstraint());
+        constraints.setY(new SiblingConstraint());
+        cont.addChildren(blocky, blocky2, blocky3);
+
+        System.out.println("blocky1: " + blocky + ", block2: " + blocky2 + ", block3: " + blocky3);
+
+        settings.addChild(cont);
 
         Window.INSTANCE.addChild(settings);
 

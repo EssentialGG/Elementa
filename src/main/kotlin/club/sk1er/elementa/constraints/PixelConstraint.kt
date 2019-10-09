@@ -8,12 +8,12 @@ class PixelConstraint @JvmOverloads constructor(
 ) : PositionConstraint, SizeConstraint {
     override fun getXPosition(component: UIComponent, parent: UIComponent): Float {
         return if (!alignOpposite) parent.getLeft() + value
-                else parent.getRight() + value - component.getWidth()
+                else parent.getRight() - value - component.getWidth()
     }
 
     override fun getYPosition(component: UIComponent, parent: UIComponent): Float {
         return if (!alignOpposite) parent.getTop() + value
-                else parent.getBottom() + value - component.getHeight()
+                else parent.getBottom() - value - component.getHeight()
     }
 
     override fun getXSize(component: UIComponent, parent: UIComponent): Float {

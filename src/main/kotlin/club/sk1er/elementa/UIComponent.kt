@@ -6,9 +6,10 @@ import net.minecraft.client.gui.ScaledResolution
 import org.lwjgl.input.Mouse
 
 abstract class UIComponent {
-    private val children = mutableListOf<UIComponent>()
-    private val constraints = UIConstraints(this)
     open lateinit var parent: UIComponent
+    val children = mutableListOf<UIComponent>()
+
+    private val constraints = UIConstraints(this)
     private var clickAction: () -> Unit = {}
 
     fun addChild(component: UIComponent) = apply {
