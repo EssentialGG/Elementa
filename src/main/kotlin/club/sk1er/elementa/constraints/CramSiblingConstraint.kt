@@ -3,8 +3,20 @@ package club.sk1er.elementa.constraints
 import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.helpers.Padding
 
-class SiblingConstraint(private val padding: Padding = Padding()) : PositionConstraint {
+class CramSiblingConstraint(private val padding: Padding = Padding()) : PositionConstraint {
     override fun getXPosition(component: UIComponent, parent: UIComponent): Float {
+        val index = parent.children.indexOf(component)
+
+        if (index == 0) {
+            return parent.getLeft() + padding.paddingValue
+        }
+
+        val sibling = parent.children[index - 1]
+
+        if (sibling.getRight() + padding.paddingValue + component.getWidth() < parent.getWidth()) {
+            return sibling.getRight() + padding.paddingValue
+        }
+
         return parent.getLeft() + padding.paddingValue
     }
 
@@ -16,6 +28,10 @@ class SiblingConstraint(private val padding: Padding = Padding()) : PositionCons
         }
 
         val sibling = parent.children[index - 1]
+
+        if (sibling.getRight() + padding.paddingValue + component.getWidth() < parent.getWidth()) {
+            return sibling.getTop()
+        }
 
         var lowestPoint = sibling.getBottom()
 

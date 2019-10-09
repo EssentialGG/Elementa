@@ -67,7 +67,7 @@ public class ExampleMod {
 
         UIBlock button = new UIBlock(new Color(93, 222, 244, 255));
         button.getConstraints()
-                .setX(new PixelConstraint(-5, true))
+                .setX(new PixelConstraint(5, true))
                 .setY(new PixelConstraint(5))
                 .setWidth(new PixelConstraint(10))
                 .setHeight(new PixelConstraint(10));
@@ -85,34 +85,32 @@ public class ExampleMod {
 
         UIBlock blocky = new UIBlock(Color.RED);
         blocky.getConstraints()
-            .setX(new SiblingConstraint())
+            .setX(new SiblingConstraint(new Padding(2)))
             .setY(new SiblingConstraint(new Padding(5)))
-            .setWidth(new PixelConstraint(15))
-            .setHeight(new PixelConstraint(15));
+            .setWidth(new PixelConstraint(75))
+            .setHeight(new PixelConstraint(35));
 
         UIBlock blocky2 = new UIBlock(Color.GREEN);
         blocky2.getConstraints()
-            .setX(new SiblingConstraint())
-            .setY(new SiblingConstraint(new Padding(5)))
-            .setWidth(new PixelConstraint(15))
+            .setX(new CramSiblingConstraint(new Padding(5)))
+            .setY(new CramSiblingConstraint(new Padding(5)))
+            .setWidth(new PixelConstraint(75))
             .setHeight(new PixelConstraint(15));
 
         UIBlock blocky3 = new UIBlock(Color.GRAY);
         blocky3.getConstraints()
-            .setX(new SiblingConstraint())
-            .setY(new SiblingConstraint(new Padding(5)))
+            .setX(new CramSiblingConstraint(new Padding(5)))
+            .setY(new CramSiblingConstraint(new Padding(5)))
             .setWidth(new PixelConstraint(15))
             .setHeight(new PixelConstraint(15));
 
         UIContainer cont = new UIContainer();
         cont.getConstraints()
             .setHeight(new ChildBasedSizeConstraint())
-            .setWidth(new ChildBasedSizeConstraint())
+            .setWidth(new FillConstraint())
             .setX(new SiblingConstraint())
             .setY(new SiblingConstraint());
         cont.addChildren(blocky, blocky2, blocky3);
-
-        System.out.println("blocky1: " + blocky + ", block2: " + blocky2 + ", block3: " + blocky3);
 
         settings.addChild(cont);
 
@@ -125,7 +123,7 @@ public class ExampleMod {
                 .setWidth(new RelativeConstraint(0.2f))
                 .setHeight(new AspectConstraint(1));
 
-        Window.INSTANCE.addChild(image);
+//        Window.INSTANCE.addChild(image);
     }
 
     private UIComponent createSlider(String text, PositionConstraint yConstraint) {
