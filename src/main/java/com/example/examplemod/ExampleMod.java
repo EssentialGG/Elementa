@@ -2,8 +2,8 @@ package com.example.examplemod;
 
 import club.sk1er.elementa.UIComponent;
 import club.sk1er.elementa.UIConstraints;
-import club.sk1er.elementa.components.*;
 import club.sk1er.elementa.components.Window;
+import club.sk1er.elementa.components.*;
 import club.sk1er.elementa.constraints.*;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
@@ -67,14 +67,13 @@ public class ExampleMod {
 
         UIBlock button = new UIBlock(new Color(93, 222, 244, 255));
         constraints = button.getConstraints();
-        constraints.setX(new FillConstraint(-10));
+        constraints.setX(new PixelConstraint(-10, true));
         constraints.setY(new PixelConstraint(5));
         constraints.setWidth(new PixelConstraint(10));
         constraints.setHeight(new PixelConstraint(10));
         button.onClick(() -> {
             Window.INSTANCE.removeChild(settings);
             System.out.println("CLICKED");
-            return true;
         });
 
         top.addChild(button);

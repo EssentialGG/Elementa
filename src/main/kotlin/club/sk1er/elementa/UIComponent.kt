@@ -1,5 +1,6 @@
 package club.sk1er.elementa
 
+import club.sk1er.elementa.constraints.animation.AnimatingConstraints
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.ScaledResolution
 import org.lwjgl.input.Mouse
@@ -27,6 +28,8 @@ abstract class UIComponent {
         children.clear()
     }
 
+    fun makeAnimation() = AnimatingConstraints(this)
+
     open fun getConstraints() = constraints
 
     open fun getLeft() = constraints.getX()
@@ -48,10 +51,7 @@ abstract class UIComponent {
         val mouseX = Mouse.getX() * res.scaledWidth / mc.displayWidth
         val mouseY = Mouse.getY() * res.scaledHeight / mc.displayHeight
 
-        val ret =  (mouseX > getLeft() && mouseX < getRight() && mouseY > getTop() && mouseY < getBottom())
-        println("HOVER: $ret")
-
-        return ret
+        return (mouseX > getLeft() && mouseX < getRight() && mouseY > getTop() && mouseY < getBottom())
     }
 
     open fun draw() {
@@ -67,5 +67,9 @@ abstract class UIComponent {
 
     fun onClick(method: () -> Unit) {
         clickAction = method
+    }
+
+    fun onClick(method: Runnable) {
+        clickAction = { method.run() }
     }
 }

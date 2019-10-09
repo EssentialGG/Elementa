@@ -4,38 +4,37 @@ import club.sk1er.elementa.constraints.PixelConstraint
 import club.sk1er.elementa.constraints.PositionConstraint
 import club.sk1er.elementa.constraints.SizeConstraint
 
-class UIConstraints(private val component: UIComponent) {
+open class UIConstraints(protected val component: UIComponent) {
     private var xConstraint: PositionConstraint = PixelConstraint(0f)
     private var yConstraint: PositionConstraint = PixelConstraint(0f)
     private var widthConstraint: SizeConstraint = PixelConstraint(0f)
     private var heightConstraint: SizeConstraint = PixelConstraint(0f)
 
-
-    fun getX(): Float {
+    open fun getX(): Float {
         return xConstraint.getXPosition(component, component.parent)
     }
-    fun setX(constraint: PositionConstraint) = apply {
+    open fun setX(constraint: PositionConstraint) = apply {
         xConstraint = constraint
     }
 
-    fun getY(): Float {
+    open fun getY(): Float {
         return yConstraint.getYPosition(component, component.parent)
     }
-    fun setY(constraint: PositionConstraint) = apply {
+    open fun setY(constraint: PositionConstraint) = apply {
         yConstraint = constraint
     }
 
-    fun getWidth(): Float {
+    open fun getWidth(): Float {
         return widthConstraint.getXSize(component, component.parent)
     }
-    fun setWidth(constraint: SizeConstraint) = apply {
+    open fun setWidth(constraint: SizeConstraint) = apply {
         widthConstraint = constraint
     }
 
-    fun getHeight(): Float {
+    open fun getHeight(): Float {
         return heightConstraint.getYSize(component, component.parent)
     }
-    fun setHeight(constraint: SizeConstraint) = apply {
+    open fun setHeight(constraint: SizeConstraint) = apply {
         heightConstraint = constraint
     }
 
