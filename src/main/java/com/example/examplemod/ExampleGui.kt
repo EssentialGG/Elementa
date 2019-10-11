@@ -119,7 +119,7 @@ class ExampleGui : GuiScreen() {
             offset += 35
 
             val anim = settings.makeAnimation()
-                .setXAnimation(LinearStrategy, 5f, PixelConstraint(offset))
+                .setXAnimation(LinearStrategy, 1f, PixelConstraint(offset))
 
             settings.animateTo(anim)
         }
