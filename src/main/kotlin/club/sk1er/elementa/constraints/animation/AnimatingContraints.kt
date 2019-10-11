@@ -11,6 +11,14 @@ class AnimatingConstraints(
     component: UIComponent,
     private val oldConstraints: UIConstraints
 ) : UIConstraints(component) {
+
+    init {
+        this.xConstraint = oldConstraints.xConstraint
+        this.yConstraint = oldConstraints.yConstraint
+        this.widthConstraint = oldConstraints.widthConstraint
+        this.heightConstraint = oldConstraints.heightConstraint
+    }
+
     fun setXAnimation(strategy: AnimationStrategy, time: Float, newConstraint: PositionConstraint) = apply {
         val totalFrames = time * Window.ANIMATION_FPS
 

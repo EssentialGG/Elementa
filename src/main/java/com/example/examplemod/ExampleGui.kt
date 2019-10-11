@@ -101,8 +101,6 @@ class ExampleGui : GuiScreen() {
     override fun mouseClicked(mouseX: Int, mouseY: Int, mouseButton: Int) {
         super.mouseClicked(mouseX, mouseY, mouseButton)
 
-        println("Clicked mb $mouseButton")
-
         if (mouseButton == 1) {
             offset += 35
 
