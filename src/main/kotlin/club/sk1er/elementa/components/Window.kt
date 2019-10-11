@@ -5,7 +5,7 @@ import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.ScaledResolution
 
 object Window : UIComponent() {
-    const val ANIMATION_FPS = 60
+    const val ANIMATION_FPS = 244
 
     private var systemTime = -1L
     var scaledResolution = ScaledResolution(Minecraft.getMinecraft())

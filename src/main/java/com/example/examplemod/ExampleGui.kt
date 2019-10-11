@@ -120,8 +120,7 @@ class ExampleGui : GuiScreen() {
         if (mouseButton == 1) {
             offset += 35
 
-            val anim = settings.makeAnimation()
-                .setXAnimation(EaseInOutStrategy, 1f, PixelConstraint(offset))
+            val anim = settings.makeAnimation().setXAnimation(EaseInOutStrategy, 1f, PixelConstraint(offset))
 
             settings.animateTo(anim)
         }
