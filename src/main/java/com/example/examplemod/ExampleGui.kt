@@ -6,6 +6,8 @@ import club.sk1er.elementa.components.UIContainer
 import club.sk1er.elementa.components.UIText
 import club.sk1er.elementa.components.Window
 import club.sk1er.elementa.constraints.*
+import club.sk1er.elementa.constraints.animation.EaseInOutStrategy
+import club.sk1er.elementa.constraints.animation.EaseOutStrategy
 import club.sk1er.elementa.constraints.animation.LinearStrategy
 import club.sk1er.elementa.features.ScissorFeature
 import club.sk1er.elementa.helpers.Padding
@@ -119,7 +121,7 @@ class ExampleGui : GuiScreen() {
             offset += 35
 
             val anim = settings.makeAnimation()
-                .setXAnimation(LinearStrategy, 5f, PixelConstraint(offset))
+                .setXAnimation(EaseInOutStrategy, 1f, PixelConstraint(offset))
 
             settings.animateTo(anim)
         }
