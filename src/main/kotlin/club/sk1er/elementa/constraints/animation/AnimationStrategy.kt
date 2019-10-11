@@ -1,7 +1,11 @@
 package club.sk1er.elementa.constraints.animation
 
 interface AnimationStrategy {
-    fun getValue(start: Float, end: Float, totalFrames: Int, elapsedFrames: Int): Float
+    fun getValue(percentComplete: Float): Float
+}
 
-    fun animationFrame()
+object LinearStrategy : AnimationStrategy {
+    override fun getValue(percentComplete: Float): Float {
+        return percentComplete
+    }
 }

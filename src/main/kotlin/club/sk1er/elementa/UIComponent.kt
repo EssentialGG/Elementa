@@ -9,7 +9,7 @@ abstract class UIComponent {
     open lateinit var parent: UIComponent
     val children = mutableListOf<UIComponent>()
 
-    private val constraints = UIConstraints(this)
+    private var constraints = UIConstraints(this)
     private var clickAction: () -> Unit = {}
 
     fun addChild(component: UIComponent) = apply {
@@ -29,7 +29,15 @@ abstract class UIComponent {
         children.clear()
     }
 
-    fun makeAnimation() = AnimatingConstraints(this)
+    fun makeAnimation() = AnimatingConstraints(this, constraints)
+
+    fun animateTo(constraints: AnimatingConstraints) {
+        this.setConstraints(constraints)
+    }
+
+    fun setConstraints(constraints: UIConstraints) {
+        this.constraints = constraints
+    }
 
     open fun getConstraints() = constraints
 
@@ -64,6 +72,15 @@ abstract class UIComponent {
             clickAction()
         }
         this.children.forEach(UIComponent::click)
+    }
+
+    open fun animationFrame() {
+        val constraints = getConstraints()
+        if (constraints is AnimatingConstraints) {
+            constraints.animationFrame()
+        }
+
+        this.children.forEach(UIComponent::animationFrame)
     }
 
     fun onClick(method: () -> Unit) {

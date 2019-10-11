@@ -1,17 +1,25 @@
 package com.example.examplemod
 
 import club.sk1er.elementa.UIComponent
-import club.sk1er.elementa.components.*
+import club.sk1er.elementa.components.UIBlock
+import club.sk1er.elementa.components.UIContainer
+import club.sk1er.elementa.components.UIText
+import club.sk1er.elementa.components.Window
 import club.sk1er.elementa.constraints.*
+import club.sk1er.elementa.constraints.animation.LinearStrategy
 import club.sk1er.elementa.helpers.Padding
 import net.minecraft.client.gui.GuiScreen
 import java.awt.Color
 
 class ExampleGui : GuiScreen() {
+    private val settings: UIComponent
+
+    var offset = 5f
+
     init {
         Window.clearChildren()
 
-        val settings = UIBlock(Color(0, 172, 193, 255))
+        settings = UIBlock(Color(0, 172, 193, 255))
         settings.getConstraints()
                 .setX(PixelConstraint(5f))
                 .setY(PixelConstraint(5f))
@@ -92,6 +100,17 @@ class ExampleGui : GuiScreen() {
 
     override fun mouseClicked(mouseX: Int, mouseY: Int, mouseButton: Int) {
         super.mouseClicked(mouseX, mouseY, mouseButton)
+
+        println("Clicked mb $mouseButton")
+
+        if (mouseButton == 1) {
+            offset += 35
+
+            val anim = settings.makeAnimation()
+                .setXAnimation(LinearStrategy, 5f, PixelConstraint(offset))
+
+            settings.animateTo(anim)
+        }
     }
 
     override fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {

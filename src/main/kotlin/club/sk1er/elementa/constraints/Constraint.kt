@@ -16,14 +16,22 @@ interface GeneralConstraint : PositionConstraint, SizeConstraint {
     override fun getYSize(component: UIComponent, parent: UIComponent) = getYValue(component, parent)
 }
 
-interface PositionConstraint {
-    fun getXPosition(component: UIComponent, parent: UIComponent): Float
+interface PositionConstraint : XConstraint, YConstraint
 
+interface XConstraint {
+    fun getXPosition(component: UIComponent, parent: UIComponent): Float
+}
+
+interface YConstraint {
     fun getYPosition(component: UIComponent, parent: UIComponent): Float
 }
 
-interface SizeConstraint {
-    fun getXSize(component: UIComponent, parent: UIComponent): Float
+interface SizeConstraint : WidthConstraint, HeightConstraint
 
+interface WidthConstraint {
+    fun getXSize(component: UIComponent, parent: UIComponent): Float
+}
+
+interface HeightConstraint {
     fun getYSize(component: UIComponent, parent: UIComponent): Float
 }
