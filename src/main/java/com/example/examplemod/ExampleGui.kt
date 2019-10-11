@@ -6,9 +6,7 @@ import club.sk1er.elementa.components.UIContainer
 import club.sk1er.elementa.components.UIText
 import club.sk1er.elementa.components.Window
 import club.sk1er.elementa.constraints.*
-import club.sk1er.elementa.constraints.animation.EaseInOutStrategy
-import club.sk1er.elementa.constraints.animation.EaseOutStrategy
-import club.sk1er.elementa.constraints.animation.LinearStrategy
+import club.sk1er.elementa.constraints.animation.Animations
 import club.sk1er.elementa.features.ScissorFeature
 import club.sk1er.elementa.helpers.Padding
 import net.minecraft.client.gui.GuiScreen
@@ -120,7 +118,7 @@ class ExampleGui : GuiScreen() {
         if (mouseButton == 1) {
             offset += 35
 
-            val anim = settings.makeAnimation().setXAnimation(EaseInOutStrategy, 1f, PixelConstraint(offset))
+            val anim = settings.makeAnimation().setXAnimation(Animations.IN_OUT_QUAD, 1f, PixelConstraint(offset))
 
             settings.animateTo(anim)
         }
