@@ -1,7 +1,6 @@
 package club.sk1er.elementa.components
 
 import club.sk1er.elementa.UIComponent
-import club.sk1er.elementa.UIConstraints
 import club.sk1er.elementa.constraints.PixelConstraint
 import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.GlStateManager
@@ -16,6 +15,8 @@ class UIText @JvmOverloads constructor(private val text: String, private val col
     }
 
     override fun draw() {
+        beforeDraw()
+
         val x = this.getLeft()
         val y = this.getTop()
         val width = this.getWidth().toDouble()

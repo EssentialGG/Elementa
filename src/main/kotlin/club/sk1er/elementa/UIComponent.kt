@@ -1,13 +1,15 @@
 package club.sk1er.elementa
 
+import club.sk1er.elementa.components.Window
 import club.sk1er.elementa.constraints.animation.AnimatingConstraints
+import club.sk1er.elementa.features.Feature
 import net.minecraft.client.Minecraft
-import net.minecraft.client.gui.ScaledResolution
 import org.lwjgl.input.Mouse
 
 abstract class UIComponent {
     open lateinit var parent: UIComponent
     val children = mutableListOf<UIComponent>()
+    val features = mutableListOf<Feature>()
 
     private var constraints = UIConstraints(this)
     private var clickAction: () -> Unit = {}
@@ -39,6 +41,10 @@ abstract class UIComponent {
         this.constraints = constraints
     }
 
+    fun enableFeatures(vararg features: Feature) {
+        this.features.addAll(features)
+    }
+
     open fun getConstraints() = constraints
 
     open fun getLeft() = constraints.getX()
@@ -54,7 +60,7 @@ abstract class UIComponent {
     open fun getHeight() = constraints.getHeight()
 
     open fun isHovered(): Boolean {
-        val res = ScaledResolution(Minecraft.getMinecraft())
+        val res = Window.scaledResolution
         val mc = Minecraft.getMinecraft()
 
         val mouseX = Mouse.getX() * res.scaledWidth / mc.displayWidth
@@ -65,6 +71,16 @@ abstract class UIComponent {
 
     open fun draw() {
         this.children.forEach(UIComponent::draw)
+
+        afterDraw()
+    }
+
+    open fun beforeDraw() {
+        features.forEach { it.beforeDraw(this) }
+    }
+
+    open fun afterDraw() {
+        features.forEach { it.afterDraw(this) }
     }
 
     open fun click() {

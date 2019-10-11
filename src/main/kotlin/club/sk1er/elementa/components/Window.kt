@@ -8,12 +8,15 @@ object Window : UIComponent() {
     const val ANIMATION_FPS = 60
 
     private var systemTime = -1L
+    var scaledResolution = ScaledResolution(Minecraft.getMinecraft())
 
     init {
         super.parent = this
     }
 
     override fun draw() {
+        scaledResolution = ScaledResolution(Minecraft.getMinecraft())
+
         if (systemTime == -1L) systemTime = System.currentTimeMillis()
 
         while (this.systemTime < System.currentTimeMillis() + 1000 / ANIMATION_FPS) {
@@ -34,11 +37,11 @@ object Window : UIComponent() {
     }
 
     override fun getWidth(): Float {
-        return ScaledResolution(Minecraft.getMinecraft()).scaledWidth.toFloat()
+        return scaledResolution.scaledWidth.toFloat()
     }
 
     override fun getHeight(): Float {
-        return ScaledResolution(Minecraft.getMinecraft()).scaledHeight.toFloat()
+        return scaledResolution.scaledHeight.toFloat()
     }
 
     override fun getRight() = getWidth()

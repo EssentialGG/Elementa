@@ -1,7 +1,6 @@
 package club.sk1er.elementa.components
 
 import club.sk1er.elementa.UIComponent
-import club.sk1er.elementa.UIConstraints
 import club.sk1er.elementa.constraints.PixelConstraint
 import club.sk1er.elementa.shaders.Shaders
 import net.minecraft.client.renderer.GlStateManager
@@ -26,6 +25,8 @@ class UIImage @JvmOverloads constructor(name: String, url: String? = null) : UIC
     }
 
     override fun draw() {
+        beforeDraw()
+
         val x = this.getLeft().toDouble()
         val y = this.getTop().toDouble()
         val width = this.getWidth().toDouble()

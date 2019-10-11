@@ -7,6 +7,7 @@ import club.sk1er.elementa.components.UIText
 import club.sk1er.elementa.components.Window
 import club.sk1er.elementa.constraints.*
 import club.sk1er.elementa.constraints.animation.LinearStrategy
+import club.sk1er.elementa.features.ScissorFeature
 import club.sk1er.elementa.helpers.Padding
 import net.minecraft.client.gui.GuiScreen
 import java.awt.Color
@@ -85,7 +86,20 @@ class ExampleGui : GuiScreen() {
 
         settings.addChild(cont)
 
+        val textHolder = UIBlock(Color.PINK)
+        textHolder.getConstraints()
+            .setX(CenterConstraint())
+            .setY(CenterConstraint())
+            .setWidth(PixelConstraint(50f))
+            .setHeight(PixelConstraint(10f))
+
+        val bigText = UIText("I'm longer than my container")
+        textHolder.addChild(bigText)
+
+        textHolder.enableFeatures(ScissorFeature())
+
         Window.addChild(settings)
+        Window.addChild(textHolder)
 
 //        val image = UIImage("./images/logo.png", "https://avatars3.githubusercontent.com/u/10331479?s=460&v=4")
 //        image.getConstraints()
