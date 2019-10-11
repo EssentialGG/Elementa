@@ -116,9 +116,13 @@ class ExampleGui : GuiScreen() {
         super.mouseClicked(mouseX, mouseY, mouseButton)
 
         if (mouseButton == 1) {
-            offset += 35
+            val anim = settings.makeAnimation()
 
-            val anim = settings.makeAnimation().setXAnimation(Animations.IN_OUT_QUAD, 1f, PixelConstraint(offset))
+            if (settings.getConstraints().getX() == 5f) {
+                anim.setXAnimation(EaseInOutStrategy, 1f, PixelConstraint(5f, true))
+            } else {
+                anim.setXAnimation(EaseInOutStrategy, 1f, PixelConstraint(5f))
+            }
 
             settings.animateTo(anim)
         }
