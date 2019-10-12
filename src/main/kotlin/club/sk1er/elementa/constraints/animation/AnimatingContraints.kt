@@ -3,9 +3,9 @@ package club.sk1er.elementa.constraints.animation
 import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.UIConstraints
 import club.sk1er.elementa.components.Window
+import club.sk1er.elementa.constraints.ColorConstraint
 import club.sk1er.elementa.constraints.PositionConstraint
 import club.sk1er.elementa.constraints.SizeConstraint
-import javax.naming.OperationNotSupportedException
 
 class AnimatingConstraints(
     component: UIComponent,
@@ -19,6 +19,11 @@ class AnimatingConstraints(
         this.yConstraint = oldConstraints.yConstraint
         this.widthConstraint = oldConstraints.widthConstraint
         this.heightConstraint = oldConstraints.heightConstraint
+        this.colorConstraint = oldConstraints.colorConstraint
+    }
+
+    fun begin() {
+        component.animateTo(this)
     }
 
     fun setXAnimation(strategy: AnimationStrategy, time: Float, newConstraint: PositionConstraint) = apply {
@@ -61,6 +66,17 @@ class AnimatingConstraints(
             strategy,
             totalFrames.toInt(),
             oldConstraints.heightConstraint,
+            newConstraint
+        )
+    }
+
+    fun setColorAnimation(strategy: AnimationStrategy, time: Float, newConstraint: ColorConstraint) = apply {
+        val totalFrames = time * Window.ANIMATION_FPS
+
+        colorConstraint = ColorAnimationComponent(
+            strategy,
+            totalFrames.toInt(),
+            oldConstraints.colorConstraint,
             newConstraint
         )
     }
@@ -108,26 +124,38 @@ class AnimatingConstraints(
             else anyLeftAnimating = true
         }
 
+        val color = colorConstraint
+        if (color is ColorAnimationComponent) {
+            color.animationFrame()
+
+            if (color.complete()) colorConstraint = color.newConstraint
+            else anyLeftAnimating = true
+        }
+
         if (!anyLeftAnimating) {
             component.setConstraints(UIConstraints(component).apply {
                 xConstraint = this@AnimatingConstraints.xConstraint
                 yConstraint = this@AnimatingConstraints.yConstraint
                 widthConstraint = this@AnimatingConstraints.widthConstraint
                 heightConstraint = this@AnimatingConstraints.heightConstraint
+                colorConstraint = this@AnimatingConstraints.colorConstraint
             })
             completeAction()
         }
     }
 
     override fun setX(constraint: PositionConstraint) =
-        throw OperationNotSupportedException("Can't call setter methods on an animation")
+        throw UnsupportedOperationException("Can't call setter methods on an animation")
 
     override fun setY(constraint: PositionConstraint) =
-        throw OperationNotSupportedException("Can't call setter methods on an animation")
+        throw UnsupportedOperationException("Can't call setter methods on an animation")
 
     override fun setWidth(constraint: SizeConstraint) =
-        throw OperationNotSupportedException("Can't call setter methods on an animation")
+        throw UnsupportedOperationException("Can't call setter methods on an animation")
 
     override fun setHeight(constraint: SizeConstraint) =
-        throw OperationNotSupportedException("Can't call setter methods on an animation")
+        throw UnsupportedOperationException("Can't call setter methods on an animation")
+
+    override fun setColor(constraint: ColorConstraint) =
+        throw UnsupportedOperationException("Can't call setter methods on an animation")
 }

@@ -1,6 +1,7 @@
 package club.sk1er.elementa.constraints
 
 import club.sk1er.elementa.UIComponent
+import java.awt.Color
 
 interface GeneralConstraint : PositionConstraint, SizeConstraint {
     fun getXValue(component: UIComponent, parent: UIComponent): Float
@@ -34,4 +35,8 @@ interface WidthConstraint {
 
 interface HeightConstraint {
     fun getYSize(component: UIComponent, parent: UIComponent): Float
+}
+
+interface ColorConstraint {
+    fun getColor(component: UIComponent, parent: UIComponent): Color
 }

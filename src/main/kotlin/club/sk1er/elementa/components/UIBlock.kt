@@ -1,6 +1,7 @@
 package club.sk1er.elementa.components
 
 import club.sk1er.elementa.UIComponent
+import club.sk1er.elementa.constraints.ConstantColorConstraint
 import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.client.renderer.Tessellator
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats
@@ -8,10 +9,9 @@ import org.lwjgl.opengl.GL11
 import java.awt.Color
 import java.util.*
 
-class UIBlock(private var color: Color) : UIComponent() {
-    fun getColor() = color
-    fun setColor(color: Color) = apply {
-        this.color = color
+class UIBlock : UIComponent() {
+    init {
+        this.getConstraints().setColor(ConstantColorConstraint(Color(0, 0, 0, 0)))
     }
 
     override fun draw() {
@@ -21,6 +21,11 @@ class UIBlock(private var color: Color) : UIComponent() {
         val y = this.getTop().toDouble()
         val width = this.getWidth().toDouble()
         val height = this.getHeight().toDouble()
+        val color = this.getColor()
+
+        if (color.alpha == 0) {
+            return super.draw()
+        }
 
         GL11.glPushMatrix()
 
@@ -56,6 +61,4 @@ class UIBlock(private var color: Color) : UIComponent() {
 
         super.draw()
     }
-
-    fun copy() = UIBlock(color).getConstraints()
 }

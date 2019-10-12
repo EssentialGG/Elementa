@@ -59,6 +59,8 @@ abstract class UIComponent {
 
     open fun getHeight() = constraints.getHeight()
 
+    open fun getColor() = constraints.getColor()
+
     open fun isHovered(): Boolean {
         val res = Window.scaledResolution
         val mc = Minecraft.getMinecraft()
