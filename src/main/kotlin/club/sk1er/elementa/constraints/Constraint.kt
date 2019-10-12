@@ -3,6 +3,10 @@ package club.sk1er.elementa.constraints
 import club.sk1er.elementa.UIComponent
 import java.awt.Color
 
+interface SuperConstraint {
+    fun animationFrame() {  }
+}
+
 interface GeneralConstraint : PositionConstraint, SizeConstraint {
     fun getXValue(component: UIComponent, parent: UIComponent): Float
 
@@ -19,24 +23,24 @@ interface GeneralConstraint : PositionConstraint, SizeConstraint {
 
 interface PositionConstraint : XConstraint, YConstraint
 
-interface XConstraint {
+interface XConstraint : SuperConstraint {
     fun getXPosition(component: UIComponent, parent: UIComponent): Float
 }
 
-interface YConstraint {
+interface YConstraint : SuperConstraint {
     fun getYPosition(component: UIComponent, parent: UIComponent): Float
 }
 
 interface SizeConstraint : WidthConstraint, HeightConstraint
 
-interface WidthConstraint {
+interface WidthConstraint : SuperConstraint {
     fun getXSize(component: UIComponent, parent: UIComponent): Float
 }
 
-interface HeightConstraint {
+interface HeightConstraint : SuperConstraint {
     fun getYSize(component: UIComponent, parent: UIComponent): Float
 }
 
-interface ColorConstraint {
+interface ColorConstraint : SuperConstraint {
     fun getColor(component: UIComponent, parent: UIComponent): Color
 }

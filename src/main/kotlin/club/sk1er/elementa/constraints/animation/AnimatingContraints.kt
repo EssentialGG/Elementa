@@ -89,45 +89,37 @@ class AnimatingConstraints(
         completeAction = { method.run() }
     }
 
-    fun animationFrame() {
+    override fun animationFrame() {
+        super.animationFrame()
+
         var anyLeftAnimating = false
 
         val x = xConstraint
         if (x is XAnimationComponent) {
-            x.animationFrame()
-
             if (x.complete()) xConstraint = x.newConstraint
             else anyLeftAnimating = true
         }
 
         val y = yConstraint
         if (y is YAnimationComponent) {
-            y.animationFrame()
-
             if (y.complete()) yConstraint = y.newConstraint
             else anyLeftAnimating = true
         }
 
         val width = widthConstraint
         if (width is WidthAnimationComponent) {
-            width.animationFrame()
-
             if (width.complete()) widthConstraint = width.newConstraint
             else anyLeftAnimating = true
         }
 
         val height = heightConstraint
         if (height is HeightAnimationComponent) {
-            height.animationFrame()
-
             if (height.complete()) heightConstraint = height.newConstraint
             else anyLeftAnimating = true
         }
 
         val color = colorConstraint
         if (color is ColorAnimationComponent) {
-            color.animationFrame()
-
             if (color.complete()) colorConstraint = color.newConstraint
             else anyLeftAnimating = true
         }

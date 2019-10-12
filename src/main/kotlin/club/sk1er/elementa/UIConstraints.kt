@@ -45,6 +45,14 @@ open class UIConstraints(protected val component: UIComponent) {
         colorConstraint = constraint
     }
 
+    internal open fun animationFrame() {
+        xConstraint.animationFrame()
+        yConstraint.animationFrame()
+        widthConstraint.animationFrame()
+        heightConstraint.animationFrame()
+        colorConstraint.animationFrame()
+    }
+
     fun finish(): UIComponent {
         return component
     }

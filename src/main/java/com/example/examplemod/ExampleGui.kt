@@ -18,6 +18,10 @@ class ExampleGui : GuiScreen() {
     init {
         Window.clearChildren()
 
+//        Window.addChild(uiBlock {
+//            x = PixelConstraint()
+//        })
+
         settings = UIBlock()
         settings.getConstraints()
             .setX(PixelConstraint(5f))
@@ -33,9 +37,10 @@ class ExampleGui : GuiScreen() {
             .setColor(ConstantColorConstraint(Color(0, 124, 145, 255)))
 
         val title = UIText("Settings")
-        title.getConstraints()
+            .getConstraints()
             .setX(PixelConstraint(5f))
             .setY(CenterConstraint())
+            .finish()
 
         val button = UIBlock()
         button.getConstraints()
@@ -78,7 +83,7 @@ class ExampleGui : GuiScreen() {
             .setY(CramSiblingConstraint(Padding(5f)))
             .setWidth(PixelConstraint(15f))
             .setHeight(PixelConstraint(15f))
-            .setColor(ConstantColorConstraint(Color.GRAY))
+            .setColor(RainbowColorConstraint())
 
         val cont = UIContainer()
         cont.getConstraints()

@@ -8,10 +8,10 @@ import kotlin.math.roundToInt
 sealed class AnimationComponent(
     private val strategy: AnimationStrategy,
     private val totalFrames: Int
-) {
+) : SuperConstraint {
     private var elapsedFrames = 0
 
-    fun animationFrame() {
+    override fun animationFrame() {
         if (elapsedFrames >= totalFrames) return
 
         elapsedFrames++

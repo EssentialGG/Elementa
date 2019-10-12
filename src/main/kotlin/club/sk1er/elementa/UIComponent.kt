@@ -94,9 +94,8 @@ abstract class UIComponent {
 
     open fun animationFrame() {
         val constraints = getConstraints()
-        if (constraints is AnimatingConstraints) {
-            constraints.animationFrame()
-        }
+
+        constraints.animationFrame()
 
         this.children.forEach(UIComponent::animationFrame)
     }
