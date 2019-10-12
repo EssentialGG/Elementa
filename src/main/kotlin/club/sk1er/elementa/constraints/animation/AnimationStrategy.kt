@@ -4,9 +4,6 @@ import kotlin.math.cos
 import kotlin.math.pow
 import kotlin.math.sin
 import kotlin.math.sqrt
-import net.minecraft.realms.Tezzelator.t
-
-
 
 interface AnimationStrategy {
     fun getValue(percentComplete: Float): Float
