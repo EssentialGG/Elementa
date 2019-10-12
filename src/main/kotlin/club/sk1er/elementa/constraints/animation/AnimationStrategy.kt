@@ -4,6 +4,9 @@ import kotlin.math.cos
 import kotlin.math.pow
 import kotlin.math.sin
 import kotlin.math.sqrt
+import net.minecraft.realms.Tezzelator.t
+
+
 
 interface AnimationStrategy {
     fun getValue(percentComplete: Float): Float
@@ -140,6 +143,24 @@ enum class Animations : AnimationStrategy {
             if (t < 1) return -0.5f * (sqrt(1 - t.pow(2)) - 1)
             t -= 2
             return 0.5f * (sqrt(1 - t.pow(2)) + 1)
+        }
+    },
+    IN_ELASTIC {
+        override fun getValue(percentComplete: Float): Float {
+            val t = percentComplete - 1
+            return -(2f.pow(10 * t)) * sin((t - 0.075f) * (2 * Math.PI.toFloat()) / 0.3f)
+        }
+    },
+    OUT_ELASTIC {
+        override fun getValue(percentComplete: Float): Float {
+            return 2f.pow(-10 * percentComplete) * sin((percentComplete - 0.075f) * (2 * Math.PI.toFloat()) / 0.3f ) + 1
+        }
+    },
+    IN_OUT_ELASTIC {
+        override fun getValue(percentComplete: Float): Float {
+            val t = percentComplete * 2f - 1
+            if (t < 0) return 0.5f * -(2f.pow(10 * t)) * sin((t - 0.1125f) * (2 * Math.PI.toFloat()) / 0.45f)
+            return 0.5f * 2f.pow(-10 * t) * sin((t - 0.1125f) * (2 * Math.PI.toFloat()) / 0.45f) + 1
         }
     }
 }
