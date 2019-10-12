@@ -14,27 +14,28 @@ import java.awt.Color
 
 class ExampleGui : GuiScreen() {
     private val settings: UIComponent
+    private val window: Window = Window()
 
     init {
-        Window.clearChildren()
-
 //        Window.addChild(uiBlock {
 //            x = PixelConstraint()
 //        })
 
         settings = UIBlock()
-        settings.getConstraints()
+            .getConstraints()
             .setX(PixelConstraint(5f))
             .setY(PixelConstraint(5f))
             .setWidth(RelativeConstraint(0.3f))
             .setHeight(FillConstraint(-5f))
             .setColor(ConstantColorConstraint(Color(0, 172, 193, 255)))
+            .finish()
 
         val top = UIBlock()
-        top.getConstraints()
+            .getConstraints()
             .setWidth(FillConstraint())
             .setHeight(PixelConstraint(20f))
             .setColor(ConstantColorConstraint(Color(0, 124, 145, 255)))
+            .finish()
 
         val title = UIText("Settings")
             .getConstraints()
@@ -43,14 +44,15 @@ class ExampleGui : GuiScreen() {
             .finish()
 
         val button = UIBlock()
-        button.getConstraints()
+            .getConstraints()
             .setX(PixelConstraint(5f, true))
             .setY(PixelConstraint(5f))
             .setWidth(PixelConstraint(10f))
             .setHeight(PixelConstraint(10f))
             .setColor(ConstantColorConstraint(Color(93, 222, 244, 255)))
+            .finish()
         button.onClick {
-            Window.removeChild(settings)
+            window.removeChild(settings)
             println("CLICKED")
         }
 
@@ -62,35 +64,39 @@ class ExampleGui : GuiScreen() {
         settings.addChild(createSlider("Second Slider", PixelConstraint(65f)))
 
         val blocky = UIBlock()
-        blocky.getConstraints()
+            .getConstraints()
             .setX(SiblingConstraint(Padding(2f)))
             .setY(SiblingConstraint(Padding(5f)))
             .setWidth(PixelConstraint(75f))
             .setHeight(PixelConstraint(35f))
             .setColor(ConstantColorConstraint(Color.RED))
+            .finish()
 
         val blocky2 = UIBlock()
-        blocky2.getConstraints()
+            .getConstraints()
             .setX(CramSiblingConstraint(Padding(5f)))
             .setY(CramSiblingConstraint(Padding(5f)))
             .setWidth(PixelConstraint(75f))
             .setHeight(PixelConstraint(15f))
             .setColor(ConstantColorConstraint(Color.GREEN))
+            .finish()
 
         val blocky3 = UIBlock()
-        blocky3.getConstraints()
+            .getConstraints()
             .setX(CramSiblingConstraint(Padding(5f)))
             .setY(CramSiblingConstraint(Padding(5f)))
             .setWidth(PixelConstraint(15f))
             .setHeight(PixelConstraint(15f))
             .setColor(RainbowColorConstraint())
+            .finish()
 
         val cont = UIContainer()
-        cont.getConstraints()
+            .getConstraints()
             .setHeight(ChildBasedSizeConstraint())
             .setWidth(FillConstraint())
             .setX(SiblingConstraint())
             .setY(SiblingConstraint())
+            .finish()
         cont.addChildren(blocky, blocky2, blocky3)
 
         settings.addChild(cont)
@@ -107,15 +113,15 @@ class ExampleGui : GuiScreen() {
         val bigText = UIText("I'm longer than my container")
         textHolder.addChild(bigText)
 
+        window.addChild(settings)
+        window.addChild(textHolder)
+
         textHolder.enableFeatures(ScissorFeature())
 
         textHolder.makeAnimation()
             .setWidthAnimation(Animations.OUT_CIRCULAR, 3f, ChildBasedSizeConstraint())
             .setColorAnimation(Animations.IN_EXP, 3f, ConstantColorConstraint(Color.PINK))
             .begin()
-
-        Window.addChild(settings)
-        Window.addChild(textHolder)
 
 //        val image = UIImage("./images/logo.png", "https://avatars3.githubusercontent.com/u/10331479?s=460&v=4")
 //        image.getConstraints()
@@ -146,7 +152,7 @@ class ExampleGui : GuiScreen() {
 
     override fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
         super.drawScreen(mouseX, mouseY, partialTicks)
-        Window.draw()
+        window.draw()
     }
 
     private fun createSlider(text: String, yConstraint: PositionConstraint): UIComponent {

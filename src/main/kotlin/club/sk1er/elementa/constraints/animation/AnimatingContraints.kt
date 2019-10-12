@@ -27,7 +27,7 @@ class AnimatingConstraints(
     }
 
     fun setXAnimation(strategy: AnimationStrategy, time: Float, newConstraint: PositionConstraint) = apply {
-        val totalFrames = time * Window.ANIMATION_FPS
+        val totalFrames = time * Window.of(component).animationFPS
 
         xConstraint = XAnimationComponent(
             strategy,
@@ -38,7 +38,7 @@ class AnimatingConstraints(
     }
 
     fun setYAnimation(strategy: AnimationStrategy, time: Float, newConstraint: PositionConstraint) = apply {
-        val totalFrames = time * Window.ANIMATION_FPS
+        val totalFrames = time * Window.of(component).animationFPS
 
         yConstraint = YAnimationComponent(
             strategy,
@@ -49,7 +49,7 @@ class AnimatingConstraints(
     }
 
     fun setWidthAnimation(strategy: AnimationStrategy, time: Float, newConstraint: SizeConstraint) = apply {
-        val totalFrames = time * Window.ANIMATION_FPS
+        val totalFrames = time * Window.of(component).animationFPS
 
         widthConstraint = WidthAnimationComponent(
             strategy,
@@ -60,7 +60,7 @@ class AnimatingConstraints(
     }
 
     fun setHeightAnimation(strategy: AnimationStrategy, time: Float, newConstraint: SizeConstraint) = apply {
-        val totalFrames = time * Window.ANIMATION_FPS
+        val totalFrames = time * Window.of(component).animationFPS
 
         heightConstraint = HeightAnimationComponent(
             strategy,
@@ -71,7 +71,7 @@ class AnimatingConstraints(
     }
 
     fun setColorAnimation(strategy: AnimationStrategy, time: Float, newConstraint: ColorConstraint) = apply {
-        val totalFrames = time * Window.ANIMATION_FPS
+        val totalFrames = time * Window.of(component).animationFPS
 
         colorConstraint = ColorAnimationComponent(
             strategy,

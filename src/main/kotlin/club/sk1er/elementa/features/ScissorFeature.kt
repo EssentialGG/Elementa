@@ -7,7 +7,7 @@ import kotlin.math.roundToInt
 
 class ScissorFeature : Feature {
     override fun beforeDraw(component: UIComponent) {
-        val res = Window.scaledResolution
+        val res = Window.of(component).scaledResolution
 
         glEnable(GL_SCISSOR_TEST)
         glScissor(

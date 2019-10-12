@@ -62,7 +62,7 @@ abstract class UIComponent {
     open fun getColor() = constraints.getColor()
 
     open fun isHovered(): Boolean {
-        val res = Window.scaledResolution
+        val res = Window.of(this).scaledResolution
         val mc = Minecraft.getMinecraft()
 
         val mouseX = Mouse.getX() * res.scaledWidth / mc.displayWidth

@@ -4,9 +4,7 @@ import club.sk1er.elementa.UIComponent
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.ScaledResolution
 
-object Window : UIComponent() {
-    const val ANIMATION_FPS = 244
-
+class Window(val animationFPS: Int = 244) : UIComponent() {
     private var systemTime = -1L
     var scaledResolution = ScaledResolution(Minecraft.getMinecraft())
 
@@ -19,10 +17,10 @@ object Window : UIComponent() {
 
         if (systemTime == -1L) systemTime = System.currentTimeMillis()
 
-        while (this.systemTime < System.currentTimeMillis() + 1000 / ANIMATION_FPS) {
+        while (this.systemTime < System.currentTimeMillis() + 1000 / animationFPS) {
             animationFrame()
 
-            this.systemTime += 1000 / ANIMATION_FPS;
+            this.systemTime += 1000 / animationFPS;
         }
 
         super.draw()
@@ -46,4 +44,16 @@ object Window : UIComponent() {
 
     override fun getRight() = getWidth()
     override fun getBottom() = getHeight()
+
+    companion object {
+        fun of(component: UIComponent): Window {
+            var current = component
+
+            while (current !is Window && current.parent != current) {
+                current = current.parent
+            }
+
+            return current as? Window ?: throw IllegalStateException("No window parent? It's possible you haven't called Window.addChild() at this point in time.")
+        }
+    }
 }
