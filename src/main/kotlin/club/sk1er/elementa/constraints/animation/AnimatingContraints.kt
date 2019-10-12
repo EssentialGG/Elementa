@@ -12,6 +12,8 @@ class AnimatingConstraints(
     private val oldConstraints: UIConstraints
 ) : UIConstraints(component) {
 
+    var completeAction: () -> Unit = {}
+
     init {
         this.xConstraint = oldConstraints.xConstraint
         this.yConstraint = oldConstraints.yConstraint
@@ -63,6 +65,14 @@ class AnimatingConstraints(
         )
     }
 
+    fun onComplete(method: () -> Unit) {
+        completeAction = method
+    }
+
+    fun onComplete(method: Runnable) {
+        completeAction = { method.run() }
+    }
+
     fun animationFrame() {
         var anyLeftAnimating = false
 
@@ -105,6 +115,7 @@ class AnimatingConstraints(
                 widthConstraint = this@AnimatingConstraints.widthConstraint
                 heightConstraint = this@AnimatingConstraints.heightConstraint
             })
+            completeAction()
         }
     }
 
