@@ -159,5 +159,37 @@ enum class Animations : AnimationStrategy {
             if (t < 0) return 0.5f * -(2f.pow(10 * t)) * sin((t - 0.1125f) * (2 * Math.PI.toFloat()) / 0.45f)
             return 0.5f * 2f.pow(-10 * t) * sin((t - 0.1125f) * (2 * Math.PI.toFloat()) / 0.45f) + 1
         }
+    },
+    IN_BOUNCE {
+        override fun getValue(percentComplete: Float): Float {
+            return 1 - OUT_BOUNCE.getValue(1 - percentComplete)
+        }
+    },
+    OUT_BOUNCE {
+        override fun getValue(percentComplete: Float): Float {
+            var t = percentComplete
+            return when {
+                t < 1 / 2.75f -> 7.5625f * t * t
+                t < 2 / 2.75f -> {
+                    t -= 1.5f / 2.75f
+                    7.5625f * t * t + 0.75f
+                }
+                t < 2.5 / 2.75 -> {
+                    //return c*(7.5625f*(t-=(2.25f/2.75f))*t + .9375f) + b;
+                    t -= 2.25f / 2.75f
+                    7.5625f * t * t + 0.9375f
+                }
+                else -> {
+                    t -= 2.625f / 2.75f
+                    7.5625f * t * t + 0.984375f
+                }
+            }
+        }
+    },
+    IN_OUT_BOUNCE {
+        override fun getValue(percentComplete: Float): Float {
+            if (percentComplete < 0.5f) return IN_BOUNCE.getValue(percentComplete * 2) * 0.5f
+            return OUT_BOUNCE.getValue(percentComplete * 2 - 1) * 0.5f + 0.5f
+        }
     }
 }

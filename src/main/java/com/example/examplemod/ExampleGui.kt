@@ -15,8 +15,6 @@ import java.awt.Color
 class ExampleGui : GuiScreen() {
     private val settings: UIComponent
 
-    var offset = 5f
-
     init {
         Window.clearChildren()
 
@@ -132,9 +130,9 @@ class ExampleGui : GuiScreen() {
             val anim = settings.makeAnimation()
 
             if (settings.getConstraints().getX() == 5f) {
-                anim.setXAnimation(Animations.IN_OUT_ELASTIC, 1f, PixelConstraint(5f, true))
+                anim.setXAnimation(Animations.IN_OUT_BOUNCE, 1f, PixelConstraint(5f, true))
             } else {
-                anim.setXAnimation(Animations.OUT_ELASTIC, 1f, PixelConstraint(5f))
+                anim.setXAnimation(Animations.OUT_BOUNCE, 1f, PixelConstraint(5f))
             }
 
             settings.animateTo(anim)
