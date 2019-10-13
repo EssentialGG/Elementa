@@ -1,5 +1,6 @@
 package com.example.examplemod
 
+import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.components.UIBlock
 import club.sk1er.elementa.components.UIText
 import club.sk1er.elementa.components.Window
@@ -15,29 +16,28 @@ class SettingsGui : GuiScreen() {
 
     init {
         val categories = UIBlock()
-        categories.getConstraints()
                 .setX(PixelConstraint(-window.getWidth() / 3))
                 .setWidth(RelativeConstraint(1 / 3f))
                 .setHeight(RelativeConstraint(1f))
                 .setColor(ConstantColorConstraint(Color(0, 0, 0, 150)))
 
         val categoryTitle = UIBlock()
-        categoryTitle.getConstraints()
                 .setX(CenterConstraint())
                 .setY(PixelConstraint(10f))
                 .setWidth(PixelConstraint(0f))
                 .setHeight(PixelConstraint(18f))
+
         val categoryText = UIText("Settings")
-        categoryText.getConstraints()
                 .setWidth(PixelConstraint(Minecraft.getMinecraft().fontRendererObj.getStringWidth("Settings") * 2f))
                 .setHeight(PixelConstraint(18f))
         categoryTitle.addChild(categoryText)
         categories.addChild(categoryTitle)
         categoryTitle.enableFeatures(ScissorFeature())
 
+        //val categoryHolder = UIContainer()
+
 
         val settings = UIBlock()
-        settings.getConstraints()
                 .setX(PixelConstraint(-window.getWidth() * 2 / 3, true))
                 .setWidth(RelativeConstraint(2 / 3f))
                 .setHeight(RelativeConstraint(1f))
@@ -71,5 +71,12 @@ class SettingsGui : GuiScreen() {
     override fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
         super.drawScreen(mouseX, mouseY, partialTicks)
         window.draw()
+    }
+
+    private fun createCategory(): UIComponent {
+        val container = UIBlock()
+
+
+        return container
     }
 }
