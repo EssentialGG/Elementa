@@ -17,16 +17,15 @@ class UIText @JvmOverloads constructor(private val text: String, private val sha
     override fun draw() {
         beforeDraw()
 
-        val x = this.getLeft().toDouble()
-        val y = this.getTop().toDouble()
-        val width = this.getWidth().toDouble()
-        val height = this.getHeight().toDouble()
+        val x = this.getLeft()
+        val y = this.getTop()
+        val width = this.getWidth() / textWidth
+        val height = this.getHeight() / 9f
 
         GlStateManager.pushMatrix()
 
-        GlStateManager.translate(x, y, 0.0)
-        GlStateManager.scale(width / textWidth, height / 9.0, 1.0)
-        Minecraft.getMinecraft().fontRendererObj.drawString(text, 0f, 0f, this.getColor().rgb, shadow)
+        GlStateManager.scale(width.toDouble(), height.toDouble(), 1.0)
+        Minecraft.getMinecraft().fontRendererObj.drawString(text, x / width, y / height, this.getColor().rgb, shadow)
 
         GlStateManager.popMatrix()
 
