@@ -3,7 +3,6 @@ package club.sk1er.elementa.features
 import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.components.Window
 import org.lwjgl.opengl.GL11.*
-import kotlin.math.roundToInt
 
 class ScissorFeature : Feature {
     override fun beforeDraw(component: UIComponent) {
@@ -11,10 +10,10 @@ class ScissorFeature : Feature {
 
         glEnable(GL_SCISSOR_TEST)
         glScissor(
-            component.getLeft().roundToInt() * res.scaleFactor,
-            component.getTop().roundToInt() * res.scaleFactor,
-            component.getWidth().roundToInt() * res.scaleFactor,
-            component.getHeight().roundToInt() * res.scaleFactor
+            component.getLeft().toInt() * res.scaleFactor,
+            (res.scaledHeight * res.scaleFactor) - (component.getBottom().toInt() * res.scaleFactor),
+            component.getWidth().toInt() * res.scaleFactor,
+            component.getHeight().toInt() * res.scaleFactor
         )
     }
 

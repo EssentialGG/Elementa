@@ -1,10 +1,12 @@
 package com.example.examplemod
 
-import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.components.UIBlock
 import club.sk1er.elementa.components.UIText
 import club.sk1er.elementa.components.Window
-import club.sk1er.elementa.constraints.*
+import club.sk1er.elementa.constraints.CenterConstraint
+import club.sk1er.elementa.constraints.ConstantColorConstraint
+import club.sk1er.elementa.constraints.PixelConstraint
+import club.sk1er.elementa.constraints.RelativeConstraint
 import club.sk1er.elementa.constraints.animation.Animations
 import club.sk1er.elementa.features.ScissorFeature
 import net.minecraft.client.gui.GuiScreen
@@ -25,12 +27,13 @@ class SettingsGui : GuiScreen() {
         categoryTitle.getConstraints()
                 .setX(CenterConstraint())
                 .setY(PixelConstraint(10f))
-                .setWidth(PixelConstraint(100f))
+                .setWidth(PixelConstraint(0f))
                 .setHeight(PixelConstraint(18f))
                 .setColor(ConstantColorConstraint(Color(0, 0, 0, 100)))
         val categoryText = UIText("Settings")
         categoryTitle.addChild(categoryText)
         categories.addChild(categoryTitle)
+        categoryTitle.enableFeatures(ScissorFeature())
 
 
         val settings = UIBlock()
@@ -41,9 +44,6 @@ class SettingsGui : GuiScreen() {
                 .setColor(ConstantColorConstraint(Color(0, 0, 0, 100)))
 
         window.addChildren(categories, settings)
-
-
-        categoryTitle.enableFeatures(ScissorFeature())
 
         ////////////////
         // ANIMATIONS //
@@ -56,10 +56,10 @@ class SettingsGui : GuiScreen() {
                 categories.makeAnimation()
                         .setXAnimation(Animations.OUT_EXP, 0.5f, PixelConstraint(0f))
                         .onComplete {
-//                            categoryTitle.animateTo(
-//                                    categoryTitle.makeAnimation()
-//                                            .setWidthAnimation(Animations.OUT_EXP, 0.5f, PixelConstraint(100f))
-//                            )
+                            categoryTitle.animateTo(
+                                    categoryTitle.makeAnimation()
+                                            .setWidthAnimation(Animations.OUT_EXP, 0.5f, PixelConstraint(100f))
+                            )
                         }
         )
     }
