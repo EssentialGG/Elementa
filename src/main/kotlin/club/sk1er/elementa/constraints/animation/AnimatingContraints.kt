@@ -81,11 +81,11 @@ class AnimatingConstraints(
         )
     }
 
-    fun onComplete(method: () -> Unit) {
+    fun onComplete(method: () -> Unit) = apply {
         completeAction = method
     }
 
-    fun onComplete(method: Runnable) {
+    fun onComplete(method: Runnable) = apply {
         completeAction = { method.run() }
     }
 
