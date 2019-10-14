@@ -63,7 +63,11 @@ class SettingsGui : GuiScreen() {
         // ANIMATIONS //
         ////////////////
 
-        settings.animateTo(settings.makeAnimation().setXAnimation(Animations.OUT_EXP, 0.5f, PixelConstraint(0f, true)))
+        settings.animateTo(
+            settings
+                .makeAnimation()
+                .setXAnimation(Animations.OUT_EXP, 0.5f, PixelConstraint(0f, true), 1f)
+        )
 
         categories.animateTo(
                 categories.makeAnimation()
