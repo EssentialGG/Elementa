@@ -38,6 +38,9 @@ abstract class UIComponent {
         children.clear()
     }
 
+    inline fun <reified T> childrenOfType() = children.filterIsInstance<T>()
+    fun <T> childrenOfType(clazz: Class<T>) = children.filterIsInstance(clazz)
+
     fun makeAnimation() = AnimatingConstraints(this, constraints)
 
     fun animateTo(constraints: AnimatingConstraints) {

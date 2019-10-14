@@ -84,12 +84,14 @@ class SettingsGui : GuiScreen() {
 
                 categoryHolder.children.forEachIndexed { index, uiComponent ->
                     uiComponent.animate {
-                        setWidthAnimation(Animations.OUT_QUAD, 0.5f, RelativeConstraint(1f), delay = 0.35f * index)
-                        setXAnimation(Animations.OUT_EXP, 0.5f, PixelConstraint(0f), delay = 0.35f * index)
+                        setWidthAnimation(Animations.OUT_QUAD, 0.5f, RelativeConstraint(1f), delay = 0.1f * index)
+                        setXAnimation(Animations.OUT_EXP, 0.5f, PixelConstraint(0f), delay = 0.1f * index)
                     }
                 }
             }
         }
+
+        categoryHolder.childrenOfType<Category>().first().select()
     }
 
     override fun mouseClicked(mouseX: Int, mouseY: Int, mouseButton: Int) {
@@ -109,6 +111,13 @@ class SettingsGui : GuiScreen() {
                 setWidth(PixelConstraint(Minecraft.getMinecraft().fontRendererObj.getStringWidth(string) * 2f))
                 setHeight(PixelConstraint(18f))
             }
+
+        private val selBlock = UIBlock()
+                .constrain {
+                    setColor(ConstantColorConstraint(Color(255, 255, 255, 255)))
+                    setY(SiblingConstraint())
+                    setHeight(PixelConstraint(2f))
+                }
 
         init {
             setY(SiblingConstraint(Padding(8f)))
@@ -131,9 +140,25 @@ class SettingsGui : GuiScreen() {
 
             onClick {
                 println(text)
+                parent.children.forEach {
+                    if (it == this) select()
+                    else (it as Category).deselect()
+                }
             }
 
-            addChild(text)
+            addChildren(text, selBlock)
+        }
+
+        fun deselect() = apply {
+            selBlock.animate {
+                setWidthAnimation(Animations.OUT_EXP, 0.5f, PixelConstraint(0f))
+            }
+        }
+
+        fun select() = apply {
+            selBlock.animate {
+                setWidthAnimation(Animations.OUT_EXP, 0.5f, RelativeConstraint(1f))
+            }
         }
     }
 }
