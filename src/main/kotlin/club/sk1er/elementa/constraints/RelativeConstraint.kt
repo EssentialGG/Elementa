@@ -10,4 +10,11 @@ class RelativeConstraint(private val value: Float) : GeneralConstraint {
     override fun getYValue(component: UIComponent, parent: UIComponent): Float {
         return parent.getHeight() * value
     }
+
+    companion object {
+        val FULL = RelativeConstraint(1f)
+        val ONE_HALF = RelativeConstraint(1 / 2f)
+        val ONE_THIRD = RelativeConstraint(1 / 3f)
+        val TWO_THIRDS = RelativeConstraint(2 / 3f)
+    }
 }

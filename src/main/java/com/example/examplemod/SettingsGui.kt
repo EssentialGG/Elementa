@@ -7,6 +7,10 @@ import club.sk1er.elementa.components.UIText
 import club.sk1er.elementa.components.Window
 import club.sk1er.elementa.constraints.*
 import club.sk1er.elementa.constraints.animation.Animations
+import club.sk1er.elementa.dsl.animate
+import club.sk1er.elementa.dsl.childOf
+import club.sk1er.elementa.dsl.constrain
+import club.sk1er.elementa.dsl.width
 import club.sk1er.elementa.features.ScissorFeature
 import club.sk1er.elementa.helpers.Padding
 import net.minecraft.client.Minecraft
@@ -17,87 +21,75 @@ class SettingsGui : GuiScreen() {
     private val window = Window()
 
     init {
-        val categories = UIBlock()
-                .setX(PixelConstraint(-window.getWidth() / 3))
-                .setWidth(RelativeConstraint(1 / 3f))
-                .setHeight(RelativeConstraint(1f))
-                .setColor(ConstantColorConstraint(Color(0, 0, 0, 150)))
+        val categories = UIBlock().constrain {
+            x = PixelConstraint(-window.getWidth() / 3)
+            width = RelativeConstraint.ONE_THIRD
+            height = RelativeConstraint.FULL
+            color = ConstantColorConstraint(Color(0, 0, 0, 150))
+        }
 
         val categoryTitle = UIBlock()
-                .setX(CenterConstraint())
-                .setY(PixelConstraint(10f))
-                .setWidth(PixelConstraint(0f))
-                .setHeight(PixelConstraint(36f))
+            .constrain {
+                x = CenterConstraint()
+                y = PixelConstraint(10f)
+                width = PixelConstraint(0f)
+                height = PixelConstraint(36f)
+            }
+            .childOf(categories)
+            .enableFeatures(ScissorFeature())
 
-        val categoryText = UIText("Settings")
-                .setWidth(PixelConstraint(Minecraft.getMinecraft().fontRendererObj.getStringWidth("Settings") * 4f))
-                .setHeight(PixelConstraint(36f))
-        categoryTitle.addChild(categoryText)
-        categoryTitle.enableFeatures(ScissorFeature())
-
-        categories.addChild(categoryTitle)
+        UIText("Settings")
+            .constrain {
+                width = PixelConstraint("Settings".width() * 4f)
+                height = PixelConstraint(36f)
+            }
+            .childOf(categoryTitle)
 
         val categoryHolder = UIContainer()
-                .setX(CenterConstraint())
-                .setY(PixelConstraint(50f))
-                .setWidth(RelativeConstraint(0.9f))
-        categoryHolder.addChild(Category("General"))
-        categoryHolder.addChild(Category("Position"))
-        categoryHolder.addChild(Category("Test"))
-        categoryHolder.addChild(Category("Category"))
-        categoryHolder.addChild(Category("Woohoo"))
+            .constrain {
+                x = CenterConstraint()
+                y = PixelConstraint(50f)
+                width = RelativeConstraint(0.9f)
+            }
+            .addChildren(
+                Category("General"), Category("Position"), Category("Test"),
+                Category("Category"), Category("Woohoo")
+            )
+            .childOf(categories)
 
-        val categoryAnimation = UIContainer()
+        window.addChild(categories)
 
-        categories.addChildren(categoryHolder, categoryAnimation)
-
-        val settings = UIBlock()
-                .setX(PixelConstraint(-window.getWidth() * 2 / 3, true))
-                .setWidth(RelativeConstraint(2 / 3f))
-                .setHeight(RelativeConstraint(1f))
-                .setColor(ConstantColorConstraint(Color(0, 0, 0, 100)))
-
-        window.addChildren(categories, settings)
+        val settings = UIBlock().constrain {
+            x = PixelConstraint(-window.getWidth() * 2 / 3, true)
+            width = RelativeConstraint.TWO_THIRDS
+            height = RelativeConstraint.FULL
+            color = ConstantColorConstraint(Color(0, 0, 0, 100))
+        } childOf window
 
         ////////////////
         // ANIMATIONS //
         ////////////////
 
-        settings.animateTo(
-            settings
-                .makeAnimation()
-                .setXAnimation(Animations.OUT_EXP, 0.5f, PixelConstraint(0f, true), 1f)
-        )
+        settings.animate {
+            setXAnimation(Animations.OUT_EXP, 0.5f, PixelConstraint(0f, true))
+        }
 
-        categories.animateTo(
-                categories.makeAnimation()
-                        .setXAnimation(Animations.OUT_EXP, 0.5f, PixelConstraint(0f))
-                        .onComplete {
-                            recursiveAnimate(categoryAnimation, categoryHolder, 0)
-                            categoryTitle.animateTo(
-                                    categoryTitle.makeAnimation()
-                                            .setWidthAnimation(Animations.OUT_EXP, 0.5f, ChildBasedSizeConstraint( 2f))
-                            )
-                        }
-        )
-    }
+        categories.animate {
+            setXAnimation(Animations.OUT_EXP, 0.5f, PixelConstraint(0f))
 
-    private fun recursiveAnimate(handler: UIComponent, holder: UIComponent, index: Int) {
-        if (index == holder.children.size) return
+            onComplete {
+                categoryTitle.animate {
+                    setWidthAnimation(Animations.OUT_EXP, 0.5f, ChildBasedSizeConstraint(2f))
+                }
 
-        val child = holder.children[index]
-        handler.animateTo(
-                handler.makeAnimation()
-                        .setYAnimation(Animations.LINEAR, 0.2f, PixelConstraint(child.getTop()))
-                        .onComplete {
-                            child.animateTo(
-                                    child.makeAnimation()
-                                            .setWidthAnimation(Animations.OUT_QUAD, 0.5f, RelativeConstraint(1f))
-                                            .setXAnimation(Animations.OUT_EXP, 0.5f, PixelConstraint(0f))
-                            )
-                            recursiveAnimate(handler, holder, index + 1)
-                        }
-        )
+                categoryHolder.children.forEachIndexed { index, uiComponent ->
+                    uiComponent.animate {
+                        setWidthAnimation(Animations.OUT_QUAD, 0.5f, RelativeConstraint(1f), delay = 0.35f * index)
+                        setXAnimation(Animations.OUT_EXP, 0.5f, PixelConstraint(0f), delay = 0.35f * index)
+                    }
+                }
+            }
+        }
     }
 
     override fun mouseClicked(mouseX: Int, mouseY: Int, mouseButton: Int) {
@@ -113,8 +105,10 @@ class SettingsGui : GuiScreen() {
 
     class Category(string: String) : UIComponent() {
         private val text = UIText(string)
-                .setWidth(PixelConstraint(Minecraft.getMinecraft().fontRendererObj.getStringWidth(string) * 2f))
-                .setHeight(PixelConstraint(18f))
+            .constrain {
+                setWidth(PixelConstraint(Minecraft.getMinecraft().fontRendererObj.getStringWidth(string) * 2f))
+                setHeight(PixelConstraint(18f))
+            }
 
         init {
             setY(SiblingConstraint(Padding(8f)))
@@ -124,10 +118,18 @@ class SettingsGui : GuiScreen() {
             enableFeatures(ScissorFeature())
 
             onHover {
-                text.animateTo(text.makeAnimation().setXAnimation(Animations.OUT_EXP, 0.5f, PixelConstraint(10f)))
-            }.onUnHover {
-                text.animateTo(text.makeAnimation().setXAnimation(Animations.OUT_BOUNCE, 0.5f, PixelConstraint(0f)))
-            }.onClick {
+                text.animate {
+                    setXAnimation(Animations.OUT_EXP, 0.5f, PixelConstraint(10f))
+                }
+            }
+
+            onUnHover {
+                text.animate {
+                    setXAnimation(Animations.OUT_BOUNCE, 0.5f, PixelConstraint(0f))
+                }
+            }
+
+            onClick {
                 println(text)
             }
 

@@ -15,11 +15,11 @@ class AnimatingConstraints(
     var completeAction: () -> Unit = {}
 
     init {
-        this.xConstraint = oldConstraints.xConstraint
-        this.yConstraint = oldConstraints.yConstraint
-        this.widthConstraint = oldConstraints.widthConstraint
-        this.heightConstraint = oldConstraints.heightConstraint
-        this.colorConstraint = oldConstraints.colorConstraint
+        this.x = oldConstraints.x
+        this.y = oldConstraints.y
+        this.width = oldConstraints.width
+        this.height = oldConstraints.height
+        this.color = oldConstraints.color
     }
 
     fun begin() {
@@ -30,10 +30,10 @@ class AnimatingConstraints(
         val totalFrames = time * Window.of(component).animationFPS
         val totalDelay = delay * Window.of(component).animationFPS
 
-        xConstraint = XAnimationComponent(
+        x = XAnimationComponent(
             strategy,
             totalFrames.toInt(),
-            oldConstraints.xConstraint,
+            oldConstraints.x,
             newConstraint,
             totalDelay.toInt()
         )
@@ -43,10 +43,10 @@ class AnimatingConstraints(
         val totalFrames = time * Window.of(component).animationFPS
         val totalDelay = delay * Window.of(component).animationFPS
 
-        yConstraint = YAnimationComponent(
+        y = YAnimationComponent(
             strategy,
             totalFrames.toInt(),
-            oldConstraints.yConstraint,
+            oldConstraints.y,
             newConstraint,
             totalDelay.toInt()
         )
@@ -56,10 +56,10 @@ class AnimatingConstraints(
         val totalFrames = time * Window.of(component).animationFPS
         val totalDelay = delay * Window.of(component).animationFPS
 
-        widthConstraint = WidthAnimationComponent(
+        width = WidthAnimationComponent(
             strategy,
             totalFrames.toInt(),
-            oldConstraints.widthConstraint,
+            oldConstraints.width,
             newConstraint,
             totalDelay.toInt()
         )
@@ -69,10 +69,10 @@ class AnimatingConstraints(
         val totalFrames = time * Window.of(component).animationFPS
         val totalDelay = delay * Window.of(component).animationFPS
 
-        heightConstraint = HeightAnimationComponent(
+        height = HeightAnimationComponent(
             strategy,
             totalFrames.toInt(),
-            oldConstraints.heightConstraint,
+            oldConstraints.height,
             newConstraint,
             totalDelay.toInt()
         )
@@ -82,10 +82,10 @@ class AnimatingConstraints(
         val totalFrames = time * Window.of(component).animationFPS
         val totalDelay = delay * Window.of(component).animationFPS
 
-        colorConstraint = ColorAnimationComponent(
+        color = ColorAnimationComponent(
             strategy,
             totalFrames.toInt(),
-            oldConstraints.colorConstraint,
+            oldConstraints.color,
             newConstraint,
             totalDelay.toInt()
         )
@@ -104,43 +104,43 @@ class AnimatingConstraints(
 
         var anyLeftAnimating = false
 
-        val x = xConstraint
+        val x = x
         if (x is XAnimationComponent) {
-            if (x.complete()) xConstraint = x.newConstraint
+            if (x.complete()) this.x = x.newConstraint
             else anyLeftAnimating = true
         }
 
-        val y = yConstraint
+        val y = y
         if (y is YAnimationComponent) {
-            if (y.complete()) yConstraint = y.newConstraint
+            if (y.complete()) this.y = y.newConstraint
             else anyLeftAnimating = true
         }
 
-        val width = widthConstraint
+        val width = width
         if (width is WidthAnimationComponent) {
-            if (width.complete()) widthConstraint = width.newConstraint
+            if (width.complete()) this.width = width.newConstraint
             else anyLeftAnimating = true
         }
 
-        val height = heightConstraint
+        val height = height
         if (height is HeightAnimationComponent) {
-            if (height.complete()) heightConstraint = height.newConstraint
+            if (height.complete()) this.height = height.newConstraint
             else anyLeftAnimating = true
         }
 
-        val color = colorConstraint
+        val color = color
         if (color is ColorAnimationComponent) {
-            if (color.complete()) colorConstraint = color.newConstraint
+            if (color.complete()) this.color = color.newConstraint
             else anyLeftAnimating = true
         }
 
         if (!anyLeftAnimating) {
             component.setConstraints(UIConstraints(component).apply {
-                xConstraint = this@AnimatingConstraints.xConstraint
-                yConstraint = this@AnimatingConstraints.yConstraint
-                widthConstraint = this@AnimatingConstraints.widthConstraint
-                heightConstraint = this@AnimatingConstraints.heightConstraint
-                colorConstraint = this@AnimatingConstraints.colorConstraint
+                this.x = this@AnimatingConstraints.x
+                this.y = this@AnimatingConstraints.y
+                this.width = this@AnimatingConstraints.width
+                this.height = this@AnimatingConstraints.height
+                this.color = this@AnimatingConstraints.color
             })
             completeAction()
         }

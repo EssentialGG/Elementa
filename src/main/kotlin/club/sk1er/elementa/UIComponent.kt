@@ -48,7 +48,7 @@ abstract class UIComponent {
         this.constraints = constraints
     }
 
-    fun enableFeatures(vararg features: Feature) {
+    fun enableFeatures(vararg features: Feature) = apply {
         this.features.addAll(features)
     }
 
