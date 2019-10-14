@@ -11,6 +11,7 @@ import club.sk1er.elementa.features.ScissorFeature
 import club.sk1er.elementa.helpers.Padding
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiScreen
+import net.minecraft.init.Items
 import java.awt.Color
 
 class SettingsGui : GuiScreen() {
@@ -41,11 +42,11 @@ class SettingsGui : GuiScreen() {
                 .setX(CenterConstraint())
                 .setY(PixelConstraint(50f))
                 .setWidth(RelativeConstraint(0.9f))
-        categoryHolder.addChild(createCategory("General"))
-        categoryHolder.addChild(createCategory("Position"))
-        categoryHolder.addChild(createCategory("Test"))
-        categoryHolder.addChild(createCategory("Category"))
-        categoryHolder.addChild(createCategory("Woohoo"))
+        categoryHolder.addChild(Category("General").getComponent())
+        categoryHolder.addChild(Category("Position").getComponent())
+        categoryHolder.addChild(Category("Test").getComponent())
+        categoryHolder.addChild(Category("Category").getComponent())
+        categoryHolder.addChild(Category("Woohoo").getComponent())
 
         val categoryAnimation = UIContainer()
 
@@ -107,28 +108,30 @@ class SettingsGui : GuiScreen() {
         window.draw()
     }
 
-    private fun createCategory(string: String): UIComponent {
-        val container = UIBlock()
+    class Category(string: String) {
+        private val container = UIBlock()
                 .setY(SiblingConstraint(Padding(8f)))
                 .setX(PixelConstraint(-10f))
                 .setHeight(ChildBasedSizeConstraint())
 
-        val text = UIText(string)
+        private val text = UIText(string)
                 .setWidth(PixelConstraint(Minecraft.getMinecraft().fontRendererObj.getStringWidth(string) * 2f))
                 .setHeight(PixelConstraint(18f))
 
-        container.enableFeatures(ScissorFeature())
+        init {
+            container.enableFeatures(ScissorFeature())
 
-        container.addChild(text)
+            container.onHover {
+                text.animateTo(text.makeAnimation().setXAnimation(Animations.OUT_EXP, 0.5f, PixelConstraint(10f)))
+            }.onUnHover {
+                text.animateTo(text.makeAnimation().setXAnimation(Animations.OUT_BOUNCE, 0.5f, PixelConstraint(0f)))
+            }.onClick {
+                println(Items.string)
+            }
 
-        container.onHover {
-            container.animateTo(container.makeAnimation().setXAnimation(Animations.OUT_EXP, 0.5f, PixelConstraint(10f)))
-        }.onUnHover {
-            container.animateTo(container.makeAnimation().setXAnimation(Animations.OUT_EXP, 0.5f, PixelConstraint(0f)))
-        }.onClick {
-            println(string)
+            container.addChild(text)
         }
 
-        return container
+        fun getComponent() = container
     }
 }
