@@ -15,7 +15,11 @@ abstract class UIComponent {
     val features = mutableListOf<Feature>()
 
     private var constraints = UIConstraints(this)
+
     private var clickAction: () -> Unit = {}
+    private var hoverAction: () -> Unit = {}
+    private var unHoverAction: () -> Unit = {}
+    private var currentlyHovered = false
 
     fun addChild(component: UIComponent) = apply {
         component.parent = this
@@ -89,13 +93,23 @@ abstract class UIComponent {
         val mc = Minecraft.getMinecraft()
 
         val mouseX = Mouse.getX() * res.scaledWidth / mc.displayWidth
-        val mouseY = Mouse.getY() * res.scaledHeight / mc.displayHeight
+        val mouseY = res.scaledHeight - Mouse.getY() * res.scaledHeight / mc.displayHeight - 1f
 
         return (mouseX > getLeft() && mouseX < getRight() && mouseY > getTop() && mouseY < getBottom())
     }
 
     open fun draw() {
         this.children.forEach(UIComponent::draw)
+
+        if (isHovered() && !currentlyHovered) {
+            hoverAction()
+            currentlyHovered = true
+        }
+
+        if (!isHovered() && currentlyHovered) {
+            unHoverAction()
+            currentlyHovered = false
+        }
 
         afterDraw()
     }
@@ -109,9 +123,7 @@ abstract class UIComponent {
     }
 
     open fun click() {
-        if (isHovered()) {
-            clickAction()
-        }
+        if (isHovered()) clickAction()
         this.children.forEach(UIComponent::click)
     }
 
@@ -123,11 +135,27 @@ abstract class UIComponent {
         this.children.forEach(UIComponent::animationFrame)
     }
 
-    fun onClick(method: () -> Unit) {
+    fun onClick(method: () -> Unit) = apply {
         clickAction = method
     }
 
-    fun onClick(method: Runnable) {
+    fun onClick(method: Runnable) = apply {
         clickAction = { method.run() }
+    }
+
+    fun onHover(method: () -> Unit) = apply {
+        hoverAction = method
+    }
+
+    fun onHover(method: Runnable) = apply {
+        hoverAction = { method.run() }
+    }
+
+    fun onUnHover(method: () -> Unit) = apply {
+        unHoverAction = method
+    }
+
+    fun onUnHover(method: Runnable) = apply {
+        unHoverAction = { method.run() }
     }
 }
