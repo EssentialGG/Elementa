@@ -15,8 +15,6 @@ class UIText @JvmOverloads constructor(private val text: String, private val sha
     }
 
     override fun draw() {
-        beforeDraw()
-
         val x = this.getLeft()
         val y = this.getTop()
         val width = this.getWidth() / textWidth

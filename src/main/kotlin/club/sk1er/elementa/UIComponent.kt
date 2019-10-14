@@ -99,6 +99,8 @@ abstract class UIComponent {
     }
 
     open fun draw() {
+        beforeDraw()
+
         this.children.forEach(UIComponent::draw)
 
         if (isHovered() && !currentlyHovered) {

@@ -15,8 +15,6 @@ class UIBlock : UIComponent() {
     }
 
     override fun draw() {
-        beforeDraw()
-
         val x = this.getLeft().toDouble()
         val y = this.getTop().toDouble()
         val width = this.getWidth().toDouble()
