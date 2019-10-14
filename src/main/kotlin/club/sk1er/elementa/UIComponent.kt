@@ -140,7 +140,7 @@ abstract class UIComponent {
     }
 
     fun onClick(method: Runnable) = apply {
-        clickAction = { method.run() }
+        clickAction = method::run
     }
 
     fun onHover(method: () -> Unit) = apply {
@@ -148,7 +148,7 @@ abstract class UIComponent {
     }
 
     fun onHover(method: Runnable) = apply {
-        hoverAction = { method.run() }
+        hoverAction = method::run
     }
 
     fun onUnHover(method: () -> Unit) = apply {
@@ -156,6 +156,6 @@ abstract class UIComponent {
     }
 
     fun onUnHover(method: Runnable) = apply {
-        unHoverAction = { method.run() }
+        unHoverAction = method::run
     }
 }

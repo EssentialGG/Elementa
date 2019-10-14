@@ -86,7 +86,7 @@ class AnimatingConstraints(
     }
 
     fun onComplete(method: Runnable) = apply {
-        completeAction = { method.run() }
+        completeAction = method::run
     }
 
     override fun animationFrame() {

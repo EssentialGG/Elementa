@@ -1,10 +1,14 @@
 package com.example.examplemod
 
 import club.sk1er.elementa.UIComponent
-import club.sk1er.elementa.components.*
+import club.sk1er.elementa.components.UIBlock
+import club.sk1er.elementa.components.UIContainer
+import club.sk1er.elementa.components.UIText
+import club.sk1er.elementa.components.Window
 import club.sk1er.elementa.constraints.*
 import club.sk1er.elementa.constraints.animation.Animations
 import club.sk1er.elementa.features.ScissorFeature
+import club.sk1er.elementa.helpers.Padding
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiScreen
 import java.awt.Color
@@ -37,11 +41,11 @@ class SettingsGui : GuiScreen() {
                 .setX(CenterConstraint())
                 .setY(PixelConstraint(50f))
                 .setWidth(RelativeConstraint(0.9f))
-        categoryHolder.addChild(createCategory(PixelConstraint(0f), "General"))
-        categoryHolder.addChild(createCategory(PixelConstraint(25f), "Position"))
-        categoryHolder.addChild(createCategory(PixelConstraint(50f), "Test"))
-        categoryHolder.addChild(createCategory(PixelConstraint(75f), "Category"))
-        categoryHolder.addChild(createCategory(PixelConstraint(100f), "Woohoo"))
+        categoryHolder.addChild(createCategory("General"))
+        categoryHolder.addChild(createCategory("Position"))
+        categoryHolder.addChild(createCategory("Test"))
+        categoryHolder.addChild(createCategory("Category"))
+        categoryHolder.addChild(createCategory("Woohoo"))
 
         val categoryAnimation = UIContainer()
 
@@ -103,9 +107,9 @@ class SettingsGui : GuiScreen() {
         window.draw()
     }
 
-    private fun createCategory(offset: PositionConstraint, string: String): UIComponent {
+    private fun createCategory(string: String): UIComponent {
         val container = UIBlock()
-                .setY(offset)
+                .setY(SiblingConstraint(Padding(8f)))
                 .setX(PixelConstraint(-10f))
                 .setHeight(ChildBasedSizeConstraint())
 
