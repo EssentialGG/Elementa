@@ -50,27 +50,58 @@ class SettingsGui : GuiScreen() {
                 x = CenterConstraint()
                 y = PixelConstraint(50f)
                 width = RelativeConstraint(0.9f)
-            }
-            .addChildren(
-                Category("General"), Category("Position"), Category("Test"),
-                Category("Category"), Category("Woohoo")
-            )
-            .childOf(categories)
+            } childOf categories
 
         window.addChild(categories)
 
-        val settings = UIBlock().constrain {
+        val settingsBox = UIBlock().constrain {
             x = PixelConstraint(-window.getWidth() * 2 / 3, true)
             width = RelativeConstraint.TWO_THIRDS
             height = RelativeConstraint.FULL
             color = ConstantColorConstraint(Color(0, 0, 0, 100))
         } childOf window
 
+        Category("General", settingsBox)
+                .addSetting(ToggleSetting("Toggle", "This toggles something"))
+                .addSetting(ToggleSetting("Toggle", "This toggles something"))
+                .addSetting(ToggleSetting("Toggle", "This toggles something"))
+                .addSetting(ToggleSetting("Toggle", "This toggles something"))
+                .addSetting(ToggleSetting("Toggle", "This toggles something"))
+                .addSetting(ToggleSetting("Toggle", "This toggles something"))
+                .addSetting(ToggleSetting("Toggle", "This toggles something"))
+                .addSetting(ToggleSetting("Toggle", "This toggles something"))
+                .addSetting(ToggleSetting("Toggle", "This toggles something"))
+                .childOf(categoryHolder)
+        Category("Position", settingsBox)
+                .addSetting(ToggleSetting("Toggle", "This toggles something"))
+                .addSetting(ToggleSetting("Toggle", "This toggles something"))
+                .addSetting(ToggleSetting("Toggle", "This toggles something"))
+                .childOf(categoryHolder)
+        Category("Test", settingsBox)
+                .addSetting(ToggleSetting("Toggle", "This toggles something"))
+                .addSetting(ToggleSetting("Toggle", "This toggles something"))
+                .addSetting(ToggleSetting("Toggle", "This toggles something"))
+                .addSetting(ToggleSetting("Toggle", "This toggles something"))
+                .addSetting(ToggleSetting("Toggle", "This toggles something"))
+                .addSetting(ToggleSetting("Toggle", "This toggles something"))
+                .childOf(categoryHolder)
+        Category("Category", settingsBox)
+                .addSetting(ToggleSetting("Toggle", "This toggles something"))
+                .addSetting(ToggleSetting("Toggle", "This toggles something"))
+                .childOf(categoryHolder)
+        Category("Woohoo", settingsBox)
+                .addSetting(ToggleSetting("Toggle", "This toggles something"))
+                .addSetting(ToggleSetting("Toggle", "This toggles something"))
+                .addSetting(ToggleSetting("Toggle", "This toggles something"))
+                .addSetting(ToggleSetting("Toggle", "This toggles something"))
+                .addSetting(ToggleSetting("Toggle", "This toggles something"))
+                .childOf(categoryHolder)
+
         ////////////////
         // ANIMATIONS //
         ////////////////
 
-        settings.animate {
+        settingsBox.animate {
             setXAnimation(Animations.OUT_EXP, 0.5f, PixelConstraint(0f, true))
         }
 
@@ -105,7 +136,9 @@ class SettingsGui : GuiScreen() {
         window.draw()
     }
 
-    class Category(string: String) : UIComponent() {
+    private class Category(string: String, settingsBox: UIComponent) : UIComponent() {
+        private val settings = mutableListOf<Setting>()
+
         private val text = UIText(string)
             .constrain {
                 setWidth(PixelConstraint(Minecraft.getMinecraft().fontRendererObj.getStringWidth(string) * 2f))
@@ -118,6 +151,12 @@ class SettingsGui : GuiScreen() {
                     setY(SiblingConstraint())
                     setHeight(PixelConstraint(2f))
                 }
+
+        private val settingBlock = UIContainer()
+                .constrain {
+                    setWidth(RelativeConstraint(1f))
+                    setHeight(RelativeConstraint(1f))
+                } childOf settingsBox
 
         init {
             setY(SiblingConstraint(Padding(8f)))
@@ -149,16 +188,61 @@ class SettingsGui : GuiScreen() {
             addChildren(text, selBlock)
         }
 
-        fun deselect() = apply {
-            selBlock.animate {
-                setWidthAnimation(Animations.OUT_EXP, 0.5f, PixelConstraint(0f))
-            }
-        }
-
         fun select() = apply {
             selBlock.animate {
                 setWidthAnimation(Animations.OUT_EXP, 0.5f, RelativeConstraint(1f))
             }
+
+            settings.forEachIndexed { index, setting ->
+                setting.children.first().animate {
+                    setWidthAnimation(Animations.OUT_EXP, 0.5f, PixelConstraint(100f), delay = 0.1f * index)
+                    setColorAnimation(Animations.OUT_EXP, 0.5f, ConstantColorConstraint(Color(0, 0, 0, 100)), delay = 0.1f * index)
+                }
+            }
         }
+
+        fun deselect() = apply {
+            selBlock.animate {
+                setWidthAnimation(Animations.OUT_EXP, 0.5f, PixelConstraint(0f))
+            }
+
+            settings.forEachIndexed { index, setting ->
+                setting.children.first().animate {
+                    setWidthAnimation(Animations.OUT_EXP, 0.5f, PixelConstraint(0f), delay = 0.1f * index)
+                    setColorAnimation(Animations.OUT_EXP, 0.5f, ConstantColorConstraint(Color(0, 0, 0, 0)), delay = 0.1f * index)
+                }
+            }
+        }
+
+        fun addSetting(setting: UIComponent) = apply {
+            settings.add((setting as Setting))
+            settingBlock.addChild(setting)
+        }
+    }
+
+    private abstract class Setting(private val name: String, private val description: String) : UIComponent() {
+        init {
+            setX(CramSiblingConstraint(Padding(10f)))
+            setY(CramSiblingConstraint(Padding(10f)))
+            setWidth(PixelConstraint(100f))
+            setHeight(PixelConstraint(20f))
+
+            val drawBox = UIBlock()
+                    .constrain {
+                        setHeight(RelativeConstraint(1f))
+                        setColor(ConstantColorConstraint(Color(0, 0, 0, 100)))
+                    }.enableFeatures(ScissorFeature())
+            val text = UIText(name)
+                    .constrain {
+                        setX(PixelConstraint(3f))
+                        setY(CenterConstraint())
+                    } childOf drawBox
+
+            addChild(drawBox)
+        }
+    }
+
+    private class ToggleSetting(name: String, description: String) : Setting(name, description) {
+
     }
 }
