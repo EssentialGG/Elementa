@@ -4,11 +4,14 @@ import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.helpers.Padding
 
 class SiblingConstraint(private val padding: Padding = Padding()) : PositionConstraint {
-    override fun getXPosition(component: UIComponent, parent: UIComponent): Float {
+    override var cachedValue = 0f
+    override var recalculate = true
+
+    override fun getXPositionImpl(component: UIComponent, parent: UIComponent): Float {
         return parent.getLeft() + padding.paddingValue
     }
 
-    override fun getYPosition(component: UIComponent, parent: UIComponent): Float {
+    override fun getYPositionImpl(component: UIComponent, parent: UIComponent): Float {
         val index = parent.children.indexOf(component)
 
         if (index == 0) {

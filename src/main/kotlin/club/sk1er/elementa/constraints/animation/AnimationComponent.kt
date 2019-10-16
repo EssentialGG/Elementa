@@ -6,11 +6,11 @@ import java.awt.Color
 import kotlin.math.max
 import kotlin.math.roundToInt
 
-sealed class AnimationComponent(
+sealed class AnimationComponent<T>(
     private val strategy: AnimationStrategy,
     private val totalFrames: Int,
     private val delayFrames: Int
-) : SuperConstraint {
+) : SuperConstraint<T> {
     private var elapsedFrames = 0
 
     override fun animationFrame() {
@@ -30,8 +30,11 @@ class XAnimationComponent(
     private val oldConstraint: XConstraint,
     val newConstraint: XConstraint,
     delay: Int
-) : AnimationComponent(strategy, totalFrames, delay), XConstraint {
-    override fun getXPosition(component: UIComponent, parent: UIComponent): Float {
+) : AnimationComponent<Float>(strategy, totalFrames, delay), XConstraint {
+    override var cachedValue = 0f
+    override var recalculate = true
+
+    override fun getXPositionImpl(component: UIComponent, parent: UIComponent): Float {
         val startX = oldConstraint.getXPosition(component, parent)
         val finalX = newConstraint.getXPosition(component, parent)
 
@@ -45,8 +48,11 @@ class YAnimationComponent(
     private val oldConstraint: YConstraint,
     val newConstraint: YConstraint,
     delay: Int
-) : AnimationComponent(strategy, totalFrames, delay), YConstraint {
-    override fun getYPosition(component: UIComponent, parent: UIComponent): Float {
+) : AnimationComponent<Float>(strategy, totalFrames, delay), YConstraint {
+    override var cachedValue = 0f
+    override var recalculate = true
+
+    override fun getYPositionImpl(component: UIComponent, parent: UIComponent): Float {
         val startX = oldConstraint.getYPosition(component, parent)
         val finalX = newConstraint.getYPosition(component, parent)
 
@@ -60,8 +66,11 @@ class WidthAnimationComponent(
     private val oldConstraint: WidthConstraint,
     val newConstraint: WidthConstraint,
     delay: Int
-) : AnimationComponent(strategy, totalFrames, delay), WidthConstraint {
-    override fun getXSize(component: UIComponent, parent: UIComponent): Float {
+) : AnimationComponent<Float>(strategy, totalFrames, delay), WidthConstraint {
+    override var cachedValue = 0f
+    override var recalculate = true
+
+    override fun getXSizeImpl(component: UIComponent, parent: UIComponent): Float {
         val startX = oldConstraint.getXSize(component, parent)
         val finalX = newConstraint.getXSize(component, parent)
 
@@ -75,8 +84,11 @@ class HeightAnimationComponent(
     private val oldConstraint: HeightConstraint,
     val newConstraint: HeightConstraint,
     delay: Int
-) : AnimationComponent(strategy, totalFrames, delay), HeightConstraint {
-    override fun getYSize(component: UIComponent, parent: UIComponent): Float {
+) : AnimationComponent<Float>(strategy, totalFrames, delay), HeightConstraint {
+    override var cachedValue = 0f
+    override var recalculate = true
+
+    override fun getYSizeImpl(component: UIComponent, parent: UIComponent): Float {
         val startX = oldConstraint.getYSize(component, parent)
         val finalX = newConstraint.getYSize(component, parent)
 
@@ -90,8 +102,11 @@ class ColorAnimationComponent(
     private val oldConstraint: ColorConstraint,
     val newConstraint: ColorConstraint,
     delay: Int
-) : AnimationComponent(strategy, totalFrames, delay), ColorConstraint {
-    override fun getColor(component: UIComponent, parent: UIComponent): Color {
+) : AnimationComponent<Color>(strategy, totalFrames, delay), ColorConstraint {
+    override var cachedValue = Color.WHITE
+    override var recalculate = true
+
+    override fun getColorImpl(component: UIComponent, parent: UIComponent): Color {
         val startColor = oldConstraint.getColor(component, parent)
         val endColor = newConstraint.getColor(component, parent)
         val percentComplete = getPercentComplete()

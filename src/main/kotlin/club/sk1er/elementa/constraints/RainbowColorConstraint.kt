@@ -7,10 +7,13 @@ import kotlin.math.sin
 import kotlin.random.Random
 
 class RainbowColorConstraint(private val alpha: Int = 255, private val speed: Float = 50f) : ColorConstraint {
+    override var cachedValue = Color.WHITE
+    override var recalculate = true
+
     private var currentColor: Color = Color.WHITE
     private var currentStep = Random.nextInt(20)
 
-    override fun getColor(component: UIComponent, parent: UIComponent): Color {
+    override fun getColorImpl(component: UIComponent, parent: UIComponent): Color {
         return currentColor
     }
 
