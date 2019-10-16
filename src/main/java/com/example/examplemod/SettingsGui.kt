@@ -178,7 +178,6 @@ class SettingsGui : GuiScreen() {
             }
 
             onClick {
-                println(text)
                 parent.children.forEach {
                     if (it == this) select()
                     else (it as Category).deselect()
