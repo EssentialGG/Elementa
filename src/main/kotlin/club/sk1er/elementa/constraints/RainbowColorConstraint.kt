@@ -11,7 +11,7 @@ class RainbowColorConstraint(private val alpha: Int = 255, private val speed: Fl
     override var recalculate = true
 
     private var currentColor: Color = Color.WHITE
-    private var currentStep = Random.nextInt(20)
+    private var currentStep = Random.nextInt(500)
 
     override fun getColorImpl(component: UIComponent, parent: UIComponent): Color {
         return currentColor

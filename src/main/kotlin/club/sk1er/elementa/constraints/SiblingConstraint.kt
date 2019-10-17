@@ -3,7 +3,7 @@ package club.sk1er.elementa.constraints
 import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.helpers.Padding
 
-class SiblingConstraint(private val padding: Padding = Padding()) : PositionConstraint {
+class SiblingConstraint(val padding: Padding = Padding()) : PositionConstraint {
     override var cachedValue = 0f
     override var recalculate = true
 
@@ -30,6 +30,6 @@ class SiblingConstraint(private val padding: Padding = Padding()) : PositionCons
             if (child.getBottom() > lowestPoint) lowestPoint = child.getBottom()
         }
 
-        return lowestPoint + padding.paddingValue
+        return lowestPoint /*+ padding.paddingValue*/
     }
 }
