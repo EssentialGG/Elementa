@@ -26,7 +26,7 @@ class RelativeConstraint(private val value: Float) : GeneralConstraint {
         val ONE_HALF = RelativeConstraint(1 / 2f)
         val ONE_THIRD = RelativeConstraint(1 / 3f)
         val TWO_THIRDS = RelativeConstraint(2 / 3f)
-        val ONE_FOURTH = RelativeConstraint(2 / 4f)
+        val ONE_FOURTH = RelativeConstraint(1 / 4f)
         val THREE_FOURTHS = RelativeConstraint(3 / 4f)
     }
 }
