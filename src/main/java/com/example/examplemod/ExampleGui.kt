@@ -8,7 +8,6 @@ import club.sk1er.elementa.components.Window
 import club.sk1er.elementa.constraints.*
 import club.sk1er.elementa.constraints.animation.Animations
 import club.sk1er.elementa.features.ScissorFeature
-import club.sk1er.elementa.helpers.Padding
 import net.minecraft.client.gui.GuiScreen
 import java.awt.Color
 
@@ -63,32 +62,32 @@ class ExampleGui : GuiScreen() {
         settings.addChild(createSlider("Slider 1", PixelConstraint(30f)))
         settings.addChild(createSlider("Second Slider", PixelConstraint(65f)))
 
-        val blocky = UIBlock()
-            .getConstraints()
-            .setX(SiblingConstraint(Padding(2f)))
-            .setY(SiblingConstraint(Padding(5f)))
-            .setWidth(PixelConstraint(75f))
-            .setHeight(PixelConstraint(35f))
-            .setColor(ConstantColorConstraint(Color.RED))
-            .finish()
-
-        val blocky2 = UIBlock()
-            .getConstraints()
-            .setX(CramSiblingConstraint(Padding(5f)))
-            .setY(CramSiblingConstraint(Padding(5f)))
-            .setWidth(PixelConstraint(75f))
-            .setHeight(PixelConstraint(15f))
-            .setColor(ConstantColorConstraint(Color.GREEN))
-            .finish()
-
-        val blocky3 = UIBlock()
-            .getConstraints()
-            .setX(CramSiblingConstraint(Padding(5f)))
-            .setY(CramSiblingConstraint(Padding(5f)))
-            .setWidth(PixelConstraint(15f))
-            .setHeight(PixelConstraint(15f))
-            .setColor(RainbowColorConstraint())
-            .finish()
+//        val blocky = UIBlock()
+//            .getConstraints()
+//            .setX(SiblingConstraint(Padding(2f)))
+//            .setY(SiblingConstraint(Padding(5f)))
+//            .setWidth(PixelConstraint(75f))
+//            .setHeight(PixelConstraint(35f))
+//            .setColor(ConstantColorConstraint(Color.RED))
+//            .finish()
+//
+//        val blocky2 = UIBlock()
+//            .getConstraints()
+//            .setX(CramSiblingConstraint(Padding(5f)))
+//            .setY(CramSiblingConstraint(Padding(5f)))
+//            .setWidth(PixelConstraint(75f))
+//            .setHeight(PixelConstraint(15f))
+//            .setColor(ConstantColorConstraint(Color.GREEN))
+//            .finish()
+//
+//        val blocky3 = UIBlock()
+//            .getConstraints()
+//            .setX(CramSiblingConstraint(Padding(5f)))
+//            .setY(CramSiblingConstraint(Padding(5f)))
+//            .setWidth(PixelConstraint(15f))
+//            .setHeight(PixelConstraint(15f))
+//            .setColor(RainbowColorConstraint())
+//            .finish()
 
         val cont = UIContainer()
             .getConstraints()
@@ -97,7 +96,7 @@ class ExampleGui : GuiScreen() {
             .setX(SiblingConstraint())
             .setY(SiblingConstraint())
             .finish()
-        cont.addChildren(blocky, blocky2, blocky3)
+//        cont.addChildren(blocky, blocky2, blocky3)
 
         settings.addChild(cont)
 

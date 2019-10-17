@@ -1,9 +1,8 @@
 package club.sk1er.elementa.constraints
 
 import club.sk1er.elementa.UIComponent
-import club.sk1er.elementa.helpers.Padding
 
-class CramSiblingConstraint(private val padding: Padding = Padding()) : PositionConstraint {
+class CramSiblingConstraint : SiblingConstraint() {
     override var cachedValue = 0f
     override var recalculate = true
 
@@ -11,41 +10,31 @@ class CramSiblingConstraint(private val padding: Padding = Padding()) : Position
         val index = parent.children.indexOf(component)
 
         if (index == 0) {
-            return parent.getLeft() + padding.paddingValue
+            return parent.getLeft()
         }
 
         val sibling = parent.children[index - 1]
 
-        if (sibling.getRight() + padding.paddingValue + component.getWidth() < parent.getRight()) {
-            return sibling.getRight() + padding.paddingValue
+        if (sibling.getRight() + component.getWidth() < parent.getRight()) {
+            return sibling.getRight()
         }
 
-        return parent.getLeft() + padding.paddingValue
+        return parent.getLeft()
     }
 
     override fun getYPositionImpl(component: UIComponent, parent: UIComponent): Float {
         val index = parent.children.indexOf(component)
 
         if (index == 0) {
-            return parent.getTop() + padding.paddingValue
+            return parent.getTop()
         }
 
         val sibling = parent.children[index - 1]
 
-        if (sibling.getRight() + padding.paddingValue + component.getWidth() < parent.getRight()) {
+        if (sibling.getRight() + component.getWidth() < parent.getRight()) {
             return sibling.getTop()
         }
 
-        var lowestPoint = sibling.getBottom()
-
-        for (n in index - 1 downTo 0) {
-            val child = parent.children[n]
-
-            if (child.getTop() != sibling.getTop()) break
-
-            if (child.getBottom() > lowestPoint) lowestPoint = child.getBottom()
-        }
-
-        return lowestPoint + padding.paddingValue
+        return getLowestPoint(sibling, parent, index)
     }
 }

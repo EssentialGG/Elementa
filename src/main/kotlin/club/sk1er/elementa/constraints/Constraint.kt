@@ -21,9 +21,9 @@ interface GeneralConstraint : PositionConstraint, SizeConstraint {
 
     override fun getYPositionImpl(component: UIComponent, parent: UIComponent) = getYValue(component, parent)
 
-    override fun getXSizeImpl(component: UIComponent, parent: UIComponent) = getXValue(component, parent)
+    override fun getWidthImpl(component: UIComponent, parent: UIComponent) = getXValue(component, parent)
 
-    override fun getYSizeImpl(component: UIComponent, parent: UIComponent) = getYValue(component, parent)
+    override fun getHeightImpl(component: UIComponent, parent: UIComponent) = getYValue(component, parent)
 }
 
 interface PositionConstraint : XConstraint, YConstraint
@@ -57,11 +57,11 @@ interface YConstraint : SuperConstraint<Float> {
 interface SizeConstraint : WidthConstraint, HeightConstraint
 
 interface WidthConstraint : SuperConstraint<Float> {
-    fun getXSizeImpl(component: UIComponent, parent: UIComponent): Float
+    fun getWidthImpl(component: UIComponent, parent: UIComponent): Float
 
-    fun getXSize(component: UIComponent, parent: UIComponent): Float {
+    fun getWidth(component: UIComponent, parent: UIComponent): Float {
         if (recalculate) {
-            cachedValue = getXSizeImpl(component, parent)
+            cachedValue = getWidthImpl(component, parent)
             recalculate = false
         }
 
@@ -70,11 +70,11 @@ interface WidthConstraint : SuperConstraint<Float> {
 }
 
 interface HeightConstraint : SuperConstraint<Float> {
-    fun getYSizeImpl(component: UIComponent, parent: UIComponent): Float
+    fun getHeightImpl(component: UIComponent, parent: UIComponent): Float
 
-    fun getYSize(component: UIComponent, parent: UIComponent): Float {
+    fun getHeight(component: UIComponent, parent: UIComponent): Float {
         if (recalculate) {
-            cachedValue = getYSizeImpl(component, parent)
+            cachedValue = getHeightImpl(component, parent)
             recalculate = false
         }
 

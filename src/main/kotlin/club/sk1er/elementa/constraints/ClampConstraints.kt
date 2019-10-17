@@ -9,8 +9,8 @@ class MaxWidthConstraint(
     override var cachedValue = 0f
     override var recalculate = true
 
-    override fun getXSizeImpl(component: UIComponent, parent: UIComponent): Float {
-        return widthConstraint.getXSize(component, parent).coerceAtMost(maxWidthConstraint.getXSize(component, parent))
+    override fun getWidthImpl(component: UIComponent, parent: UIComponent): Float {
+        return widthConstraint.getWidth(component, parent).coerceAtMost(maxWidthConstraint.getWidth(component, parent))
     }
 }
 
@@ -21,8 +21,8 @@ class MinWidthConstraint(
     override var cachedValue = 0f
     override var recalculate = true
 
-    override fun getXSizeImpl(component: UIComponent, parent: UIComponent): Float {
-        return widthConstraint.getXSize(component, parent).coerceAtLeast(minWidthConstraint.getXSize(component, parent))
+    override fun getWidthImpl(component: UIComponent, parent: UIComponent): Float {
+        return widthConstraint.getWidth(component, parent).coerceAtLeast(minWidthConstraint.getWidth(component, parent))
     }
 }
 
@@ -33,8 +33,8 @@ class MaxHeightConstraint(
     override var cachedValue = 0f
     override var recalculate = true
 
-    override fun getYSizeImpl(component: UIComponent, parent: UIComponent): Float {
-        return heightConstraint.getYSize(component, parent).coerceAtMost(maxHeightConstraint.getYSize(component, parent))
+    override fun getHeightImpl(component: UIComponent, parent: UIComponent): Float {
+        return heightConstraint.getHeight(component, parent).coerceAtMost(maxHeightConstraint.getHeight(component, parent))
     }
 }
 
@@ -45,7 +45,7 @@ class MinHeightConstraint(
     override var cachedValue = 0f
     override var recalculate = true
 
-    override fun getYSizeImpl(component: UIComponent, parent: UIComponent): Float {
-        return heightConstraint.getYSize(component, parent).coerceAtLeast(minHeightConstraint.getYSize(component, parent))
+    override fun getHeightImpl(component: UIComponent, parent: UIComponent): Float {
+        return heightConstraint.getHeight(component, parent).coerceAtLeast(minHeightConstraint.getHeight(component, parent))
     }
 }

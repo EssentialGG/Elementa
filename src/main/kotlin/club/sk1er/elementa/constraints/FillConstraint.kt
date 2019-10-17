@@ -6,11 +6,11 @@ class FillConstraint @JvmOverloads constructor(private val value: Float = 0f) : 
     override var cachedValue = 0f
     override var recalculate = true
 
-    override fun getXSizeImpl(component: UIComponent, parent: UIComponent): Float {
+    override fun getWidthImpl(component: UIComponent, parent: UIComponent): Float {
         return parent.getRight() - component.getLeft() + value
     }
 
-    override fun getYSizeImpl(component: UIComponent, parent: UIComponent): Float {
+    override fun getHeightImpl(component: UIComponent, parent: UIComponent): Float {
         return parent.getBottom() - component.getTop() + value
     }
 }

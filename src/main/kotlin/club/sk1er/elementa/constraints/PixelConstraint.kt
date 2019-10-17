@@ -19,11 +19,11 @@ class PixelConstraint @JvmOverloads constructor(
                 else parent.getBottom() - value - component.getHeight()
     }
 
-    override fun getXSizeImpl(component: UIComponent, parent: UIComponent): Float {
+    override fun getWidthImpl(component: UIComponent, parent: UIComponent): Float {
         return value
     }
 
-    override fun getYSizeImpl(component: UIComponent, parent: UIComponent): Float {
+    override fun getHeightImpl(component: UIComponent, parent: UIComponent): Float {
         return value
     }
 }

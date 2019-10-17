@@ -6,11 +6,11 @@ class ChildBasedSizeConstraint @JvmOverloads constructor(private val value: Floa
     override var cachedValue = 0f
     override var recalculate = true
 
-    override fun getXSizeImpl(component: UIComponent, parent: UIComponent): Float {
+    override fun getWidthImpl(component: UIComponent, parent: UIComponent): Float {
         return component.children.maxBy { it.getWidth() + value }?.getWidth() ?: value
     }
 
-    override fun getYSizeImpl(component: UIComponent, parent: UIComponent): Float {
+    override fun getHeightImpl(component: UIComponent, parent: UIComponent): Float {
         return component.children.sumByDouble { it.getHeight().toDouble() }.toFloat() + value
     }
 }

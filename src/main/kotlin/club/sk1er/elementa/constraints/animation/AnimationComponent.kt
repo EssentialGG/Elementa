@@ -72,9 +72,9 @@ class WidthAnimationComponent(
     override var cachedValue = 0f
     override var recalculate = true
 
-    override fun getXSizeImpl(component: UIComponent, parent: UIComponent): Float {
-        val startX = oldConstraint.getXSize(component, parent)
-        val finalX = newConstraint.getXSize(component, parent)
+    override fun getWidthImpl(component: UIComponent, parent: UIComponent): Float {
+        val startX = oldConstraint.getWidth(component, parent)
+        val finalX = newConstraint.getWidth(component, parent)
 
         return startX + ((finalX - startX) * getPercentComplete())
     }
@@ -90,9 +90,9 @@ class HeightAnimationComponent(
     override var cachedValue = 0f
     override var recalculate = true
 
-    override fun getYSizeImpl(component: UIComponent, parent: UIComponent): Float {
-        val startX = oldConstraint.getYSize(component, parent)
-        val finalX = newConstraint.getYSize(component, parent)
+    override fun getHeightImpl(component: UIComponent, parent: UIComponent): Float {
+        val startX = oldConstraint.getHeight(component, parent)
+        val finalX = newConstraint.getHeight(component, parent)
 
         return startX + ((finalX - startX) * getPercentComplete())
     }

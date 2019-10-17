@@ -7,12 +7,8 @@ import club.sk1er.elementa.components.UIText
 import club.sk1er.elementa.components.Window
 import club.sk1er.elementa.constraints.*
 import club.sk1er.elementa.constraints.animation.Animations
-import club.sk1er.elementa.dsl.animate
-import club.sk1er.elementa.dsl.childOf
-import club.sk1er.elementa.dsl.constrain
-import club.sk1er.elementa.dsl.width
+import club.sk1er.elementa.dsl.*
 import club.sk1er.elementa.features.ScissorFeature
-import club.sk1er.elementa.helpers.Padding
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiScreen
 import org.lwjgl.input.Mouse
@@ -169,9 +165,9 @@ class SettingsGui : GuiScreen() {
                 } childOf settingsBox
 
         init {
-            setY(SiblingConstraint(Padding(8f)))
+            setY(SiblingConstraint())
             setX(PixelConstraint(-10f))
-            setHeight(ChildBasedSizeConstraint())
+            setHeight(ChildBasedSizeConstraint().padHeight(8f))
 
             enableFeatures(ScissorFeature())
 
@@ -245,10 +241,10 @@ class SettingsGui : GuiScreen() {
         val text = UIText(name)
 
         init {
-            setX(CramSiblingConstraint(Padding(10f)))
-            setY(CramSiblingConstraint(Padding(10f)))
-            setWidth(PixelConstraint(100f))
-            setHeight(PixelConstraint(20f))
+            setX(CramSiblingConstraint())
+            setY(CramSiblingConstraint())
+            setWidth(PixelConstraint(100f).padWidth(10f))
+            setHeight(PixelConstraint(20f).padHeight(10f))
 
             drawBox.constrain {
                 setHeight(RelativeConstraint(1f))

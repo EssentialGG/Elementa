@@ -1,9 +1,7 @@
 package club.sk1er.elementa
 
 import club.sk1er.elementa.components.Window
-import club.sk1er.elementa.constraints.ColorConstraint
-import club.sk1er.elementa.constraints.PositionConstraint
-import club.sk1er.elementa.constraints.SizeConstraint
+import club.sk1er.elementa.constraints.*
 import club.sk1er.elementa.constraints.animation.AnimatingConstraints
 import club.sk1er.elementa.features.Feature
 import net.minecraft.client.Minecraft
@@ -57,19 +55,19 @@ abstract class UIComponent {
         this.features.addAll(features)
     }
 
-    fun setX(constraint: PositionConstraint) = apply {
+    fun setX(constraint: XConstraint) = apply {
         this.constraints.setX(constraint)
     }
 
-    fun setY(constraint: PositionConstraint) = apply {
+    fun setY(constraint: YConstraint) = apply {
         this.constraints.setY(constraint)
     }
 
-    fun setWidth(constraint: SizeConstraint) = apply {
+    fun setWidth(constraint: WidthConstraint) = apply {
         this.constraints.setWidth(constraint)
     }
 
-    fun setHeight(constraint: SizeConstraint) = apply {
+    fun setHeight(constraint: HeightConstraint) = apply {
         this.constraints.setHeight(constraint)
     }
 

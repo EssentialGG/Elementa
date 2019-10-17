@@ -7,3 +7,6 @@ fun WidthConstraint.min(minConstraint: WidthConstraint) = MinWidthConstraint(thi
 
 fun HeightConstraint.max(maxConstraint: HeightConstraint) = MaxHeightConstraint(this, maxConstraint)
 fun HeightConstraint.min(minConstraint: HeightConstraint) = MinHeightConstraint(this, minConstraint)
+
+fun WidthConstraint.padWidth(padding: Float) = WidthPaddingConstraint(this, padding)
+fun HeightConstraint.padHeight(padding: Float) = HeightPaddingConstraint(this, padding)

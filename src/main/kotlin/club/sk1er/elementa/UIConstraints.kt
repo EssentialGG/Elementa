@@ -13,31 +13,28 @@ open class UIConstraints(protected val component: UIComponent) {
     open fun getX(): Float {
         return x.getXPosition(component, component.parent)
     }
-    open fun setX(constraint: PositionConstraint) = apply {
+    open fun setX(constraint: XConstraint) = apply {
         x = constraint
     }
 
     open fun getY(): Float {
         return y.getYPosition(component, component.parent)
     }
-    open fun setY(constraint: PositionConstraint) = apply {
+    open fun setY(constraint: YConstraint) = apply {
         y = constraint
     }
 
     open fun getWidth(): Float {
-        return width.getXSize(component, component.parent)
+        return width.getWidth(component, component.parent)
     }
-    open fun setWidth(constraint: SizeConstraint) = apply {
+    open fun setWidth(constraint: WidthConstraint) = apply {
         width = constraint
     }
 
     open fun getHeight(): Float {
-        // TODO: Obviously not good. It makes no sense for Padding to be specific to SiblingConstraints,
-        //  rather, it should probably be a wrapping constraint (like MaxWidthConstraint)
-        return height.getYSize(component, component.parent) +
-                if (y is SiblingConstraint) (y as SiblingConstraint).padding.paddingValue else 0f
+        return height.getHeight(component, component.parent)
     }
-    open fun setHeight(constraint: SizeConstraint) = apply {
+    open fun setHeight(constraint: HeightConstraint) = apply {
         height = constraint
     }
 

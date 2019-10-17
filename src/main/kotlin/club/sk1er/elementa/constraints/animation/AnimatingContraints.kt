@@ -3,9 +3,7 @@ package club.sk1er.elementa.constraints.animation
 import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.UIConstraints
 import club.sk1er.elementa.components.Window
-import club.sk1er.elementa.constraints.ColorConstraint
-import club.sk1er.elementa.constraints.PositionConstraint
-import club.sk1er.elementa.constraints.SizeConstraint
+import club.sk1er.elementa.constraints.*
 
 class AnimatingConstraints(
     component: UIComponent,
@@ -151,16 +149,16 @@ class AnimatingConstraints(
         }
     }
 
-    override fun setX(constraint: PositionConstraint) =
+    override fun setX(constraint: XConstraint) =
         throw UnsupportedOperationException("Can't call setter methods on an animation")
 
-    override fun setY(constraint: PositionConstraint) =
+    override fun setY(constraint: YConstraint) =
         throw UnsupportedOperationException("Can't call setter methods on an animation")
 
-    override fun setWidth(constraint: SizeConstraint) =
+    override fun setWidth(constraint: WidthConstraint) =
         throw UnsupportedOperationException("Can't call setter methods on an animation")
 
-    override fun setHeight(constraint: SizeConstraint) =
+    override fun setHeight(constraint: HeightConstraint) =
         throw UnsupportedOperationException("Can't call setter methods on an animation")
 
     override fun setColor(constraint: ColorConstraint) =
