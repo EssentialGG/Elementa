@@ -32,7 +32,10 @@ open class UIConstraints(protected val component: UIComponent) {
     }
 
     open fun getHeight(): Float {
-        return height.getYSize(component, component.parent)
+        // TODO: Obviously not good. It makes no sense for Padding to be specific to SiblingConstraints,
+        //  rather, it should probably be a wrapping constraint (like MaxWidthConstraint)
+        return height.getYSize(component, component.parent) +
+                if (y is SiblingConstraint) (y as SiblingConstraint).padding.paddingValue else 0f
     }
     open fun setHeight(constraint: SizeConstraint) = apply {
         height = constraint

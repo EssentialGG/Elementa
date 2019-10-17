@@ -15,6 +15,7 @@ import club.sk1er.elementa.features.ScissorFeature
 import club.sk1er.elementa.helpers.Padding
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiScreen
+import org.lwjgl.input.Mouse
 import java.awt.Color
 
 class SettingsGui : GuiScreen() {
@@ -45,11 +46,12 @@ class SettingsGui : GuiScreen() {
             }
             .childOf(categoryTitle)
 
-        val categoryHolder = UIContainer()
+        val categoryHolder = UIBlock()
             .constrain {
                 x = CenterConstraint()
                 y = PixelConstraint(50f)
                 width = RelativeConstraint(0.9f)
+                height = ChildBasedSizeConstraint()
             } childOf categories
 
         window.addChild(categories)
@@ -136,7 +138,15 @@ class SettingsGui : GuiScreen() {
         window.draw()
     }
 
-    private class Category(string: String, settingsBox: UIComponent) : UIComponent() {
+    override fun handleMouseInput() {
+        super.handleMouseInput()
+
+        val delta = Mouse.getEventDWheel().coerceIn(-1, 1)
+
+        window.scroll(delta)
+    }
+
+    class Category(string: String, settingsBox: UIComponent) : UIBlock() {
         private val settings = mutableListOf<Setting>()
 
         private val text = UIText(string)

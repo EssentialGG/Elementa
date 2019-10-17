@@ -34,6 +34,7 @@ interface XConstraint : SuperConstraint<Float> {
     fun getXPosition(component: UIComponent, parent: UIComponent): Float {
         if (recalculate) {
             cachedValue = getXPositionImpl(component, parent)
+            recalculate = false
         }
 
         return cachedValue
@@ -46,6 +47,7 @@ interface YConstraint : SuperConstraint<Float> {
     fun getYPosition(component: UIComponent, parent: UIComponent): Float {
         if (recalculate) {
             cachedValue = getYPositionImpl(component, parent)
+            recalculate = false
         }
 
         return cachedValue
@@ -60,6 +62,7 @@ interface WidthConstraint : SuperConstraint<Float> {
     fun getXSize(component: UIComponent, parent: UIComponent): Float {
         if (recalculate) {
             cachedValue = getXSizeImpl(component, parent)
+            recalculate = false
         }
 
         return cachedValue
@@ -72,6 +75,7 @@ interface HeightConstraint : SuperConstraint<Float> {
     fun getYSize(component: UIComponent, parent: UIComponent): Float {
         if (recalculate) {
             cachedValue = getYSizeImpl(component, parent)
+            recalculate = false
         }
 
         return cachedValue
@@ -84,6 +88,7 @@ interface ColorConstraint : SuperConstraint<Color> {
     fun getColor(component: UIComponent, parent: UIComponent): Color {
         if (recalculate) {
             cachedValue = getColorImpl(component, parent)
+            recalculate = false
         }
 
         return cachedValue

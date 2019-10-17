@@ -14,6 +14,8 @@ sealed class AnimationComponent<T>(
     private var elapsedFrames = 0
 
     override fun animationFrame() {
+        super.animationFrame()
+
         if (complete()) return
 
         elapsedFrames++

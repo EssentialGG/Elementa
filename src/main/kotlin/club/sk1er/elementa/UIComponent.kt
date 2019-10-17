@@ -8,6 +8,7 @@ import club.sk1er.elementa.constraints.animation.AnimatingConstraints
 import club.sk1er.elementa.features.Feature
 import net.minecraft.client.Minecraft
 import org.lwjgl.input.Mouse
+import java.util.function.Consumer
 
 abstract class UIComponent {
     open lateinit var parent: UIComponent
@@ -20,8 +21,9 @@ abstract class UIComponent {
     private var hoverAction: () -> Unit = {}
     private var unHoverAction: () -> Unit = {}
     private var currentlyHovered = false
+    private var scrollAction: (delta: Int) -> Unit = {}
 
-    fun addChild(component: UIComponent) = apply {
+    open fun addChild(component: UIComponent) = apply {
         component.parent = this
         children.add(component)
     }
@@ -38,8 +40,8 @@ abstract class UIComponent {
         children.clear()
     }
 
-    inline fun <reified T> childrenOfType() = children.filterIsInstance<T>()
-    fun <T> childrenOfType(clazz: Class<T>) = children.filterIsInstance(clazz)
+    inline fun <reified T> childrenOfType() = childrenOfType(T::class.java)
+    open fun <T> childrenOfType(clazz: Class<T>) = children.filterIsInstance(clazz)
 
     fun makeAnimation() = AnimatingConstraints(this, constraints)
 
@@ -132,6 +134,11 @@ abstract class UIComponent {
         this.children.forEach(UIComponent::click)
     }
 
+    open fun scroll(delta: Int) {
+        if (isHovered()) scrollAction(delta)
+        this.children.forEach { it.scroll(delta) }
+    }
+
     open fun animationFrame() {
         val constraints = getConstraints()
 
@@ -162,5 +169,13 @@ abstract class UIComponent {
 
     fun onUnHover(method: Runnable) = apply {
         unHoverAction = method::run
+    }
+
+    fun onScroll(method: (delta: Int) -> Unit) = apply {
+        scrollAction = method
+    }
+
+    fun onScroll(method: Consumer<Int>) = apply {
+        scrollAction = method::accept
     }
 }
