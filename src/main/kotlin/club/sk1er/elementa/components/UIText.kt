@@ -19,11 +19,14 @@ class UIText @JvmOverloads constructor(private val text: String, private val sha
         val y = this.getTop()
         val width = this.getWidth() / textWidth
         val height = this.getHeight() / 9f
+        val color = this.getColor()
 
         GlStateManager.pushMatrix()
 
+        GlStateManager.color(color.red.toFloat() / 255f, color.green.toFloat() / 255f, color.blue.toFloat() / 255f, color.alpha.toFloat() / 255f)
+
         GlStateManager.scale(width.toDouble(), height.toDouble(), 1.0)
-        Minecraft.getMinecraft().fontRendererObj.drawString(text, x / width, y / height, this.getColor().rgb, shadow)
+        Minecraft.getMinecraft().fontRendererObj.drawString(text, x / width, y / height, 0xffffff, shadow)
 
         GlStateManager.popMatrix()
 

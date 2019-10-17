@@ -62,39 +62,39 @@ class SettingsGui : GuiScreen() {
         } childOf window
 
         Category("General", settingsBox)
-                .addSetting(ToggleSetting("Toggle", "This toggles something"))
-                .addSetting(ToggleSetting("Toggle", "This toggles something"))
-                .addSetting(ToggleSetting("Toggle", "This toggles something"))
-                .addSetting(ToggleSetting("Toggle", "This toggles something"))
-                .addSetting(ToggleSetting("Toggle", "This toggles something"))
-                .addSetting(ToggleSetting("Toggle", "This toggles something"))
-                .addSetting(ToggleSetting("Toggle", "This toggles something"))
-                .addSetting(ToggleSetting("Toggle", "This toggles something"))
-                .addSetting(ToggleSetting("Toggle", "This toggles something"))
+                .addSetting(ToggleSetting("General 1", "This toggles something"))
+                .addSetting(ToggleSetting("General 2", "This toggles something"))
+                .addSetting(ToggleSetting("General 3", "This toggles something"))
+                .addSetting(ToggleSetting("General 4", "This toggles something"))
+                .addSetting(ToggleSetting("General 5", "This toggles something"))
+                .addSetting(ToggleSetting("General 6", "This toggles something"))
+                .addSetting(ToggleSetting("General 7", "This toggles something"))
+                .addSetting(ToggleSetting("General 8", "This toggles something"))
+                .addSetting(ToggleSetting("General 9", "This toggles something"))
                 .childOf(categoryHolder)
         Category("Position", settingsBox)
-                .addSetting(ToggleSetting("Toggle", "This toggles something"))
-                .addSetting(ToggleSetting("Toggle", "This toggles something"))
-                .addSetting(ToggleSetting("Toggle", "This toggles something"))
+                .addSetting(ToggleSetting("Position 1", "This toggles something"))
+                .addSetting(ToggleSetting("Position 2", "This toggles something"))
+                .addSetting(ToggleSetting("Position 3", "This toggles something"))
                 .childOf(categoryHolder)
         Category("Test", settingsBox)
-                .addSetting(ToggleSetting("Toggle", "This toggles something"))
-                .addSetting(ToggleSetting("Toggle", "This toggles something"))
-                .addSetting(ToggleSetting("Toggle", "This toggles something"))
-                .addSetting(ToggleSetting("Toggle", "This toggles something"))
-                .addSetting(ToggleSetting("Toggle", "This toggles something"))
-                .addSetting(ToggleSetting("Toggle", "This toggles something"))
+                .addSetting(ToggleSetting("Test 1", "This toggles something"))
+                .addSetting(ToggleSetting("Test 2", "This toggles something"))
+                .addSetting(ToggleSetting("Test 3", "This toggles something"))
+                .addSetting(ToggleSetting("Test 4", "This toggles something"))
+                .addSetting(ToggleSetting("Test 5", "This toggles something"))
+                .addSetting(ToggleSetting("Test 6", "This toggles something"))
                 .childOf(categoryHolder)
         Category("Category", settingsBox)
-                .addSetting(ToggleSetting("Toggle", "This toggles something"))
-                .addSetting(ToggleSetting("Toggle", "This toggles something"))
+                .addSetting(ToggleSetting("Category 1", "This toggles something"))
+                .addSetting(ToggleSetting("Category 2", "This toggles something"))
                 .childOf(categoryHolder)
         Category("Woohoo", settingsBox)
-                .addSetting(ToggleSetting("Toggle", "This toggles something"))
-                .addSetting(ToggleSetting("Toggle", "This toggles something"))
-                .addSetting(ToggleSetting("Toggle", "This toggles something"))
-                .addSetting(ToggleSetting("Toggle", "This toggles something"))
-                .addSetting(ToggleSetting("Toggle", "This toggles something"))
+                .addSetting(ToggleSetting("Woohoo 1", "This toggles something"))
+                .addSetting(ToggleSetting("Woohoo 2", "This toggles something"))
+                .addSetting(ToggleSetting("Woohoo 3", "This toggles something"))
+                .addSetting(ToggleSetting("Woohoo 4", "This toggles something"))
+                .addSetting(ToggleSetting("Woohoo 5", "This toggles something"))
                 .childOf(categoryHolder)
 
         ////////////////
@@ -192,10 +192,13 @@ class SettingsGui : GuiScreen() {
                 setWidthAnimation(Animations.OUT_EXP, 0.5f, RelativeConstraint(1f))
             }
 
-            settings.forEachIndexed { index, setting ->
-                setting.children.first().animate {
-                    setWidthAnimation(Animations.OUT_EXP, 0.5f, PixelConstraint(100f), delay = 0.1f * index)
-                    setColorAnimation(Animations.OUT_EXP, 0.5f, ConstantColorConstraint(Color(0, 0, 0, 100)), delay = 0.1f * index)
+            settings.forEach {
+                it.drawBox.animate {
+                    setYAnimation(Animations.OUT_EXP, 0.5f, PixelConstraint(0f))
+                    setColorAnimation(Animations.OUT_EXP, 0.5f, ConstantColorConstraint(Color(0, 0, 0, 100)))
+                }
+                it.text.animate {
+                    setColorAnimation(Animations.OUT_EXP, 0.5f, ConstantColorConstraint(Color(255, 255, 255, 255)))
                 }
             }
         }
@@ -205,10 +208,18 @@ class SettingsGui : GuiScreen() {
                 setWidthAnimation(Animations.OUT_EXP, 0.5f, PixelConstraint(0f))
             }
 
-            settings.forEachIndexed { index, setting ->
-                setting.children.first().animate {
-                    setWidthAnimation(Animations.OUT_EXP, 0.5f, PixelConstraint(0f), delay = 0.1f * index)
-                    setColorAnimation(Animations.OUT_EXP, 0.5f, ConstantColorConstraint(Color(0, 0, 0, 0)), delay = 0.1f * index)
+            settings.forEach {
+                it.drawBox.animate {
+                    setYAnimation(Animations.OUT_EXP, 0.5f, PixelConstraint(-10f))
+                    setColorAnimation(Animations.OUT_EXP, 0.5f, ConstantColorConstraint(Color(0, 0, 0, 0)))
+                    onComplete {
+                        it.drawBox.constrain {
+                            setY(PixelConstraint(10f))
+                        }
+                    }
+                }
+                it.text.animate {
+                    setColorAnimation(Animations.OUT_EXP, 0.5f, ConstantColorConstraint(Color(255, 255, 255, 10)))
                 }
             }
         }
@@ -220,22 +231,27 @@ class SettingsGui : GuiScreen() {
     }
 
     private abstract class Setting(private val name: String, private val description: String) : UIComponent() {
+        val drawBox = UIBlock()
+        val text = UIText(name)
+
         init {
             setX(CramSiblingConstraint(Padding(10f)))
             setY(CramSiblingConstraint(Padding(10f)))
             setWidth(PixelConstraint(100f))
             setHeight(PixelConstraint(20f))
 
-            val drawBox = UIBlock()
-                    .constrain {
-                        setHeight(RelativeConstraint(1f))
-                        setColor(ConstantColorConstraint(Color(0, 0, 0, 100)))
-                    }.enableFeatures(ScissorFeature())
-            val text = UIText(name)
-                    .constrain {
-                        setX(PixelConstraint(3f))
-                        setY(CenterConstraint())
-                    } childOf drawBox
+            drawBox.constrain {
+                setHeight(RelativeConstraint(1f))
+                setWidth(RelativeConstraint(1f))
+                setY(PixelConstraint(10f))
+                setColor(ConstantColorConstraint(Color(0, 0, 0, 0)))
+            }.enableFeatures(ScissorFeature())
+
+            text.constrain {
+                setX(PixelConstraint(3f))
+                setY(CenterConstraint())
+                setColor(ConstantColorConstraint(Color(0, 0, 0, 10)))
+            } childOf drawBox
 
             addChild(drawBox)
         }
