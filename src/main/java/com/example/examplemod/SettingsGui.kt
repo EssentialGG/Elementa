@@ -167,7 +167,7 @@ class SettingsGui : GuiScreen() {
         init {
             setY(SiblingConstraint())
             setX(PixelConstraint(-10f))
-            setHeight(ChildBasedSizeConstraint().padHeight(8f))
+            setHeight(ChildBasedSizeConstraint() + 8.pixels())
 
             enableEffects(ScissorEffect())
 
@@ -243,8 +243,8 @@ class SettingsGui : GuiScreen() {
         init {
             setX(CramSiblingConstraint())
             setY(CramSiblingConstraint())
-            setWidth(PixelConstraint(100f).padWidth(10f))
-            setHeight(PixelConstraint(20f).padHeight(10f))
+            setWidth(PixelConstraint(110f))
+            setHeight(PixelConstraint(30f))
 
             drawBox.constrain {
                 setHeight(RelativeConstraint(1f))
