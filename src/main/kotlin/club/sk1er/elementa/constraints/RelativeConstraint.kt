@@ -1,7 +1,14 @@
 package club.sk1er.elementa.constraints
 
 import club.sk1er.elementa.UIComponent
+import club.sk1er.elementa.constraints.RelativeConstraint.Companion.ONE_HALF
 
+/**
+ * Sets this component's X/Y position or width/height to be some
+ * percentage of its parents.
+ *
+ * Some are predefined, such as [ONE_HALF]
+ */
 class RelativeConstraint(private val value: Float) : GeneralConstraint {
     override var cachedValue = 0f
     override var recalculate = true

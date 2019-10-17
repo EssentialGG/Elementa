@@ -2,6 +2,10 @@ package club.sk1er.elementa.constraints
 
 import club.sk1er.elementa.UIComponent
 
+/**
+ * Similar to a [SiblingConstraint], except it tries to fit
+ * itself inline if possible. If not possible, it falls back to the next line.
+ */
 class CramSiblingConstraint : SiblingConstraint() {
     override var cachedValue = 0f
     override var recalculate = true

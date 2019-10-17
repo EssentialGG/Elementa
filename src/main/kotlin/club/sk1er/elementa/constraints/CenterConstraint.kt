@@ -2,6 +2,9 @@ package club.sk1er.elementa.constraints
 
 import club.sk1er.elementa.UIComponent
 
+/**
+ * Centers this box on the X or Y axis.
+ */
 class CenterConstraint @JvmOverloads constructor(private var value: Float = 0f) : PositionConstraint {
     override var cachedValue = 0f
     override var recalculate = true

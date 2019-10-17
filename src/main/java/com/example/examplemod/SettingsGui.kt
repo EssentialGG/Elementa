@@ -8,7 +8,7 @@ import club.sk1er.elementa.components.Window
 import club.sk1er.elementa.constraints.*
 import club.sk1er.elementa.constraints.animation.Animations
 import club.sk1er.elementa.dsl.*
-import club.sk1er.elementa.features.ScissorFeature
+import club.sk1er.elementa.effects.ScissorEffect
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiScreen
 import org.lwjgl.input.Mouse
@@ -33,7 +33,7 @@ class SettingsGui : GuiScreen() {
                 height = PixelConstraint(36f)
             }
             .childOf(categories)
-            .enableFeatures(ScissorFeature())
+            .enableEffects(ScissorEffect())
 
         UIText("Settings")
             .constrain {
@@ -169,7 +169,7 @@ class SettingsGui : GuiScreen() {
             setX(PixelConstraint(-10f))
             setHeight(ChildBasedSizeConstraint().padHeight(8f))
 
-            enableFeatures(ScissorFeature())
+            enableEffects(ScissorEffect())
 
             onHover {
                 text.animate {
@@ -251,7 +251,7 @@ class SettingsGui : GuiScreen() {
                 setWidth(RelativeConstraint(1f))
                 setY(PixelConstraint(10f))
                 setColor(ConstantColorConstraint(Color(0, 0, 0, 0)))
-            }.enableFeatures(ScissorFeature())
+            }.enableEffects(ScissorEffect())
 
             text.constrain {
                 setX(PixelConstraint(3f))

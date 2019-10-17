@@ -2,6 +2,10 @@ package club.sk1er.elementa.constraints
 
 import club.sk1er.elementa.UIComponent
 
+/**
+ * Sets this component's X/Y position or width/height to be a constant
+ * number of pixels.
+ */
 class PixelConstraint @JvmOverloads constructor(
     private val value: Float,
     private val alignOpposite: Boolean = false

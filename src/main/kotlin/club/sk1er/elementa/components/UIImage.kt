@@ -2,7 +2,6 @@ package club.sk1er.elementa.components
 
 import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.constraints.PixelConstraint
-import club.sk1er.elementa.shaders.Shaders
 import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.client.renderer.Tessellator
 import net.minecraft.client.renderer.texture.DynamicTexture
@@ -32,8 +31,6 @@ class UIImage @JvmOverloads constructor(name: String, url: String? = null) : UIC
 
         GL11.glPushMatrix()
 
-        Shaders.blurShader.bindIfUsable()
-
         GlStateManager.enableBlend()
         GlStateManager.scale(1f, 1f, 50f)
         GlStateManager.bindTexture(texture.glTextureId)
@@ -49,8 +46,6 @@ class UIImage @JvmOverloads constructor(name: String, url: String? = null) : UIC
         worldRenderer.pos(x + width, y, 0.0).tex(1.0, 0.0).endVertex()
         worldRenderer.pos(x, y, 0.0).tex(0.0, 0.0).endVertex()
         tessellator.draw()
-
-        Shaders.blurShader.unbindIfUsable()
 
         GL11.glPopMatrix()
 

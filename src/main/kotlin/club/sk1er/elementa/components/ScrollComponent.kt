@@ -5,8 +5,13 @@ import club.sk1er.elementa.constraints.PixelConstraint
 import club.sk1er.elementa.constraints.RelativeConstraint
 import club.sk1er.elementa.dsl.childOf
 import club.sk1er.elementa.dsl.constrain
-import club.sk1er.elementa.features.ScissorFeature
+import club.sk1er.elementa.effects.ScissorEffect
 
+/**
+ * Basic scroll component that will only draw what is currently visible.
+ *
+ * Also prevents scrolling past what should be reasonable. TODO
+ */
 class ScrollComponent : UIComponent() {
     private val actualHolder = UIContainer().constrain {
         x = PixelConstraint(0f)
@@ -16,9 +21,11 @@ class ScrollComponent : UIComponent() {
     }
 
     private var offset = 0f
+    override val children: MutableList<UIComponent>
+        get() = actualHolder.children
 
     init {
-        this.enableFeatures(ScissorFeature())
+        this.enableEffects(ScissorEffect())
 
         actualHolder childOf this
 
@@ -31,9 +38,5 @@ class ScrollComponent : UIComponent() {
 
     override fun addChild(component: UIComponent) = apply {
         actualHolder.addChild(component)
-    }
-
-    override fun <T> childrenOfType(clazz: Class<T>): List<T> {
-        return actualHolder.children.filterIsInstance(clazz)
     }
 }

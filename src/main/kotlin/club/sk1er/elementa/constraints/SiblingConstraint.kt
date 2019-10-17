@@ -2,6 +2,12 @@ package club.sk1er.elementa.constraints
 
 import club.sk1er.elementa.UIComponent
 
+/**
+ * Positions this component to be directly after its previous sibling.
+ *
+ * This will always put it on a new line, regardless of whether it can fit inline or not.
+ * If you would like for components to try and fit inline, use [CramSiblingConstraint]
+ */
 open class SiblingConstraint : PositionConstraint {
     override var cachedValue = 0f
     override var recalculate = true

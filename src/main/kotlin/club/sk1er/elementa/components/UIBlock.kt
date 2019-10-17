@@ -9,6 +9,9 @@ import org.lwjgl.opengl.GL11
 import java.awt.Color
 import java.util.*
 
+/**
+ * Extremely simple component that simply draws a colored rectangle.
+ */
 open class UIBlock : UIComponent() {
     init {
         this.getConstraints().setColor(ConstantColorConstraint(Color(0, 0, 0, 0)))

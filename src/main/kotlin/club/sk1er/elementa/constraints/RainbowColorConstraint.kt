@@ -6,6 +6,10 @@ import java.awt.Color
 import kotlin.math.sin
 import kotlin.random.Random
 
+/**
+ * Changes this component's color every frame, using a sin wave to create
+ * a chroma effect.
+ */
 class RainbowColorConstraint(private val alpha: Int = 255, private val speed: Float = 50f) : ColorConstraint {
     override var cachedValue = Color.WHITE
     override var recalculate = true

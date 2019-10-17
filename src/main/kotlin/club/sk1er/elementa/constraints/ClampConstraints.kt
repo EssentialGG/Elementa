@@ -2,6 +2,9 @@ package club.sk1er.elementa.constraints
 
 import club.sk1er.elementa.UIComponent
 
+/**
+ * Clamps the width to be the max of [widthConstraint] and [maxWidthConstraint]
+ */
 class MaxWidthConstraint(
     private val widthConstraint: WidthConstraint,
     private val maxWidthConstraint: WidthConstraint
@@ -14,6 +17,9 @@ class MaxWidthConstraint(
     }
 }
 
+/**
+ * Clamps the width to be the min of [widthConstraint] and [minWidthConstraint]
+ */
 class MinWidthConstraint(
     private val widthConstraint: WidthConstraint,
     private val minWidthConstraint: WidthConstraint
@@ -26,6 +32,9 @@ class MinWidthConstraint(
     }
 }
 
+/**
+ * Clamps the height to be the max of [heightConstraint] and [maxHeightConstraint]
+ */
 class MaxHeightConstraint(
     private val heightConstraint: HeightConstraint,
     private val maxHeightConstraint: HeightConstraint
@@ -38,6 +47,9 @@ class MaxHeightConstraint(
     }
 }
 
+/**
+ * Clamps the height to be the min of [heightConstraint] and [minHeightConstraint]
+ */
 class MinHeightConstraint(
     private val heightConstraint: HeightConstraint,
     private val minHeightConstraint: HeightConstraint

@@ -2,6 +2,9 @@ package club.sk1er.elementa.constraints
 
 import club.sk1er.elementa.UIComponent
 
+/**
+ * Adds [padding] to this component's width.
+ */
 class WidthPaddingConstraint(private val widthConstraint: WidthConstraint, private val padding: Float) : WidthConstraint {
     override var cachedValue = 0f
     override var recalculate = true
@@ -11,6 +14,9 @@ class WidthPaddingConstraint(private val widthConstraint: WidthConstraint, priva
     }
 }
 
+/**
+ * Adds [padding] to this component's height.
+ */
 class HeightPaddingConstraint(private val widthConstraint: HeightConstraint, private val padding: Float) : HeightConstraint {
     override var cachedValue = 0f
     override var recalculate = true

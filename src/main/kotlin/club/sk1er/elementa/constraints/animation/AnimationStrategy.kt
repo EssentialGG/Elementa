@@ -5,10 +5,19 @@ import kotlin.math.pow
 import kotlin.math.sin
 import kotlin.math.sqrt
 
+/**
+ * Provides a mapping from 0f - 1f to 0f - 1f (however, this output value can technically go past those bounds).
+ */
 interface AnimationStrategy {
     fun getValue(percentComplete: Float): Float
 }
 
+/**
+ * Most of the basic animations that someone would want to use.
+ *
+ * If you're not sure what these algorithms look like,
+ * use the [https://easings.net/en] website as a reference.
+ */
 enum class Animations : AnimationStrategy {
     LINEAR {
         override fun getValue(percentComplete: Float): Float {

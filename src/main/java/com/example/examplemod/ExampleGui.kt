@@ -7,7 +7,7 @@ import club.sk1er.elementa.components.UIText
 import club.sk1er.elementa.components.Window
 import club.sk1er.elementa.constraints.*
 import club.sk1er.elementa.constraints.animation.Animations
-import club.sk1er.elementa.features.ScissorFeature
+import club.sk1er.elementa.effects.ScissorEffect
 import net.minecraft.client.gui.GuiScreen
 import java.awt.Color
 
@@ -115,7 +115,7 @@ class ExampleGui : GuiScreen() {
         window.addChild(settings)
         window.addChild(textHolder)
 
-        textHolder.enableFeatures(ScissorFeature())
+        textHolder.enableEffects(ScissorEffect())
 
         textHolder.makeAnimation()
             .setWidthAnimation(Animations.OUT_CIRCULAR, 3f, ChildBasedSizeConstraint())

@@ -5,6 +5,4 @@ import org.lwjgl.opengl.GLContext
 
 object Shaders {
     val newShaders = areShadersSupported() && GLContext.getCapabilities().OpenGL21
-
-    val blurShader: Shader = BlurShader()
 }

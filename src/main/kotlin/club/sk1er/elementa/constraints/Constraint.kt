@@ -3,6 +3,12 @@ package club.sk1er.elementa.constraints
 import club.sk1er.elementa.UIComponent
 import java.awt.Color
 
+/**
+ * The "super" constraint that all other constraints inherit from.
+ *
+ * [T] is what this constraint deals with, for example Float for WidthConstraint
+ * or Color for ColorConstraint
+ */
 interface SuperConstraint <T> {
     var cachedValue: T
     var recalculate: Boolean

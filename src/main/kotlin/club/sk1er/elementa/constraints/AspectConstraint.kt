@@ -2,6 +2,13 @@ package club.sk1er.elementa.constraints
 
 import club.sk1er.elementa.UIComponent
 
+/**
+ * For size:
+ * Sets the width/height to be [value] percent of its own height/width respectively.
+ *
+ * For position:
+ * TODO
+ */
 class AspectConstraint(private val value: Float) : PositionConstraint, SizeConstraint {
     override var cachedValue = 0f
     override var recalculate = true

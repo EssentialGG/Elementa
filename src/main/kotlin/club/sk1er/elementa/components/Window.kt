@@ -4,6 +4,10 @@ import club.sk1er.elementa.UIComponent
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.ScaledResolution
 
+/**
+ * "Root" component. All components MUST have a Window in their hierarchy in order to do any rendering
+ * or animating.
+ */
 class Window(val animationFPS: Int = 244) : UIComponent() {
     private var systemTime = -1L
     var scaledResolution = ScaledResolution(Minecraft.getMinecraft())
