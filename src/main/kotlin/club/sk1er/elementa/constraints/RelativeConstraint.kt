@@ -5,7 +5,7 @@ import club.sk1er.elementa.constraints.RelativeConstraint.Companion.ONE_HALF
 
 /**
  * Sets this component's X/Y position or width/height to be some
- * percentage of its parents.
+ * multiple of its parents.
  *
  * Some are predefined, such as [ONE_HALF]
  */
@@ -26,5 +26,7 @@ class RelativeConstraint(private val value: Float) : GeneralConstraint {
         val ONE_HALF = RelativeConstraint(1 / 2f)
         val ONE_THIRD = RelativeConstraint(1 / 3f)
         val TWO_THIRDS = RelativeConstraint(2 / 3f)
+        val ONE_FOURTH = RelativeConstraint(2 / 4f)
+        val THREE_FOURTHS = RelativeConstraint(3 / 4f)
     }
 }
