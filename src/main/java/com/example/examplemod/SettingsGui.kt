@@ -22,15 +22,15 @@ class SettingsGui : GuiScreen() {
             x = PixelConstraint(-window.getWidth() / 3)
             width = RelativeConstraint.ONE_THIRD
             height = RelativeConstraint.FULL
-            color = ConstantColorConstraint(Color(0, 0, 0, 150))
+            color = Color(0, 0, 0, 150).asConstraint()
         }
 
         val categoryTitle = UIBlock()
             .constrain {
                 x = CenterConstraint()
-                y = PixelConstraint(10f)
-                width = PixelConstraint(0f)
-                height = PixelConstraint(36f)
+                y = 10.pixels()
+                width = 0.pixels()
+                height = 36.pixels()
             }
             .childOf(categories)
             .enableEffects(ScissorEffect())
@@ -38,14 +38,14 @@ class SettingsGui : GuiScreen() {
         UIText("Settings")
             .constrain {
                 width = PixelConstraint("Settings".width() * 4f)
-                height = PixelConstraint(36f)
+                height = 36.pixels()
             }
             .childOf(categoryTitle)
 
         val categoryHolder = UIBlock()
             .constrain {
                 x = CenterConstraint()
-                y = PixelConstraint(50f)
+                y = 50.pixels()
                 width = RelativeConstraint(0.9f)
                 height = ChildBasedSizeConstraint()
             } childOf categories
@@ -56,7 +56,7 @@ class SettingsGui : GuiScreen() {
             x = PixelConstraint(-window.getWidth() * 2 / 3, true)
             width = RelativeConstraint.TWO_THIRDS
             height = RelativeConstraint.FULL
-            color = ConstantColorConstraint(Color(0, 0, 0, 100))
+            color = Color(0, 0, 0, 100).asConstraint()
         } childOf window
 
         Category("General", settingsBox)
@@ -100,11 +100,11 @@ class SettingsGui : GuiScreen() {
         ////////////////
 
         settingsBox.animate {
-            setXAnimation(Animations.OUT_EXP, 0.5f, PixelConstraint(0f, true))
+            setXAnimation(Animations.OUT_EXP, 0.5f, 0.pixels(true))
         }
 
         categories.animate {
-            setXAnimation(Animations.OUT_EXP, 0.5f, PixelConstraint(0f))
+            setXAnimation(Animations.OUT_EXP, 0.5f, 0.pixels())
 
             onComplete {
                 categoryTitle.animate {
@@ -114,7 +114,7 @@ class SettingsGui : GuiScreen() {
                 categoryHolder.children.forEachIndexed { index, uiComponent ->
                     uiComponent.animate {
                         setWidthAnimation(Animations.OUT_QUAD, 0.5f, RelativeConstraint(1f), delay = 0.1f * index)
-                        setXAnimation(Animations.OUT_EXP, 0.5f, PixelConstraint(0f), delay = 0.1f * index)
+                        setXAnimation(Animations.OUT_EXP, 0.5f, 0.pixels(), delay = 0.1f * index)
                     }
                 }
             }
@@ -148,14 +148,14 @@ class SettingsGui : GuiScreen() {
         private val text = UIText(string)
             .constrain {
                 setWidth(PixelConstraint(Minecraft.getMinecraft().fontRendererObj.getStringWidth(string) * 2f))
-                setHeight(PixelConstraint(18f))
+                setHeight(18.pixels())
             }
 
         private val selBlock = UIBlock()
                 .constrain {
-                    setColor(ConstantColorConstraint(Color(255, 255, 255, 255)))
+                    setColor(Color(255, 255, 255, 255).asConstraint())
                     setY(SiblingConstraint())
-                    setHeight(PixelConstraint(2f))
+                    setHeight(2.pixels())
                 }
 
         private val settingBlock = UIContainer()
@@ -166,20 +166,20 @@ class SettingsGui : GuiScreen() {
 
         init {
             setY(SiblingConstraint())
-            setX(PixelConstraint(-10f))
+            setX((-10).pixels())
             setHeight(ChildBasedSizeConstraint() + 8.pixels())
 
             enableEffects(ScissorEffect())
 
             onHover {
                 text.animate {
-                    setXAnimation(Animations.OUT_EXP, 0.5f, PixelConstraint(10f))
+                    setXAnimation(Animations.OUT_EXP, 0.5f, 10.pixels())
                 }
             }
 
             onUnHover {
                 text.animate {
-                    setXAnimation(Animations.OUT_BOUNCE, 0.5f, PixelConstraint(0f))
+                    setXAnimation(Animations.OUT_BOUNCE, 0.5f, 0.pixels())
                 }
             }
 
@@ -200,32 +200,32 @@ class SettingsGui : GuiScreen() {
 
             settings.forEach {
                 it.drawBox.animate {
-                    setYAnimation(Animations.OUT_EXP, 0.5f, PixelConstraint(0f))
-                    setColorAnimation(Animations.OUT_EXP, 0.5f, ConstantColorConstraint(Color(0, 0, 0, 100)))
+                    setYAnimation(Animations.OUT_EXP, 0.5f, 0.pixels())
+                    setColorAnimation(Animations.OUT_EXP, 0.5f, Color(0, 0, 0, 100).asConstraint())
                 }
                 it.text.animate {
-                    setColorAnimation(Animations.OUT_EXP, 0.5f, ConstantColorConstraint(Color(255, 255, 255, 255)))
+                    setColorAnimation(Animations.OUT_EXP, 0.5f, Color(255, 255, 255, 255).asConstraint())
                 }
             }
         }
 
         fun deselect() = apply {
             selBlock.animate {
-                setWidthAnimation(Animations.OUT_EXP, 0.5f, PixelConstraint(0f))
+                setWidthAnimation(Animations.OUT_EXP, 0.5f, 0.pixels())
             }
 
             settings.forEach {
                 it.drawBox.animate {
-                    setYAnimation(Animations.OUT_EXP, 0.5f, PixelConstraint(-10f))
-                    setColorAnimation(Animations.OUT_EXP, 0.5f, ConstantColorConstraint(Color(0, 0, 0, 0)))
+                    setYAnimation(Animations.OUT_EXP, 0.5f, (-10).pixels())
+                    setColorAnimation(Animations.OUT_EXP, 0.5f, Color(0, 0, 0, 0).asConstraint())
                     onComplete {
                         it.drawBox.constrain {
-                            setY(PixelConstraint(10f))
+                            setY(10.pixels())
                         }
                     }
                 }
                 it.text.animate {
-                    setColorAnimation(Animations.OUT_EXP, 0.5f, ConstantColorConstraint(Color(255, 255, 255, 10)))
+                    setColorAnimation(Animations.OUT_EXP, 0.5f, Color(255, 255, 255, 10).asConstraint())
                 }
             }
         }
@@ -243,20 +243,20 @@ class SettingsGui : GuiScreen() {
         init {
             setX(CramSiblingConstraint())
             setY(CramSiblingConstraint())
-            setWidth(PixelConstraint(110f))
-            setHeight(PixelConstraint(30f))
+            setWidth(110.pixels())
+            setHeight(30.pixels())
 
             drawBox.constrain {
                 setHeight(RelativeConstraint(1f))
                 setWidth(RelativeConstraint(1f))
-                setY(PixelConstraint(10f))
-                setColor(ConstantColorConstraint(Color(0, 0, 0, 0)))
+                setY(10.pixels())
+                setColor(Color(0, 0, 0, 0).asConstraint())
             }.enableEffects(ScissorEffect())
 
             text.constrain {
-                setX(PixelConstraint(3f))
+                setX(3.pixels())
                 setY(CenterConstraint())
-                setColor(ConstantColorConstraint(Color(0, 0, 0, 10)))
+                setColor(Color(0, 0, 0, 10).asConstraint())
             } childOf drawBox
 
             addChild(drawBox)
