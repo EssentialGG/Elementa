@@ -199,6 +199,9 @@ class SettingsGui : GuiScreen() {
             }
 
             settings.forEach {
+                it.drawBox.constrain {
+                    setY(10.pixels())
+                }
                 it.drawBox.animate {
                     setYAnimation(Animations.OUT_EXP, 0.5f, 0.pixels())
                     setColorAnimation(Animations.OUT_EXP, 0.5f, Color(0, 0, 0, 100).asConstraint())
@@ -215,14 +218,12 @@ class SettingsGui : GuiScreen() {
             }
 
             settings.forEach {
+                it.drawBox.constrain {
+                    setY(0.pixels())
+                }
                 it.drawBox.animate {
                     setYAnimation(Animations.OUT_EXP, 0.5f, (-10).pixels())
                     setColorAnimation(Animations.OUT_EXP, 0.5f, Color(0, 0, 0, 0).asConstraint())
-                    onComplete {
-                        it.drawBox.constrain {
-                            setY(10.pixels())
-                        }
-                    }
                 }
                 it.text.animate {
                     setColorAnimation(Animations.OUT_EXP, 0.5f, Color(255, 255, 255, 10).asConstraint())

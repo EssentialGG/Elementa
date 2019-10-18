@@ -148,19 +148,4 @@ class AnimatingConstraints(
             completeAction()
         }
     }
-
-    override fun setX(constraint: XConstraint) =
-        throw UnsupportedOperationException("Can't call setter methods on an animation")
-
-    override fun setY(constraint: YConstraint) =
-        throw UnsupportedOperationException("Can't call setter methods on an animation")
-
-    override fun setWidth(constraint: WidthConstraint) =
-        throw UnsupportedOperationException("Can't call setter methods on an animation")
-
-    override fun setHeight(constraint: HeightConstraint) =
-        throw UnsupportedOperationException("Can't call setter methods on an animation")
-
-    override fun setColor(constraint: ColorConstraint) =
-        throw UnsupportedOperationException("Can't call setter methods on an animation")
 }
