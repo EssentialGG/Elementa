@@ -60,7 +60,7 @@ class SettingsGui : GuiScreen() {
         } childOf window
 
         Category("General", settingsBox)
-                .addSetting(ToggleSetting("General 1", "This toggles something"))
+        .addSetting(ToggleSetting("General 1", "This toggles something"))
                 .addSetting(ToggleSetting("General 2", "This toggles something"))
                 .addSetting(ToggleSetting("General 3", "This toggles something"))
                 .addSetting(ToggleSetting("General 4", "This toggles something"))
@@ -125,8 +125,7 @@ class SettingsGui : GuiScreen() {
 
     override fun mouseClicked(mouseX: Int, mouseY: Int, mouseButton: Int) {
         super.mouseClicked(mouseX, mouseY, mouseButton)
-
-        window.click()
+        window.click(mouseButton)
     }
 
     override fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
@@ -144,6 +143,7 @@ class SettingsGui : GuiScreen() {
 
     class Category(string: String, settingsBox: UIComponent) : UIBlock() {
         private val settings = mutableListOf<Setting>()
+        private var selected = false
 
         private val text = UIText(string)
             .constrain {
@@ -158,7 +158,7 @@ class SettingsGui : GuiScreen() {
                     setHeight(2.pixels())
                 }
 
-        private val settingBlock = UIContainer()
+        private val settingsBlock = SettingsBlock()
                 .constrain {
                     setWidth(RelativeConstraint(1f))
                     setHeight(RelativeConstraint(1f))
@@ -185,8 +185,9 @@ class SettingsGui : GuiScreen() {
 
             onClick {
                 parent.children.forEach {
-                    if (it == this) select()
-                    else (it as Category).deselect()
+                    it as Category
+                    if (it == this && !it.selected) select()
+                    else if (it != this && it.selected) it.deselect()
                 }
             }
 
@@ -194,6 +195,7 @@ class SettingsGui : GuiScreen() {
         }
 
         fun select() = apply {
+            selected = true
             selBlock.animate {
                 setWidthAnimation(Animations.OUT_EXP, 0.5f, RelativeConstraint(1f))
             }
@@ -206,6 +208,9 @@ class SettingsGui : GuiScreen() {
                     setYAnimation(Animations.OUT_EXP, 0.5f, 0.pixels())
                     setColorAnimation(Animations.OUT_EXP, 0.5f, Color(0, 0, 0, 100).asConstraint())
                 }
+                it.title.animate {
+                    setColorAnimation(Animations.OUT_EXP, 0.5f, Color(255, 255, 255, 255).asConstraint())
+                }
                 it.text.animate {
                     setColorAnimation(Animations.OUT_EXP, 0.5f, Color(255, 255, 255, 255).asConstraint())
                 }
@@ -213,6 +218,7 @@ class SettingsGui : GuiScreen() {
         }
 
         fun deselect() = apply {
+            selected = false
             selBlock.animate {
                 setWidthAnimation(Animations.OUT_EXP, 0.5f, 0.pixels())
             }
@@ -225,6 +231,9 @@ class SettingsGui : GuiScreen() {
                     setYAnimation(Animations.OUT_EXP, 0.5f, (-10).pixels())
                     setColorAnimation(Animations.OUT_EXP, 0.5f, Color(0, 0, 0, 0).asConstraint())
                 }
+                it.title.animate {
+                    setColorAnimation(Animations.OUT_EXP, 0.5f, Color(255, 255, 255, 10).asConstraint())
+                }
                 it.text.animate {
                     setColorAnimation(Animations.OUT_EXP, 0.5f, Color(255, 255, 255, 10).asConstraint())
                 }
@@ -233,30 +242,62 @@ class SettingsGui : GuiScreen() {
 
         fun addSetting(setting: UIComponent) = apply {
             settings.add((setting as Setting))
-            settingBlock.addChild(setting)
+            settingsBlock.addChild(setting)
+        }
+    }
+
+    private class SettingsBlock() : UIComponent() {
+        var scrolled = 0
+
+        init {
+            onScroll {
+                if (it == 0) return@onScroll
+                scrolled += it * 50
+                println(scrolled)
+                if (scrolled <= 0) {
+                    children.first().animate {
+                        setYAnimation(Animations.OUT_EXP, 0.5f, scrolled.pixels())
+                    }
+                } else {
+                    scrolled = 0
+                    children.first().animate {
+                        setYAnimation(Animations.OUT_ELASTIC, 0.5f, 0.pixels())
+                    }
+                }
+            }
         }
     }
 
     private abstract class Setting(private val name: String, private val description: String) : UIComponent() {
         val drawBox = UIBlock()
-        val text = UIText(name)
+        val title = UIText(name)
+        val text = UIText(description)
 
         init {
-            setX(CramSiblingConstraint())
+            setX(CenterConstraint())
             setY(CramSiblingConstraint())
-            setWidth(110.pixels())
-            setHeight(30.pixels())
+            setWidth(RelativeConstraint(0.75f))
+            setHeight(100.pixels())
 
             drawBox.constrain {
-                setHeight(RelativeConstraint(1f))
-                setWidth(RelativeConstraint(1f))
-                setY(10.pixels())
+                setHeight(RelativeConstraint(0.9f))
+                setWidth(RelativeConstraint(0.9f))
+                setX(CenterConstraint())
+                setY(CenterConstraint())
                 setColor(Color(0, 0, 0, 0).asConstraint())
             }.enableEffects(ScissorEffect())
 
+            title.constrain {
+                setX(3.pixels())
+                setY(3.pixels())
+                setWidth(PixelConstraint(Minecraft.getMinecraft().fontRendererObj.getStringWidth(name) * 2f))
+                setHeight(18.pixels())
+                setColor(Color(0, 0, 0, 10).asConstraint())
+            } childOf drawBox
+
             text.constrain {
                 setX(3.pixels())
-                setY(CenterConstraint())
+                setY(25.pixels())
                 setColor(Color(0, 0, 0, 10).asConstraint())
             } childOf drawBox
 
@@ -265,6 +306,32 @@ class SettingsGui : GuiScreen() {
     }
 
     private class ToggleSetting(name: String, description: String) : Setting(name, description) {
+        var toggled = true
+
+        val toggleBox = UIBlock()
+        val toggleSlider = UIBlock()
+        val toggleTextOn = UIText("ON")
+        val toggleTextOff = UIText("OFF")
+
+        init {
+            toggleBox.constrain {
+                
+            }
+
+
+            addChild(toggleBox)
+        }
+
+        fun toggle() {
+            if (toggled) {
+
+            } else {
+
+            }
+        }
+    }
+
+    private class Divider(name: String, description: String) : Setting(name, description) {
 
     }
 }

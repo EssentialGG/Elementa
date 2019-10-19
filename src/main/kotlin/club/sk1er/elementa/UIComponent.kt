@@ -19,7 +19,7 @@ abstract class UIComponent {
     private val features = mutableListOf<Effect>()
     private var constraints = UIConstraints(this)
 
-    private var clickAction: () -> Unit = {}
+    private var clickAction: (button: Int) -> Unit = {}
     private var hoverAction: () -> Unit = {}
     private var unHoverAction: () -> Unit = {}
     private var currentlyHovered = false
@@ -181,9 +181,9 @@ abstract class UIComponent {
         features.forEach { it.afterDraw(this) }
     }
 
-    open fun click() {
-        if (isHovered()) clickAction()
-        this.children.forEach(UIComponent::click)
+    open fun click(button: Int) {
+        if (isHovered()) clickAction(button)
+        this.children.forEach { it.click(button) }
     }
 
     open fun scroll(delta: Int) {
@@ -199,12 +199,12 @@ abstract class UIComponent {
         this.children.forEach(UIComponent::animationFrame)
     }
 
-    fun onClick(method: () -> Unit) = apply {
+    fun onClick(method: (button: Int) -> Unit) = apply {
         clickAction = method
     }
 
-    fun onClick(method: Runnable) = apply {
-        clickAction = method::run
+    fun onClick(method: Consumer<Int>) = apply {
+        clickAction = method::accept
     }
 
     fun onHover(method: () -> Unit) = apply {
