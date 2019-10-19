@@ -33,9 +33,14 @@ class UIImage(private var image: BufferedImage?) : UIComponent() {
         val height = this.getHeight().toDouble()
         val color = this.getColor()
 
+        if (color.alpha == 0) {
+            return
+        }
+
         GL11.glPushMatrix()
 
         GlStateManager.enableBlend()
+        GlStateManager.enableAlpha()
         GlStateManager.color(
             color.red / 255f, color.green / 255f,
             color.blue / 255f, color.alpha / 255f
