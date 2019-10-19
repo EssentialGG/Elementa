@@ -31,10 +31,15 @@ class UIImage(private var image: BufferedImage?) : UIComponent() {
         val y = this.getTop().toDouble()
         val width = this.getWidth().toDouble()
         val height = this.getHeight().toDouble()
+        val color = this.getColor()
 
         GL11.glPushMatrix()
 
         GlStateManager.enableBlend()
+        GlStateManager.color(
+            color.red / 255f, color.green / 255f,
+            color.blue / 255f, color.alpha / 255f
+        )
         GlStateManager.scale(1f, 1f, 50f)
         GlStateManager.bindTexture(texture.glTextureId)
         GlStateManager.enableTexture2D()

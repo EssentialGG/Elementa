@@ -42,6 +42,14 @@ class XAnimationComponent(
 
         return startX + ((finalX - startX) * getPercentComplete())
     }
+
+    // TODO: This is gross, can probably be done in parent!
+    override fun animationFrame() {
+        super<AnimationComponent>.animationFrame()
+
+        oldConstraint.animationFrame()
+        newConstraint.animationFrame()
+    }
 }
 
 class YAnimationComponent(
@@ -59,6 +67,12 @@ class YAnimationComponent(
         val finalX = newConstraint.getYPosition(component, parent)
 
         return startX + ((finalX - startX) * getPercentComplete())
+    }
+    override fun animationFrame() {
+        super<AnimationComponent>.animationFrame()
+
+        oldConstraint.animationFrame()
+        newConstraint.animationFrame()
     }
 }
 
@@ -78,6 +92,13 @@ class WidthAnimationComponent(
 
         return startX + ((finalX - startX) * getPercentComplete())
     }
+
+    override fun animationFrame() {
+        super<AnimationComponent>.animationFrame()
+
+        oldConstraint.animationFrame()
+        newConstraint.animationFrame()
+    }
 }
 
 class HeightAnimationComponent(
@@ -95,6 +116,13 @@ class HeightAnimationComponent(
         val finalX = newConstraint.getHeight(component, parent)
 
         return startX + ((finalX - startX) * getPercentComplete())
+    }
+
+    override fun animationFrame() {
+        super<AnimationComponent>.animationFrame()
+
+        oldConstraint.animationFrame()
+        newConstraint.animationFrame()
     }
 }
 
@@ -119,5 +147,12 @@ class ColorAnimationComponent(
         val newA = startColor.alpha + ((endColor.alpha - startColor.alpha) * percentComplete)
 
         return Color(newR.roundToInt(), newG.roundToInt(), newB.roundToInt(), newA.roundToInt())
+    }
+
+    override fun animationFrame() {
+        super<AnimationComponent>.animationFrame()
+
+        oldConstraint.animationFrame()
+        newConstraint.animationFrame()
     }
 }

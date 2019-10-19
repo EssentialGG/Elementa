@@ -1,15 +1,13 @@
 package com.example.examplemod
 
 import club.sk1er.elementa.UIComponent
-import club.sk1er.elementa.components.UIBlock
-import club.sk1er.elementa.components.UIContainer
-import club.sk1er.elementa.components.UIText
-import club.sk1er.elementa.components.Window
+import club.sk1er.elementa.components.*
 import club.sk1er.elementa.constraints.*
 import club.sk1er.elementa.constraints.animation.Animations
 import club.sk1er.elementa.effects.ScissorEffect
 import net.minecraft.client.gui.GuiScreen
 import java.awt.Color
+import java.net.URL
 
 class ExampleGui : GuiScreen() {
     private val settings: UIComponent
@@ -62,33 +60,6 @@ class ExampleGui : GuiScreen() {
         settings.addChild(createSlider("Slider 1", PixelConstraint(30f)))
         settings.addChild(createSlider("Second Slider", PixelConstraint(65f)))
 
-//        val blocky = UIBlock()
-//            .getConstraints()
-//            .setX(SiblingConstraint(Padding(2f)))
-//            .setY(SiblingConstraint(Padding(5f)))
-//            .setWidth(PixelConstraint(75f))
-//            .setHeight(PixelConstraint(35f))
-//            .setColor(ConstantColorConstraint(Color.RED))
-//            .finish()
-//
-//        val blocky2 = UIBlock()
-//            .getConstraints()
-//            .setX(CramSiblingConstraint(Padding(5f)))
-//            .setY(CramSiblingConstraint(Padding(5f)))
-//            .setWidth(PixelConstraint(75f))
-//            .setHeight(PixelConstraint(15f))
-//            .setColor(ConstantColorConstraint(Color.GREEN))
-//            .finish()
-//
-//        val blocky3 = UIBlock()
-//            .getConstraints()
-//            .setX(CramSiblingConstraint(Padding(5f)))
-//            .setY(CramSiblingConstraint(Padding(5f)))
-//            .setWidth(PixelConstraint(15f))
-//            .setHeight(PixelConstraint(15f))
-//            .setColor(RainbowColorConstraint())
-//            .finish()
-
         val cont = UIContainer()
             .getConstraints()
             .setHeight(ChildBasedSizeConstraint())
@@ -96,7 +67,6 @@ class ExampleGui : GuiScreen() {
             .setX(SiblingConstraint())
             .setY(SiblingConstraint())
             .finish()
-//        cont.addChildren(blocky, blocky2, blocky3)
 
         settings.addChild(cont)
 
@@ -106,7 +76,6 @@ class ExampleGui : GuiScreen() {
             .setY(CenterConstraint())
             .setWidth(PixelConstraint(50f))
             .setHeight(PixelConstraint(10f))
-//            .setColor(ConstantColorConstraint(Color.BLACK))
             .finish()
 
         val bigText = UIText("I'm longer than my container")
@@ -122,14 +91,30 @@ class ExampleGui : GuiScreen() {
             .setColorAnimation(Animations.IN_EXP, 3f, ConstantColorConstraint(Color.PINK))
             .begin()
 
-//        val image = UIImage("./images/logo.png", "https://avatars3.githubusercontent.com/u/10331479?s=460&v=4")
-//        image.getConstraints()
-//                .setX(CenterConstraint())
-//                .setY(PixelConstraint(3f))
-//                .setWidth(RelativeConstraint(0.2f))
-//                .setHeight(AspectConstraint(1f))
-//
-//        Window.addChild(image);
+        val imageComponent = UIImage.ofURL(URL("https://avatars3.githubusercontent.com/u/10331479?s=460&v=4"))
+            .setX(PixelConstraint(0f))
+            .setY(PixelConstraint(0f))
+            .setWidth(RelativeConstraint(1f))
+            .setHeight(RelativeConstraint(1f))
+
+        window.addChild(imageComponent)
+
+        val anim = imageComponent.makeAnimation()
+            .setWidthAnimation(Animations.IN_CUBIC, 1.5f, RelativeConstraint(1 / 4f))
+            .setHeightAnimation(Animations.IN_CUBIC, 1.5f, RelativeConstraint(1 / 4f))
+            .setXAnimation(Animations.OUT_QUINT, 1.5f, PixelConstraint(15f, true))
+            .setYAnimation(Animations.OUT_QUINT, 1.5f, PixelConstraint(15f, true))
+            .onComplete {
+                val newAnim = imageComponent.makeAnimation()
+                    .setColorAnimation(
+                        Animations.IN_CUBIC, 1f,
+                        ConstantColorConstraint(Color(1f, 1f, 1f, 0f))
+                    )
+
+                imageComponent.animateTo(newAnim)
+            }
+
+        imageComponent.animateTo(anim)
     }
 
 
