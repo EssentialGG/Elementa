@@ -12,13 +12,10 @@ import java.io.File
 import java.net.URL
 import javax.imageio.ImageIO
 
-class UIImage @JvmOverloads constructor(name: String, url: String? = null) : UIComponent() {
-    private val image: BufferedImage
-    private val texture: DynamicTexture
+class UIImage(image: BufferedImage) : UIComponent() {
+    private val texture: DynamicTexture = DynamicTexture(image)
 
     init {
-        image = getBufferedImage(name, url)
-        texture = DynamicTexture(image)
         super.getConstraints().setWidth(PixelConstraint(image.width.toFloat()))
         super.getConstraints().setHeight(PixelConstraint(image.height.toFloat()))
     }
@@ -52,20 +49,17 @@ class UIImage @JvmOverloads constructor(name: String, url: String? = null) : UIC
         super.draw()
     }
 
-    private fun getBufferedImage(name: String, url: String? = null): BufferedImage {
-        // TODO: fix this
-        val resourceFile = File(name)
-
-        if (resourceFile.exists()) {
-            return ImageIO.read(resourceFile)
+    companion object {
+        fun ofFile(file: File): UIImage {
+            return UIImage(ImageIO.read(file))
         }
 
-        val image = ImageIO.read(URL(url))
-        resourceFile.parentFile.mkdirs()
-        resourceFile.createNewFile()
-        ImageIO.write(image, "png", resourceFile)
-        return image
+        fun ofURL(url: URL): UIImage {
+            return UIImage(ImageIO.read(url))
+        }
+
+        fun ofResource(path: String): UIImage {
+            return UIImage(ImageIO.read(this::class.java.getResourceAsStream(path)))
+        }
     }
-
-
 }

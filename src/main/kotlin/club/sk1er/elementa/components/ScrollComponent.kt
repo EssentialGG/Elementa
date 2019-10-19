@@ -3,7 +3,6 @@ package club.sk1er.elementa.components
 import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.constraints.PixelConstraint
 import club.sk1er.elementa.constraints.RelativeConstraint
-import club.sk1er.elementa.dsl.childOf
 import club.sk1er.elementa.dsl.constrain
 import club.sk1er.elementa.effects.ScissorEffect
 
@@ -27,7 +26,7 @@ class ScrollComponent : UIComponent() {
     init {
         this.enableEffects(ScissorEffect())
 
-        actualHolder childOf this
+        actualHolder.parent = this
 
         onScroll { delta ->
             // TODO: Math to make sure I can't scroll past content.

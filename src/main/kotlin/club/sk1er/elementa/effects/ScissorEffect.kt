@@ -10,16 +10,17 @@ import org.lwjgl.opengl.GL11.*
  *
  * By proxy, this restricts all of said component's children drawing to inside of the same bounds.
  */
-class ScissorEffect : Effect {
+class ScissorEffect @JvmOverloads constructor(private val customBoundingBox: UIComponent? = null) : Effect {
     override fun beforeDraw(component: UIComponent) {
-        val res = Window.of(component).scaledResolution
+        val boundingBox = customBoundingBox ?: component
+        val res = Window.of(boundingBox).scaledResolution
 
         glEnable(GL_SCISSOR_TEST)
         glScissor(
-            component.getLeft().toInt() * res.scaleFactor,
-            (res.scaledHeight * res.scaleFactor) - (component.getBottom().toInt() * res.scaleFactor),
-            component.getWidth().toInt() * res.scaleFactor,
-            component.getHeight().toInt() * res.scaleFactor
+            boundingBox.getLeft().toInt() * res.scaleFactor,
+            (res.scaledHeight * res.scaleFactor) - (boundingBox.getBottom().toInt() * res.scaleFactor),
+            boundingBox.getWidth().toInt() * res.scaleFactor,
+            boundingBox.getHeight().toInt() * res.scaleFactor
         )
     }
 
