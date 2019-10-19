@@ -12,15 +12,21 @@ import java.io.File
 import java.net.URL
 import javax.imageio.ImageIO
 
-class UIImage(image: BufferedImage) : UIComponent() {
-    private val texture: DynamicTexture = DynamicTexture(image)
+class UIImage(private var image: BufferedImage?) : UIComponent() {
+    private lateinit var texture: DynamicTexture
 
     init {
-        super.getConstraints().setWidth(PixelConstraint(image.width.toFloat()))
-        super.getConstraints().setHeight(PixelConstraint(image.height.toFloat()))
+        val img = image ?: throw IllegalArgumentException("image must not be null.")
+        super.getConstraints().setWidth(PixelConstraint(img.width.toFloat()))
+        super.getConstraints().setHeight(PixelConstraint(img.height.toFloat()))
     }
 
     override fun draw() {
+        if (image != null) {
+            texture = DynamicTexture(image)
+            image = null
+        }
+
         val x = this.getLeft().toDouble()
         val y = this.getTop().toDouble()
         val width = this.getWidth().toDouble()
