@@ -4,11 +4,11 @@ import club.sk1er.elementa.constraints.*
 import java.awt.Color
 
 open class UIConstraints(protected val component: UIComponent) {
-    var x: XConstraint = PixelConstraint(0f)
-    var y: YConstraint = PixelConstraint(0f)
-    var width: WidthConstraint = PixelConstraint(0f)
-    var height: HeightConstraint = PixelConstraint(0f)
-    var color: ColorConstraint = ConstantColorConstraint(Color.WHITE)
+    internal var x: XConstraint = PixelConstraint(0f)
+    internal var y: YConstraint = PixelConstraint(0f)
+    internal var width: WidthConstraint = PixelConstraint(0f)
+    internal var height: HeightConstraint = PixelConstraint(0f)
+    internal var color: ColorConstraint = ConstantColorConstraint(Color.WHITE)
 
     open fun getX(): Float {
         return x.getXPosition(component, component.parent)
