@@ -256,6 +256,7 @@ class SettingsGui : GuiScreen() {
 
     private class ToggleSetting(name: String, description: String) : Setting() {
         var toggled = true
+        private var selected = false
 
         val drawBox = UIBlock()
         val title = UIText(name)
@@ -293,6 +294,8 @@ class SettingsGui : GuiScreen() {
                 width = 50.pixels()
                 height = 20.pixels()
                 color = Color(0, 0, 0, 0).asConstraint()
+            }.onClick {
+                toggle()
             } childOf drawBox
 
             toggleSlider.constrain {
@@ -315,6 +318,7 @@ class SettingsGui : GuiScreen() {
         }
 
         override fun animateIn() {
+            selected = true
             drawBox.constrain {
                 y = 10.pixels()
             }
@@ -326,6 +330,7 @@ class SettingsGui : GuiScreen() {
         }
 
         override fun animateOut() {
+            selected = false
             drawBox.constrain {
                 y = 0.pixels()
             }
@@ -348,10 +353,19 @@ class SettingsGui : GuiScreen() {
         }
 
         fun toggle() {
+            if (!selected) return
             if (toggled) {
-
+                toggled = false
+                toggleSlider.animate {
+                    setXAnimation(Animations.OUT_EXP, 0.5f, 0.pixels(true))
+                    setColorAnimation(Animations.OUT_EXP, 0.5f, Color(120, 0, 0).asConstraint())
+                }
             } else {
-
+                toggled = true
+                toggleSlider.animate {
+                    setXAnimation(Animations.OUT_EXP, 0.5f, 0.pixels())
+                    setColorAnimation(Animations.OUT_EXP, 0.5f, Color(0, 120, 0).asConstraint())
+                }
             }
         }
     }
