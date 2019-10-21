@@ -13,7 +13,6 @@ import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiScreen
 import org.lwjgl.input.Mouse
 import java.awt.Color
-import java.awt.SystemColor.text
 
 class SettingsGui : GuiScreen() {
     private val window = Window()
@@ -24,7 +23,7 @@ class SettingsGui : GuiScreen() {
             width = RelativeConstraint(1 / 3f)
             height = RelativeConstraint(1f)
             color = Color(0, 0, 0, 150).asConstraint()
-        } childOf window
+    } childOf window
 
         val categoryTitle = UIContainer()
             .constrain {
@@ -69,11 +68,13 @@ class SettingsGui : GuiScreen() {
                 .addSetting(ToggleSetting("General 9", "This toggles something"))
                 .childOf(categoryHolder)
         Category("Position", settingsBox)
+                .addSetting(Divider("Position Settings"))
                 .addSetting(ToggleSetting("Position 1", "This toggles something"))
                 .addSetting(ToggleSetting("Position 2", "This toggles something"))
                 .addSetting(ToggleSetting("Position 3", "This toggles something"))
                 .childOf(categoryHolder)
         Category("Test", settingsBox)
+                .addSetting(Divider("Test Settings"))
                 .addSetting(ToggleSetting("Test 1", "This toggles something"))
                 .addSetting(ToggleSetting("Test 2", "This toggles something"))
                 .addSetting(ToggleSetting("Test 3", "This toggles something"))
@@ -294,14 +295,20 @@ class SettingsGui : GuiScreen() {
                 color = Color(0, 0, 0, 0).asConstraint()
             } childOf drawBox
 
+            toggleSlider.constrain {
+                width = RelativeConstraint(0.5f)
+                height = RelativeConstraint(1f)
+                color = Color(0, 120, 0, 0).asConstraint()
+            } childOf toggleBox
+
             toggleTextOn.constrain {
-                x = 5.pixels()
+                x = 6.pixels()
                 y = CenterConstraint()
                 color = Color(255, 255, 255, 10).asConstraint()
             } childOf toggleBox
 
             toggleTextOff.constrain {
-                x = 5.pixels(true)
+                x = 3.pixels(true)
                 y = CenterConstraint()
                 color = Color(255, 255, 255, 10).asConstraint()
             } childOf toggleBox
@@ -315,7 +322,7 @@ class SettingsGui : GuiScreen() {
                 setYAnimation(Animations.OUT_EXP, 0.5f, 0.pixels())
                 setColorAnimation(Animations.OUT_EXP, 0.5f, Color(0, 0, 0, 100).asConstraint())
             }
-            animateAlpha(255, title, text, toggleBox, toggleTextOn, toggleTextOff)
+            animateAlpha(255, title, text, toggleBox, toggleTextOn, toggleTextOff, toggleSlider)
         }
 
         override fun animateOut() {
@@ -326,7 +333,7 @@ class SettingsGui : GuiScreen() {
                 setYAnimation(Animations.OUT_EXP, 0.5f, (-10).pixels())
                 setColorAnimation(Animations.OUT_EXP, 0.5f, Color(0, 0, 0, 0).asConstraint())
             }
-            animateAlpha(0, title, text, toggleBox, toggleTextOn, toggleTextOff)
+            animateAlpha(0, title, text, toggleBox, toggleTextOn, toggleTextOff, toggleSlider)
         }
 
         private fun animateAlpha(alpha: Int, vararg components: UIComponent) {
@@ -355,9 +362,10 @@ class SettingsGui : GuiScreen() {
         init {
             title.constrain {
                 x = CenterConstraint()
-                y = CenterConstraint()
+                y = CenterConstraint(10f)
                 width = PixelConstraint(Minecraft.getMinecraft().fontRendererObj.getStringWidth(name) * 2f)
                 height = 18.pixels()
+                color = Color(255, 255, 255, 10).asConstraint()
             } childOf this
         }
 
