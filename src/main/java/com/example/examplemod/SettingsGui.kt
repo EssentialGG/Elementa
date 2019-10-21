@@ -23,29 +23,26 @@ class SettingsGui : GuiScreen() {
             width = RelativeConstraint(1 / 3f)
             height = RelativeConstraint(1f)
             color = Color(0, 0, 0, 150).asConstraint()
-    } childOf window
+        } childOf window
 
-        val categoryTitle = UIContainer()
-            .constrain {
-                y = 10.pixels()
-                x = CenterConstraint()
-                width = 0.pixels()
-                height = 36.pixels()
-            }.enableEffects(ScissorEffect()) childOf categories
+        val categoryTitle = UIContainer().constrain {
+            y = 10.pixels()
+            x = CenterConstraint()
+            width = 0.pixels()
+            height = 36.pixels()
+        }.enableEffects(ScissorEffect()) childOf categories
 
-        UIText("Settings")
-            .constrain {
-                width = MaxSizeConstraint(PixelConstraint("Settings".width() * 4f), RelativeConstraint(1f).constrainTo(categories))
-                height = 36.pixels()
-            } childOf categoryTitle
+        UIText("Settings").constrain {
+            width = MaxSizeConstraint(PixelConstraint("Settings".width() * 4f), RelativeConstraint(1f).constrainTo(categories))
+            height = 36.pixels()
+        } childOf categoryTitle
 
-        val categoryHolder = UIBlock()
-            .constrain {
-                x = CenterConstraint()
-                y = 50.pixels()
-                width = RelativeConstraint(0.9f)
-                height = ChildBasedSizeConstraint()
-            } childOf categories
+        val categoryHolder = UIBlock().constrain {
+            x = CenterConstraint()
+            y = 50.pixels()
+            width = RelativeConstraint(0.9f)
+            height = ChildBasedSizeConstraint()
+        } childOf categories
 
         val settingsBox = UIBlock().constrain {
             x = PixelConstraint(-window.getWidth() * 2 / 3, true)
@@ -98,18 +95,13 @@ class SettingsGui : GuiScreen() {
         // ANIMATIONS //
         ////////////////
 
-        settingsBox.animate {
-            setXAnimation(Animations.OUT_EXP, 0.5f, 0.pixels(true))
-        }
+        settingsBox.animate { setXAnimation(Animations.OUT_EXP, 0.5f, 0.pixels(true)) }
 
         categories.animate {
             setXAnimation(Animations.OUT_EXP, 0.5f, 0.pixels())
 
             onComplete {
-                categoryTitle.animate {
-                    setWidthAnimation(Animations.OUT_EXP, 0.5f, ChildBasedSizeConstraint())
-                }
-
+                categoryTitle.animate { setWidthAnimation(Animations.OUT_EXP, 0.5f, ChildBasedSizeConstraint()) }
                 categoryHolder.children.forEachIndexed { index, uiComponent ->
                     uiComponent.animate {
                         setWidthAnimation(Animations.OUT_QUAD, 0.5f, RelativeConstraint(1f), delay = 0.1f * index)
@@ -134,34 +126,29 @@ class SettingsGui : GuiScreen() {
 
     override fun handleMouseInput() {
         super.handleMouseInput()
-
         val delta = Mouse.getEventDWheel().coerceIn(-1, 1)
-
         window.scroll(delta)
     }
 
     class Category(string: String, settingsBox: UIComponent) : UIContainer() {
         private val settings = mutableListOf<Setting>()
-        private var selected = false
+        var selected = false
 
-        private val text = UIText(string)
-            .constrain {
-                width = PixelConstraint(Minecraft.getMinecraft().fontRendererObj.getStringWidth(string) * 2f)
-                height = 18.pixels()
-            }
+        private val text = UIText(string).constrain {
+            width = PixelConstraint(Minecraft.getMinecraft().fontRendererObj.getStringWidth(string) * 2f)
+            height = 18.pixels()
+        } childOf this
 
-        private val selBlock = UIBlock()
-                .constrain {
-                    color = Color(255, 255, 255, 255).asConstraint()
-                    y = SiblingConstraint()
-                    height = 2.pixels()
-                }
+        private val selBlock = UIBlock().constrain {
+            color = Color(255, 255, 255, 255).asConstraint()
+            y = SiblingConstraint()
+            height = 2.pixels()
+        } childOf this
 
-        private val settingsBlock = SettingsBlock()
-                .constrain {
-                    width = RelativeConstraint(1f)
-                    height = RelativeConstraint(1f)
-                } childOf settingsBox
+        private val settingsBlock = SettingsBlock().constrain {
+            width = RelativeConstraint(1f)
+            height = RelativeConstraint(1f)
+        } childOf settingsBox
 
         init {
             setY(SiblingConstraint())
@@ -171,15 +158,11 @@ class SettingsGui : GuiScreen() {
             enableEffects(ScissorEffect())
 
             onHover {
-                text.animate {
-                    setXAnimation(Animations.OUT_EXP, 0.5f, 10.pixels())
-                }
+                text.animate { setXAnimation(Animations.OUT_EXP, 0.5f, 10.pixels()) }
             }
 
             onUnHover {
-                text.animate {
-                    setXAnimation(Animations.OUT_BOUNCE, 0.5f, 0.pixels())
-                }
+                text.animate { setXAnimation(Animations.OUT_BOUNCE, 0.5f, 0.pixels()) }
             }
 
             onClick {
@@ -189,30 +172,18 @@ class SettingsGui : GuiScreen() {
                     else if (it != this && it.selected) it.deselect()
                 }
             }
-
-            addChildren(text, selBlock)
         }
 
         fun select() = apply {
             selected = true
-            selBlock.animate {
-                setWidthAnimation(Animations.OUT_EXP, 0.5f, RelativeConstraint(1f))
-            }
-
-            settings.forEach {
-                it.animateIn()
-            }
+            selBlock.animate { setWidthAnimation(Animations.OUT_EXP, 0.5f, RelativeConstraint(1f)) }
+            settings.forEach { it.animateIn() }
         }
 
         fun deselect() = apply {
             selected = false
-            selBlock.animate {
-                setWidthAnimation(Animations.OUT_EXP, 0.5f, 0.pixels())
-            }
-
-            settings.forEach {
-                it.animateOut()
-            }
+            selBlock.animate { setWidthAnimation(Animations.OUT_EXP, 0.5f, 0.pixels()) }
+            settings.forEach { it.animateOut() }
         }
 
         fun addSetting(setting: UIComponent) = apply {
@@ -226,23 +197,21 @@ class SettingsGui : GuiScreen() {
 
         init {
             onScroll {
-                if (it == 0) return@onScroll
+                if (it == 0 && !(children.first() as Setting).selected) return@onScroll
                 scrolled += it * 50
                 if (scrolled <= 0) {
-                    children.first().animate {
-                        setYAnimation(Animations.OUT_EXP, 0.5f, scrolled.pixels())
-                    }
+                    children.first().animate { setYAnimation(Animations.OUT_EXP, 0.5f, scrolled.pixels()) }
                 } else {
                     scrolled = 0
-                    children.first().animate {
-                        setYAnimation(Animations.OUT_ELASTIC, 0.5f, 0.pixels())
-                    }
+                    children.first().animate { setYAnimation(Animations.OUT_ELASTIC, 0.5f, 0.pixels()) }
                 }
             }
         }
     }
 
     private abstract class Setting() : UIContainer() {
+        var selected = false
+
         init {
             setX(CenterConstraint())
             setY(CramSiblingConstraint())
@@ -250,13 +219,12 @@ class SettingsGui : GuiScreen() {
             setHeight(40.pixels())
         }
 
-        abstract fun animateOut()
-        abstract fun animateIn()
+        open fun animateIn() { selected = true }
+        open fun animateOut() { selected = false }
     }
 
     private class ToggleSetting(name: String, description: String) : Setting() {
         var toggled = true
-        private var selected = false
 
         val drawBox = UIBlock()
         val title = UIText(name)
@@ -318,10 +286,8 @@ class SettingsGui : GuiScreen() {
         }
 
         override fun animateIn() {
-            selected = true
-            drawBox.constrain {
-                y = 10.pixels()
-            }
+            super.animateIn()
+            drawBox.constrain { y = 10.pixels() }
             drawBox.animate {
                 setYAnimation(Animations.OUT_EXP, 0.5f, 0.pixels())
                 setColorAnimation(Animations.OUT_EXP, 0.5f, Color(0, 0, 0, 100).asConstraint())
@@ -330,10 +296,8 @@ class SettingsGui : GuiScreen() {
         }
 
         override fun animateOut() {
-            selected = false
-            drawBox.constrain {
-                y = 0.pixels()
-            }
+            super.animateOut()
+            drawBox.constrain { y = 0.pixels() }
             drawBox.animate {
                 setYAnimation(Animations.OUT_EXP, 0.5f, (-10).pixels())
                 setColorAnimation(Animations.OUT_EXP, 0.5f, Color(0, 0, 0, 0).asConstraint())
@@ -371,22 +335,16 @@ class SettingsGui : GuiScreen() {
     }
 
     private class Divider(name: String) : Setting() {
-        val title = UIText(name)
-
-        init {
-            title.constrain {
-                x = CenterConstraint()
-                y = CenterConstraint(10f)
-                width = PixelConstraint(Minecraft.getMinecraft().fontRendererObj.getStringWidth(name) * 2f)
-                height = 18.pixels()
-                color = Color(255, 255, 255, 10).asConstraint()
-            } childOf this
-        }
+        val title = UIText(name).constrain {
+            x = CenterConstraint()
+            y = CenterConstraint(10f)
+            width = PixelConstraint(Minecraft.getMinecraft().fontRendererObj.getStringWidth(name) * 2f)
+            height = 18.pixels()
+            color = Color(255, 255, 255, 10).asConstraint()
+        } childOf this
 
         override fun animateIn() {
-            title.constrain {
-                y = CenterConstraint(10f)
-            }
+            title.constrain { y = CenterConstraint(10f) }
             title.animate {
                 setYAnimation(Animations.OUT_EXP, 0.5f, CenterConstraint())
                 setColorAnimation(Animations.OUT_EXP, 0.5f, Color(255, 255, 255, 255).asConstraint())
@@ -394,9 +352,7 @@ class SettingsGui : GuiScreen() {
         }
 
         override fun animateOut() {
-            title.constrain {
-                y = CenterConstraint()
-            }
+            title.constrain { y = CenterConstraint() }
             title.animate {
                 setYAnimation(Animations.OUT_EXP, 0.5f, CenterConstraint(-10f))
                 setColorAnimation(Animations.OUT_EXP, 0.5f, Color(255, 255, 255, 10).asConstraint())
