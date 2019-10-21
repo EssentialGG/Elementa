@@ -1,6 +1,7 @@
 package club.sk1er.elementa.effects
 
 import club.sk1er.elementa.UIComponent
+import club.sk1er.elementa.components.UIText
 import club.sk1er.elementa.components.Window
 import org.lwjgl.opengl.GL11.*
 
@@ -13,7 +14,7 @@ import org.lwjgl.opengl.GL11.*
 class ScissorEffect @JvmOverloads constructor(private val customBoundingBox: UIComponent? = null) : Effect {
     override fun beforeDraw(component: UIComponent) {
         val boundingBox = customBoundingBox ?: component
-        val res = Window.of(boundingBox).scaledResolution
+        val res = Window.of(component).scaledResolution
 
         glEnable(GL_SCISSOR_TEST)
         glScissor(
@@ -22,6 +23,16 @@ class ScissorEffect @JvmOverloads constructor(private val customBoundingBox: UIC
             boundingBox.getWidth().toInt() * res.scaleFactor,
             boundingBox.getHeight().toInt() * res.scaleFactor
         )
+
+
+//        if (component is UIText) {
+//            print("SX: " + boundingBox.getLeft().toInt())
+//            print(" SY: " + (res.scaledHeight - boundingBox.getBottom().toInt()))
+//            print(" SW: " + boundingBox.getWidth().toInt())
+//            print(" SH: " + boundingBox.getHeight().toInt())
+//            print(" RES: " + res.scaledHeight)
+//            print(" BOT: " + boundingBox.getBottom().toInt() + "\n")
+//        }
     }
 
     override fun afterDraw(component: UIComponent) {

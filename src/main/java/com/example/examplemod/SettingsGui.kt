@@ -20,8 +20,8 @@ class SettingsGui : GuiScreen() {
     init {
         val categories = UIBlock().constrain {
             x = PixelConstraint(-window.getWidth() / 3)
-            width = RelativeConstraint.ONE_THIRD
-            height = RelativeConstraint.FULL
+            width = RelativeConstraint(1 / 3f)
+            height = RelativeConstraint(1f)
             color = Color(0, 0, 0, 150).asConstraint()
         }
 
@@ -31,16 +31,16 @@ class SettingsGui : GuiScreen() {
                 y = 10.pixels()
                 width = 0.pixels()
                 height = 36.pixels()
-            }
-            .childOf(categories)
-            .enableEffects(ScissorEffect())
+                color = Color(255, 0, 0, 255).asConstraint()
+            }.childOf(categories)
 
         UIText("Settings")
             .constrain {
-                width = PixelConstraint("Settings".width() * 4f)
+                x = CenterConstraint()
+                y = 10.pixels()
+                width = MaxSizeConstraint(PixelConstraint("Settings".width() * 4f), RelativeConstraint(1f))
                 height = 36.pixels()
-            }
-            .childOf(categoryTitle)
+            }.enableEffects(ScissorEffect(categoryTitle)) childOf categories
 
         val categoryHolder = UIBlock()
             .constrain {
@@ -54,8 +54,8 @@ class SettingsGui : GuiScreen() {
 
         val settingsBox = UIBlock().constrain {
             x = PixelConstraint(-window.getWidth() * 2 / 3, true)
-            width = RelativeConstraint.TWO_THIRDS
-            height = RelativeConstraint.FULL
+            width = RelativeConstraint(2 / 3f)
+            height = RelativeConstraint(1f)
             color = Color(0, 0, 0, 100).asConstraint()
         } childOf window
 
@@ -108,7 +108,7 @@ class SettingsGui : GuiScreen() {
 
             onComplete {
                 categoryTitle.animate {
-                    setWidthAnimation(Animations.OUT_EXP, 0.5f, ChildBasedSizeConstraint(2f))
+                    setWidthAnimation(Animations.OUT_EXP, 0.5f, RelativeConstraint(1f))
                 }
 
                 categoryHolder.children.forEachIndexed { index, uiComponent ->
@@ -126,6 +126,7 @@ class SettingsGui : GuiScreen() {
     override fun mouseClicked(mouseX: Int, mouseY: Int, mouseButton: Int) {
         super.mouseClicked(mouseX, mouseY, mouseButton)
         window.click(mouseButton)
+        println("X: $mouseX, Y: $mouseY")
     }
 
     override fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
@@ -147,27 +148,28 @@ class SettingsGui : GuiScreen() {
 
         private val text = UIText(string)
             .constrain {
-                setWidth(PixelConstraint(Minecraft.getMinecraft().fontRendererObj.getStringWidth(string) * 2f))
-                setHeight(18.pixels())
+                width = PixelConstraint(Minecraft.getMinecraft().fontRendererObj.getStringWidth(string) * 2f)
+                height = 18.pixels()
             }
 
         private val selBlock = UIBlock()
                 .constrain {
-                    setColor(Color(255, 255, 255, 255).asConstraint())
-                    setY(SiblingConstraint())
-                    setHeight(2.pixels())
+                    color = Color(255, 255, 255, 255).asConstraint()
+                    y = SiblingConstraint()
+                    height = 2.pixels()
                 }
 
         private val settingsBlock = SettingsBlock()
                 .constrain {
-                    setWidth(RelativeConstraint(1f))
-                    setHeight(RelativeConstraint(1f))
+                    width = RelativeConstraint(1f)
+                    height = RelativeConstraint(1f)
                 } childOf settingsBox
 
         init {
             setY(SiblingConstraint())
             setX((-10).pixels())
             setHeight(ChildBasedSizeConstraint() + 8.pixels())
+            setColor(Color(255, 0, 0, 255).asConstraint())
 
             enableEffects(ScissorEffect())
 
@@ -202,7 +204,7 @@ class SettingsGui : GuiScreen() {
 
             settings.forEach {
                 it.drawBox.constrain {
-                    setY(10.pixels())
+                    y = 10.pixels()
                 }
                 it.drawBox.animate {
                     setYAnimation(Animations.OUT_EXP, 0.5f, 0.pixels())
@@ -225,7 +227,7 @@ class SettingsGui : GuiScreen() {
 
             settings.forEach {
                 it.drawBox.constrain {
-                    setY(0.pixels())
+                    y = 0.pixels()
                 }
                 it.drawBox.animate {
                     setYAnimation(Animations.OUT_EXP, 0.5f, (-10).pixels())
@@ -280,25 +282,25 @@ class SettingsGui : GuiScreen() {
             setHeight(100.pixels())
 
             drawBox.constrain {
-                setHeight(RelativeConstraint(0.9f))
-                setWidth(RelativeConstraint(0.9f))
-                setX(CenterConstraint())
-                setY(CenterConstraint())
-                setColor(Color(0, 0, 0, 0).asConstraint())
+                height = RelativeConstraint(0.9f)
+                width = RelativeConstraint(0.9f)
+                x = CenterConstraint()
+                y = CenterConstraint()
+                color = Color(0, 0, 0, 0).asConstraint()
             }.enableEffects(ScissorEffect())
 
             title.constrain {
-                setX(3.pixels())
-                setY(3.pixels())
-                setWidth(PixelConstraint(Minecraft.getMinecraft().fontRendererObj.getStringWidth(name) * 2f))
-                setHeight(18.pixels())
-                setColor(Color(0, 0, 0, 10).asConstraint())
+                x = 3.pixels()
+                y = 3.pixels()
+                width = PixelConstraint(Minecraft.getMinecraft().fontRendererObj.getStringWidth(name) * 2f)
+                height = 18.pixels()
+                color = Color(0, 0, 0, 10).asConstraint()
             } childOf drawBox
 
             text.constrain {
-                setX(3.pixels())
-                setY(25.pixels())
-                setColor(Color(0, 0, 0, 10).asConstraint())
+                x = 3.pixels()
+                y = 25.pixels()
+                color = Color(0, 0, 0, 10).asConstraint()
             } childOf drawBox
 
             addChild(drawBox)
@@ -315,7 +317,7 @@ class SettingsGui : GuiScreen() {
 
         init {
             toggleBox.constrain {
-                
+
             }
 
 

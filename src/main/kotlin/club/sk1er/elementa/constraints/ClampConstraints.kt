@@ -12,6 +12,12 @@ class MaxSizeConstraint(
     override var cachedValue = 0f
     override var recalculate = true
 
+    override fun animationFrame() {
+        super.animationFrame()
+        constraint.animationFrame()
+        maxConstraint.animationFrame()
+    }
+
     override fun getWidthImpl(component: UIComponent, parent: UIComponent): Float {
         return constraint.getWidth(component, parent).coerceAtMost(maxConstraint.getWidth(component, parent))
     }
@@ -31,6 +37,12 @@ class MinSizeConstraint(
 ) : SizeConstraint {
     override var cachedValue = 0f
     override var recalculate = true
+
+    override fun animationFrame() {
+        super.animationFrame()
+        constraint.animationFrame()
+        minConstraint.animationFrame()
+    }
 
     override fun getWidthImpl(component: UIComponent, parent: UIComponent): Float {
         return constraint.getWidth(component, parent).coerceAtLeast(minConstraint.getWidth(component, parent))
