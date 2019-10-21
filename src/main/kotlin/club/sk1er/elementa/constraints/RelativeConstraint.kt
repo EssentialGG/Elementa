@@ -10,11 +10,17 @@ class RelativeConstraint(private val value: Float) : GeneralConstraint {
     override var cachedValue = 0f
     override var recalculate = true
 
+    var constrainer: UIComponent? = null
+
+    fun constrainTo(component: UIComponent) = apply { constrainer = component }
+
     override fun getXValue(component: UIComponent, parent: UIComponent): Float {
-        return parent.getWidth() * value
+        return if (constrainer != null) constrainer!!.getWidth() * value
+        else parent.getWidth() * value
     }
 
     override fun getYValue(component: UIComponent, parent: UIComponent): Float {
-        return parent.getHeight() * value
+        return if (constrainer != null) constrainer!!.getHeight() * value
+        else parent.getHeight() * value
     }
 }

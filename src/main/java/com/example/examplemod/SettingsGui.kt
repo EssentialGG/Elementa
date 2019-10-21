@@ -23,24 +23,21 @@ class SettingsGui : GuiScreen() {
             width = RelativeConstraint(1 / 3f)
             height = RelativeConstraint(1f)
             color = Color(0, 0, 0, 150).asConstraint()
-        }
+        } childOf window
 
-        val categoryTitle = UIBlock()
+        val categoryTitle = UIContainer()
             .constrain {
-                x = CenterConstraint()
                 y = 10.pixels()
+                x = CenterConstraint()
                 width = 0.pixels()
                 height = 36.pixels()
-                color = Color(255, 0, 0, 255).asConstraint()
-            }.childOf(categories)
+            }.enableEffects(ScissorEffect()) childOf categories
 
         UIText("Settings")
             .constrain {
-                x = CenterConstraint()
-                y = 10.pixels()
-                width = MaxSizeConstraint(PixelConstraint("Settings".width() * 4f), RelativeConstraint(1f))
+                width = MaxSizeConstraint(PixelConstraint("Settings".width() * 4f), RelativeConstraint(1f).constrainTo(categories))
                 height = 36.pixels()
-            }.enableEffects(ScissorEffect(categoryTitle)) childOf categories
+            } childOf categoryTitle
 
         val categoryHolder = UIBlock()
             .constrain {
@@ -49,8 +46,6 @@ class SettingsGui : GuiScreen() {
                 width = RelativeConstraint(0.9f)
                 height = ChildBasedSizeConstraint()
             } childOf categories
-
-        window.addChild(categories)
 
         val settingsBox = UIBlock().constrain {
             x = PixelConstraint(-window.getWidth() * 2 / 3, true)
@@ -108,7 +103,7 @@ class SettingsGui : GuiScreen() {
 
             onComplete {
                 categoryTitle.animate {
-                    setWidthAnimation(Animations.OUT_EXP, 0.5f, RelativeConstraint(1f))
+                    setWidthAnimation(Animations.OUT_EXP, 0.5f, ChildBasedSizeConstraint())
                 }
 
                 categoryHolder.children.forEachIndexed { index, uiComponent ->
@@ -126,7 +121,6 @@ class SettingsGui : GuiScreen() {
     override fun mouseClicked(mouseX: Int, mouseY: Int, mouseButton: Int) {
         super.mouseClicked(mouseX, mouseY, mouseButton)
         window.click(mouseButton)
-        println("X: $mouseX, Y: $mouseY")
     }
 
     override fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
@@ -142,7 +136,7 @@ class SettingsGui : GuiScreen() {
         window.scroll(delta)
     }
 
-    class Category(string: String, settingsBox: UIComponent) : UIBlock() {
+    class Category(string: String, settingsBox: UIComponent) : UIContainer() {
         private val settings = mutableListOf<Setting>()
         private var selected = false
 
@@ -169,7 +163,6 @@ class SettingsGui : GuiScreen() {
             setY(SiblingConstraint())
             setX((-10).pixels())
             setHeight(ChildBasedSizeConstraint() + 8.pixels())
-            setColor(Color(255, 0, 0, 255).asConstraint())
 
             enableEffects(ScissorEffect())
 
@@ -255,7 +248,6 @@ class SettingsGui : GuiScreen() {
             onScroll {
                 if (it == 0) return@onScroll
                 scrolled += it * 50
-                println(scrolled)
                 if (scrolled <= 0) {
                     children.first().animate {
                         setYAnimation(Animations.OUT_EXP, 0.5f, scrolled.pixels())

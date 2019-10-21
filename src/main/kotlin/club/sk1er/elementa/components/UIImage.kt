@@ -12,7 +12,7 @@ import java.io.File
 import java.net.URL
 import javax.imageio.ImageIO
 
-class UIImage(private var image: BufferedImage?) : UIComponent() {
+open class UIImage(private var image: BufferedImage?) : UIComponent() {
     private lateinit var texture: DynamicTexture
 
     init {
