@@ -13,6 +13,7 @@ import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiScreen
 import org.lwjgl.input.Mouse
 import java.awt.Color
+import java.awt.SystemColor.text
 
 class SettingsGui : GuiScreen() {
     private val window = Window()
@@ -55,10 +56,12 @@ class SettingsGui : GuiScreen() {
         } childOf window
 
         Category("General", settingsBox)
-        .addSetting(ToggleSetting("General 1", "This toggles something"))
+                .addSetting(Divider("General Settings"))
+                .addSetting(ToggleSetting("General 1", "This toggles something"))
                 .addSetting(ToggleSetting("General 2", "This toggles something"))
                 .addSetting(ToggleSetting("General 3", "This toggles something"))
                 .addSetting(ToggleSetting("General 4", "This toggles something"))
+                .addSetting(Divider("Category"))
                 .addSetting(ToggleSetting("General 5", "This toggles something"))
                 .addSetting(ToggleSetting("General 6", "This toggles something"))
                 .addSetting(ToggleSetting("General 7", "This toggles something"))
@@ -196,19 +199,7 @@ class SettingsGui : GuiScreen() {
             }
 
             settings.forEach {
-                it.drawBox.constrain {
-                    y = 10.pixels()
-                }
-                it.drawBox.animate {
-                    setYAnimation(Animations.OUT_EXP, 0.5f, 0.pixels())
-                    setColorAnimation(Animations.OUT_EXP, 0.5f, Color(0, 0, 0, 100).asConstraint())
-                }
-                it.title.animate {
-                    setColorAnimation(Animations.OUT_EXP, 0.5f, Color(255, 255, 255, 255).asConstraint())
-                }
-                it.text.animate {
-                    setColorAnimation(Animations.OUT_EXP, 0.5f, Color(255, 255, 255, 255).asConstraint())
-                }
+                it.animateIn()
             }
         }
 
@@ -219,19 +210,7 @@ class SettingsGui : GuiScreen() {
             }
 
             settings.forEach {
-                it.drawBox.constrain {
-                    y = 0.pixels()
-                }
-                it.drawBox.animate {
-                    setYAnimation(Animations.OUT_EXP, 0.5f, (-10).pixels())
-                    setColorAnimation(Animations.OUT_EXP, 0.5f, Color(0, 0, 0, 0).asConstraint())
-                }
-                it.title.animate {
-                    setColorAnimation(Animations.OUT_EXP, 0.5f, Color(255, 255, 255, 10).asConstraint())
-                }
-                it.text.animate {
-                    setColorAnimation(Animations.OUT_EXP, 0.5f, Color(255, 255, 255, 10).asConstraint())
-                }
+                it.animateOut()
             }
         }
 
@@ -262,45 +241,24 @@ class SettingsGui : GuiScreen() {
         }
     }
 
-    private abstract class Setting(private val name: String, private val description: String) : UIComponent() {
-        val drawBox = UIBlock()
-        val title = UIText(name)
-        val text = UIText(description)
-
+    private abstract class Setting() : UIContainer() {
         init {
             setX(CenterConstraint())
             setY(CramSiblingConstraint())
             setWidth(RelativeConstraint(0.75f))
-            setHeight(100.pixels())
-
-            drawBox.constrain {
-                height = RelativeConstraint(0.9f)
-                width = RelativeConstraint(0.9f)
-                x = CenterConstraint()
-                y = CenterConstraint()
-                color = Color(0, 0, 0, 0).asConstraint()
-            }.enableEffects(ScissorEffect())
-
-            title.constrain {
-                x = 3.pixels()
-                y = 3.pixels()
-                width = PixelConstraint(Minecraft.getMinecraft().fontRendererObj.getStringWidth(name) * 2f)
-                height = 18.pixels()
-                color = Color(0, 0, 0, 10).asConstraint()
-            } childOf drawBox
-
-            text.constrain {
-                x = 3.pixels()
-                y = 25.pixels()
-                color = Color(0, 0, 0, 10).asConstraint()
-            } childOf drawBox
-
-            addChild(drawBox)
+            setHeight(40.pixels())
         }
+
+        abstract fun animateOut()
+        abstract fun animateIn()
     }
 
-    private class ToggleSetting(name: String, description: String) : Setting(name, description) {
+    private class ToggleSetting(name: String, description: String) : Setting() {
         var toggled = true
+
+        val drawBox = UIBlock()
+        val title = UIText(name)
+        val text = UIText(description)
 
         val toggleBox = UIBlock()
         val toggleSlider = UIBlock()
@@ -308,12 +266,78 @@ class SettingsGui : GuiScreen() {
         val toggleTextOff = UIText("OFF")
 
         init {
+            drawBox.constrain {
+                height = RelativeConstraint(0.9f)
+                width = RelativeConstraint(1f)
+                color = Color(0, 0, 0, 0).asConstraint()
+            }.enableEffects(ScissorEffect()) childOf this
+
+            title.constrain {
+                x = 3.pixels()
+                y = 3.pixels()
+                width = PixelConstraint(Minecraft.getMinecraft().fontRendererObj.getStringWidth(name) * 2f)
+                height = 18.pixels()
+                color = Color(255, 255, 255, 10).asConstraint()
+            } childOf drawBox
+
+            text.constrain {
+                x = 3.pixels()
+                y = 25.pixels()
+                color = Color(255, 255, 255, 10).asConstraint()
+            } childOf drawBox
+
             toggleBox.constrain {
+                x = 5.pixels(true)
+                y = CenterConstraint()
+                width = 50.pixels()
+                height = 20.pixels()
+                color = Color(0, 0, 0, 0).asConstraint()
+            } childOf drawBox
 
+            toggleTextOn.constrain {
+                x = 5.pixels()
+                y = CenterConstraint()
+                color = Color(255, 255, 255, 10).asConstraint()
+            } childOf toggleBox
+
+            toggleTextOff.constrain {
+                x = 5.pixels(true)
+                y = CenterConstraint()
+                color = Color(255, 255, 255, 10).asConstraint()
+            } childOf toggleBox
+        }
+
+        override fun animateIn() {
+            drawBox.constrain {
+                y = 10.pixels()
             }
+            drawBox.animate {
+                setYAnimation(Animations.OUT_EXP, 0.5f, 0.pixels())
+                setColorAnimation(Animations.OUT_EXP, 0.5f, Color(0, 0, 0, 100).asConstraint())
+            }
+            animateAlpha(255, title, text, toggleBox, toggleTextOn, toggleTextOff)
+        }
 
+        override fun animateOut() {
+            drawBox.constrain {
+                y = 0.pixels()
+            }
+            drawBox.animate {
+                setYAnimation(Animations.OUT_EXP, 0.5f, (-10).pixels())
+                setColorAnimation(Animations.OUT_EXP, 0.5f, Color(0, 0, 0, 0).asConstraint())
+            }
+            animateAlpha(0, title, text, toggleBox, toggleTextOn, toggleTextOff)
+        }
 
-            addChild(toggleBox)
+        private fun animateAlpha(alpha: Int, vararg components: UIComponent) {
+            var newAlpha = alpha
+            components.forEach {
+                if (newAlpha < 10 && it is UIText) newAlpha = 10
+                val constraint = Color(it.getColor().red, it.getColor().green, it.getColor().blue, newAlpha).asConstraint()
+                it.animate {
+                    setColorAnimation(Animations.OUT_EXP, 0.5f, constraint)
+                }
+            }
         }
 
         fun toggle() {
@@ -325,7 +349,36 @@ class SettingsGui : GuiScreen() {
         }
     }
 
-    private class Divider(name: String, description: String) : Setting(name, description) {
+    private class Divider(name: String) : Setting() {
+        val title = UIText(name)
 
+        init {
+            title.constrain {
+                x = CenterConstraint()
+                y = CenterConstraint()
+                width = PixelConstraint(Minecraft.getMinecraft().fontRendererObj.getStringWidth(name) * 2f)
+                height = 18.pixels()
+            } childOf this
+        }
+
+        override fun animateIn() {
+            title.constrain {
+                y = CenterConstraint(10f)
+            }
+            title.animate {
+                setYAnimation(Animations.OUT_EXP, 0.5f, CenterConstraint())
+                setColorAnimation(Animations.OUT_EXP, 0.5f, Color(255, 255, 255, 255).asConstraint())
+            }
+        }
+
+        override fun animateOut() {
+            title.constrain {
+                y = CenterConstraint()
+            }
+            title.animate {
+                setYAnimation(Animations.OUT_EXP, 0.5f, CenterConstraint(-10f))
+                setColorAnimation(Animations.OUT_EXP, 0.5f, Color(255, 255, 255, 10).asConstraint())
+            }
+        }
     }
 }
