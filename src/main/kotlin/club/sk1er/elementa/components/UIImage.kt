@@ -22,6 +22,8 @@ open class UIImage(private var image: BufferedImage?) : UIComponent() {
     }
 
     override fun draw() {
+        beforeDraw()
+
         if (image != null) {
             texture = DynamicTexture(image)
             image = null

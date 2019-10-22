@@ -14,6 +14,11 @@ interface Effect {
     fun beforeDraw(component: UIComponent)
 
     /**
+     * Set up all drawing, turn on shaders, etc.
+     */
+    fun beforeChildrenDraw(component: UIComponent)
+
+    /**
      * Clean up all of this feature's GL states, etc.
      */
     fun afterDraw(component: UIComponent)

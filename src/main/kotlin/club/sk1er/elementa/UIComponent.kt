@@ -156,7 +156,7 @@ abstract class UIComponent {
      * Also does some housekeeping dealing with hovering and effects.
      */
     open fun draw() {
-        beforeDraw()
+        beforeChildrenDraw()
 
         this.children.forEach(UIComponent::draw)
 
@@ -179,6 +179,10 @@ abstract class UIComponent {
 
     open fun afterDraw() {
         features.forEach { it.afterDraw(this) }
+    }
+
+    open fun beforeChildrenDraw() {
+        features.forEach { it.beforeChildrenDraw(this) }
     }
 
     open fun click(button: Int) {
