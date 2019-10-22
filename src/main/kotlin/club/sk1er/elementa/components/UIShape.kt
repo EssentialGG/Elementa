@@ -2,21 +2,21 @@ package club.sk1er.elementa.components
 
 import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.constraints.ConstantColorConstraint
-import com.sun.javafx.geom.Vec2d
 import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.client.renderer.Tessellator
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats
 import org.lwjgl.opengl.GL11
 import java.awt.Color
 
+// feeling cute, might delete this class later
 open class UIShape : UIComponent() {
-    private var vertexes = mutableListOf<Vec2d>()
+    private var vertexes = mutableListOf<List<Double>>()
 
     init {
         this.setColor(ConstantColorConstraint(Color(0, 0, 0, 0)))
     }
 
-    fun addVertex(vertex: Vec2d) {
+    fun addVertex(vertex: List<Double>) {
         vertexes.add(vertex)
     }
 
@@ -40,7 +40,7 @@ open class UIShape : UIComponent() {
 
         worldRenderer.begin(GL11.GL_TRIANGLES, DefaultVertexFormats.POSITION)
         vertexes.forEach {
-            worldRenderer.pos(it.x, it.y, 0.0).endVertex()
+            worldRenderer.pos(it[0], it[1], 0.0).endVertex()
         }
         tessellator.draw()
 
