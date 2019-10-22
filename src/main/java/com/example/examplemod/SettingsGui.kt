@@ -9,6 +9,7 @@ import club.sk1er.elementa.constraints.*
 import club.sk1er.elementa.constraints.animation.Animations
 import club.sk1er.elementa.dsl.*
 import club.sk1er.elementa.effects.ScissorEffect
+import club.sk1er.elementa.effects.StencilEffect
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiScreen
 import org.lwjgl.input.Mouse
@@ -25,12 +26,13 @@ class SettingsGui : GuiScreen() {
             color = Color(0, 0, 0, 150).asConstraint()
         } childOf window
 
-        val categoryTitle = UIContainer().constrain {
+        val categoryTitle = UIBlock().constrain {
             y = 10.pixels()
             x = CenterConstraint()
             width = 0.pixels()
             height = 36.pixels()
-        }.enableEffects(ScissorEffect()) childOf categories
+            color = Color.RED.asConstraint()
+        }.enableEffects(StencilEffect()) childOf categories
 
         UIText("Settings").constrain {
             width = MaxSizeConstraint(PixelConstraint("Settings".width() * 4f), RelativeConstraint(1f).constrainTo(categories))
@@ -101,7 +103,7 @@ class SettingsGui : GuiScreen() {
             setXAnimation(Animations.OUT_EXP, 0.5f, 0.pixels())
 
             onComplete {
-                categoryTitle.animate { setWidthAnimation(Animations.OUT_EXP, 0.5f, ChildBasedSizeConstraint()) }
+                categoryTitle.animate { setWidthAnimation(Animations.OUT_EXP, 5f, ChildBasedSizeConstraint()) }
                 categoryHolder.children.forEachIndexed { index, uiComponent ->
                     uiComponent.animate {
                         setWidthAnimation(Animations.OUT_QUAD, 0.5f, RelativeConstraint(1f), delay = 0.1f * index)
@@ -192,7 +194,7 @@ class SettingsGui : GuiScreen() {
         }
     }
 
-    private class SettingsBlock() : UIComponent() {
+    private class SettingsBlock : UIComponent() {
         var scrolled = 0
 
         init {
@@ -209,7 +211,7 @@ class SettingsGui : GuiScreen() {
         }
     }
 
-    private abstract class Setting() : UIContainer() {
+    private abstract class Setting : UIContainer() {
         var selected = false
 
         init {

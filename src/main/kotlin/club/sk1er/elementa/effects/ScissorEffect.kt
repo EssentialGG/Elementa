@@ -1,7 +1,6 @@
 package club.sk1er.elementa.effects
 
 import club.sk1er.elementa.UIComponent
-import club.sk1er.elementa.components.UIText
 import club.sk1er.elementa.components.Window
 import org.lwjgl.opengl.GL11.*
 
@@ -33,6 +32,10 @@ class ScissorEffect @JvmOverloads constructor(private val customBoundingBox: UIC
 //            print(" RES: " + res.scaledHeight)
 //            print(" BOT: " + boundingBox.getBottom().toInt() + "\n")
 //        }
+    }
+
+    override fun beforeChildrenDraw(component: UIComponent) {
+        // do nothing
     }
 
     override fun afterDraw(component: UIComponent) {

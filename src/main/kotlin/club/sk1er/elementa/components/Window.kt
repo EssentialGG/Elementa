@@ -3,6 +3,7 @@ package club.sk1er.elementa.components
 import club.sk1er.elementa.UIComponent
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.ScaledResolution
+import org.lwjgl.opengl.GL11
 
 /**
  * "Root" component. All components MUST have a Window in their hierarchy in order to do any rendering
@@ -17,6 +18,9 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
     }
 
     override fun draw() {
+        GL11.glClear(GL11.GL_STENCIL_BUFFER_BIT)
+        GL11.glClearStencil(0)
+
         scaledResolution = ScaledResolution(Minecraft.getMinecraft())
 
         if (systemTime == -1L) systemTime = System.currentTimeMillis()

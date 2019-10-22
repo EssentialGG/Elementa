@@ -14,7 +14,7 @@ interface Effect {
     fun beforeDraw(component: UIComponent)
 
     /**
-     * Set up all drawing, turn on shaders, etc.
+     * Called after this component draws but before it's children are drawn.
      */
     fun beforeChildrenDraw(component: UIComponent)
 
