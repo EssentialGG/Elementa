@@ -1,10 +1,7 @@
 package com.example.examplemod
 
 import club.sk1er.elementa.UIComponent
-import club.sk1er.elementa.components.UIBlock
-import club.sk1er.elementa.components.UIContainer
-import club.sk1er.elementa.components.UIText
-import club.sk1er.elementa.components.Window
+import club.sk1er.elementa.components.*
 import club.sk1er.elementa.constraints.*
 import club.sk1er.elementa.constraints.animation.Animations
 import club.sk1er.elementa.dsl.*
@@ -26,7 +23,7 @@ class SettingsGui : GuiScreen() {
             color = Color(0, 0, 0, 150).asConstraint()
         } childOf window
 
-        val categoryTitle = UIBlock().constrain {
+        val categoryTitle = UIShape().constrain {
             y = 10.pixels()
             x = CenterConstraint()
             width = 0.pixels()

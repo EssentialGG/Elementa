@@ -1,5 +1,6 @@
 package com.example.examplemod
 
+import club.sk1er.elementa.effects.StencilEffect
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiScreen
 import net.minecraftforge.client.ClientCommandHandler
@@ -14,6 +15,8 @@ import net.minecraftforge.fml.common.gameevent.TickEvent
 class ExampleMod {
     @EventHandler
     fun init(event: FMLInitializationEvent) {
+        StencilEffect.enableStencil()
+
         MinecraftForge.EVENT_BUS.register(this)
         ClientCommandHandler.instance.registerCommand(ExampleCommand())
     }

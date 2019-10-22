@@ -9,10 +9,7 @@ import org.lwjgl.opengl.GL11
 import java.awt.Color
 import java.util.*
 
-/**
- * Extremely simple component that simply draws a colored rectangle.
- */
-open class UIBlock : UIComponent() {
+open class UIShape : UIComponent() {
     init {
         this.getConstraints().setColor(ConstantColorConstraint(Color(0, 0, 0, 0)))
     }
@@ -48,7 +45,7 @@ open class UIBlock : UIComponent() {
 
         GlStateManager.color(color.red.toFloat() / 255f, color.green.toFloat() / 255f, color.blue.toFloat() / 255f, color.alpha.toFloat() / 255f)
 
-        worldRenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION)
+        worldRenderer.begin(GL11.GL_TRIANGLES, DefaultVertexFormats.POSITION)
         worldRenderer.pos(pos[0], pos[3], 0.0).endVertex()
         worldRenderer.pos(pos[2], pos[3], 0.0).endVertex()
         worldRenderer.pos(pos[2], pos[1], 0.0).endVertex()
