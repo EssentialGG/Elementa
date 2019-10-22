@@ -14,7 +14,7 @@ import java.util.*
  */
 open class UIBlock : UIComponent() {
     init {
-        this.getConstraints().setColor(ConstantColorConstraint(Color(0, 0, 0, 0)))
+        this.setColor(ConstantColorConstraint(Color(0, 0, 0, 0)))
     }
 
     override fun draw() {
@@ -22,21 +22,14 @@ open class UIBlock : UIComponent() {
 
         val x = this.getLeft().toDouble()
         val y = this.getTop().toDouble()
-        val width = this.getWidth().toDouble()
-        val height = this.getHeight().toDouble()
-        val color = this.getColor()
+        val x2 = this.getRight().toDouble()
+        val y2 = this.getBottom().toDouble()
 
-        if (color.alpha == 0) {
-            return super.draw()
-        }
+        val color = this.getColor()
+        if (color.alpha == 0) return super.draw()
+
 
         GL11.glPushMatrix()
-
-        val pos = mutableListOf(x, y, x + width, y + height)
-        if (pos[0] > pos[2])
-            Collections.swap(pos, 0, 2)
-        if (pos[1] > pos[3])
-            Collections.swap(pos, 1, 3)
 
         GlStateManager.enableBlend()
         GlStateManager.disableTexture2D()
@@ -49,10 +42,10 @@ open class UIBlock : UIComponent() {
         GlStateManager.color(color.red.toFloat() / 255f, color.green.toFloat() / 255f, color.blue.toFloat() / 255f, color.alpha.toFloat() / 255f)
 
         worldRenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION)
-        worldRenderer.pos(pos[0], pos[3], 0.0).endVertex()
-        worldRenderer.pos(pos[2], pos[3], 0.0).endVertex()
-        worldRenderer.pos(pos[2], pos[1], 0.0).endVertex()
-        worldRenderer.pos(pos[0], pos[1], 0.0).endVertex()
+        worldRenderer.pos(x, y2, 0.0).endVertex()
+        worldRenderer.pos(x2, y2, 0.0).endVertex()
+        worldRenderer.pos(x2, y, 0.0).endVertex()
+        worldRenderer.pos(x, y, 0.0).endVertex()
         tessellator.draw()
 
         GlStateManager.color(1f, 1f, 1f, 1f)

@@ -2,38 +2,31 @@ package club.sk1er.elementa.components
 
 import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.constraints.ConstantColorConstraint
+import com.sun.javafx.geom.Vec2d
 import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.client.renderer.Tessellator
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats
 import org.lwjgl.opengl.GL11
 import java.awt.Color
-import java.util.*
 
 open class UIShape : UIComponent() {
+    private var vertexes = mutableListOf<Vec2d>()
+
     init {
-        this.getConstraints().setColor(ConstantColorConstraint(Color(0, 0, 0, 0)))
+        this.setColor(ConstantColorConstraint(Color(0, 0, 0, 0)))
+    }
+
+    fun addVertex(vertex: Vec2d) {
+        vertexes.add(vertex)
     }
 
     override fun draw() {
         beforeDraw()
 
-        val x = this.getLeft().toDouble()
-        val y = this.getTop().toDouble()
-        val width = this.getWidth().toDouble()
-        val height = this.getHeight().toDouble()
         val color = this.getColor()
-
-        if (color.alpha == 0) {
-            return super.draw()
-        }
+        if (color.alpha == 0) return super.draw()
 
         GL11.glPushMatrix()
-
-        val pos = mutableListOf(x, y, x + width, y + height)
-        if (pos[0] > pos[2])
-            Collections.swap(pos, 0, 2)
-        if (pos[1] > pos[3])
-            Collections.swap(pos, 1, 3)
 
         GlStateManager.enableBlend()
         GlStateManager.disableTexture2D()
@@ -46,10 +39,9 @@ open class UIShape : UIComponent() {
         GlStateManager.color(color.red.toFloat() / 255f, color.green.toFloat() / 255f, color.blue.toFloat() / 255f, color.alpha.toFloat() / 255f)
 
         worldRenderer.begin(GL11.GL_TRIANGLES, DefaultVertexFormats.POSITION)
-        worldRenderer.pos(pos[0], pos[3], 0.0).endVertex()
-        worldRenderer.pos(pos[2], pos[3], 0.0).endVertex()
-        worldRenderer.pos(pos[2], pos[1], 0.0).endVertex()
-        worldRenderer.pos(pos[0], pos[1], 0.0).endVertex()
+        vertexes.forEach {
+            worldRenderer.pos(it.x, it.y, 0.0).endVertex()
+        }
         tessellator.draw()
 
         GlStateManager.color(1f, 1f, 1f, 1f)

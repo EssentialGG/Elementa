@@ -23,13 +23,12 @@ class SettingsGui : GuiScreen() {
             color = Color(0, 0, 0, 150).asConstraint()
         } childOf window
 
-        val categoryTitle = UIShape().constrain {
+        val categoryTitle = UIBlock().constrain {
             y = 10.pixels()
             x = CenterConstraint()
             width = 0.pixels()
             height = 36.pixels()
-            color = Color.RED.asConstraint()
-        }.enableEffects(StencilEffect()) childOf categories
+        }.enableEffects(ScissorEffect()) childOf categories
 
         UIText("Settings").constrain {
             width = MaxSizeConstraint(PixelConstraint("Settings".width() * 4f), RelativeConstraint(1f).constrainTo(categories))
@@ -100,7 +99,7 @@ class SettingsGui : GuiScreen() {
             setXAnimation(Animations.OUT_EXP, 0.5f, 0.pixels())
 
             onComplete {
-                categoryTitle.animate { setWidthAnimation(Animations.OUT_EXP, 5f, ChildBasedSizeConstraint()) }
+                categoryTitle.animate { setWidthAnimation(Animations.OUT_EXP, 0.5f, ChildBasedSizeConstraint()) }
                 categoryHolder.children.forEachIndexed { index, uiComponent ->
                     uiComponent.animate {
                         setWidthAnimation(Animations.OUT_QUAD, 0.5f, RelativeConstraint(1f), delay = 0.1f * index)
@@ -129,7 +128,7 @@ class SettingsGui : GuiScreen() {
         window.scroll(delta)
     }
 
-    class Category(string: String, settingsBox: UIComponent) : UIContainer() {
+    class Category(string: String, settingsBox: UIComponent) : UIBlock() {
         private val settings = mutableListOf<Setting>()
         var selected = false
 
@@ -225,64 +224,56 @@ class SettingsGui : GuiScreen() {
     private class ToggleSetting(name: String, description: String) : Setting() {
         var toggled = true
 
-        val drawBox = UIBlock()
-        val title = UIText(name)
-        val text = UIText(description)
+        val drawBox = UIBlock().constrain {
+            height = RelativeConstraint(0.9f)
+            width = RelativeConstraint(1f)
+            color = Color(0, 0, 0, 0).asConstraint()
+        }.enableEffects(ScissorEffect()) childOf this
 
-        val toggleBox = UIBlock()
-        val toggleSlider = UIBlock()
-        val toggleTextOn = UIText("ON")
-        val toggleTextOff = UIText("OFF")
+        val title = UIText(name).constrain {
+            x = 3.pixels()
+            y = 3.pixels()
+            width = PixelConstraint(Minecraft.getMinecraft().fontRendererObj.getStringWidth(name) * 2f)
+            height = 18.pixels()
+            color = Color(255, 255, 255, 10).asConstraint()
+        } childOf drawBox
 
-        init {
-            drawBox.constrain {
-                height = RelativeConstraint(0.9f)
-                width = RelativeConstraint(1f)
-                color = Color(0, 0, 0, 0).asConstraint()
-            }.enableEffects(ScissorEffect()) childOf this
+        val text = UIText(description).constrain {
+            x = 3.pixels()
+            y = 25.pixels()
+            color = Color(255, 255, 255, 10).asConstraint()
+        } childOf drawBox
 
-            title.constrain {
-                x = 3.pixels()
-                y = 3.pixels()
-                width = PixelConstraint(Minecraft.getMinecraft().fontRendererObj.getStringWidth(name) * 2f)
-                height = 18.pixels()
-                color = Color(255, 255, 255, 10).asConstraint()
-            } childOf drawBox
 
-            text.constrain {
-                x = 3.pixels()
-                y = 25.pixels()
-                color = Color(255, 255, 255, 10).asConstraint()
-            } childOf drawBox
 
-            toggleBox.constrain {
-                x = 5.pixels(true)
-                y = CenterConstraint()
-                width = 50.pixels()
-                height = 20.pixels()
-                color = Color(0, 0, 0, 0).asConstraint()
-            }.onClick {
-                toggle()
-            } childOf drawBox
+        val toggleBox = UIRoundedRectangle(10f).constrain {
+            x = 5.pixels(true)
+            y = CenterConstraint()
+            width = 50.pixels()
+            height = 20.pixels()
+            color = Color(0, 0, 0, 0).asConstraint()
+        }.onClick {
+            toggle()
+        }.enableEffects(StencilEffect()) childOf drawBox
 
-            toggleSlider.constrain {
-                width = RelativeConstraint(0.5f)
-                height = RelativeConstraint(1f)
-                color = Color(0, 120, 0, 0).asConstraint()
-            } childOf toggleBox
+        val toggleSlider = UIBlock().constrain {
+            x = 0.pixels(true)
+            width = RelativeConstraint(0.5f)
+            height = RelativeConstraint(1f)
+            color = Color(0, 120, 0, 0).asConstraint()
+        } childOf toggleBox
 
-            toggleTextOn.constrain {
-                x = 6.pixels()
-                y = CenterConstraint()
-                color = Color(255, 255, 255, 10).asConstraint()
-            } childOf toggleBox
+        val toggleTextOff = UIText("OFF").constrain {
+            x = 4.pixels()
+            y = CenterConstraint(1f)
+            color = Color(255, 255, 255, 10).asConstraint()
+        } childOf toggleBox
 
-            toggleTextOff.constrain {
-                x = 3.pixels(true)
-                y = CenterConstraint()
-                color = Color(255, 255, 255, 10).asConstraint()
-            } childOf toggleBox
-        }
+        val toggleTextOn = UIText("ON").constrain {
+            x = 7.pixels(true)
+            y = CenterConstraint(1f)
+            color = Color(255, 255, 255, 10).asConstraint()
+        } childOf toggleBox
 
         override fun animateIn() {
             super.animateIn()
@@ -320,13 +311,13 @@ class SettingsGui : GuiScreen() {
             if (toggled) {
                 toggled = false
                 toggleSlider.animate {
-                    setXAnimation(Animations.OUT_EXP, 0.5f, 0.pixels(true))
+                    setXAnimation(Animations.OUT_EXP, 0.5f, 0.pixels())
                     setColorAnimation(Animations.OUT_EXP, 0.5f, Color(120, 0, 0).asConstraint())
                 }
             } else {
                 toggled = true
                 toggleSlider.animate {
-                    setXAnimation(Animations.OUT_EXP, 0.5f, 0.pixels())
+                    setXAnimation(Animations.OUT_EXP, 0.5f, 0.pixels(true))
                     setColorAnimation(Animations.OUT_EXP, 0.5f, Color(0, 120, 0).asConstraint())
                 }
             }
