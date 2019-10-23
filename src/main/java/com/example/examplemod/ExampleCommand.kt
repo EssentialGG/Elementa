@@ -1,5 +1,6 @@
 package com.example.examplemod
 
+import com.example.examplemod.settings.SettingsGui
 import net.minecraft.command.CommandBase
 import net.minecraft.command.ICommandSender
 
