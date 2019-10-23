@@ -10,14 +10,11 @@ import java.awt.Color
 
 // feeling cute, might delete this class later
 open class UIShape : UIComponent() {
-    private var vertexes = mutableListOf<List<Double>>()
+    var vertexes = mutableListOf<UIPoint>()
+    var drawMode = GL11.GL_POLYGON
 
     init {
         this.setColor(ConstantColorConstraint(Color(0, 0, 0, 0)))
-    }
-
-    fun addVertex(vertex: List<Double>) {
-        vertexes.add(vertex)
     }
 
     override fun draw() {
@@ -38,9 +35,9 @@ open class UIShape : UIComponent() {
 
         GlStateManager.color(color.red.toFloat() / 255f, color.green.toFloat() / 255f, color.blue.toFloat() / 255f, color.alpha.toFloat() / 255f)
 
-        worldRenderer.begin(GL11.GL_TRIANGLES, DefaultVertexFormats.POSITION)
+        worldRenderer.begin(drawMode, DefaultVertexFormats.POSITION)
         vertexes.forEach {
-            worldRenderer.pos(it[0], it[1], 0.0).endVertex()
+            worldRenderer.pos(it.getX().toDouble(), it.getY().toDouble(), 0.0).endVertex()
         }
         tessellator.draw()
 
