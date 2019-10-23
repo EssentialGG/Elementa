@@ -6,7 +6,7 @@ import club.sk1er.elementa.UIComponent
  * Sets this component's X/Y position or width/height to be some
  * multiple of its parents.
  */
-class RelativeConstraint(private val value: Float) : GeneralConstraint {
+class RelativeConstraint @JvmOverloads constructor(private val value: Float = 1f) : GeneralConstraint {
     override var cachedValue = 0f
     override var recalculate = true
 
