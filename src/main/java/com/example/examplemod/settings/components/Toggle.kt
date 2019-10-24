@@ -19,18 +19,13 @@ class Toggle : UIComponent() {
         x = CenterConstraint()
         width = 20.pixels()
         height = 10.pixels()
+        color = Color(120, 120, 120, 0).asConstraint()
     }.enableEffects(StencilEffect()) childOf this
 
     private val slideOn = UIBlock().constrain {
         width = RelativeConstraint()
         height = RelativeConstraint()
         color = Color(0, 170, 165, 0).asConstraint()
-    } childOf slide
-
-    private val slideOff = UIBlock().constrain {
-        x = 0.pixels(true)
-        height = RelativeConstraint()
-        color = Color(120, 120, 120, 0).asConstraint()
     } childOf slide
 
     private val knob = Knob()
@@ -54,17 +49,15 @@ class Toggle : UIComponent() {
 
     fun fadeIn() {
         selected = true
-        slide.animate { setColorAnimation(Animations.OUT_EXP, 0.5f, Color(0, 0, 0, 255).asConstraint()) }
+        slide.animate { setColorAnimation(Animations.OUT_EXP, 0.5f, Color(120, 120, 120, 255).asConstraint()) }
         slideOn.animate { setColorAnimation(Animations.OUT_EXP, 0.5f, Color(0, 170, 165, 255).asConstraint()) }
-        slideOff.animate { setColorAnimation(Animations.OUT_EXP, 0.5f, Color(120, 120, 120, 255).asConstraint()) }
         knob.fadeIn()
     }
 
     fun fadeOut() {
         selected = false
-        slide.animate { setColorAnimation(Animations.OUT_EXP, 0.5f, Color(0, 0, 0, 0).asConstraint()) }
+        slide.animate { setColorAnimation(Animations.OUT_EXP, 0.5f, Color(120, 120, 120, 0).asConstraint()) }
         slideOn.animate { setColorAnimation(Animations.OUT_EXP, 0.5f, Color(0, 170, 165, 0).asConstraint()) }
-        slideOff.animate { setColorAnimation(Animations.OUT_EXP, 0.5f, Color(120, 120, 120, 0).asConstraint()) }
         knob.fadeOut()
     }
 
@@ -75,12 +68,10 @@ class Toggle : UIComponent() {
         if (toggled) {
             toggled = false
             slideOn.animate { setWidthAnimation(Animations.OUT_EXP, 0.5f, 0.pixels()) }
-            slideOff.animate { setWidthAnimation(Animations.OUT_EXP, 0.5f, RelativeConstraint()) }
 
         } else {
             toggled = true
             slideOn.animate { setWidthAnimation(Animations.OUT_EXP, 0.5f, RelativeConstraint()) }
-            slideOff.animate { setWidthAnimation(Animations.OUT_EXP, 0.5f, 0.pixels()) }
 
         }
     }

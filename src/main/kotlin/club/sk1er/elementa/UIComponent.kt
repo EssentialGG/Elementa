@@ -98,6 +98,13 @@ abstract class UIComponent {
         this.features.addAll(effects)
     }
 
+    /**
+     * Enables a single effect to be applied when the component draws.
+     */
+    fun enableEffect(effect: Effect) = apply {
+        this.features.add(effect)
+    }
+
     fun setX(constraint: XConstraint) = apply {
         this.constraints.setX(constraint)
     }
