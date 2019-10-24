@@ -13,7 +13,7 @@ import net.minecraft.client.Minecraft
 import java.awt.Color
 
 class ToggleSetting(name: String, description: String) : SettingObject() {
-    var toggled = true
+    private var toggled = true
 
     private val drawBox = UIBlock().constrain {
         height = RelativeConstraint(0.9f)
@@ -37,7 +37,7 @@ class ToggleSetting(name: String, description: String) : SettingObject() {
 
 
 
-    private val toggleBox = UIContainer().constrain() {
+    private val toggleBox = UIContainer().constrain {
         x = 10.pixels(true)
         y = CenterConstraint()
         width = 30.pixels()
