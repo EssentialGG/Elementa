@@ -69,33 +69,11 @@ class ToggleSetting(name: String, description: String) : SettingObject() {
         color = Color(120, 120, 120, 0).asConstraint()
     } childOf toggleBack
 
-    private val toggleSlider = UIBlock().constrain {
-        x = 0.pixels(true)
-        y = CenterConstraint()
-        width = 14.pixels()
-        height = 14.pixels()
-    } childOf toggleBox
+    private val toggleKnob = SettingKnob()
 
-    private val toggleSliderHover = UICircle().constrain {
-        x =7f.pixels()
-        y = CenterConstraint()
-        width = 14.pixels()
-        color = Color(0, 255, 250, 0).asConstraint()
-    } childOf toggleSlider
-
-    private val toggleSliderClick = UICircle().constrain {
-        x =7f.pixels()
-        y = CenterConstraint()
-        width = 14.pixels()
-        color = Color(255, 255, 255, 0).asConstraint()
-    } childOf toggleSlider
-
-    private val toggleSliderKnob = UICircle().constrain {
-        x = 7f.pixels()
-        y = CenterConstraint()
-        width = 14.pixels()
-        color = Color(0, 210, 205, 0).asConstraint()
-    } childOf toggleSlider
+    init {
+        toggleKnob childOf toggleBox
+    }
 
     override fun animateIn() {
         super.animateIn()
@@ -104,8 +82,8 @@ class ToggleSetting(name: String, description: String) : SettingObject() {
             setYAnimation(Animations.OUT_EXP, 0.5f, 0.pixels())
             setColorAnimation(Animations.OUT_EXP, 0.5f, Color(0, 0, 0, 100).asConstraint())
         }
-        toggleSliderHover.animate { setColorAnimation(Animations.OUT_EXP, 0.5f, Color(0, 255, 250, 50).asConstraint()) }
-        animateAlpha(255, title, text, toggleBack, toggleBackOn, toggleBackOff, toggleSliderKnob)
+        toggleKnob.fadeIn()
+        animateAlpha(255, title, text, toggleBack, toggleBackOn, toggleBackOff)
     }
 
     override fun animateOut() {
@@ -115,8 +93,8 @@ class ToggleSetting(name: String, description: String) : SettingObject() {
             setYAnimation(Animations.OUT_EXP, 0.5f, (-10).pixels())
             setColorAnimation(Animations.OUT_EXP, 0.5f, Color(0, 0, 0, 0).asConstraint())
         }
-        toggleSliderHover.animate { setColorAnimation(Animations.OUT_EXP, 0.5f, Color(0, 255, 250, 0).asConstraint()) }
-        animateAlpha(0, title, text, toggleBack, toggleBackOn, toggleBackOff, toggleSliderKnob)
+        toggleKnob.fadeOut()
+        animateAlpha(0, title, text, toggleBack, toggleBackOn, toggleBackOff)
     }
 
     private fun animateAlpha(alpha: Int, vararg components: UIComponent) {
@@ -132,39 +110,23 @@ class ToggleSetting(name: String, description: String) : SettingObject() {
 
     private fun toggle() {
         if (!selected) return
-
-        toggleSliderClick.constrain {
-            width = 14.pixels()
-            color = Color(255, 255, 255, 75).asConstraint()
-        }
-        toggleSliderClick.animate {
-            setWidthAnimation(Animations.OUT_EXP, 0.5f, 25.pixels())
-            setColorAnimation(Animations.OUT_EXP, 1f, Color(255, 255, 255, 0).asConstraint())
-        }
+        toggleKnob.click(toggled)
 
         if (toggled) {
             toggled = false
             toggleBackOn.animate { setWidthAnimation(Animations.OUT_EXP, 0.5f, 0.pixels()) }
             toggleBackOff.animate { setWidthAnimation(Animations.OUT_EXP, 0.5f, RelativeConstraint()) }
-            toggleSlider.animate { setXAnimation(Animations.OUT_EXP, 0.5f, 0.pixels()) }
-            toggleSliderHover.animate { setColorAnimation(Animations.OUT_EXP, 0.5f, Color(255, 255, 255, 50).asConstraint()) }
-            toggleSliderKnob.animate { setColorAnimation(Animations.OUT_EXP, 0.5f, Color(164, 164, 164, 255).asConstraint()) }
+
         } else {
             toggled = true
             toggleBackOn.animate { setWidthAnimation(Animations.OUT_EXP, 0.5f, RelativeConstraint()) }
             toggleBackOff.animate { setWidthAnimation(Animations.OUT_EXP, 0.5f, 0.pixels()) }
-            toggleSlider.animate { setXAnimation(Animations.OUT_EXP, 0.5f, 0.pixels(true)) }
-            toggleSliderHover.animate { setColorAnimation(Animations.OUT_EXP, 0.5f, Color(0, 255, 250, 50).asConstraint()) }
-            toggleSliderKnob.animate { setColorAnimation(Animations.OUT_EXP, 0.5f, Color(0, 210, 205).asConstraint()) }
+
         }
     }
 
     private fun hover(isHovered: Boolean) {
         if (!selected) return
-        if (isHovered) {
-            toggleSliderHover.animate { setWidthAnimation(Animations.OUT_EXP, 0.5f, 25f.pixels()) }
-        } else {
-            toggleSliderHover.animate { setWidthAnimation(Animations.OUT_EXP, 0.5f, 14f.pixels()) }
-        }
+        toggleKnob.hover(isHovered)
     }
 }
