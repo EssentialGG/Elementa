@@ -19,11 +19,13 @@ abstract class UIComponent {
     private val features = mutableListOf<Effect>()
     private var constraints = UIConstraints(this)
 
-    private var clickAction: (button: Int) -> Unit = {}
-    private var hoverAction: () -> Unit = {}
-    private var unHoverAction: () -> Unit = {}
+    private var mouseClickAction: (button: Int) -> Unit = {}
+    private var mouseReleaseAction: () -> Unit = {}
+    private var mouseEnterAction: () -> Unit = {}
+    private var mouseLeaveAction: () -> Unit = {}
+    private var mouseScrollAction: (delta: Int) -> Unit = {}
+
     private var currentlyHovered = false
-    private var scrollAction: (delta: Int) -> Unit = {}
 
     /**
      * Adds [component] to this component's children tree,
@@ -168,12 +170,12 @@ abstract class UIComponent {
         this.children.forEach(UIComponent::draw)
 
         if (isHovered() && !currentlyHovered) {
-            hoverAction()
+            mouseEnterAction()
             currentlyHovered = true
         }
 
         if (!isHovered() && currentlyHovered) {
-            unHoverAction()
+            mouseLeaveAction()
             currentlyHovered = false
         }
 
@@ -192,14 +194,34 @@ abstract class UIComponent {
         features.forEach { it.beforeChildrenDraw(this) }
     }
 
-    open fun click(button: Int) {
-        if (isHovered()) clickAction(button)
-        this.children.forEach { it.click(button) }
+    /**
+     * Runs the set [onMouseClick] method for the component and it's children.
+     * Use this in the proper mouse click event to cascade all component's mouse click events.
+     * Most common use is on the [Window] object.
+     */
+    open fun mouseClick(button: Int) {
+        if (isHovered()) mouseClickAction(button)
+        this.children.forEach { it.mouseClick(button) }
     }
 
-    open fun scroll(delta: Int) {
-        if (isHovered()) scrollAction(delta)
-        this.children.forEach { it.scroll(delta) }
+    /**
+     * Runs the set [onMouseClick] method for the component and it's children.
+     * Use this in the proper mouse release event to cascade all component's mouse release events.
+     * Most common use is on the [Window] object.
+     */
+    open fun mouseRelease() {
+        if (isHovered()) mouseReleaseAction()
+        this.children.forEach { it.mouseReleaseAction() }
+    }
+
+    /**
+     * Runs the set [onMouseClick] method for the component and it's children.
+     * Use this in the proper mouse scroll event to cascade all component's mouse scroll events.
+     * Most common use is on the [Window] object.
+     */
+    open fun mouseScroll(delta: Int) {
+        if (isHovered()) mouseScrollAction(delta)
+        this.children.forEach { it.mouseScroll(delta) }
     }
 
     open fun animationFrame() {
@@ -210,35 +232,73 @@ abstract class UIComponent {
         this.children.forEach(UIComponent::animationFrame)
     }
 
-    fun onClick(method: (button: Int) -> Unit) = apply {
-        clickAction = method
+    /**
+     * Adds a method to be run when mouse is clicked within the component.
+     */
+    fun onMouseClick(method: (button: Int) -> Unit) = apply {
+        mouseClickAction = method
     }
 
-    fun onClick(method: Consumer<Int>) = apply {
-        clickAction = method::accept
+    /**
+     * Adds a method to be run when mouse is clicked within the component.
+     */
+    fun onMouseClick(method: Consumer<Int>) = apply {
+        mouseClickAction = method::accept
     }
 
-    fun onHover(method: () -> Unit) = apply {
-        hoverAction = method
+    /**
+     * Adds a method to be run when mouse is released within the component.
+     */
+    fun onMouseRelease(method: () -> Unit) = apply {
+        mouseReleaseAction = method
     }
 
-    fun onHover(method: Runnable) = apply {
-        hoverAction = method::run
+    /**
+     * Adds a method to be run when mouse is released within the component.
+     */
+    fun onMouseRelease(method: Runnable) = apply {
+        mouseReleaseAction = method::run
     }
 
-    fun onUnHover(method: () -> Unit) = apply {
-        unHoverAction = method
+    /**
+     * Adds a method to be run when mouse enters the component.
+     */
+    fun onMouseEnter(method: () -> Unit) = apply {
+        mouseEnterAction = method
     }
 
-    fun onUnHover(method: Runnable) = apply {
-        unHoverAction = method::run
+    /**
+     * Adds a method to be run when mouse enters the component.
+     */
+    fun onMouseEnter(method: Runnable) = apply {
+        mouseEnterAction = method::run
     }
 
-    fun onScroll(method: (delta: Int) -> Unit) = apply {
-        scrollAction = method
+    /**
+     * Adds a method to be run when mouse leaves the component.
+     */
+    fun onMouseLeave(method: () -> Unit) = apply {
+        mouseLeaveAction = method
     }
 
-    fun onScroll(method: Consumer<Int>) = apply {
-        scrollAction = method::accept
+    /**
+     * Adds a method to be run when mouse leaves the component.
+     */
+    fun onMouseLeave(method: Runnable) = apply {
+        mouseLeaveAction = method::run
+    }
+
+    /**
+     * Adds a method to be run when mouse scrolls while in the component.
+     */
+    fun onMouseScroll(method: (delta: Int) -> Unit) = apply {
+        mouseScrollAction = method
+    }
+
+    /**
+     * Adds a method to be run when mouse scrolls while in the component.
+     */
+    fun onMouseScroll(method: Consumer<Int>) = apply {
+        mouseScrollAction = method::accept
     }
 }

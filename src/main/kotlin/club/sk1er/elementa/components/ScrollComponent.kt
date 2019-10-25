@@ -28,7 +28,7 @@ class ScrollComponent : UIComponent() {
 
         actualHolder.parent = this
 
-        onScroll { delta ->
+        onMouseScroll { delta ->
             // TODO: Math to make sure I can't scroll past content.
             offset += (delta * 10)
             actualHolder.setX(PixelConstraint(offset))

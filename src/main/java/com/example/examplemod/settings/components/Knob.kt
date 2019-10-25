@@ -6,7 +6,7 @@ import club.sk1er.elementa.constraints.CenterConstraint
 import club.sk1er.elementa.constraints.animation.Animations
 import club.sk1er.elementa.dsl.*
 import java.awt.Color
-// 14
+
 class Knob(private val size: Int) : UIContainer() {
     private val hover = UICircle().constrain {
         x = (size / 2).pixels()
@@ -31,7 +31,6 @@ class Knob(private val size: Int) : UIContainer() {
 
     init {
         constrain {
-            x = 0f.pixels(true)
             y = CenterConstraint()
             width = size.pixels()
             height = size.pixels()
@@ -48,17 +47,11 @@ class Knob(private val size: Int) : UIContainer() {
         knob.animate { setColorAnimation(Animations.OUT_EXP, 0.5f, Color(0, 210, 205, 0).asConstraint()) }
     }
 
-    fun hover(isHovered: Boolean) {
-        if (isHovered) {
-            hover.animate { setWidthAnimation(Animations.OUT_EXP, 0.5f, (size * 1.75f).pixels()) }
-        } else {
-            hover.animate { setWidthAnimation(Animations.OUT_EXP, 0.5f, size.pixels()) }
-        }
-    }
+    fun hover() = hover.animate { setWidthAnimation(Animations.OUT_EXP, 0.5f, (size * 1.75f).pixels()) }
+    fun unHover() = hover.animate { setWidthAnimation(Animations.OUT_EXP, 0.5f, size.pixels()) }
 
-    fun grab() {
-        hover.animate { setWidthAnimation(Animations.OUT_EXP, 0.5f, (size * 2.25f).pixels()) }
-    }
+    fun grab() = hover.animate { setWidthAnimation(Animations.OUT_EXP, 0.5f, (size * 2.25f).pixels()) }
+    fun unGrab() = hover.animate { setWidthAnimation(Animations.OUT_EXP, 0.5f, (size * 1.75f).pixels()) }
 
     fun click(toggled: Boolean) {
         click.constrain {

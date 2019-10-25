@@ -36,15 +36,20 @@ class Toggle : UIComponent() {
             y = CenterConstraint()
             width = 30.pixels()
             height = 20.pixels()
-        }.onClick {
+        }.onMouseClick {
+            if (!selected) return@onMouseClick
             toggle()
-        }.onHover {
-            hover(true)
-        }.onUnHover {
-            hover(false)
+        }.onMouseEnter {
+            if (!selected) return@onMouseEnter
+            knob.hover()
+        }.onMouseLeave {
+            if (!selected) return@onMouseLeave
+            knob.unHover()
         }
 
-        knob childOf this
+        knob.constrain {
+            x = 0.pixels(true)
+        } childOf this
     }
 
     fun fadeIn() {
@@ -62,7 +67,6 @@ class Toggle : UIComponent() {
     }
 
     private fun toggle() {
-        if (!selected) return
         knob.click(toggled)
 
         if (toggled) {
@@ -72,12 +76,6 @@ class Toggle : UIComponent() {
         } else {
             toggled = true
             slideOn.animate { setWidthAnimation(Animations.OUT_EXP, 0.5f, RelativeConstraint()) }
-
         }
-    }
-
-    private fun hover(isHovered: Boolean) {
-        if (!selected) return
-        knob.hover(isHovered)
     }
 }

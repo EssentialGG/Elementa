@@ -115,7 +115,12 @@ class SettingsGui : GuiScreen() {
 
     override fun mouseClicked(mouseX: Int, mouseY: Int, mouseButton: Int) {
         super.mouseClicked(mouseX, mouseY, mouseButton)
-        window.click(mouseButton)
+        window.mouseClick(mouseButton)
+    }
+
+    override fun mouseReleased(mouseX: Int, mouseY: Int, state: Int) {
+        super.mouseReleased(mouseX, mouseY, state)
+        window.mouseRelease()
     }
 
     override fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
@@ -126,7 +131,7 @@ class SettingsGui : GuiScreen() {
     override fun handleMouseInput() {
         super.handleMouseInput()
         val delta = Mouse.getEventDWheel().coerceIn(-1, 1)
-        window.scroll(delta)
+        window.mouseScroll(delta)
     }
 
     class Category(string: String, settingsBox: UIComponent) : UIBlock() {
@@ -156,15 +161,15 @@ class SettingsGui : GuiScreen() {
 
             enableEffects(ScissorEffect())
 
-            onHover {
+            onMouseEnter {
                 text.animate { setXAnimation(Animations.OUT_EXP, 0.5f, 10.pixels()) }
             }
 
-            onUnHover {
+            onMouseLeave {
                 text.animate { setXAnimation(Animations.OUT_BOUNCE, 0.5f, 0.pixels()) }
             }
 
-            onClick {
+            onMouseClick {
                 parent.children.forEach {
                     it as Category
                     if (it == this && !it.selected) select()
@@ -195,8 +200,8 @@ class SettingsGui : GuiScreen() {
         var scrolled = 0
 
         init {
-            onScroll {
-                if (it == 0 && !(children.first() as SettingObject).selected) return@onScroll
+            onMouseScroll {
+                if (it == 0 && !(children.first() as SettingObject).selected) return@onMouseScroll
                 scrolled += it * 50
                 if (scrolled <= 0) {
                     children.first().animate { setYAnimation(Animations.OUT_EXP, 0.5f, scrolled.pixels()) }

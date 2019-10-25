@@ -48,7 +48,7 @@ class ExampleGui : GuiScreen() {
             .setHeight(PixelConstraint(10f))
             .setColor(ConstantColorConstraint(Color(93, 222, 244, 255)))
             .finish()
-        button.onClick {
+        button.onMouseClick {
             window.removeChild(settings)
             println("CLICKED")
         }

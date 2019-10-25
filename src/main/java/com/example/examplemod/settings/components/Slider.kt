@@ -12,10 +12,13 @@ import club.sk1er.elementa.effects.StencilEffect
 import java.awt.Color
 
 class Slider : UIContainer() {
-    private val slide = UIRoundedRectangle(2f).constrain {
+    private var grabbed = false
+    private val value = 0.5f
+
+    private val slide = UIRoundedRectangle(1f).constrain {
         y = CenterConstraint()
         width = RelativeConstraint()
-        height = 4.pixels()
+        height = 2.pixels()
         color = Color(120, 120, 120, 0).asConstraint()
     }.enableEffect(StencilEffect()) childOf this
 
@@ -28,12 +31,15 @@ class Slider : UIContainer() {
     private val knob = Knob(10)
 
     init {
-        knob.onHover {
-            knob.hover(true)
-        }.onUnHover {
-            knob.hover(false)
-        }.onClick {
+        knob.constrain {
+            x = 0.pixels(true)
+        }.onMouseEnter {
+            knob.hover()
+        }.onMouseLeave {
+            knob.unHover()
+        }.onMouseClick {
             knob.grab()
+            grabbed = true
         } childOf this
 
         constrain {
