@@ -6,26 +6,26 @@ import club.sk1er.elementa.constraints.CenterConstraint
 import club.sk1er.elementa.constraints.animation.Animations
 import club.sk1er.elementa.dsl.*
 import java.awt.Color
-
-class Knob : UIContainer() {
+// 14
+class Knob(private val size: Int) : UIContainer() {
     private val hover = UICircle().constrain {
-        x =7f.pixels()
+        x = (size / 2).pixels()
         y = CenterConstraint()
-        width = 14.pixels()
+        width = size.pixels()
         color = Color(0, 255, 250, 0).asConstraint()
     } childOf this
 
     private val click = UICircle().constrain {
-        x =7f.pixels()
+        x = (size / 2).pixels()
         y = CenterConstraint()
-        width = 14.pixels()
+        width = size.pixels()
         color = Color(255, 255, 255, 0).asConstraint()
     } childOf this
 
     private val knob = UICircle().constrain {
-        x = 7f.pixels()
+        x = (size / 2).pixels()
         y = CenterConstraint()
-        width = 14.pixels()
+        width = size.pixels()
         color = Color(0, 210, 205, 0).asConstraint()
     } childOf this
 
@@ -33,8 +33,8 @@ class Knob : UIContainer() {
         constrain {
             x = 0f.pixels(true)
             y = CenterConstraint()
-            width = 14.pixels()
-            height = 14.pixels()
+            width = size.pixels()
+            height = size.pixels()
         }
     }
 
@@ -50,19 +50,23 @@ class Knob : UIContainer() {
 
     fun hover(isHovered: Boolean) {
         if (isHovered) {
-            hover.animate { setWidthAnimation(Animations.OUT_EXP, 0.5f, 25f.pixels()) }
+            hover.animate { setWidthAnimation(Animations.OUT_EXP, 0.5f, (size * 1.75f).pixels()) }
         } else {
-            hover.animate { setWidthAnimation(Animations.OUT_EXP, 0.5f, 14f.pixels()) }
+            hover.animate { setWidthAnimation(Animations.OUT_EXP, 0.5f, size.pixels()) }
         }
+    }
+
+    fun grab() {
+        hover.animate { setWidthAnimation(Animations.OUT_EXP, 0.5f, (size * 2.25f).pixels()) }
     }
 
     fun click(toggled: Boolean) {
         click.constrain {
-            width = 14.pixels()
+            width = size.pixels()
             color = Color(255, 255, 255, 75).asConstraint()
         }
         click.animate {
-            setWidthAnimation(Animations.OUT_EXP, 0.5f, 25.pixels())
+            setWidthAnimation(Animations.OUT_EXP, 0.5f, (size * 1.75f).pixels())
             setColorAnimation(Animations.OUT_EXP, 1f, Color(255, 255, 255, 0).asConstraint())
         }
 

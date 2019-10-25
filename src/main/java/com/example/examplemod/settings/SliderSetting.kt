@@ -7,13 +7,13 @@ import club.sk1er.elementa.constraints.PixelConstraint
 import club.sk1er.elementa.constraints.RelativeConstraint
 import club.sk1er.elementa.constraints.animation.Animations
 import club.sk1er.elementa.dsl.*
-import com.example.examplemod.settings.components.Toggle
+import com.example.examplemod.settings.components.Slider
 import net.minecraft.client.Minecraft
 import java.awt.Color
 
-class ToggleSetting(name: String, description: String) : SettingObject() {
+class SliderSetting(name: String, description: String) : SettingObject() {
     private val drawBox = UIBlock().constrain {
-        height = ChildBasedSizeConstraint()
+        height = ChildBasedSizeConstraint() + 8.pixels()
         width = RelativeConstraint()
         color = Color(0, 0, 0, 0).asConstraint()
     } childOf this
@@ -32,10 +32,10 @@ class ToggleSetting(name: String, description: String) : SettingObject() {
         color = Color(255, 255, 255, 10).asConstraint()
     } childOf drawBox
 
-    private val toggle = Toggle()
+    private val slider = Slider()
 
     init {
-        toggle childOf drawBox
+        slider childOf drawBox
     }
 
     override fun animateIn() {
@@ -47,7 +47,7 @@ class ToggleSetting(name: String, description: String) : SettingObject() {
         }
         title.animate { setColorAnimation(Animations.OUT_EXP, 0.5f, Color.WHITE.asConstraint())}
         text.animate { setColorAnimation(Animations.OUT_EXP, 0.5f, Color.WHITE.asConstraint()) }
-        toggle.fadeIn()
+        slider.fadeIn()
     }
 
     override fun animateOut() {
@@ -59,6 +59,6 @@ class ToggleSetting(name: String, description: String) : SettingObject() {
         }
         title.animate { setColorAnimation(Animations.OUT_EXP, 0.5f, Color(255, 255, 255, 10).asConstraint())}
         text.animate { setColorAnimation(Animations.OUT_EXP, 0.5f, Color(255, 255, 255, 10).asConstraint()) }
-        toggle.fadeOut()
+        slider.fadeOut()
     }
 }

@@ -1,7 +1,9 @@
 package com.example.examplemod.settings
 
 import club.sk1er.elementa.UIComponent
-import club.sk1er.elementa.components.*
+import club.sk1er.elementa.components.UIBlock
+import club.sk1er.elementa.components.UIText
+import club.sk1er.elementa.components.Window
 import club.sk1er.elementa.constraints.*
 import club.sk1er.elementa.constraints.animation.Animations
 import club.sk1er.elementa.dsl.*
@@ -51,7 +53,7 @@ class SettingsGui : GuiScreen() {
         Category("General", settingsBox)
                 .addSetting(SettingDivider("General Settings"))
                 .addSetting(ToggleSetting("General 1", "This toggles something"))
-                .addSetting(ToggleSetting("General 2", "This toggles something"))
+                .addSetting(SliderSetting("General 2", "This changes a value"))
                 .addSetting(ToggleSetting("General 3", "This toggles something"))
                 .addSetting(ToggleSetting("General 4", "This toggles something"))
                 .addSetting(SettingDivider("Category"))

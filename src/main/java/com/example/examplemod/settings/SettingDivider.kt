@@ -1,7 +1,9 @@
 package com.example.examplemod.settings
 
+import club.sk1er.elementa.components.UIContainer
 import club.sk1er.elementa.components.UIText
 import club.sk1er.elementa.constraints.CenterConstraint
+import club.sk1er.elementa.constraints.ChildBasedSizeConstraint
 import club.sk1er.elementa.constraints.PixelConstraint
 import club.sk1er.elementa.constraints.animation.Animations
 import club.sk1er.elementa.dsl.*
@@ -9,13 +11,17 @@ import net.minecraft.client.Minecraft
 import java.awt.Color
 
 class SettingDivider(name: String) : SettingObject() {
-    private val title = UIText(name).constrain {
+    private val container = UIContainer().constrain {
         x = CenterConstraint()
-        y = CenterConstraint(10f)
+        width = ChildBasedSizeConstraint()
+        height = 25.pixels()
+    } childOf this
+
+    private val title = UIText(name).constrain {
         width = PixelConstraint(Minecraft.getMinecraft().fontRendererObj.getStringWidth(name) * 2f)
         height = 18.pixels()
         color = Color(255, 255, 255, 10).asConstraint()
-    } childOf this
+    } childOf container
 
     override fun animateIn() {
         title.constrain { y = CenterConstraint(10f) }

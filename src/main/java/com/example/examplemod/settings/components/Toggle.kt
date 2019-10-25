@@ -28,7 +28,7 @@ class Toggle : UIComponent() {
         color = Color(0, 170, 165, 0).asConstraint()
     } childOf slide
 
-    private val knob = Knob()
+    private val knob = Knob(14)
 
     init {
         constrain {
