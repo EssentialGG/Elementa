@@ -53,6 +53,9 @@ class Slider : UIContainer() {
             knob.animate {
                 setXAnimation(Animations.OUT_EXP, 0.5f, (mouseX - 5).pixels().positionMinMax(0.pixels(), 0.pixels(true)))
             }
+            slideBackground.animate {
+                setWidthAnimation(Animations.OUT_EXP, 0.5f, mouseX.pixels().sizeMinMax(0.pixels(), RelativeConstraint()))
+            }
         }
 
         constrain {
