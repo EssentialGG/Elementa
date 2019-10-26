@@ -12,10 +12,12 @@ import club.sk1er.elementa.effects.StencilEffect
 import java.awt.Color
 
 class Button(text: String) : UIComponent() {
+    private var active = false
+
     private val background = UIRoundedRectangle(4f).constrain {
         width = RelativeConstraint()
         height = RelativeConstraint()
-        color = Color(0, 170, 165, 0).asConstraint()
+        color = Color(0, 205, 200, 0).asConstraint()
     }.enableEffect(StencilEffect()) childOf this
 
     private val click = UICircle().constrain {
@@ -30,6 +32,7 @@ class Button(text: String) : UIComponent() {
 
     init {
         onMouseClick { mouseX, mouseY, button ->
+            if (!active) return@onMouseClick
             click.constrain {
                 x = mouseX.pixels()
                 y = mouseY.pixels()
@@ -43,19 +46,32 @@ class Button(text: String) : UIComponent() {
         }
 
         onMouseRelease {
+            if (!active) return@onMouseRelease
             click.animate {
                 setColorAnimation(Animations.OUT_EXP, 1f, Color(0, 0, 0, 0).asConstraint())
             }
         }
+
+        onMouseEnter {
+            if (!active) return@onMouseEnter
+            background.animate { setColorAnimation(Animations.OUT_EXP, 1f, Color(0, 170, 165, 255).asConstraint()) }
+        }
+
+        onMouseLeave {
+            if (!active) return@onMouseLeave
+            background.animate { setColorAnimation(Animations.OUT_EXP, 1f, Color(0, 205, 200, 255).asConstraint()) }
+        }
     }
 
     fun fadeIn() {
-        background.animate { setColorAnimation(Animations.OUT_EXP, 0.5f, Color(0, 170, 165, 255).asConstraint()) }
+        active = true
+        background.animate { setColorAnimation(Animations.OUT_EXP, 0.5f, Color(0, 205, 200, 255).asConstraint()) }
         text.animate { setColorAnimation(Animations.OUT_EXP, 0.5f, Color.BLACK.asConstraint()) }
     }
 
     fun fadeOut() {
-        background.animate { setColorAnimation(Animations.OUT_EXP, 0.5f, Color(0, 170, 165, 0).asConstraint()) }
+        active = false
+        background.animate { setColorAnimation(Animations.OUT_EXP, 0.5f, Color(0, 255, 255, 0).asConstraint()) }
         text.animate { setColorAnimation(Animations.OUT_EXP, 0.5f, Color(0, 0, 0, 0).asConstraint()) }
     }
 }

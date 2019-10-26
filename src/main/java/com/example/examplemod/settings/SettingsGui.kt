@@ -124,6 +124,11 @@ class SettingsGui : GuiScreen() {
         window.mouseRelease()
     }
 
+    override fun mouseClickMove(mouseX: Int, mouseY: Int, clickedMouseButton: Int, timeSinceLastClick: Long) {
+        super.mouseClickMove(mouseX, mouseY, clickedMouseButton, timeSinceLastClick)
+        window.mouseDrag(mouseX, mouseY, clickedMouseButton)
+    }
+
     override fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
         super.drawScreen(mouseX, mouseY, partialTicks)
         window.draw()

@@ -3,9 +3,7 @@ package com.example.examplemod.settings.components
 import club.sk1er.elementa.components.UIBlock
 import club.sk1er.elementa.components.UIContainer
 import club.sk1er.elementa.components.UIRoundedRectangle
-import club.sk1er.elementa.constraints.CenterConstraint
-import club.sk1er.elementa.constraints.CramSiblingConstraint
-import club.sk1er.elementa.constraints.RelativeConstraint
+import club.sk1er.elementa.constraints.*
 import club.sk1er.elementa.constraints.animation.Animations
 import club.sk1er.elementa.dsl.*
 import club.sk1er.elementa.effects.StencilEffect
@@ -34,13 +32,26 @@ class Slider : UIContainer() {
         knob.constrain {
             x = 0.pixels(true)
         }.onMouseEnter {
+            if (!grabbed)
             knob.hover()
         }.onMouseLeave {
+            if (!grabbed)
             knob.unHover()
         }.onMouseClick { _, _, _ ->
             knob.grab()
             grabbed = true
+        }.onMouseRelease {
+            if (!grabbed) return@onMouseRelease
+            knob.release()
+            grabbed = false
         } childOf this
+
+        onMouseDrag { mouseX, _, _ ->
+            if (!grabbed) return@onMouseDrag
+            knob.animate {
+                setXAnimation(Animations.OUT_EXP, 0.5f, MaxPositionConstraint(MinPositionConstraint((mouseX - 5).pixels(), 0.pixels()), 0.pixels(true)))
+            }
+        }
 
         constrain {
             x = CenterConstraint()

@@ -24,6 +24,7 @@ abstract class UIComponent {
     private var mouseEnterAction: () -> Unit = {}
     private var mouseLeaveAction: () -> Unit = {}
     private var mouseScrollAction: (delta: Int) -> Unit = {}
+    private var mouseDragAction: (mouseX: Float, mouseY: Float, button: Int) -> Unit = { _, _, _ -> }
 
     private var currentlyHovered = false
 
@@ -200,29 +201,39 @@ abstract class UIComponent {
      * Most common use is on the [Window] object.
      */
     open fun mouseClick(mouseX: Int, mouseY: Int, button: Int) {
-        if (isHovered()) mouseClickAction( mouseX - this.getLeft(), mouseY - this.getTop(), button)
+        if (isHovered()) mouseClickAction( mouseX - getLeft(), mouseY - getTop(), button)
         this.children.forEach { it.mouseClick(mouseX, mouseY, button) }
     }
 
     /**
-     * Runs the set [onMouseClick] method for the component and it's children.
+     * Runs the set [onMouseRelease] method for the component and it's children.
      * Use this in the proper mouse release event to cascade all component's mouse release events.
      * Most common use is on the [Window] object.
      */
     open fun mouseRelease() {
-        if (isHovered()) mouseReleaseAction()
+        mouseReleaseAction()
         this.children.forEach { it.mouseRelease() }
 
     }
 
     /**
-     * Runs the set [onMouseClick] method for the component and it's children.
+     * Runs the set [onMouseScroll] method for the component and it's children.
      * Use this in the proper mouse scroll event to cascade all component's mouse scroll events.
      * Most common use is on the [Window] object.
      */
     open fun mouseScroll(delta: Int) {
         if (isHovered()) mouseScrollAction(delta)
         this.children.forEach { it.mouseScroll(delta) }
+    }
+
+    /**
+     * Runs the set [onMouseDrag] method for the component and it's children.
+     * Use this in the proper mouse drag event to cascade all component's mouse scroll events.
+     * Most common use is on the [Window] object.
+     */
+    open fun mouseDrag(mouseX: Int, mouseY: Int, button: Int) {
+        mouseDragAction(mouseX - getLeft(), mouseY - getTop(), button)
+        children.forEach { it.mouseDrag(mouseX, mouseY, button) }
     }
 
     open fun animationFrame() {
@@ -259,6 +270,14 @@ abstract class UIComponent {
      */
     fun onMouseRelease(method: Runnable) = apply {
         mouseReleaseAction = method::run
+    }
+
+    /**
+     * Adds a method to be run when mouse is dragged anywhere on screen.
+     * This does not check if mouse is in component.
+     */
+    fun onMouseDrag(method: (Float, Float, Int) -> Unit) = apply {
+        mouseDragAction = method
     }
 
     /**

@@ -51,7 +51,10 @@ class Knob(private val size: Int) : UIContainer() {
     fun unHover() = hover.animate { setWidthAnimation(Animations.OUT_EXP, 0.5f, size.pixels()) }
 
     fun grab() = hover.animate { setWidthAnimation(Animations.OUT_EXP, 0.5f, (size * 2.25f).pixels()) }
-    fun unGrab() = hover.animate { setWidthAnimation(Animations.OUT_EXP, 0.5f, (size * 1.75f).pixels()) }
+    fun release() {
+        if (isHovered()) hover.animate { setWidthAnimation(Animations.OUT_EXP, 0.5f, (size * 1.75f).pixels()) }
+        else unHover()
+    }
 
     fun click(toggled: Boolean) {
         click.constrain {

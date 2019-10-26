@@ -27,6 +27,31 @@ class MaxSizeConstraint(
     }
 }
 
+/**
+ * Clamps the width to be the max of [constraint] and [maxConstraint]
+ */
+class MaxPositionConstraint(
+        private val constraint: PositionConstraint,
+        private val maxConstraint: PositionConstraint
+) : PositionConstraint {
+    override var cachedValue = 0f
+    override var recalculate = true
+
+    override fun animationFrame() {
+        super.animationFrame()
+        constraint.animationFrame()
+        maxConstraint.animationFrame()
+    }
+
+    override fun getXPositionImpl(component: UIComponent, parent: UIComponent): Float {
+        return constraint.getXPosition(component, parent).coerceAtMost(maxConstraint.getXPosition(component, parent))
+    }
+
+    override fun getYPositionImpl(component: UIComponent, parent: UIComponent): Float {
+        return constraint.getYPosition(component, parent).coerceAtMost(maxConstraint.getYPosition(component, parent))
+    }
+}
+
 
 /**
  * Clamps the width to be the min of [constraint] and [minConstraint]
@@ -50,5 +75,30 @@ class MinSizeConstraint(
 
     override fun getHeightImpl(component: UIComponent, parent: UIComponent): Float {
         return constraint.getHeight(component, parent).coerceAtLeast(minConstraint.getHeight(component, parent))
+    }
+}
+
+/**
+ * Clamps the width to be the min of [constraint] and [minConstraint]
+ */
+class MinPositionConstraint(
+        private val constraint: PositionConstraint,
+        private val minConstraint: PositionConstraint
+) : PositionConstraint {
+    override var cachedValue = 0f
+    override var recalculate = true
+
+    override fun animationFrame() {
+        super.animationFrame()
+        constraint.animationFrame()
+        minConstraint.animationFrame()
+    }
+
+    override fun getXPositionImpl(component: UIComponent, parent: UIComponent): Float {
+        return constraint.getXPosition(component, parent).coerceAtLeast(minConstraint.getXPosition(component, parent))
+    }
+
+    override fun getYPositionImpl(component: UIComponent, parent: UIComponent): Float {
+        return constraint.getYPosition(component, parent).coerceAtLeast(minConstraint.getYPosition(component, parent))
     }
 }
