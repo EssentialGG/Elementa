@@ -24,7 +24,7 @@ class SettingDivider(name: String) : SettingObject() {
     } childOf container
 
     override fun animateIn() {
-        title.constrain { y = CenterConstraint(10f) }
+        title.constrain { y = CenterConstraint() + 10.pixels() }
         title.animate {
             setYAnimation(Animations.OUT_EXP, 0.5f, CenterConstraint())
             setColorAnimation(Animations.OUT_EXP, 0.5f, Color(255, 255, 255, 255).asConstraint())
@@ -34,7 +34,7 @@ class SettingDivider(name: String) : SettingObject() {
     override fun animateOut() {
         title.constrain { y = CenterConstraint() }
         title.animate {
-            setYAnimation(Animations.OUT_EXP, 0.5f, CenterConstraint(-10f))
+            setYAnimation(Animations.OUT_EXP, 0.5f, CenterConstraint() + (-10).pixels())
             setColorAnimation(Animations.OUT_EXP, 0.5f, Color(255, 255, 255, 10).asConstraint())
         }
     }

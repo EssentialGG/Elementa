@@ -4,6 +4,8 @@ import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.components.*
 import club.sk1er.elementa.constraints.*
 import club.sk1er.elementa.constraints.animation.Animations
+import club.sk1er.elementa.dsl.pixels
+import club.sk1er.elementa.dsl.plus
 import club.sk1er.elementa.effects.ScissorEffect
 import net.minecraft.client.gui.GuiScreen
 import java.awt.Color
@@ -23,7 +25,7 @@ class ExampleGui : GuiScreen() {
             .setX(PixelConstraint(5f))
             .setY(PixelConstraint(5f))
             .setWidth(RelativeConstraint(0.3f))
-            .setHeight(FillConstraint(-5f))
+            .setHeight(FillConstraint() + (-5).pixels())
             .setColor(ConstantColorConstraint(Color(0, 172, 193, 255)))
             .finish()
 
@@ -144,7 +146,7 @@ class ExampleGui : GuiScreen() {
         container.getConstraints()
             .setX(PixelConstraint(15f))
             .setY(yConstraint)
-            .setWidth(FillConstraint(-15f))
+            .setWidth(FillConstraint() + (-15).pixels())
             .setHeight(PixelConstraint(30f))
 
         val title = UIText(text)
