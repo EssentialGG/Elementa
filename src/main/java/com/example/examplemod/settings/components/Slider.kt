@@ -1,17 +1,17 @@
 package com.example.examplemod.settings.components
 
+import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.components.UIBlock
-import club.sk1er.elementa.components.UIContainer
 import club.sk1er.elementa.components.UIRoundedRectangle
 import club.sk1er.elementa.constraints.CenterConstraint
-import club.sk1er.elementa.constraints.CramSiblingConstraint
 import club.sk1er.elementa.constraints.RelativeConstraint
+import club.sk1er.elementa.constraints.SiblingConstraint
 import club.sk1er.elementa.constraints.animation.Animations
 import club.sk1er.elementa.dsl.*
 import club.sk1er.elementa.effects.StencilEffect
 import java.awt.Color
 
-class Slider : UIContainer() {
+class Slider : UIComponent() {
     private var grabbed = false
     private val value = 0.5f
 
@@ -60,7 +60,7 @@ class Slider : UIContainer() {
 
         constrain {
             x = CenterConstraint()
-            y = CramSiblingConstraint()
+            y = SiblingConstraint()
             width = RelativeConstraint(0.75f)
             height = 20.pixels()
         }

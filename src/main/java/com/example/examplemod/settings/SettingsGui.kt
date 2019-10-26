@@ -196,8 +196,8 @@ class SettingsGui : GuiScreen() {
             settings.forEach { it.animateOut() }
         }
 
-        fun addSetting(setting: UIComponent) = apply {
-            settings.add((setting as SettingObject))
+        fun addSetting(setting: SettingObject) = apply {
+            settings.add(setting)
             settingsBlock.addChild(setting)
         }
     }
