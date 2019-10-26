@@ -36,7 +36,7 @@ class Toggle : UIComponent() {
             y = CenterConstraint()
             width = 30.pixels()
             height = 20.pixels()
-        }.onMouseClick {
+        }.onMouseClick { _, _, _ ->
             if (!selected) return@onMouseClick
             toggle()
         }.onMouseEnter {

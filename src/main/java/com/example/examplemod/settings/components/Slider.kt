@@ -37,7 +37,7 @@ class Slider : UIContainer() {
             knob.hover()
         }.onMouseLeave {
             knob.unHover()
-        }.onMouseClick {
+        }.onMouseClick { _, _, _ ->
             knob.grab()
             grabbed = true
         } childOf this

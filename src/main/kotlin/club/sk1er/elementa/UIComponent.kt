@@ -19,7 +19,7 @@ abstract class UIComponent {
     private val features = mutableListOf<Effect>()
     private var constraints = UIConstraints(this)
 
-    private var mouseClickAction: (button: Int) -> Unit = {}
+    private var mouseClickAction: (mouseX: Float, mouseY: Float, button: Int) -> Unit = { _, _, _ -> }
     private var mouseReleaseAction: () -> Unit = {}
     private var mouseEnterAction: () -> Unit = {}
     private var mouseLeaveAction: () -> Unit = {}
@@ -199,9 +199,9 @@ abstract class UIComponent {
      * Use this in the proper mouse click event to cascade all component's mouse click events.
      * Most common use is on the [Window] object.
      */
-    open fun mouseClick(button: Int) {
-        if (isHovered()) mouseClickAction(button)
-        this.children.forEach { it.mouseClick(button) }
+    open fun mouseClick(mouseX: Int, mouseY: Int, button: Int) {
+        if (isHovered()) mouseClickAction( mouseX - this.getLeft(), mouseY - this.getTop(), button)
+        this.children.forEach { it.mouseClick(mouseX, mouseY, button) }
     }
 
     /**
@@ -211,7 +211,8 @@ abstract class UIComponent {
      */
     open fun mouseRelease() {
         if (isHovered()) mouseReleaseAction()
-        this.children.forEach { it.mouseReleaseAction() }
+        this.children.forEach { it.mouseRelease() }
+
     }
 
     /**
@@ -235,16 +236,16 @@ abstract class UIComponent {
     /**
      * Adds a method to be run when mouse is clicked within the component.
      */
-    fun onMouseClick(method: (button: Int) -> Unit) = apply {
+    fun onMouseClick(method: (Float, Float, Int) -> Unit) = apply {
         mouseClickAction = method
     }
 
     /**
      * Adds a method to be run when mouse is clicked within the component.
      */
-    fun onMouseClick(method: Consumer<Int>) = apply {
-        mouseClickAction = method::accept
-    }
+//    fun onMouseClick(method: Consumer<Int>) = apply {
+//        mouseClickAction = method.accept(int)
+//    }
 
     /**
      * Adds a method to be run when mouse is released within the component.

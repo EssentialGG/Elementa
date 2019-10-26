@@ -52,6 +52,7 @@ class SettingsGui : GuiScreen() {
 
         Category("General", settingsBox)
                 .addSetting(SettingDivider("General Settings"))
+                .addSetting(ButtonSetting("test", "test", "Button"))
                 .addSetting(ToggleSetting("General 1", "This toggles something"))
                 .addSetting(SliderSetting("General 2", "This changes a value"))
                 .addSetting(ToggleSetting("General 3", "This toggles something"))
@@ -115,7 +116,7 @@ class SettingsGui : GuiScreen() {
 
     override fun mouseClicked(mouseX: Int, mouseY: Int, mouseButton: Int) {
         super.mouseClicked(mouseX, mouseY, mouseButton)
-        window.mouseClick(mouseButton)
+        window.mouseClick(mouseX, mouseY, mouseButton)
     }
 
     override fun mouseReleased(mouseX: Int, mouseY: Int, state: Int) {
@@ -169,7 +170,7 @@ class SettingsGui : GuiScreen() {
                 text.animate { setXAnimation(Animations.OUT_BOUNCE, 0.5f, 0.pixels()) }
             }
 
-            onMouseClick {
+            onMouseClick { _, _, _ ->
                 parent.children.forEach {
                     it as Category
                     if (it == this && !it.selected) select()
