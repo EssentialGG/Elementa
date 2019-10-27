@@ -53,7 +53,7 @@ repositories {
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    compileOnly "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 }
 
 processResources {
@@ -98,9 +98,24 @@ publishing {
             }
         }
     }
+
     publications {
         gpr(MavenPublication) { publication ->
-            project.shadow.component(publication)
+            publication.pom { pom ->
+                pom.withXml { xml ->
+                    def dependenciesNode = xml.asNode().appendNode('dependencies')
+
+                    project.configurations.compileOnly.allDependencies.each {
+                        if (!(it instanceof SelfResolvingDependency)) {
+                            def dependencyNode = dependenciesNode.appendNode('dependency')
+                            dependencyNode.appendNode('groupId', it.group)
+                            dependencyNode.appendNode('artifactId', it.name)
+                            dependencyNode.appendNode('version', it.version)
+                            dependencyNode.appendNode('scope', 'runtime')
+                        }
+                    }
+                }
+            }
         }
     }
 }
