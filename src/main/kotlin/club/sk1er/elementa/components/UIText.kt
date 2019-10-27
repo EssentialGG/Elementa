@@ -9,14 +9,28 @@ import net.minecraft.client.renderer.GlStateManager
  * Simple text component that draws its given [text] at the scale determined by
  * this component's width & height constrains.
  */
-open class UIText @JvmOverloads constructor(private val text: String, private val shadow: Boolean = true) : UIComponent() {
+open class UIText @JvmOverloads constructor(private var text: String = "", private var shadow: Boolean = true) : UIComponent() {
 
-    private val textWidth: Float = Minecraft.getMinecraft().fontRendererObj.getStringWidth(text).toFloat()
+    private var textWidth: Float = Minecraft.getMinecraft().fontRendererObj.getStringWidth(text).toFloat()
 
     init {
         super.getConstraints().setWidth(PixelConstraint(textWidth))
         super.getConstraints().setHeight(PixelConstraint(9f))
     }
+
+    fun getText() = text
+    fun setText(text: String) = apply {
+        this.text = text
+        textWidth = Minecraft.getMinecraft().fontRendererObj.getStringWidth(text).toFloat()
+    }
+
+    fun getShadow() = shadow
+    fun setShadow(shadow: Boolean) = apply { this.shadow = shadow }
+
+    /**
+     * Returns the text width if no scale is applied to the text
+     */
+    fun getTextWidth() = textWidth
 
     override fun draw() {
         beforeDraw()
