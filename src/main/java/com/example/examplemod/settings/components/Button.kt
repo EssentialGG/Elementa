@@ -20,14 +20,12 @@ class Button(text: String) : UIComponent() {
         color = Color(0, 205, 200, 0).asConstraint()
     }.enableEffect(StencilEffect()) childOf this
 
-    private val click = UICircle().constrain {
-        color = Color(0, 0, 0, 0).asConstraint()
-    } childOf background
+    private val click = UICircle() childOf background
 
     private val text = UIText(text, false).constrain {
         x = CenterConstraint()
         y = CenterConstraint()
-        color = Color(255, 255, 255, 0).asConstraint()
+        color = Color(0, 0, 0, 0).asConstraint()
     } childOf background
 
     init {

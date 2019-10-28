@@ -210,14 +210,21 @@ class SettingsGui : GuiScreen() {
                 if (it == 0 && !(children.first() as SettingObject).selected) return@onMouseScroll
                 scrolled += it * 50
 
-                children.first().animate {
-                    setYAnimation(Animations.OUT_EXP, 0.5f, scrolled.pixels())
+                if (scrolled <= 0) {
+                    children.first().animate {
+                        setYAnimation(Animations.OUT_EXP, 0.5f, scrolled.pixels())
+                    }
+                } else {
+                    children.first().animate {
+                        setYAnimation(Animations.OUT_EXP, 0.3f, (scrolled / 4).pixels())
+                    }
                 }
+
 
                 if (scrolled > 0) {
                     scrolled = 0
                     children.first().animate {
-                        setYAnimation(Animations.OUT_ELASTIC, 0.5f, 0.pixels(), delay = 0.3f)
+                        setYAnimation(Animations.OUT_BOUNCE, 0.5f, 0.pixels(), delay = 0.1f)
                     }
                 }
             }
