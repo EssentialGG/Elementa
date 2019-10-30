@@ -11,14 +11,12 @@ buildscript {
     }
     dependencies {
         classpath "net.minecraftforge.gradle:ForgeGradle:2.1-SNAPSHOT"
-        classpath 'com.github.jengelman.gradle.plugins:shadow:4.0.4'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "org.jetbrains.dokka:dokka-gradle-plugin:0.9.17"
         classpath "org.jetbrains.dokka:dokka-gradle-plugin:${dokka_version}"
     }
 }
 
-apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: "net.minecraftforge.gradle.forge"
 apply plugin: 'kotlin'
 apply plugin: 'maven-publish'
@@ -72,36 +70,6 @@ processResources {
     // copy everything else, thats not the mcmod.info
     from(sourceSets.main.resources.srcDirs) {
         exclude "mcmod.info"
-    }
-}
-
-reobf {
-    shadowJar { mappingType = 'SEARGE' }
-}
-
-tasks.build.dependsOn reobfShadowJar
-
-shadowJar {
-//    minimize()
-
-    classifier ''
-}
-
-publishing {
-    repositories {
-        maven {
-            name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/Sk1erLLC/Elementa")
-            credentials {
-                username = project.findProperty("gpr.user") ?: System.getenv("GPR_USER")
-                password = project.findProperty("gpr.key") ?: System.getenv("GPR_API_KEY")
-            }
-        }
-    }
-    publications {
-        gpr(MavenPublication) { publication ->
-            project.shadow.component(publication)
-        }
     }
 }
 
