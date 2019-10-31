@@ -6,6 +6,12 @@ class AdditivePositionConstraint(private val constraint1: PositionConstraint, pr
     override var cachedValue = 0f
     override var recalculate = true
 
+    override fun animationFrame() {
+        super.animationFrame()
+        constraint1.animationFrame()
+        constraint2.animationFrame()
+    }
+
     override fun getXPositionImpl(component: UIComponent, parent: UIComponent): Float {
         return constraint1.getXPosition(component, parent) + constraint2.getXPosition(component, parent)
     }
@@ -18,6 +24,12 @@ class AdditivePositionConstraint(private val constraint1: PositionConstraint, pr
 class AdditiveSizeConstraint(private val constraint1: SizeConstraint, private val constraint2: SizeConstraint) : SizeConstraint {
     override var cachedValue = 0f
     override var recalculate = true
+
+    override fun animationFrame() {
+        super.animationFrame()
+        constraint1.animationFrame()
+        constraint2.animationFrame()
+    }
 
     override fun getWidthImpl(component: UIComponent, parent: UIComponent): Float {
         return constraint1.getWidth(component, parent) + constraint2.getWidth(component, parent)
