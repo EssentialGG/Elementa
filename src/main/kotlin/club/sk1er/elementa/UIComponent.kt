@@ -109,23 +109,23 @@ abstract class UIComponent {
     }
 
     fun setX(constraint: XConstraint) = apply {
-        this.constraints.setX(constraint)
+        this.constraints.withX(constraint)
     }
 
     fun setY(constraint: YConstraint) = apply {
-        this.constraints.setY(constraint)
+        this.constraints.withY(constraint)
     }
 
     fun setWidth(constraint: WidthConstraint) = apply {
-        this.constraints.setWidth(constraint)
+        this.constraints.withWidth(constraint)
     }
 
     fun setHeight(constraint: HeightConstraint) = apply {
-        this.constraints.setHeight(constraint)
+        this.constraints.withHeight(constraint)
     }
 
     fun setColor(constraint: ColorConstraint) = apply {
-        this.constraints.setColor(constraint)
+        this.constraints.withColor(constraint)
     }
 
     open fun getConstraints() = constraints

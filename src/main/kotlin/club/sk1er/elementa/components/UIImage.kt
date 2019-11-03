@@ -17,8 +17,8 @@ open class UIImage(private var image: BufferedImage?) : UIComponent() {
 
     init {
         val img = image ?: throw IllegalArgumentException("image must not be null.")
-        super.getConstraints().setWidth(PixelConstraint(img.width.toFloat()))
-        super.getConstraints().setHeight(PixelConstraint(img.height.toFloat()))
+        super.getConstraints().withWidth(PixelConstraint(img.width.toFloat()))
+        super.getConstraints().withHeight(PixelConstraint(img.height.toFloat()))
     }
 
     override fun draw() {

@@ -14,8 +14,8 @@ open class UIText @JvmOverloads constructor(private var text: String = "", priva
     private var textWidth: Float = Minecraft.getMinecraft().fontRendererObj.getStringWidth(text).toFloat()
 
     init {
-        super.getConstraints().setWidth(PixelConstraint(textWidth))
-        super.getConstraints().setHeight(PixelConstraint(9f))
+        super.getConstraints().withWidth(PixelConstraint(textWidth))
+        super.getConstraints().withHeight(PixelConstraint(9f))
     }
 
     fun getText() = text

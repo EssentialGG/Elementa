@@ -4,44 +4,44 @@ import club.sk1er.elementa.constraints.*
 import java.awt.Color
 
 open class UIConstraints(protected val component: UIComponent) {
-    internal var x: XConstraint = PixelConstraint(0f)
-    internal var y: YConstraint = PixelConstraint(0f)
-    internal var width: WidthConstraint = PixelConstraint(0f)
-    internal var height: HeightConstraint = PixelConstraint(0f)
-    internal var color: ColorConstraint = ConstantColorConstraint(Color.WHITE)
+    var x: XConstraint = PixelConstraint(0f)
+    var y: YConstraint = PixelConstraint(0f)
+    var width: WidthConstraint = PixelConstraint(0f)
+    var height: HeightConstraint = PixelConstraint(0f)
+    var color: ColorConstraint = ConstantColorConstraint(Color.WHITE)
 
     open fun getX(): Float {
         return x.getXPosition(component, component.parent)
     }
-    open fun setX(constraint: XConstraint) = apply {
+    open fun withX(constraint: XConstraint) = apply {
         x = constraint
     }
 
     open fun getY(): Float {
         return y.getYPosition(component, component.parent)
     }
-    open fun setY(constraint: YConstraint) = apply {
+    open fun withY(constraint: YConstraint) = apply {
         y = constraint
     }
 
     open fun getWidth(): Float {
         return width.getWidth(component, component.parent)
     }
-    open fun setWidth(constraint: WidthConstraint) = apply {
+    open fun withWidth(constraint: WidthConstraint) = apply {
         width = constraint
     }
 
     open fun getHeight(): Float {
         return height.getHeight(component, component.parent)
     }
-    open fun setHeight(constraint: HeightConstraint) = apply {
+    open fun withHeight(constraint: HeightConstraint) = apply {
         height = constraint
     }
 
     open fun getColor(): Color {
         return color.getColor(component, component.parent)
     }
-    open fun setColor(constraint: ColorConstraint) = apply {
+    open fun withColor(constraint: ColorConstraint) = apply {
         color = constraint
     }
 
