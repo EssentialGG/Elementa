@@ -13,11 +13,11 @@ class AdditivePositionConstraint(private val constraint1: PositionConstraint, pr
     }
 
     override fun getXPositionImpl(component: UIComponent, parent: UIComponent): Float {
-        return constraint1.getXPosition(component, parent) + constraint2.getXPosition(component, parent)
+        return constraint1.getXPosition(component, parent) + constraint2.getXPosition(component, parent) - parent.getLeft()
     }
 
     override fun getYPositionImpl(component: UIComponent, parent: UIComponent): Float {
-        return constraint1.getYPosition(component, parent) + constraint2.getYPosition(component, parent)
+        return constraint1.getYPosition(component, parent) + constraint2.getYPosition(component, parent) - parent.getTop()
     }
 }
 
