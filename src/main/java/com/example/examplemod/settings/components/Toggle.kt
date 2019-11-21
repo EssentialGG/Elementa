@@ -14,7 +14,7 @@ class Toggle : UIComponent() {
     private var toggled = true
     private var selected = false
 
-    private val slide = UIRoundedRectangle(5f).constrain {
+    private val slide = UIRoundedRectangle(5.0).constrain {
         y = CenterConstraint()
         x = CenterConstraint()
         width = 20.pixels()

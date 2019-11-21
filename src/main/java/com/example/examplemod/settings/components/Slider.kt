@@ -15,7 +15,7 @@ class Slider : UIComponent() {
     private var grabbed = false
     private val value = 0.5f
 
-    private val slide = UIRoundedRectangle(1f).constrain {
+    private val slide = UIRoundedRectangle(1.0).constrain {
         y = CenterConstraint()
         width = RelativeConstraint()
         height = 2.pixels()

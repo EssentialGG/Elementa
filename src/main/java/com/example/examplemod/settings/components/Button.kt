@@ -14,11 +14,11 @@ import java.awt.Color
 class Button(text: String) : UIComponent() {
     private var active = false
 
-    private val background = UIRoundedRectangle(4f).constrain {
+    private val background = UIRoundedRectangle(4.0).constrain {
         width = RelativeConstraint()
         height = RelativeConstraint()
         color = Color(0, 205, 200, 0).asConstraint()
-    }.enableEffect(StencilEffect()) childOf this
+    } effect StencilEffect() childOf this
 
     private val click = UICircle() childOf background
 
@@ -29,7 +29,7 @@ class Button(text: String) : UIComponent() {
     } childOf background
 
     init {
-        onMouseClick { mouseX, mouseY, button ->
+        onMouseClick { mouseX, mouseY, _ ->
             if (!active) return@onMouseClick
             click.constrain {
                 x = mouseX.pixels()
