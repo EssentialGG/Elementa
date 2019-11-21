@@ -29,3 +29,11 @@ run
 Thumbs.db
 lib/*
 *.default
+
+# minecraft
+saves
+logs
+config
+options.txt
+usercache.json
+usernamecache.json

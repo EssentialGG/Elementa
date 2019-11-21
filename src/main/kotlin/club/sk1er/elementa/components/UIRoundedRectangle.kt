@@ -14,8 +14,7 @@ import kotlin.math.sin
 /**
  * Draws a rounded rectangle
  */
-open class UIRoundedRectangle @JvmOverloads constructor(radius: Float, private val steps: Int = 10) : UIComponent() {
-    private val r = radius.toDouble()
+open class UIRoundedRectangle @JvmOverloads constructor(var radius: Double, var steps: Int = 10) : UIComponent() {
     init {
         setColor(ConstantColorConstraint(Color(0, 0, 0, 0)))
     }
@@ -48,38 +47,36 @@ open class UIRoundedRectangle @JvmOverloads constructor(radius: Float, private v
 
         var theta = 0.0
         for (i in 0 until steps) {
-            worldRenderer.pos(cos(theta) * r + x2 - r,  -sin(theta) * r + y + r, 0.0).endVertex()
+            worldRenderer.pos(cos(theta) * radius + x2 - radius,  -sin(theta) * radius + y + radius, 0.0).endVertex()
             theta += (PI / 2) / steps
         }
 
-        worldRenderer.pos(x2 - r, y, 0.0).endVertex()
-        worldRenderer.pos(x + r, y, 0.0).endVertex()
+        worldRenderer.pos(x2 - radius, y, 0.0).endVertex()
+        worldRenderer.pos(x + radius, y, 0.0).endVertex()
 
         for (i in 0 until steps) {
-            worldRenderer.pos(cos(theta) * r + x + r,  -sin(theta) * r + y + r, 0.0).endVertex()
+            worldRenderer.pos(cos(theta) * radius + x + radius,  -sin(theta) * radius + y + radius, 0.0).endVertex()
             theta += (PI / 2) / steps
         }
 
-        worldRenderer.pos(x, y + r, 0.0).endVertex()
-        worldRenderer.pos(x, y2 - r, 0.0).endVertex()
+        worldRenderer.pos(x, y + radius, 0.0).endVertex()
+        worldRenderer.pos(x, y2 - radius, 0.0).endVertex()
 
         for (i in 0 until steps) {
-            worldRenderer.pos(cos(theta) * r + x + r,  -sin(theta) * r + y2 - r, 0.0).endVertex()
+            worldRenderer.pos(cos(theta) * radius + x + radius,  -sin(theta) * radius + y2 - radius, 0.0).endVertex()
             theta += (PI / 2) / steps
         }
 
-        worldRenderer.pos(x + r, y2, 0.0).endVertex()
-        worldRenderer.pos(x2 - r, y2, 0.0).endVertex()
+        worldRenderer.pos(x + radius, y2, 0.0).endVertex()
+        worldRenderer.pos(x2 - radius, y2, 0.0).endVertex()
 
         for (i in 0 until steps) {
-            worldRenderer.pos(cos(theta) * r + x2 - r,  -sin(theta) * r + y2 - r, 0.0).endVertex()
+            worldRenderer.pos(cos(theta) * radius + x2 - radius,  -sin(theta) * radius + y2 - radius, 0.0).endVertex()
             theta += (PI / 2) / steps
         }
 
-        worldRenderer.pos(x2, y2 - r, 0.0).endVertex()
-        worldRenderer.pos(x2, y + r, 0.0).endVertex()
-
-
+        worldRenderer.pos(x2, y2 - radius, 0.0).endVertex()
+        worldRenderer.pos(x2, y + radius, 0.0).endVertex()
 
         tessellator.draw()
 
