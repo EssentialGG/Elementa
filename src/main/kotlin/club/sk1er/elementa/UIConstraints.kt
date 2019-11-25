@@ -9,6 +9,7 @@ open class UIConstraints(protected val component: UIComponent) {
     var width: WidthConstraint = PixelConstraint(0f)
     var height: HeightConstraint = PixelConstraint(0f)
     var color: ColorConstraint = ConstantColorConstraint(Color.WHITE)
+    var textScale: HeightConstraint = PixelConstraint(1f)
 
     open fun getX(): Float {
         return x.getXPosition(component, component.parent)
@@ -43,6 +44,14 @@ open class UIConstraints(protected val component: UIComponent) {
     }
     open fun withColor(constraint: ColorConstraint) = apply {
         color = constraint
+    }
+
+    open fun getTextScale(): Float {
+        return textScale.getHeight(component, component.parent)
+    }
+
+    open fun withTextScale(constraint: HeightConstraint) = apply {
+        textScale = constraint
     }
 
     internal open fun animationFrame() {

@@ -1,6 +1,5 @@
 package com.example.examplemod
 
-import com.example.examplemod.settings.SettingsGui
 import net.minecraft.command.CommandBase
 import net.minecraft.command.ICommandSender
 
@@ -12,6 +11,6 @@ class ExampleCommand : CommandBase() {
     override fun getRequiredPermissionLevel() = 0
 
     override fun processCommand(sender: ICommandSender?, args: Array<String>) {
-        ExampleMod.gui = SettingsGui()
+        ExampleMod.gui = ExampleGui()
     }
 }

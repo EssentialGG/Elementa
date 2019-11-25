@@ -35,11 +35,11 @@ open class UIText @JvmOverloads constructor(private var text: String = "", priva
     override fun draw() {
         beforeDraw()
 
-        val x = this.getLeft()
-        val y = this.getTop()
-        val width = this.getWidth() / textWidth
-        val height = this.getHeight() / 9f
-        val color = this.getColor()
+        val x = getLeft()
+        val y = getTop()
+        val width = getWidth() / textWidth
+        val height = getHeight() / 9f
+        val color = getColor()
 
         GlStateManager.enableBlend()
 

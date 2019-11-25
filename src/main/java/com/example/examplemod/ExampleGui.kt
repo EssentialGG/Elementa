@@ -4,6 +4,8 @@ import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.components.*
 import club.sk1er.elementa.constraints.*
 import club.sk1er.elementa.constraints.animation.Animations
+import club.sk1er.elementa.dsl.asConstraint
+import club.sk1er.elementa.dsl.constrain
 import club.sk1er.elementa.dsl.pixels
 import club.sk1er.elementa.dsl.plus
 import club.sk1er.elementa.effects.ScissorEffect
@@ -61,6 +63,21 @@ class ExampleGui : GuiScreen() {
         settings.addChild(top)
         settings.addChild(createSlider("Slider 1", PixelConstraint(30f)))
         settings.addChild(createSlider("Second Slider", PixelConstraint(65f)))
+        settings.addChild(
+            UIWrappedText("this is a test of really long text that wont fit on just one line inside of the gui").constrain {
+                y = SiblingConstraint()
+                width = RelativeConstraint()
+                textScale = 2.pixels()
+            }
+        )
+        settings.addChild(
+            UIBlock().constrain {
+                y = SiblingConstraint()
+                width = RelativeConstraint()
+                height = 5.pixels()
+                color = Color.RED.asConstraint()
+            }
+        )
 
         val cont = UIContainer()
             .getConstraints()
