@@ -17,6 +17,8 @@ class AnimatingConstraints(
         this.y = oldConstraints.y
         this.width = oldConstraints.width
         this.height = oldConstraints.height
+        this.radius = oldConstraints.radius
+        this.textScale = oldConstraints.textScale
         this.color = oldConstraints.color
     }
 
@@ -81,6 +83,34 @@ class AnimatingConstraints(
     }
 
     @JvmOverloads
+    fun setRadiusAnimation(strategy: AnimationStrategy, time: Float, newConstraint: WidthConstraint, delay: Float = 0f) = apply {
+        val totalFrames = time * Window.of(component).animationFPS
+        val totalDelay = delay * Window.of(component).animationFPS
+
+        radius = WidthAnimationComponent(
+            strategy,
+            totalFrames.toInt(),
+            oldConstraints.radius,
+            newConstraint,
+            totalDelay.toInt()
+        )
+    }
+
+    @JvmOverloads
+    fun setTextScaleAnimation(strategy: AnimationStrategy, time: Float, newConstraint: HeightConstraint, delay: Float = 0f) = apply {
+        val totalFrames = time * Window.of(component).animationFPS
+        val totalDelay = delay * Window.of(component).animationFPS
+
+        textScale = HeightAnimationComponent(
+            strategy,
+            totalFrames.toInt(),
+            oldConstraints.textScale,
+            newConstraint,
+            totalDelay.toInt()
+        )
+    }
+
+    @JvmOverloads
     fun setColorAnimation(strategy: AnimationStrategy, time: Float, newConstraint: ColorConstraint, delay: Float = 0f) = apply {
         val totalFrames = time * Window.of(component).animationFPS
         val totalDelay = delay * Window.of(component).animationFPS
@@ -131,6 +161,18 @@ class AnimatingConstraints(
             else anyLeftAnimating = true
         }
 
+        val radius = radius
+        if (radius is WidthAnimationComponent) {
+            if (radius.complete()) this.radius = radius.newConstraint
+            else anyLeftAnimating = true
+        }
+
+        val textScale = textScale
+        if (textScale is HeightAnimationComponent) {
+            if (textScale.complete())  this.textScale = textScale.newConstraint
+            else anyLeftAnimating = true
+        }
+
         val color = color
         if (color is ColorAnimationComponent) {
             if (color.complete()) this.color = color.newConstraint
@@ -143,6 +185,8 @@ class AnimatingConstraints(
                 this.y = this@AnimatingConstraints.y
                 this.width = this@AnimatingConstraints.width
                 this.height = this@AnimatingConstraints.height
+                this.radius = this@AnimatingConstraints.radius
+                this.textScale = this@AnimatingConstraints.textScale
                 this.color = this@AnimatingConstraints.color
             })
             completeAction()
