@@ -1,10 +1,7 @@
 package club.sk1er.elementa.components
 
 import club.sk1er.elementa.UIComponent
-import club.sk1er.elementa.constraints.HeightConstraint
 import club.sk1er.elementa.constraints.PixelConstraint
-import club.sk1er.elementa.dsl.constrain
-import club.sk1er.elementa.dsl.pixels
 import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.GlStateManager
 
@@ -33,14 +30,6 @@ open class UIWrappedText @JvmOverloads constructor(private var text: String = ""
      * Returns the text width if no scale is applied to the text
      */
     fun getTextWidth() = textWidth
-
-    fun setTextScale(constraint: HeightConstraint) = apply {
-        this.getConstraints().textScale = constraint
-    }
-
-    fun getTextScale(): Float {
-        return this.getConstraints().textScale.getHeight(this, this.parent)
-    }
 
     override fun getHeight(): Float {
         val width = getWidth() / getTextScale()

@@ -1,7 +1,8 @@
 package club.sk1er.elementa.components
 
 import club.sk1er.elementa.UIComponent
-import club.sk1er.elementa.constraints.ConstantColorConstraint
+import club.sk1er.elementa.dsl.asConstraint
+import club.sk1er.elementa.dsl.pixels
 import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.client.renderer.Tessellator
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats
@@ -11,9 +12,10 @@ import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
 
-class UICircle @JvmOverloads constructor(private val steps: Int = 40) : UIComponent() {
+class UICircle @JvmOverloads constructor(radius: Float = 0f, color: Color = Color(0, 0, 0, 0), var steps: Int = 40) : UIComponent() {
     init {
-        setColor(ConstantColorConstraint(Color(0, 0, 0, 0)))
+        setColor(color.asConstraint())
+        setRadius(radius.pixels())
     }
 
     override fun draw() {
@@ -21,9 +23,9 @@ class UICircle @JvmOverloads constructor(private val steps: Int = 40) : UICompon
 
         val x = getLeft().toDouble()
         val y = getTop().toDouble()
-        val r = getWidth().toDouble() / 2
+        val r = getRadius().toDouble()
 
-        val color = this.getColor()
+        val color = getColor()
         if (color.alpha == 0) return super.draw()
 
 

@@ -124,6 +124,14 @@ abstract class UIComponent {
         this.constraints.withHeight(constraint)
     }
 
+    fun setRadius(constraint: WidthConstraint) = apply {
+        this.constraints.withRadius(constraint)
+    }
+
+    fun setTextScale(constraint: HeightConstraint) = apply {
+        this.constraints.withTextScale(constraint)
+    }
+
     fun setColor(constraint: ColorConstraint) = apply {
         this.constraints.withColor(constraint)
     }
@@ -141,6 +149,10 @@ abstract class UIComponent {
     open fun getWidth() = constraints.getWidth()
 
     open fun getHeight() = constraints.getHeight()
+
+    open fun getRadius() = constraints.getRadius()
+
+    open fun getTextScale() = constraints.getTextScale()
 
     open fun getColor() = constraints.getColor()
 

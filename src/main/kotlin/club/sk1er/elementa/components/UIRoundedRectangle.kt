@@ -2,6 +2,7 @@ package club.sk1er.elementa.components
 
 import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.constraints.ConstantColorConstraint
+import club.sk1er.elementa.dsl.pixels
 import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.client.renderer.Tessellator
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats
@@ -14,9 +15,10 @@ import kotlin.math.sin
 /**
  * Draws a rounded rectangle
  */
-open class UIRoundedRectangle @JvmOverloads constructor(var radius: Double, var steps: Int = 10) : UIComponent() {
+open class UIRoundedRectangle @JvmOverloads constructor(radius: Float, var steps: Int = 10) : UIComponent() {
     init {
         setColor(ConstantColorConstraint(Color(0, 0, 0, 0)))
+        setRadius(radius.pixels())
     }
 
     override fun draw() {
@@ -26,8 +28,9 @@ open class UIRoundedRectangle @JvmOverloads constructor(var radius: Double, var 
         val y = getTop().toDouble()
         val x2 = getRight().toDouble()
         val y2 = getBottom().toDouble()
+        val radius = getRadius()
 
-        val color = this.getColor()
+        val color = getColor()
         if (color.alpha == 0) return super.draw()
 
 

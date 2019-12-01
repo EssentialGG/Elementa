@@ -1,7 +1,7 @@
 package club.sk1er.elementa.components
 
 import club.sk1er.elementa.UIComponent
-import club.sk1er.elementa.constraints.ConstantColorConstraint
+import club.sk1er.elementa.dsl.asConstraint
 import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.client.renderer.Tessellator
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats
@@ -11,9 +11,9 @@ import java.awt.Color
 /**
  * Extremely simple component that simply draws a colored rectangle.
  */
-open class UIBlock : UIComponent() {
+open class UIBlock(color: Color = Color(0, 0, 0, 0)) : UIComponent() {
     init {
-        this.setColor(ConstantColorConstraint(Color(0, 0, 0, 0)))
+        this.setColor(color.asConstraint())
     }
 
     override fun draw() {
@@ -24,7 +24,7 @@ open class UIBlock : UIComponent() {
         val x2 = this.getRight().toDouble()
         val y2 = this.getBottom().toDouble()
 
-        val color = this.getColor()
+        val color = getColor()
         if (color.alpha == 0) return super.draw()
 
 

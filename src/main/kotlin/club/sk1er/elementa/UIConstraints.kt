@@ -8,8 +8,9 @@ open class UIConstraints(protected val component: UIComponent) {
     var y: YConstraint = PixelConstraint(0f)
     var width: WidthConstraint = PixelConstraint(0f)
     var height: HeightConstraint = PixelConstraint(0f)
-    var color: ColorConstraint = ConstantColorConstraint(Color.WHITE)
+    var radius: WidthConstraint = PixelConstraint(0f)
     var textScale: HeightConstraint = PixelConstraint(1f)
+    var color: ColorConstraint = ConstantColorConstraint(Color.WHITE)
 
     open fun getX(): Float {
         return x.getXPosition(component, component.parent)
@@ -39,19 +40,25 @@ open class UIConstraints(protected val component: UIComponent) {
         height = constraint
     }
 
-    open fun getColor(): Color {
-        return color.getColor(component, component.parent)
+    open fun getRadius(): Float {
+        return radius.getWidth(component, component.parent)
     }
-    open fun withColor(constraint: ColorConstraint) = apply {
-        color = constraint
+    open fun withRadius(constraint: WidthConstraint) = apply {
+        radius = constraint
     }
 
     open fun getTextScale(): Float {
         return textScale.getHeight(component, component.parent)
     }
-
     open fun withTextScale(constraint: HeightConstraint) = apply {
         textScale = constraint
+    }
+
+    open fun getColor(): Color {
+        return color.getColor(component, component.parent)
+    }
+    open fun withColor(constraint: ColorConstraint) = apply {
+        color = constraint
     }
 
     internal open fun animationFrame() {
