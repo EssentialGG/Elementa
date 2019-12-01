@@ -1,4 +1,5 @@
 # Elementa
+[![](https://jitpack.io/v/sk1erllc/Elementa.svg)](https://jitpack.io/#sk1erllc/Elementa)
 
 Elementa (from the name of the first book published on Geometry by Euclid) is a library
 that aims to make GUI creation extremely simple. It's based on a couple key concepts, some that
