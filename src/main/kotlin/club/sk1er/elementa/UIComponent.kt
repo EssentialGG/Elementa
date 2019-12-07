@@ -170,7 +170,10 @@ abstract class UIComponent {
         val mouseX = Mouse.getX() * res.scaledWidth / mc.displayWidth
         val mouseY = res.scaledHeight - Mouse.getY() * res.scaledHeight / mc.displayHeight - 1f
 
-        return (mouseX > getLeft() && mouseX < getRight() && mouseY > getTop() && mouseY < getBottom())
+        return (mouseX > getLeft()
+                && mouseX < getRight()
+                && mouseY > getTop()
+                && mouseY < getBottom())
     }
 
     /**

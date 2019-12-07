@@ -3,9 +3,11 @@ package club.sk1er.elementa.components
 import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.dsl.asConstraint
 import club.sk1er.elementa.dsl.pixels
+import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.client.renderer.Tessellator
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats
+import org.lwjgl.input.Mouse
 import org.lwjgl.opengl.GL11
 import java.awt.Color
 import kotlin.math.PI
@@ -16,6 +18,19 @@ class UICircle @JvmOverloads constructor(radius: Float = 0f, color: Color = Colo
     init {
         setColor(color.asConstraint())
         setRadius(radius.pixels())
+    }
+
+    override fun isHovered(): Boolean {
+        val res = Window.of(this).scaledResolution
+        val mc = Minecraft.getMinecraft()
+
+        val mouseX = Mouse.getX() * res.scaledWidth / mc.displayWidth
+        val mouseY = res.scaledHeight - Mouse.getY() * res.scaledHeight / mc.displayHeight - 1f
+
+        return (mouseX > getLeft() - getRadius()
+                && mouseY > getTop() - getRadius()
+                && mouseX < getLeft() + getRadius() 
+                && mouseY < getTop() + getRadius())
     }
 
     override fun draw() {
