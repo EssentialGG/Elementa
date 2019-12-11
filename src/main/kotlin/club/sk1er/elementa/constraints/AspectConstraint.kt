@@ -28,4 +28,8 @@ class AspectConstraint(private val value: Float) : PositionConstraint, SizeConst
     override fun getHeightImpl(component: UIComponent, parent: UIComponent): Float {
         return component.getWidth() * value
     }
+
+    override fun getRadiusImpl(component: UIComponent, parent: UIComponent): Float {
+        return component.getRadius() * value
+    }
 }

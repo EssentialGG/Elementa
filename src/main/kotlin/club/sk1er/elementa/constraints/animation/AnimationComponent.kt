@@ -76,6 +76,31 @@ class YAnimationComponent(
     }
 }
 
+class RadiusAnimationComponent(
+    strategy: AnimationStrategy,
+    totalFrames: Int,
+    private val oldConstraint: RadiusConstraint,
+    val newConstraint: RadiusConstraint,
+    delay: Int
+) : AnimationComponent<Float>(strategy, totalFrames, delay), RadiusConstraint {
+    override var cachedValue = 0f
+    override var recalculate = true
+
+    override fun getRadiusImpl(component: UIComponent, parent: UIComponent): Float {
+        val startX = oldConstraint.getRadius(component, parent)
+        val finalX = newConstraint.getRadius(component, parent)
+
+        return startX + ((finalX - startX) * getPercentComplete())
+    }
+
+    override fun animationFrame() {
+        super<AnimationComponent>.animationFrame()
+
+        oldConstraint.animationFrame()
+        newConstraint.animationFrame()
+    }
+}
+
 class WidthAnimationComponent(
     strategy: AnimationStrategy,
     totalFrames: Int,

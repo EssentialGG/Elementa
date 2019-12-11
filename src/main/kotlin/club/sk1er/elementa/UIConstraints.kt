@@ -8,7 +8,7 @@ open class UIConstraints(protected val component: UIComponent) {
     var y: YConstraint = PixelConstraint(0f)
     var width: WidthConstraint = PixelConstraint(0f)
     var height: HeightConstraint = PixelConstraint(0f)
-    var radius: WidthConstraint = PixelConstraint(0f)
+    var radius: RadiusConstraint = PixelConstraint(0f)
     var textScale: HeightConstraint = PixelConstraint(1f)
     var color: ColorConstraint = ConstantColorConstraint(Color.WHITE)
 
@@ -41,9 +41,9 @@ open class UIConstraints(protected val component: UIComponent) {
     }
 
     open fun getRadius(): Float {
-        return radius.getWidth(component, component.parent)
+        return radius.getRadius(component, component.parent)
     }
-    open fun withRadius(constraint: WidthConstraint) = apply {
+    open fun withRadius(constraint: RadiusConstraint) = apply {
         radius = constraint
     }
 
@@ -66,6 +66,7 @@ open class UIConstraints(protected val component: UIComponent) {
         y.animationFrame()
         width.animationFrame()
         height.animationFrame()
+        radius.animationFrame()
         color.animationFrame()
     }
 
@@ -78,6 +79,7 @@ open class UIConstraints(protected val component: UIComponent) {
         this.y = this@UIConstraints.y
         this.width = this@UIConstraints.width
         this.height = this@UIConstraints.height
+        this.radius = this@UIConstraints.radius
         this.color = this@UIConstraints.color
     }
 }

@@ -36,6 +36,10 @@ class AdditiveSizeConstraint(private val constraint1: SizeConstraint, private va
     }
 
     override fun getHeightImpl(component: UIComponent, parent: UIComponent): Float {
-        return constraint1.getHeightImpl(component, parent) + constraint2.getHeightImpl(component, parent)
+        return constraint1.getHeight(component, parent) + constraint2.getHeight(component, parent)
+    }
+
+    override fun getRadiusImpl(component: UIComponent, parent: UIComponent): Float {
+        return constraint1.getRadius(component, parent) + constraint2.getRadius(component, parent)
     }
 }

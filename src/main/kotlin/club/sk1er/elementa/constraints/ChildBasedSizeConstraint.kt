@@ -11,23 +11,13 @@ class ChildBasedSizeConstraint : SizeConstraint {
 
     override fun getWidthImpl(component: UIComponent, parent: UIComponent): Float {
         return component.children.sumByDouble { it.getWidth().toDouble() }.toFloat()
-
-//        if (component.children.size == 1) {
-//            return component.children[0].getWidth()
-//        }
-//        return component.children.filter {
-//            it.getConstraints().x is SiblingConstraint
-//        }.sumByDouble { it.getWidth().toDouble() }.toFloat()
     }
 
     override fun getHeightImpl(component: UIComponent, parent: UIComponent): Float {
         return component.children.sumByDouble { it.getHeight().toDouble() }.toFloat()
+    }
 
-//        if (component.children.size == 1) {
-//            return component.children[0].getHeight()
-//        }
-//        return component.children.filter {
-//            it.getConstraints().y is SiblingConstraint
-//        }.sumByDouble { it.getHeight().toDouble() }.toFloat()
+    override fun getRadiusImpl(component: UIComponent, parent: UIComponent): Float {
+        return component.children.sumByDouble { it.getHeight().toDouble() }.toFloat() * 2f
     }
 }

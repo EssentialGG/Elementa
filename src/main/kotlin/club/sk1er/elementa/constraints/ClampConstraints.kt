@@ -25,6 +25,10 @@ class MaxSizeConstraint(
     override fun getHeightImpl(component: UIComponent, parent: UIComponent): Float {
         return constraint.getHeight(component, parent).coerceAtMost(maxConstraint.getHeight(component, parent))
     }
+
+    override fun getRadiusImpl(component: UIComponent, parent: UIComponent): Float {
+        return constraint.getRadius(component, parent).coerceAtMost(maxConstraint.getRadius(component, parent))
+    }
 }
 
 /**
@@ -75,6 +79,10 @@ class MinSizeConstraint(
 
     override fun getHeightImpl(component: UIComponent, parent: UIComponent): Float {
         return constraint.getHeight(component, parent).coerceAtLeast(minConstraint.getHeight(component, parent))
+    }
+
+    override fun getRadiusImpl(component: UIComponent, parent: UIComponent): Float {
+        return constraint.getRadius(component, parent).coerceAtLeast(minConstraint.getRadius(component, parent))
     }
 }
 

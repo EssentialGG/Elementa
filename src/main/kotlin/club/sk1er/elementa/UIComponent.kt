@@ -124,7 +124,7 @@ abstract class UIComponent {
         this.constraints.withHeight(constraint)
     }
 
-    fun setRadius(constraint: WidthConstraint) = apply {
+    fun setRadius(constraint: RadiusConstraint) = apply {
         this.constraints.withRadius(constraint)
     }
 

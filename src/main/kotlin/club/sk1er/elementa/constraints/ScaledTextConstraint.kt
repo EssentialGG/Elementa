@@ -26,4 +26,8 @@ class ScaledTextConstraint(private var scale: Float) : SizeConstraint {
             else -> throw IllegalAccessException("ScaledTextConstraint can only be used with UIText")
         }
     }
+
+    override fun getRadiusImpl(component: UIComponent, parent: UIComponent): Float {
+        throw IllegalAccessException("ScaledTextConstraint cannot be used as a radius")
+    }
 }

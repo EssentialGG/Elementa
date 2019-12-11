@@ -23,4 +23,9 @@ class RelativeConstraint @JvmOverloads constructor(private val value: Float = 1f
         return if (constrainer != null) constrainer!!.getHeight() * value
         else parent.getHeight() * value
     }
+
+    override fun getRadiusImpl(component: UIComponent, parent: UIComponent): Float {
+        return if (constrainer != null) (constrainer!!.getWidth() * value) / 2f
+        else (parent.getWidth() * value) / 2f
+    }
 }

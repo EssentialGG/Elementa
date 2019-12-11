@@ -29,7 +29,7 @@ class UICircle @JvmOverloads constructor(radius: Float = 0f, color: Color = Colo
 
         return (mouseX > getLeft() - getRadius()
                 && mouseY > getTop() - getRadius()
-                && mouseX < getLeft() + getRadius() 
+                && mouseX < getLeft() + getRadius()
                 && mouseY < getTop() + getRadius())
     }
 

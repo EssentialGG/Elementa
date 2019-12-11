@@ -30,4 +30,8 @@ class PixelConstraint @JvmOverloads constructor(
     override fun getHeightImpl(component: UIComponent, parent: UIComponent): Float {
         return value
     }
+
+    override fun getRadiusImpl(component: UIComponent, parent: UIComponent): Float {
+        return value
+    }
 }

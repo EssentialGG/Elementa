@@ -83,11 +83,11 @@ class AnimatingConstraints(
     }
 
     @JvmOverloads
-    fun setRadiusAnimation(strategy: AnimationStrategy, time: Float, newConstraint: WidthConstraint, delay: Float = 0f) = apply {
+    fun setRadiusAnimation(strategy: AnimationStrategy, time: Float, newConstraint: RadiusConstraint, delay: Float = 0f) = apply {
         val totalFrames = time * Window.of(component).animationFPS
         val totalDelay = delay * Window.of(component).animationFPS
 
-        radius = WidthAnimationComponent(
+        radius = RadiusAnimationComponent(
             strategy,
             totalFrames.toInt(),
             oldConstraints.radius,
@@ -162,7 +162,7 @@ class AnimatingConstraints(
         }
 
         val radius = radius
-        if (radius is WidthAnimationComponent) {
+        if (radius is RadiusAnimationComponent) {
             if (radius.complete()) this.radius = radius.newConstraint
             else anyLeftAnimating = true
         }

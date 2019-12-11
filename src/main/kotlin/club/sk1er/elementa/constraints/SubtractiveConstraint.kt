@@ -38,4 +38,8 @@ class SubtractiveSizeConstraint(private val constraint1: SizeConstraint, private
     override fun getHeightImpl(component: UIComponent, parent: UIComponent): Float {
         return constraint1.getHeightImpl(component, parent) - constraint2.getHeightImpl(component, parent)
     }
+
+    override fun getRadiusImpl(component: UIComponent, parent: UIComponent): Float {
+        return constraint1.getRadiusImpl(component, parent) - constraint2.getRadiusImpl(component, parent)
+    }
 }

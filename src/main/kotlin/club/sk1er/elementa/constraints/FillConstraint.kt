@@ -17,4 +17,8 @@ class FillConstraint : SizeConstraint {
     override fun getHeightImpl(component: UIComponent, parent: UIComponent): Float {
         return parent.getBottom() - component.getTop()
     }
+
+    override fun getRadiusImpl(component: UIComponent, parent: UIComponent): Float {
+        return (parent.getRadius() - component.getLeft()) / 2f
+    }
 }

@@ -30,6 +30,8 @@ interface GeneralConstraint : PositionConstraint, SizeConstraint {
     override fun getWidthImpl(component: UIComponent, parent: UIComponent) = getXValue(component, parent)
 
     override fun getHeightImpl(component: UIComponent, parent: UIComponent) = getYValue(component, parent)
+
+    override fun getRadiusImpl(component: UIComponent, parent: UIComponent) = getXValue(component, parent)
 }
 
 interface PositionConstraint : XConstraint, YConstraint
@@ -60,7 +62,20 @@ interface YConstraint : SuperConstraint<Float> {
     }
 }
 
-interface SizeConstraint : WidthConstraint, HeightConstraint
+interface SizeConstraint : WidthConstraint, HeightConstraint, RadiusConstraint
+
+interface RadiusConstraint: SuperConstraint<Float> {
+    fun getRadiusImpl(component: UIComponent, parent: UIComponent): Float
+
+    fun getRadius(component: UIComponent, parent: UIComponent): Float {
+        if (recalculate) {
+            cachedValue = getRadiusImpl(component, parent)
+            recalculate = false
+        }
+
+        return cachedValue
+    }
+}
 
 interface WidthConstraint : SuperConstraint<Float> {
     fun getWidthImpl(component: UIComponent, parent: UIComponent): Float
