@@ -21,3 +21,20 @@ class ChildBasedSizeConstraint : SizeConstraint {
         return component.children.sumByDouble { it.getHeight().toDouble() }.toFloat() * 2f
     }
 }
+
+class ChildBasedMaxSizeConstraint : SizeConstraint {
+    override var cachedValue = 0f
+    override var recalculate = true
+
+    override fun getWidthImpl(component: UIComponent, parent: UIComponent): Float {
+        return component.children.maxBy{ it.getWidth() }!!.getWidth()
+    }
+
+    override fun getHeightImpl(component: UIComponent, parent: UIComponent): Float {
+        return component.children.maxBy{ it.getHeight() }!!.getHeight()
+    }
+
+    override fun getRadiusImpl(component: UIComponent, parent: UIComponent): Float {
+        return component.children.maxBy{ it.getHeight() }!!.getHeight() * 2f
+    }
+}
