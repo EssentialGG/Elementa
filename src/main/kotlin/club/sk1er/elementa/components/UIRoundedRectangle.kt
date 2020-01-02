@@ -1,7 +1,7 @@
 package club.sk1er.elementa.components
 
 import club.sk1er.elementa.UIComponent
-import club.sk1er.elementa.constraints.ConstantColorConstraint
+import club.sk1er.elementa.dsl.asConstraint
 import club.sk1er.elementa.dsl.pixels
 import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.client.renderer.Tessellator
@@ -17,7 +17,7 @@ import kotlin.math.sin
  */
 open class UIRoundedRectangle @JvmOverloads constructor(radius: Float, var steps: Int = 10) : UIComponent() {
     init {
-        setColor(ConstantColorConstraint(Color(0, 0, 0, 0)))
+        setColor(Color(0, 0, 0, 0).asConstraint())
         setRadius(radius.pixels())
     }
 

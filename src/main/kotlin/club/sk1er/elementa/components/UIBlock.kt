@@ -13,7 +13,7 @@ import java.awt.Color
  */
 open class UIBlock(color: Color = Color(0, 0, 0, 0)) : UIComponent() {
     init {
-        this.setColor(color.asConstraint())
+        setColor(color.asConstraint())
     }
 
     override fun draw() {

@@ -1,7 +1,7 @@
 package club.sk1er.elementa.components
 
 import club.sk1er.elementa.UIComponent
-import club.sk1er.elementa.constraints.PixelConstraint
+import club.sk1er.elementa.dsl.pixels
 import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.client.renderer.Tessellator
 import net.minecraft.client.renderer.texture.DynamicTexture
@@ -17,8 +17,8 @@ open class UIImage(private var image: BufferedImage?) : UIComponent() {
 
     init {
         val img = image ?: throw IllegalArgumentException("image must not be null.")
-        super.getConstraints().withWidth(PixelConstraint(img.width.toFloat()))
-        super.getConstraints().withHeight(PixelConstraint(img.height.toFloat()))
+        setWidth(img.width.pixels())
+        setHeight(img.height.pixels())
     }
 
     override fun draw() {

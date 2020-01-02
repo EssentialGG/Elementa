@@ -1,7 +1,7 @@
 package club.sk1er.elementa.components
 
 import club.sk1er.elementa.UIComponent
-import club.sk1er.elementa.constraints.PixelConstraint
+import club.sk1er.elementa.dsl.pixels
 import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.GlStateManager
 
@@ -14,7 +14,7 @@ open class UIWrappedText @JvmOverloads constructor(private var text: String = ""
     private var textWidth: Float = Minecraft.getMinecraft().fontRendererObj.getStringWidth(text).toFloat()
 
     init {
-        setWidth(PixelConstraint(textWidth))
+        setWidth(textWidth.pixels())
     }
 
     fun getText() = text

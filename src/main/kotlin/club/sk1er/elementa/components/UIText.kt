@@ -1,7 +1,7 @@
 package club.sk1er.elementa.components
 
 import club.sk1er.elementa.UIComponent
-import club.sk1er.elementa.constraints.PixelConstraint
+import club.sk1er.elementa.dsl.pixels
 import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.GlStateManager
 
@@ -14,14 +14,15 @@ open class UIText @JvmOverloads constructor(private var text: String = "", priva
     private var textWidth: Float = Minecraft.getMinecraft().fontRendererObj.getStringWidth(text).toFloat()
 
     init {
-        super.getConstraints().withWidth(PixelConstraint(textWidth))
-        super.getConstraints().withHeight(PixelConstraint(9f))
+        setWidth(textWidth.pixels())
+        setHeight(9.pixels())
     }
 
     fun getText() = text
-    fun setText(text: String) = apply {
+    @JvmOverloads fun setText(text: String, adjustWidth: Boolean = true) = apply {
         this.text = text
         textWidth = Minecraft.getMinecraft().fontRendererObj.getStringWidth(text).toFloat()
+        if (adjustWidth) setWidth(textWidth.pixels())
     }
 
     fun getShadow() = shadow

@@ -14,7 +14,7 @@ open class UIShape : UIComponent() {
     var drawMode = GL11.GL_POLYGON
 
     init {
-        this.setColor(ConstantColorConstraint(Color(0, 0, 0, 0)))
+        setColor(ConstantColorConstraint(Color(0, 0, 0, 0)))
     }
 
     override fun draw() {
