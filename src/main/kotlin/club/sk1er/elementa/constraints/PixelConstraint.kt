@@ -12,26 +12,27 @@ class PixelConstraint @JvmOverloads constructor(
 ) : PositionConstraint, SizeConstraint {
     override var cachedValue = 0f
     override var recalculate = true
+    override var constrainTo: UIComponent? = null
 
-    override fun getXPositionImpl(component: UIComponent, parent: UIComponent): Float {
-        return if (!alignOpposite) parent.getLeft() + value
-                else parent.getRight() - value - component.getWidth()
+    override fun getXPositionImpl(component: UIComponent): Float {
+        return if (!alignOpposite) (constrainTo ?: component.parent).getLeft() + value
+                else (constrainTo ?: component.parent).getRight() - value - component.getWidth()
     }
 
-    override fun getYPositionImpl(component: UIComponent, parent: UIComponent): Float {
-        return if (!alignOpposite) parent.getTop() + value
-                else parent.getBottom() - value - component.getHeight()
+    override fun getYPositionImpl(component: UIComponent): Float {
+        return if (!alignOpposite) (constrainTo ?: component.parent).getTop() + value
+                else (constrainTo ?: component.parent).getBottom() - value - component.getHeight()
     }
 
-    override fun getWidthImpl(component: UIComponent, parent: UIComponent): Float {
+    override fun getWidthImpl(component: UIComponent): Float {
         return value
     }
 
-    override fun getHeightImpl(component: UIComponent, parent: UIComponent): Float {
+    override fun getHeightImpl(component: UIComponent): Float {
         return value
     }
 
-    override fun getRadiusImpl(component: UIComponent, parent: UIComponent): Float {
+    override fun getRadiusImpl(component: UIComponent): Float {
         return value
     }
 }

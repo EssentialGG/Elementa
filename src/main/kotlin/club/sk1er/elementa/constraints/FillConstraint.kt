@@ -9,16 +9,17 @@ import club.sk1er.elementa.UIComponent
 class FillConstraint : SizeConstraint {
     override var cachedValue = 0f
     override var recalculate = true
+    override var constrainTo: UIComponent? = null
 
-    override fun getWidthImpl(component: UIComponent, parent: UIComponent): Float {
-        return parent.getRight() - component.getLeft()
+    override fun getWidthImpl(component: UIComponent): Float {
+        return (constrainTo ?: component.parent).getRight() - component.getLeft()
     }
 
-    override fun getHeightImpl(component: UIComponent, parent: UIComponent): Float {
-        return parent.getBottom() - component.getTop()
+    override fun getHeightImpl(component: UIComponent): Float {
+        return (constrainTo ?: component.parent).getBottom() - component.getTop()
     }
 
-    override fun getRadiusImpl(component: UIComponent, parent: UIComponent): Float {
-        return (parent.getRadius() - component.getLeft()) / 2f
+    override fun getRadiusImpl(component: UIComponent): Float {
+        return ((constrainTo ?: component.parent).getRadius() - component.getLeft()) / 2f
     }
 }

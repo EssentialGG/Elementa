@@ -1,6 +1,7 @@
 package club.sk1er.elementa.constraints
 
 import club.sk1er.elementa.UIComponent
+import club.sk1er.elementa.UIConstraints
 import java.awt.Color
 
 /**
@@ -12,36 +13,41 @@ import java.awt.Color
 interface SuperConstraint <T> {
     var cachedValue: T
     var recalculate: Boolean
+    var constrainTo: UIComponent?
 
     fun animationFrame() {
         recalculate = true
     }
+
+    fun to(component: UIComponent) {
+        constrainTo = component
+    }
 }
 
 interface GeneralConstraint : PositionConstraint, SizeConstraint {
-    fun getXValue(component: UIComponent, parent: UIComponent): Float
+    fun getXValue(component: UIComponent): Float
 
-    fun getYValue(component: UIComponent, parent: UIComponent): Float
+    fun getYValue(component: UIComponent): Float
 
-    override fun getXPositionImpl(component: UIComponent, parent: UIComponent) = getXValue(component, parent)
+    override fun getXPositionImpl(component: UIComponent) = getXValue(component)
 
-    override fun getYPositionImpl(component: UIComponent, parent: UIComponent) = getYValue(component, parent)
+    override fun getYPositionImpl(component: UIComponent) = getYValue(component)
 
-    override fun getWidthImpl(component: UIComponent, parent: UIComponent) = getXValue(component, parent)
+    override fun getWidthImpl(component: UIComponent) = getXValue(component)
 
-    override fun getHeightImpl(component: UIComponent, parent: UIComponent) = getYValue(component, parent)
+    override fun getHeightImpl(component: UIComponent) = getYValue(component)
 
-    override fun getRadiusImpl(component: UIComponent, parent: UIComponent) = getXValue(component, parent)
+    override fun getRadiusImpl(component: UIComponent) = getXValue(component)
 }
 
 interface PositionConstraint : XConstraint, YConstraint
 
 interface XConstraint : SuperConstraint<Float> {
-    fun getXPositionImpl(component: UIComponent, parent: UIComponent): Float
+    fun getXPositionImpl(component: UIComponent): Float
 
-    fun getXPosition(component: UIComponent, parent: UIComponent): Float {
+    fun getXPosition(component: UIComponent): Float {
         if (recalculate) {
-            cachedValue = getXPositionImpl(component, parent)
+            cachedValue = getXPositionImpl(component)
             recalculate = false
         }
 
@@ -50,11 +56,11 @@ interface XConstraint : SuperConstraint<Float> {
 }
 
 interface YConstraint : SuperConstraint<Float> {
-    fun getYPositionImpl(component: UIComponent, parent: UIComponent): Float
+    fun getYPositionImpl(component: UIComponent): Float
 
-    fun getYPosition(component: UIComponent, parent: UIComponent): Float {
+    fun getYPosition(component: UIComponent): Float {
         if (recalculate) {
-            cachedValue = getYPositionImpl(component, parent)
+            cachedValue = getYPositionImpl(component)
             recalculate = false
         }
 
@@ -65,11 +71,11 @@ interface YConstraint : SuperConstraint<Float> {
 interface SizeConstraint : WidthConstraint, HeightConstraint, RadiusConstraint
 
 interface RadiusConstraint: SuperConstraint<Float> {
-    fun getRadiusImpl(component: UIComponent, parent: UIComponent): Float
+    fun getRadiusImpl(component: UIComponent): Float
 
-    fun getRadius(component: UIComponent, parent: UIComponent): Float {
+    fun getRadius(component: UIComponent): Float {
         if (recalculate) {
-            cachedValue = getRadiusImpl(component, parent)
+            cachedValue = getRadiusImpl(component)
             recalculate = false
         }
 
@@ -78,11 +84,11 @@ interface RadiusConstraint: SuperConstraint<Float> {
 }
 
 interface WidthConstraint : SuperConstraint<Float> {
-    fun getWidthImpl(component: UIComponent, parent: UIComponent): Float
+    fun getWidthImpl(component: UIComponent): Float
 
-    fun getWidth(component: UIComponent, parent: UIComponent): Float {
+    fun getWidth(component: UIComponent): Float {
         if (recalculate) {
-            cachedValue = getWidthImpl(component, parent)
+            cachedValue = getWidthImpl(component)
             recalculate = false
         }
 
@@ -91,11 +97,11 @@ interface WidthConstraint : SuperConstraint<Float> {
 }
 
 interface HeightConstraint : SuperConstraint<Float> {
-    fun getHeightImpl(component: UIComponent, parent: UIComponent): Float
+    fun getHeightImpl(component: UIComponent): Float
 
-    fun getHeight(component: UIComponent, parent: UIComponent): Float {
+    fun getHeight(component: UIComponent): Float {
         if (recalculate) {
-            cachedValue = getHeightImpl(component, parent)
+            cachedValue = getHeightImpl(component)
             recalculate = false
         }
 
@@ -104,11 +110,11 @@ interface HeightConstraint : SuperConstraint<Float> {
 }
 
 interface ColorConstraint : SuperConstraint<Color> {
-    fun getColorImpl(component: UIComponent, parent: UIComponent): Color
+    fun getColorImpl(component: UIComponent): Color
 
-    fun getColor(component: UIComponent, parent: UIComponent): Color {
+    fun getColor(component: UIComponent): Color {
         if (recalculate) {
-            cachedValue = getColorImpl(component, parent)
+            cachedValue = getColorImpl(component)
             recalculate = false
         }
 

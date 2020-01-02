@@ -35,10 +35,11 @@ class XAnimationComponent(
 ) : AnimationComponent<Float>(strategy, totalFrames, delay), XConstraint {
     override var cachedValue = 0f
     override var recalculate = true
+    override var constrainTo: UIComponent? = null
 
-    override fun getXPositionImpl(component: UIComponent, parent: UIComponent): Float {
-        val startX = oldConstraint.getXPosition(component, parent)
-        val finalX = newConstraint.getXPosition(component, parent)
+    override fun getXPositionImpl(component: UIComponent): Float {
+        val startX = oldConstraint.getXPosition(component)
+        val finalX = newConstraint.getXPosition(component)
 
         return startX + ((finalX - startX) * getPercentComplete())
     }
@@ -49,6 +50,10 @@ class XAnimationComponent(
 
         oldConstraint.animationFrame()
         newConstraint.animationFrame()
+    }
+
+    override fun to(component: UIComponent) {
+        throw(IllegalStateException("Constraint.to(UIComponent) is not available in this context!"))
     }
 }
 
@@ -61,10 +66,11 @@ class YAnimationComponent(
 ) : AnimationComponent<Float>(strategy, totalFrames, delay), YConstraint {
     override var cachedValue = 0f
     override var recalculate = true
+    override var constrainTo: UIComponent? = null
 
-    override fun getYPositionImpl(component: UIComponent, parent: UIComponent): Float {
-        val startX = oldConstraint.getYPosition(component, parent)
-        val finalX = newConstraint.getYPosition(component, parent)
+    override fun getYPositionImpl(component: UIComponent): Float {
+        val startX = oldConstraint.getYPosition(component)
+        val finalX = newConstraint.getYPosition(component)
 
         return startX + ((finalX - startX) * getPercentComplete())
     }
@@ -73,6 +79,10 @@ class YAnimationComponent(
 
         oldConstraint.animationFrame()
         newConstraint.animationFrame()
+    }
+
+    override fun to(component: UIComponent) {
+        throw(IllegalStateException("Constraint.to(UIComponent) is not available in this context!"))
     }
 }
 
@@ -85,10 +95,11 @@ class RadiusAnimationComponent(
 ) : AnimationComponent<Float>(strategy, totalFrames, delay), RadiusConstraint {
     override var cachedValue = 0f
     override var recalculate = true
+    override var constrainTo: UIComponent? = null
 
-    override fun getRadiusImpl(component: UIComponent, parent: UIComponent): Float {
-        val startX = oldConstraint.getRadius(component, parent)
-        val finalX = newConstraint.getRadius(component, parent)
+    override fun getRadiusImpl(component: UIComponent): Float {
+        val startX = oldConstraint.getRadius(component)
+        val finalX = newConstraint.getRadius(component)
 
         return startX + ((finalX - startX) * getPercentComplete())
     }
@@ -98,6 +109,10 @@ class RadiusAnimationComponent(
 
         oldConstraint.animationFrame()
         newConstraint.animationFrame()
+    }
+
+    override fun to(component: UIComponent) {
+        throw(IllegalStateException("Constraint.to(UIComponent) is not available in this context!"))
     }
 }
 
@@ -110,10 +125,11 @@ class WidthAnimationComponent(
 ) : AnimationComponent<Float>(strategy, totalFrames, delay), WidthConstraint {
     override var cachedValue = 0f
     override var recalculate = true
+    override var constrainTo: UIComponent? = null
 
-    override fun getWidthImpl(component: UIComponent, parent: UIComponent): Float {
-        val startX = oldConstraint.getWidth(component, parent)
-        val finalX = newConstraint.getWidth(component, parent)
+    override fun getWidthImpl(component: UIComponent): Float {
+        val startX = oldConstraint.getWidth(component)
+        val finalX = newConstraint.getWidth(component)
 
         return startX + ((finalX - startX) * getPercentComplete())
     }
@@ -123,6 +139,10 @@ class WidthAnimationComponent(
 
         oldConstraint.animationFrame()
         newConstraint.animationFrame()
+    }
+
+    override fun to(component: UIComponent) {
+        throw(IllegalStateException("Constraint.to(UIComponent) is not available in this context!"))
     }
 }
 
@@ -135,10 +155,11 @@ class HeightAnimationComponent(
 ) : AnimationComponent<Float>(strategy, totalFrames, delay), HeightConstraint {
     override var cachedValue = 0f
     override var recalculate = true
+    override var constrainTo: UIComponent? = null
 
-    override fun getHeightImpl(component: UIComponent, parent: UIComponent): Float {
-        val startX = oldConstraint.getHeight(component, parent)
-        val finalX = newConstraint.getHeight(component, parent)
+    override fun getHeightImpl(component: UIComponent): Float {
+        val startX = oldConstraint.getHeight(component)
+        val finalX = newConstraint.getHeight(component)
 
         return startX + ((finalX - startX) * getPercentComplete())
     }
@@ -148,6 +169,10 @@ class HeightAnimationComponent(
 
         oldConstraint.animationFrame()
         newConstraint.animationFrame()
+    }
+
+    override fun to(component: UIComponent) {
+        throw(IllegalStateException("Constraint.to(UIComponent) is not available in this context!"))
     }
 }
 
@@ -160,10 +185,11 @@ class ColorAnimationComponent(
 ) : AnimationComponent<Color>(strategy, totalFrames, delay), ColorConstraint {
     override var cachedValue = Color.WHITE
     override var recalculate = true
+    override var constrainTo: UIComponent? = null
 
-    override fun getColorImpl(component: UIComponent, parent: UIComponent): Color {
-        val startColor = oldConstraint.getColor(component, parent)
-        val endColor = newConstraint.getColor(component, parent)
+    override fun getColorImpl(component: UIComponent): Color {
+        val startColor = oldConstraint.getColor(component)
+        val endColor = newConstraint.getColor(component)
         val percentComplete = getPercentComplete()
 
         val newR = startColor.red + ((endColor.red - startColor.red) * percentComplete)
@@ -179,5 +205,9 @@ class ColorAnimationComponent(
 
         oldConstraint.animationFrame()
         newConstraint.animationFrame()
+    }
+
+    override fun to(component: UIComponent) {
+        throw(IllegalStateException("Constraint.to(UIComponent) is not available in this context!"))
     }
 }

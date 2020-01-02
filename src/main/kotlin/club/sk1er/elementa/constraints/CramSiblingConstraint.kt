@@ -9,36 +9,41 @@ import club.sk1er.elementa.UIComponent
 class CramSiblingConstraint : SiblingConstraint() {
     override var cachedValue = 0f
     override var recalculate = true
+    override var constrainTo: UIComponent? = null
 
-    override fun getXPositionImpl(component: UIComponent, parent: UIComponent): Float {
-        val index = parent.children.indexOf(component)
+    override fun getXPositionImpl(component: UIComponent): Float {
+        val index = component.parent.children.indexOf(component)
 
         if (index == 0) {
-            return parent.getLeft()
+            return component.parent.getLeft()
         }
 
-        val sibling = parent.children[index - 1]
+        val sibling = component.parent.children[index - 1]
 
-        if (sibling.getRight() + component.getWidth() < parent.getRight()) {
+        if (sibling.getRight() + component.getWidth() < component.parent.getRight()) {
             return sibling.getRight()
         }
 
-        return parent.getLeft()
+        return component.parent.getLeft()
     }
 
-    override fun getYPositionImpl(component: UIComponent, parent: UIComponent): Float {
-        val index = parent.children.indexOf(component)
+    override fun getYPositionImpl(component: UIComponent): Float {
+        val index = component.parent.children.indexOf(component)
 
         if (index == 0) {
-            return parent.getTop()
+            return component.parent.getTop()
         }
 
-        val sibling = parent.children[index - 1]
+        val sibling = component.parent.children[index - 1]
 
-        if (sibling.getRight() + component.getWidth() < parent.getRight()) {
+        if (sibling.getRight() + component.getWidth() < component.parent.getRight()) {
             return sibling.getTop()
         }
 
-        return getLowestPoint(sibling, parent, index)
+        return getLowestPoint(sibling, component.parent, index)
+    }
+
+    override fun to(component: UIComponent) {
+        throw(IllegalStateException("Constraint.to(UIComponent) is not available in this context!"))
     }
 }

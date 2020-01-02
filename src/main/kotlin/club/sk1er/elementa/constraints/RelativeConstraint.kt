@@ -9,23 +9,17 @@ import club.sk1er.elementa.UIComponent
 class RelativeConstraint @JvmOverloads constructor(private val value: Float = 1f) : GeneralConstraint {
     override var cachedValue = 0f
     override var recalculate = true
+    override var constrainTo: UIComponent? = null
 
-    var constrainer: UIComponent? = null
-
-    fun constrainTo(component: UIComponent) = apply { constrainer = component }
-
-    override fun getXValue(component: UIComponent, parent: UIComponent): Float {
-        return if (constrainer != null) constrainer!!.getWidth() * value
-        else parent.getWidth() * value
+    override fun getXValue(component: UIComponent): Float {
+        return (constrainTo ?: component.parent).getWidth() * value
     }
 
-    override fun getYValue(component: UIComponent, parent: UIComponent): Float {
-        return if (constrainer != null) constrainer!!.getHeight() * value
-        else parent.getHeight() * value
+    override fun getYValue(component: UIComponent): Float {
+        return (constrainTo ?: component.parent).getHeight() * value
     }
 
-    override fun getRadiusImpl(component: UIComponent, parent: UIComponent): Float {
-        return if (constrainer != null) (constrainer!!.getWidth() * value) / 2f
-        else (parent.getWidth() * value) / 2f
+    override fun getRadiusImpl(component: UIComponent): Float {
+        return ((constrainTo ?: component.parent).getWidth() * value) / 2f
     }
 }

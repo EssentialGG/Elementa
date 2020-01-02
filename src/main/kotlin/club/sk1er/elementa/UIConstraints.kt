@@ -13,49 +13,49 @@ open class UIConstraints(protected val component: UIComponent) {
     var color: ColorConstraint = ConstantColorConstraint(Color.WHITE)
 
     open fun getX(): Float {
-        return x.getXPosition(component, component.parent)
+        return x.getXPosition(component)
     }
     open fun withX(constraint: XConstraint) = apply {
         x = constraint
     }
 
     open fun getY(): Float {
-        return y.getYPosition(component, component.parent)
+        return y.getYPosition(component)
     }
     open fun withY(constraint: YConstraint) = apply {
         y = constraint
     }
 
     open fun getWidth(): Float {
-        return width.getWidth(component, component.parent)
+        return width.getWidth(component)
     }
     open fun withWidth(constraint: WidthConstraint) = apply {
         width = constraint
     }
 
     open fun getHeight(): Float {
-        return height.getHeight(component, component.parent)
+        return height.getHeight(component)
     }
     open fun withHeight(constraint: HeightConstraint) = apply {
         height = constraint
     }
 
     open fun getRadius(): Float {
-        return radius.getRadius(component, component.parent)
+        return radius.getRadius(component)
     }
     open fun withRadius(constraint: RadiusConstraint) = apply {
         radius = constraint
     }
 
     open fun getTextScale(): Float {
-        return textScale.getHeight(component, component.parent)
+        return textScale.getHeight(component)
     }
     open fun withTextScale(constraint: HeightConstraint) = apply {
         textScale = constraint
     }
 
     open fun getColor(): Color {
-        return color.getColor(component, component.parent)
+        return color.getColor(component)
     }
     open fun withColor(constraint: ColorConstraint) = apply {
         color = constraint

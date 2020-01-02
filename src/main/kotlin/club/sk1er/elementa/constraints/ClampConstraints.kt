@@ -11,6 +11,7 @@ class MaxSizeConstraint(
 ) : SizeConstraint {
     override var cachedValue = 0f
     override var recalculate = true
+    override var constrainTo: UIComponent? = null
 
     override fun animationFrame() {
         super.animationFrame()
@@ -18,16 +19,20 @@ class MaxSizeConstraint(
         maxConstraint.animationFrame()
     }
 
-    override fun getWidthImpl(component: UIComponent, parent: UIComponent): Float {
-        return constraint.getWidth(component, parent).coerceAtMost(maxConstraint.getWidth(component, parent))
+    override fun getWidthImpl(component: UIComponent): Float {
+        return constraint.getWidth(component).coerceAtMost(maxConstraint.getWidth(component))
     }
 
-    override fun getHeightImpl(component: UIComponent, parent: UIComponent): Float {
-        return constraint.getHeight(component, parent).coerceAtMost(maxConstraint.getHeight(component, parent))
+    override fun getHeightImpl(component: UIComponent): Float {
+        return constraint.getHeight(component).coerceAtMost(maxConstraint.getHeight(component))
     }
 
-    override fun getRadiusImpl(component: UIComponent, parent: UIComponent): Float {
-        return constraint.getRadius(component, parent).coerceAtMost(maxConstraint.getRadius(component, parent))
+    override fun getRadiusImpl(component: UIComponent): Float {
+        return constraint.getRadius(component).coerceAtMost(maxConstraint.getRadius(component))
+    }
+
+    override fun to(component: UIComponent) {
+        throw(IllegalStateException("Constraint.to(UIComponent) is not available in this context!"))
     }
 }
 
@@ -40,6 +45,7 @@ class MaxPositionConstraint(
 ) : PositionConstraint {
     override var cachedValue = 0f
     override var recalculate = true
+    override var constrainTo: UIComponent? = null
 
     override fun animationFrame() {
         super.animationFrame()
@@ -47,12 +53,16 @@ class MaxPositionConstraint(
         maxConstraint.animationFrame()
     }
 
-    override fun getXPositionImpl(component: UIComponent, parent: UIComponent): Float {
-        return constraint.getXPosition(component, parent).coerceAtMost(maxConstraint.getXPosition(component, parent))
+    override fun getXPositionImpl(component: UIComponent): Float {
+        return constraint.getXPosition(component).coerceAtMost(maxConstraint.getXPosition(component))
     }
 
-    override fun getYPositionImpl(component: UIComponent, parent: UIComponent): Float {
-        return constraint.getYPosition(component, parent).coerceAtMost(maxConstraint.getYPosition(component, parent))
+    override fun getYPositionImpl(component: UIComponent): Float {
+        return constraint.getYPosition(component).coerceAtMost(maxConstraint.getYPosition(component))
+    }
+
+    override fun to(component: UIComponent) {
+        throw(IllegalStateException("Constraint.to(UIComponent) is not available in this context!"))
     }
 }
 
@@ -66,6 +76,7 @@ class MinSizeConstraint(
 ) : SizeConstraint {
     override var cachedValue = 0f
     override var recalculate = true
+    override var constrainTo: UIComponent? = null
 
     override fun animationFrame() {
         super.animationFrame()
@@ -73,16 +84,20 @@ class MinSizeConstraint(
         minConstraint.animationFrame()
     }
 
-    override fun getWidthImpl(component: UIComponent, parent: UIComponent): Float {
-        return constraint.getWidth(component, parent).coerceAtLeast(minConstraint.getWidth(component, parent))
+    override fun getWidthImpl(component: UIComponent): Float {
+        return constraint.getWidth(component).coerceAtLeast(minConstraint.getWidth(component))
     }
 
-    override fun getHeightImpl(component: UIComponent, parent: UIComponent): Float {
-        return constraint.getHeight(component, parent).coerceAtLeast(minConstraint.getHeight(component, parent))
+    override fun getHeightImpl(component: UIComponent): Float {
+        return constraint.getHeight(component).coerceAtLeast(minConstraint.getHeight(component))
     }
 
-    override fun getRadiusImpl(component: UIComponent, parent: UIComponent): Float {
-        return constraint.getRadius(component, parent).coerceAtLeast(minConstraint.getRadius(component, parent))
+    override fun getRadiusImpl(component: UIComponent): Float {
+        return constraint.getRadius(component).coerceAtLeast(minConstraint.getRadius(component))
+    }
+
+    override fun to(component: UIComponent) {
+        throw(IllegalStateException("Constraint.to(UIComponent) is not available in this context!"))
     }
 }
 
@@ -95,6 +110,7 @@ class MinPositionConstraint(
 ) : PositionConstraint {
     override var cachedValue = 0f
     override var recalculate = true
+    override var constrainTo: UIComponent? = null
 
     override fun animationFrame() {
         super.animationFrame()
@@ -102,11 +118,15 @@ class MinPositionConstraint(
         minConstraint.animationFrame()
     }
 
-    override fun getXPositionImpl(component: UIComponent, parent: UIComponent): Float {
-        return constraint.getXPosition(component, parent).coerceAtLeast(minConstraint.getXPosition(component, parent))
+    override fun getXPositionImpl(component: UIComponent): Float {
+        return constraint.getXPosition(component).coerceAtLeast(minConstraint.getXPosition(component))
     }
 
-    override fun getYPositionImpl(component: UIComponent, parent: UIComponent): Float {
-        return constraint.getYPosition(component, parent).coerceAtLeast(minConstraint.getYPosition(component, parent))
+    override fun getYPositionImpl(component: UIComponent): Float {
+        return constraint.getYPosition(component).coerceAtLeast(minConstraint.getYPosition(component))
+    }
+
+    override fun to(component: UIComponent) {
+        throw(IllegalStateException("Constraint.to(UIComponent) is not available in this context!"))
     }
 }

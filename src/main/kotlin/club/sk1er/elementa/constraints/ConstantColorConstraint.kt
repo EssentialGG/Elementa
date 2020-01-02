@@ -9,8 +9,13 @@ import java.awt.Color
 class ConstantColorConstraint(private val color: Color) : ColorConstraint {
     override var cachedValue = Color.WHITE
     override var recalculate = true
+    override var constrainTo: UIComponent? = null
 
-    override fun getColorImpl(component: UIComponent, parent: UIComponent): Color {
+    override fun getColorImpl(component: UIComponent): Color {
         return color
+    }
+
+    override fun to(component: UIComponent) {
+        throw(IllegalStateException("Constraint.to(UIComponent) is not available in this context!"))
     }
 }

@@ -11,32 +11,33 @@ import club.sk1er.elementa.UIComponent
 open class SiblingConstraint @JvmOverloads constructor(private val alignOpposite: Boolean = false) : PositionConstraint {
     override var cachedValue = 0f
     override var recalculate = true
+    override var constrainTo: UIComponent? = null
 
-    override fun getXPositionImpl(component: UIComponent, parent: UIComponent): Float {
-        val index = parent.children.indexOf(component)
+    override fun getXPositionImpl(component: UIComponent): Float {
+        val index = component.parent.children.indexOf(component)
 
         if (alignOpposite) {
-            if (index == 0) return parent.getRight() - component.getWidth()
-            val sibling = parent.children[index - 1]
-            return getLeftmostPoint(sibling, parent, index) - component.getWidth()
+            if (index == 0) return component.parent.getRight() - component.getWidth()
+            val sibling = component.parent.children[index - 1]
+            return getLeftmostPoint(sibling, component.parent, index) - component.getWidth()
         } else {
-            if (index == 0) return parent.getLeft()
-            val sibling = parent.children[index - 1]
-            return getRightmostPoint(sibling, parent, index)
+            if (index == 0) return component.parent.getLeft()
+            val sibling = component.parent.children[index - 1]
+            return getRightmostPoint(sibling, component.parent, index)
         }
     }
 
-    override fun getYPositionImpl(component: UIComponent, parent: UIComponent): Float {
-        val index = parent.children.indexOf(component)
+    override fun getYPositionImpl(component: UIComponent): Float {
+        val index = component.parent.children.indexOf(component)
 
         if (alignOpposite) {
-            if (index == 0) return parent.getBottom() - component.getHeight()
-            val sibling = parent.children[index - 1]
-            return getHighestPoint(sibling, parent, index) - component.getHeight()
+            if (index == 0) return component.parent.getBottom() - component.getHeight()
+            val sibling = component.parent.children[index - 1]
+            return getHighestPoint(sibling, component.parent, index) - component.getHeight()
         } else {
-            if (index == 0) return parent.getTop()
-            val sibling = parent.children[index - 1]
-            return getLowestPoint(sibling, parent, index)
+            if (index == 0) return component.parent.getTop()
+            val sibling = component.parent.children[index - 1]
+            return getLowestPoint(sibling, component.parent, index)
         }
     }
 

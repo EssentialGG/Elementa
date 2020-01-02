@@ -13,11 +13,12 @@ import kotlin.random.Random
 class RainbowColorConstraint(private val alpha: Int = 255, private val speed: Float = 50f) : ColorConstraint {
     override var cachedValue = Color.WHITE
     override var recalculate = true
+    override var constrainTo: UIComponent? = null
 
     private var currentColor: Color = Color.WHITE
     private var currentStep = Random.nextInt(500)
 
-    override fun getColorImpl(component: UIComponent, parent: UIComponent): Color {
+    override fun getColorImpl(component: UIComponent): Color {
         return currentColor
     }
 
@@ -34,5 +35,9 @@ class RainbowColorConstraint(private val alpha: Int = 255, private val speed: Fl
             MathHelper.clamp_int(blue, 0, 255),
             MathHelper.clamp_int(alpha, 0, 255)
         )
+    }
+
+    override fun to(component: UIComponent) {
+        throw(IllegalStateException("Constraint.to(UIComponent) is not available in this context!"))
     }
 }

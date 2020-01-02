@@ -8,33 +8,35 @@ import club.sk1er.elementa.UIComponent
 class ChildBasedSizeConstraint : SizeConstraint {
     override var cachedValue = 0f
     override var recalculate = true
+    override var constrainTo: UIComponent? = null
 
-    override fun getWidthImpl(component: UIComponent, parent: UIComponent): Float {
-        return component.children.sumByDouble { it.getWidth().toDouble() }.toFloat()
+    override fun getWidthImpl(component: UIComponent): Float {
+        return (constrainTo ?: component).children.sumByDouble { it.getWidth().toDouble() }.toFloat()
     }
 
-    override fun getHeightImpl(component: UIComponent, parent: UIComponent): Float {
-        return component.children.sumByDouble { it.getHeight().toDouble() }.toFloat()
+    override fun getHeightImpl(component: UIComponent): Float {
+        return (constrainTo ?: component).children.sumByDouble { it.getHeight().toDouble() }.toFloat()
     }
 
-    override fun getRadiusImpl(component: UIComponent, parent: UIComponent): Float {
-        return component.children.sumByDouble { it.getHeight().toDouble() }.toFloat() * 2f
+    override fun getRadiusImpl(component: UIComponent): Float {
+        return (constrainTo ?: component).children.sumByDouble { it.getHeight().toDouble() }.toFloat() * 2f
     }
 }
 
 class ChildBasedMaxSizeConstraint : SizeConstraint {
     override var cachedValue = 0f
     override var recalculate = true
+    override var constrainTo: UIComponent? = null
 
-    override fun getWidthImpl(component: UIComponent, parent: UIComponent): Float {
-        return component.children.maxBy{ it.getWidth() }!!.getWidth()
+    override fun getWidthImpl(component: UIComponent): Float {
+        return (constrainTo ?: component).children.maxBy{ it.getWidth() }!!.getWidth()
     }
 
-    override fun getHeightImpl(component: UIComponent, parent: UIComponent): Float {
-        return component.children.maxBy{ it.getHeight() }!!.getHeight()
+    override fun getHeightImpl(component: UIComponent): Float {
+        return (constrainTo ?: component).children.maxBy{ it.getHeight() }!!.getHeight()
     }
 
-    override fun getRadiusImpl(component: UIComponent, parent: UIComponent): Float {
-        return component.children.maxBy{ it.getHeight() }!!.getHeight() * 2f
+    override fun getRadiusImpl(component: UIComponent): Float {
+        return (constrainTo ?: component).children.maxBy{ it.getHeight() }!!.getHeight() * 2f
     }
 }
