@@ -1,6 +1,7 @@
 package club.sk1er.elementa.constraints
 
 import club.sk1er.elementa.UIComponent
+import java.lang.UnsupportedOperationException
 
 /**
  * Similar to a [SiblingConstraint], except it tries to fit
@@ -43,7 +44,7 @@ class CramSiblingConstraint : SiblingConstraint() {
         return getLowestPoint(sibling, component.parent, index)
     }
 
-    override fun to(component: UIComponent) {
-        throw(IllegalStateException("Constraint.to(UIComponent) is not available in this context!"))
+    override fun to(component: UIComponent) = apply {
+        throw UnsupportedOperationException("Constraint.to(UIComponent) is not available in this context!")
     }
 }

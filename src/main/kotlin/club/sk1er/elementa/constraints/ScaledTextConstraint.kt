@@ -3,6 +3,7 @@ package club.sk1er.elementa.constraints
 import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.components.UIText
 import net.minecraft.client.Minecraft
+import java.lang.UnsupportedOperationException
 
 /**
  * Sets the width/height to be a scale of the default text width and height
@@ -32,7 +33,7 @@ class ScaledTextConstraint(private var scale: Float) : SizeConstraint {
         throw IllegalAccessException("ScaledTextConstraint cannot be used as a radius")
     }
 
-    override fun to(component: UIComponent) {
-        throw(IllegalStateException("Constraint.to(UIComponent) is not available in this context!"))
+    override fun to(component: UIComponent) = apply {
+        throw UnsupportedOperationException("Constraint.to(UIComponent) is not available in this context!")
     }
 }

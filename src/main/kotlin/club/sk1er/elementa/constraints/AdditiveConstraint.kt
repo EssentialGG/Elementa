@@ -1,6 +1,7 @@
 package club.sk1er.elementa.constraints
 
 import club.sk1er.elementa.UIComponent
+import java.lang.UnsupportedOperationException
 
 class AdditivePositionConstraint(private val constraint1: PositionConstraint, private val constraint2: PositionConstraint) : PositionConstraint {
     override var cachedValue = 0f
@@ -45,7 +46,7 @@ class AdditiveSizeConstraint(private val constraint1: SizeConstraint, private va
         return constraint1.getRadius(component) + constraint2.getRadius(component)
     }
 
-    override fun to(component: UIComponent) {
-        throw(IllegalStateException("Constraint.to(UIComponent) is not available in this context!"))
+    override fun to(component: UIComponent) = apply {
+        throw UnsupportedOperationException("Constraint.to(UIComponent) is not available in this context!")
     }
 }

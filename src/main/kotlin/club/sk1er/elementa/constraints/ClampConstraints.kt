@@ -1,6 +1,7 @@
 package club.sk1er.elementa.constraints
 
 import club.sk1er.elementa.UIComponent
+import java.lang.UnsupportedOperationException
 
 /**
  * Clamps the width to be the max of [constraint] and [maxConstraint]
@@ -31,8 +32,8 @@ class MaxSizeConstraint(
         return constraint.getRadius(component).coerceAtMost(maxConstraint.getRadius(component))
     }
 
-    override fun to(component: UIComponent) {
-        throw(IllegalStateException("Constraint.to(UIComponent) is not available in this context!"))
+    override fun to(component: UIComponent) = apply {
+        throw UnsupportedOperationException("Constraint.to(UIComponent) is not available in this context!")
     }
 }
 
@@ -61,8 +62,8 @@ class MaxPositionConstraint(
         return constraint.getYPosition(component).coerceAtMost(maxConstraint.getYPosition(component))
     }
 
-    override fun to(component: UIComponent) {
-        throw(IllegalStateException("Constraint.to(UIComponent) is not available in this context!"))
+    override fun to(component: UIComponent) = apply {
+        throw UnsupportedOperationException("Constraint.to(UIComponent) is not available in this context!")
     }
 }
 
@@ -96,8 +97,8 @@ class MinSizeConstraint(
         return constraint.getRadius(component).coerceAtLeast(minConstraint.getRadius(component))
     }
 
-    override fun to(component: UIComponent) {
-        throw(IllegalStateException("Constraint.to(UIComponent) is not available in this context!"))
+    override fun to(component: UIComponent) = apply {
+        throw UnsupportedOperationException("Constraint.to(UIComponent) is not available in this context!")
     }
 }
 
@@ -126,7 +127,7 @@ class MinPositionConstraint(
         return constraint.getYPosition(component).coerceAtLeast(minConstraint.getYPosition(component))
     }
 
-    override fun to(component: UIComponent) {
-        throw(IllegalStateException("Constraint.to(UIComponent) is not available in this context!"))
+    override fun to(component: UIComponent) = apply {
+        throw UnsupportedOperationException("Constraint.to(UIComponent) is not available in this context!")
     }
 }

@@ -3,6 +3,7 @@ package club.sk1er.elementa.constraints.animation
 import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.constraints.*
 import java.awt.Color
+import java.lang.UnsupportedOperationException
 import kotlin.math.max
 import kotlin.math.roundToInt
 
@@ -52,8 +53,8 @@ class XAnimationComponent(
         newConstraint.animationFrame()
     }
 
-    override fun to(component: UIComponent) {
-        throw(IllegalStateException("Constraint.to(UIComponent) is not available in this context!"))
+    override fun to(component: UIComponent) = apply {
+        throw UnsupportedOperationException("Constraint.to(UIComponent) is not available in this context!")
     }
 }
 
@@ -81,8 +82,8 @@ class YAnimationComponent(
         newConstraint.animationFrame()
     }
 
-    override fun to(component: UIComponent) {
-        throw(IllegalStateException("Constraint.to(UIComponent) is not available in this context!"))
+    override fun to(component: UIComponent) = apply {
+        throw UnsupportedOperationException("Constraint.to(UIComponent) is not available in this context!")
     }
 }
 
@@ -111,8 +112,8 @@ class RadiusAnimationComponent(
         newConstraint.animationFrame()
     }
 
-    override fun to(component: UIComponent) {
-        throw(IllegalStateException("Constraint.to(UIComponent) is not available in this context!"))
+    override fun to(component: UIComponent) = apply {
+        throw UnsupportedOperationException("Constraint.to(UIComponent) is not available in this context!")
     }
 }
 
@@ -141,8 +142,8 @@ class WidthAnimationComponent(
         newConstraint.animationFrame()
     }
 
-    override fun to(component: UIComponent) {
-        throw(IllegalStateException("Constraint.to(UIComponent) is not available in this context!"))
+    override fun to(component: UIComponent) = apply {
+        throw UnsupportedOperationException("Constraint.to(UIComponent) is not available in this context!")
     }
 }
 
@@ -171,8 +172,8 @@ class HeightAnimationComponent(
         newConstraint.animationFrame()
     }
 
-    override fun to(component: UIComponent) {
-        throw(IllegalStateException("Constraint.to(UIComponent) is not available in this context!"))
+    override fun to(component: UIComponent) = apply {
+        throw UnsupportedOperationException("Constraint.to(UIComponent) is not available in this context!")
     }
 }
 
@@ -207,7 +208,7 @@ class ColorAnimationComponent(
         newConstraint.animationFrame()
     }
 
-    override fun to(component: UIComponent) {
-        throw(IllegalStateException("Constraint.to(UIComponent) is not available in this context!"))
+    override fun to(component: UIComponent) = apply {
+        throw UnsupportedOperationException("Constraint.to(UIComponent) is not available in this context!")
     }
 }
