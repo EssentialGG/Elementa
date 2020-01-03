@@ -1,6 +1,7 @@
 package club.sk1er.elementa.constraints
 
 import club.sk1er.elementa.UIComponent
+import java.lang.UnsupportedOperationException
 
 class SubtractivePositionConstraint(private val constraint1: PositionConstraint, private val constraint2: PositionConstraint) : PositionConstraint {
     override var cachedValue = 0f
@@ -46,6 +47,6 @@ class SubtractiveSizeConstraint(private val constraint1: SizeConstraint, private
     }
 
     override fun to(component: UIComponent) {
-        throw(IllegalStateException("Constraint.to(UIComponent) is not available in this context!"))
+        throw UnsupportedOperationException("Constraint.to(UIComponent) is not available in this context!")
     }
 }

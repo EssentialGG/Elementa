@@ -19,7 +19,7 @@ class AspectConstraint @JvmOverloads constructor(private val value: Float = 1f) 
     }
 
     override fun getYPositionImpl(component: UIComponent): Float {
-        return (constrainTo ?: component) .getLeft()* value
+        return (constrainTo ?: component).getLeft()* value
     }
 
     override fun getWidthImpl(component: UIComponent): Float {

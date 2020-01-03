@@ -3,6 +3,7 @@ package club.sk1er.elementa.constraints.animation
 import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.constraints.*
 import java.awt.Color
+import java.lang.UnsupportedOperationException
 import kotlin.math.max
 import kotlin.math.roundToInt
 
@@ -53,7 +54,7 @@ class XAnimationComponent(
     }
 
     override fun to(component: UIComponent) {
-        throw(IllegalStateException("Constraint.to(UIComponent) is not available in this context!"))
+        throw UnsupportedOperationException("Constraint.to(UIComponent) is not available in this context!")
     }
 }
 
@@ -82,7 +83,7 @@ class YAnimationComponent(
     }
 
     override fun to(component: UIComponent) {
-        throw(IllegalStateException("Constraint.to(UIComponent) is not available in this context!"))
+        throw UnsupportedOperationException("Constraint.to(UIComponent) is not available in this context!")
     }
 }
 
@@ -112,7 +113,7 @@ class RadiusAnimationComponent(
     }
 
     override fun to(component: UIComponent) {
-        throw(IllegalStateException("Constraint.to(UIComponent) is not available in this context!"))
+        throw UnsupportedOperationException("Constraint.to(UIComponent) is not available in this context!")
     }
 }
 
@@ -142,7 +143,7 @@ class WidthAnimationComponent(
     }
 
     override fun to(component: UIComponent) {
-        throw(IllegalStateException("Constraint.to(UIComponent) is not available in this context!"))
+        throw UnsupportedOperationException("Constraint.to(UIComponent) is not available in this context!")
     }
 }
 
@@ -172,7 +173,7 @@ class HeightAnimationComponent(
     }
 
     override fun to(component: UIComponent) {
-        throw(IllegalStateException("Constraint.to(UIComponent) is not available in this context!"))
+        throw UnsupportedOperationException("Constraint.to(UIComponent) is not available in this context!")
     }
 }
 
@@ -208,6 +209,6 @@ class ColorAnimationComponent(
     }
 
     override fun to(component: UIComponent) {
-        throw(IllegalStateException("Constraint.to(UIComponent) is not available in this context!"))
+        throw UnsupportedOperationException("Constraint.to(UIComponent) is not available in this context!")
     }
 }

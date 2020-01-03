@@ -1,6 +1,7 @@
 package club.sk1er.elementa.constraints
 
 import club.sk1er.elementa.UIComponent
+import java.lang.UnsupportedOperationException
 
 /**
  * Clamps the width to be the max of [constraint] and [maxConstraint]
@@ -32,7 +33,7 @@ class MaxSizeConstraint(
     }
 
     override fun to(component: UIComponent) {
-        throw(IllegalStateException("Constraint.to(UIComponent) is not available in this context!"))
+        throw UnsupportedOperationException("Constraint.to(UIComponent) is not available in this context!")
     }
 }
 
@@ -62,7 +63,7 @@ class MaxPositionConstraint(
     }
 
     override fun to(component: UIComponent) {
-        throw(IllegalStateException("Constraint.to(UIComponent) is not available in this context!"))
+        throw UnsupportedOperationException("Constraint.to(UIComponent) is not available in this context!")
     }
 }
 
@@ -97,7 +98,7 @@ class MinSizeConstraint(
     }
 
     override fun to(component: UIComponent) {
-        throw(IllegalStateException("Constraint.to(UIComponent) is not available in this context!"))
+        throw UnsupportedOperationException("Constraint.to(UIComponent) is not available in this context!")
     }
 }
 
@@ -127,6 +128,6 @@ class MinPositionConstraint(
     }
 
     override fun to(component: UIComponent) {
-        throw(IllegalStateException("Constraint.to(UIComponent) is not available in this context!"))
+        throw UnsupportedOperationException("Constraint.to(UIComponent) is not available in this context!")
     }
 }

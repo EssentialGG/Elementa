@@ -13,6 +13,9 @@ import java.net.URL
 class ExampleGui : GuiScreen() {
     private val window: Window = Window()
 
+    private val myText = UIWrappedText("this is a test of really long text that wont fit on just one line inside of the gui")
+
+
     private val settings = UIBlock(Color(0, 172, 193, 255))
         .setX(5.pixels())
         .setY(5.pixels())
@@ -35,18 +38,18 @@ class ExampleGui : GuiScreen() {
                 ),
             Slider("Slider 1", 30.pixels()),
             Slider("Second Slider", 65.pixels()),
-            UIWrappedText("this is a test of really long text that wont fit on just one line inside of the gui")
-                .setY(SiblingConstraint())
-                .setWidth(RelativeConstraint())
-                .setTextScale(2.pixels()),
+            myText,
             UIBlock(Color.RED)
                 .setY(SiblingConstraint())
                 .setWidth(RelativeConstraint())
                 .setHeight(5.pixels())
         ) childOf window
 
-
     init {
+        myText.setY(SiblingConstraint())
+            .setWidth(RelativeConstraint())
+            .setTextScale(2.pixels())
+
         UIBlock()
             .setX(CenterConstraint())
             .setY(CenterConstraint())
@@ -87,6 +90,11 @@ class ExampleGui : GuiScreen() {
     override fun mouseClicked(mouseX: Int, mouseY: Int, mouseButton: Int) {
         super.mouseClicked(mouseX, mouseY, mouseButton)
         window.mouseClick(mouseX, mouseY, mouseButton)
+    }
+
+    override fun keyTyped(typedChar: Char, keyCode: Int) {
+        super.keyTyped(typedChar, keyCode)
+        myText.setText(myText.getText() + typedChar)
     }
 
     private class Slider(text: String, yConstraint: PositionConstraint): UIContainer() {

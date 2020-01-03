@@ -3,6 +3,7 @@ package club.sk1er.elementa.constraints
 import club.sk1er.elementa.UIComponent
 import net.minecraft.util.MathHelper
 import java.awt.Color
+import java.lang.UnsupportedOperationException
 import kotlin.math.sin
 import kotlin.random.Random
 
@@ -38,6 +39,6 @@ class RainbowColorConstraint(private val alpha: Int = 255, private val speed: Fl
     }
 
     override fun to(component: UIComponent) {
-        throw(IllegalStateException("Constraint.to(UIComponent) is not available in this context!"))
+        throw UnsupportedOperationException("Constraint.to(UIComponent) is not available in this context!")
     }
 }
