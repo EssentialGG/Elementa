@@ -19,7 +19,7 @@ interface SuperConstraint <T> {
         recalculate = true
     }
 
-    fun to(component: UIComponent) {
+    fun to(component: UIComponent) = apply {
         constrainTo = component
     }
 }
