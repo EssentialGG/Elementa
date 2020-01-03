@@ -27,7 +27,7 @@ class TextAspectConstraint : WidthConstraint, HeightConstraint {
         return 9 * component.getWidth() / Minecraft.getMinecraft().fontRendererObj.getStringWidth(text)
     }
 
-    override fun to(component: UIComponent) {
+    override fun to(component: UIComponent) = apply {
         throw UnsupportedOperationException("Constraint.to(UIComponent) is not available in this context!")
     }
 }

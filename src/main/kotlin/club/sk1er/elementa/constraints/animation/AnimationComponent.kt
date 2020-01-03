@@ -53,7 +53,7 @@ class XAnimationComponent(
         newConstraint.animationFrame()
     }
 
-    override fun to(component: UIComponent) {
+    override fun to(component: UIComponent) = apply {
         throw UnsupportedOperationException("Constraint.to(UIComponent) is not available in this context!")
     }
 }
@@ -82,7 +82,7 @@ class YAnimationComponent(
         newConstraint.animationFrame()
     }
 
-    override fun to(component: UIComponent) {
+    override fun to(component: UIComponent) = apply {
         throw UnsupportedOperationException("Constraint.to(UIComponent) is not available in this context!")
     }
 }
@@ -112,7 +112,7 @@ class RadiusAnimationComponent(
         newConstraint.animationFrame()
     }
 
-    override fun to(component: UIComponent) {
+    override fun to(component: UIComponent) = apply {
         throw UnsupportedOperationException("Constraint.to(UIComponent) is not available in this context!")
     }
 }
@@ -142,7 +142,7 @@ class WidthAnimationComponent(
         newConstraint.animationFrame()
     }
 
-    override fun to(component: UIComponent) {
+    override fun to(component: UIComponent) = apply {
         throw UnsupportedOperationException("Constraint.to(UIComponent) is not available in this context!")
     }
 }
@@ -172,7 +172,7 @@ class HeightAnimationComponent(
         newConstraint.animationFrame()
     }
 
-    override fun to(component: UIComponent) {
+    override fun to(component: UIComponent) = apply {
         throw UnsupportedOperationException("Constraint.to(UIComponent) is not available in this context!")
     }
 }
@@ -208,7 +208,7 @@ class ColorAnimationComponent(
         newConstraint.animationFrame()
     }
 
-    override fun to(component: UIComponent) {
+    override fun to(component: UIComponent) = apply {
         throw UnsupportedOperationException("Constraint.to(UIComponent) is not available in this context!")
     }
 }

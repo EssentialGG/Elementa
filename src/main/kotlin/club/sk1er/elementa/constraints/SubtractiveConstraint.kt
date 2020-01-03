@@ -46,7 +46,7 @@ class SubtractiveSizeConstraint(private val constraint1: SizeConstraint, private
         return constraint1.getRadiusImpl(component) - constraint2.getRadiusImpl(component)
     }
 
-    override fun to(component: UIComponent) {
+    override fun to(component: UIComponent) = apply {
         throw UnsupportedOperationException("Constraint.to(UIComponent) is not available in this context!")
     }
 }

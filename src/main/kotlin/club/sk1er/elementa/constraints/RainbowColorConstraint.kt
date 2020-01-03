@@ -38,7 +38,7 @@ class RainbowColorConstraint(private val alpha: Int = 255, private val speed: Fl
         )
     }
 
-    override fun to(component: UIComponent) {
+    override fun to(component: UIComponent) = apply {
         throw UnsupportedOperationException("Constraint.to(UIComponent) is not available in this context!")
     }
 }

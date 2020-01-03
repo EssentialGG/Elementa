@@ -33,7 +33,7 @@ class ScaledTextConstraint(private var scale: Float) : SizeConstraint {
         throw IllegalAccessException("ScaledTextConstraint cannot be used as a radius")
     }
 
-    override fun to(component: UIComponent) {
+    override fun to(component: UIComponent) = apply {
         throw UnsupportedOperationException("Constraint.to(UIComponent) is not available in this context!")
     }
 }

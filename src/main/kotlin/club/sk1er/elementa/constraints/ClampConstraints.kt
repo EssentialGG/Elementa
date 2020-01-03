@@ -32,7 +32,7 @@ class MaxSizeConstraint(
         return constraint.getRadius(component).coerceAtMost(maxConstraint.getRadius(component))
     }
 
-    override fun to(component: UIComponent) {
+    override fun to(component: UIComponent) = apply {
         throw UnsupportedOperationException("Constraint.to(UIComponent) is not available in this context!")
     }
 }
@@ -62,7 +62,7 @@ class MaxPositionConstraint(
         return constraint.getYPosition(component).coerceAtMost(maxConstraint.getYPosition(component))
     }
 
-    override fun to(component: UIComponent) {
+    override fun to(component: UIComponent) = apply {
         throw UnsupportedOperationException("Constraint.to(UIComponent) is not available in this context!")
     }
 }
@@ -97,7 +97,7 @@ class MinSizeConstraint(
         return constraint.getRadius(component).coerceAtLeast(minConstraint.getRadius(component))
     }
 
-    override fun to(component: UIComponent) {
+    override fun to(component: UIComponent) = apply {
         throw UnsupportedOperationException("Constraint.to(UIComponent) is not available in this context!")
     }
 }
@@ -127,7 +127,7 @@ class MinPositionConstraint(
         return constraint.getYPosition(component).coerceAtLeast(minConstraint.getYPosition(component))
     }
 
-    override fun to(component: UIComponent) {
+    override fun to(component: UIComponent) = apply {
         throw UnsupportedOperationException("Constraint.to(UIComponent) is not available in this context!")
     }
 }

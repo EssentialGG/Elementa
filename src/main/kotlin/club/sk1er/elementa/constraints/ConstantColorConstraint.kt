@@ -16,7 +16,7 @@ class ConstantColorConstraint(private val color: Color) : ColorConstraint {
         return color
     }
 
-    override fun to(component: UIComponent) {
+    override fun to(component: UIComponent) = apply {
         throw UnsupportedOperationException("Constraint.to(UIComponent) is not available in this context!")
     }
 }

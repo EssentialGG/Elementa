@@ -46,7 +46,7 @@ class AdditiveSizeConstraint(private val constraint1: SizeConstraint, private va
         return constraint1.getRadius(component) + constraint2.getRadius(component)
     }
 
-    override fun to(component: UIComponent) {
+    override fun to(component: UIComponent) = apply {
         throw UnsupportedOperationException("Constraint.to(UIComponent) is not available in this context!")
     }
 }
