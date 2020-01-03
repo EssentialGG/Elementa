@@ -32,7 +32,7 @@ class StencilEffect : Effect {
         /**
          * Must be called in mod initialization to use [StencilEffect]
          */
-        fun enableStencil() {
+        @JvmStatic fun enableStencil() {
             if (!Minecraft.getMinecraft().framebuffer.isStencilEnabled) {
                 Minecraft.getMinecraft().framebuffer.enableStencil()
             }
