@@ -1,6 +1,5 @@
 package com.example.examplemod
 
-import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.components.*
 import club.sk1er.elementa.constraints.*
 import club.sk1er.elementa.constraints.animation.Animations
@@ -8,7 +7,6 @@ import club.sk1er.elementa.dsl.*
 import club.sk1er.elementa.effects.ScissorEffect
 import net.minecraft.client.gui.GuiScreen
 import java.awt.Color
-import java.net.URL
 
 class ExampleGui : GuiScreen() {
     private val window: Window = Window()
@@ -50,7 +48,7 @@ class ExampleGui : GuiScreen() {
             .setWidth(RelativeConstraint())
             .setTextScale(2.pixels())
 
-        UIBlock()
+        val blocky = UIBlock()
             .setX(CenterConstraint())
             .setY(CenterConstraint())
             .setWidth(50.pixels())
@@ -58,10 +56,14 @@ class ExampleGui : GuiScreen() {
             .addChild(UIText("I'm longer than my container"))
             .effect(ScissorEffect())
             .childOf(window)
-            .animate {
-                setWidthAnimation(Animations.OUT_CIRCULAR, 3f, ChildBasedSizeConstraint())
-                setColorAnimation(Animations.IN_EXP, 3f, Color.PINK.asConstraint())
+
+        blocky.animate {
+            setWidthAnimation(Animations.OUT_CIRCULAR, 3f, ChildBasedSizeConstraint())
+            setColorAnimation(Animations.IN_EXP, 3f, Color.PINK.asConstraint())
+            onComplete {
+                window.removeChild(blocky)
             }
+        }
 
 //        UIImage.ofURL(URL("https://avatars3.githubusercontent.com/u/10331479?s=460&v=4"))
 //            .setWidth(RelativeConstraint())
