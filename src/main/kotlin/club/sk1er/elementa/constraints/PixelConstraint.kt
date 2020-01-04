@@ -14,7 +14,7 @@ class PixelConstraint @JvmOverloads constructor(
     override var recalculate = true
     override var constrainTo: UIComponent? = null
 
-    private var alignOutside = true
+    private var alignOutside = false
 
     fun alignOutside(value: Boolean) = apply {
         this.alignOutside = value
