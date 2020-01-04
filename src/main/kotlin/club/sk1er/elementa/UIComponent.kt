@@ -6,6 +6,7 @@ import club.sk1er.elementa.constraints.animation.AnimatingConstraints
 import club.sk1er.elementa.effects.Effect
 import net.minecraft.client.Minecraft
 import org.lwjgl.input.Mouse
+import java.util.concurrent.CopyOnWriteArrayList
 import java.util.function.Consumer
 
 /**
@@ -14,7 +15,7 @@ import java.util.function.Consumer
  */
 abstract class UIComponent {
     open lateinit var parent: UIComponent
-    open val children = mutableListOf<UIComponent>()
+    open val children = CopyOnWriteArrayList<UIComponent>()
 
     private val features = mutableListOf<Effect>()
     private var constraints = UIConstraints(this)
