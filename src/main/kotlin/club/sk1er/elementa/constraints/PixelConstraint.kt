@@ -14,14 +14,46 @@ class PixelConstraint @JvmOverloads constructor(
     override var recalculate = true
     override var constrainTo: UIComponent? = null
 
+    private var alignOutside = true
+
+    fun alignOutside(value: Boolean) = apply {
+        this.alignOutside = value
+    }
+
     override fun getXPositionImpl(component: UIComponent): Float {
-        return if (!alignOpposite) (constrainTo ?: component.parent).getLeft() + value
-                else (constrainTo ?: component.parent).getRight() - value - component.getWidth()
+        val target = (constrainTo ?: component.parent)
+
+        return if (alignOpposite) {
+            if (alignOutside) {
+                target.getRight() + value
+            } else {
+                target.getRight() - value - component.getWidth()
+            }
+        } else {
+            if (alignOutside) {
+                target.getLeft() - component.getWidth() - value
+            } else {
+                target.getLeft() + value
+            }
+        }
     }
 
     override fun getYPositionImpl(component: UIComponent): Float {
-        return if (!alignOpposite) (constrainTo ?: component.parent).getTop() + value
-                else (constrainTo ?: component.parent).getBottom() - value - component.getHeight()
+        val target = (constrainTo ?: component.parent)
+
+        return if (alignOpposite) {
+            if (alignOutside) {
+                target.getBottom() + value
+            } else {
+                target.getBottom() - value - component.getHeight()
+            }
+        } else {
+            if (alignOutside) {
+                target.getTop() - component.getHeight() - value
+            } else {
+                target.getTop() + value
+            }
+        }
     }
 
     override fun getWidthImpl(component: UIComponent): Float {

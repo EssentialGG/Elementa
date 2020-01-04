@@ -263,15 +263,15 @@ abstract class UIComponent {
     /**
      * Adds a method to be run when mouse is clicked within the component.
      */
-    fun onMouseClick(method: (Float, Float, Int) -> Unit) = apply {
+    fun onMouseClick(method: (mouseX: Float, mouseY: Float, mouseButton: Int) -> Unit) = apply {
         mouseClickAction = method
     }
 
     /**
      * Adds a method to be run when mouse is clicked within the component.
      */
-//    fun onMouseClick(method: Consumer<Int>) = apply {
-//        mouseClickAction = method.accept(int)
+//    fun onMouseClickConsumer(method: ) = apply {
+//        mouseClickAction = method::accept
 //    }
 
     /**
@@ -284,7 +284,7 @@ abstract class UIComponent {
     /**
      * Adds a method to be run when mouse is released within the component.
      */
-    fun onMouseRelease(method: Runnable) = apply {
+    fun onMouseReleaseRunnable(method: Runnable) = apply {
         mouseReleaseAction = method::run
     }
 
@@ -292,9 +292,17 @@ abstract class UIComponent {
      * Adds a method to be run when mouse is dragged anywhere on screen.
      * This does not check if mouse is in component.
      */
-    fun onMouseDrag(method: (Float, Float, Int) -> Unit) = apply {
+    fun onMouseDrag(method: (mouseX: Float, mouseY: Float, mouseButton: Int) -> Unit) = apply {
         mouseDragAction = method
     }
+
+    /**
+     * Adds a method to be run when mouse is dragged anywhere on screen.
+     * This does not check if mouse is in component.
+     */
+//    fun onMouseDragConsumer(method: ) = apply {
+//        mouseDragAction = method::accept
+//    }
 
     /**
      * Adds a method to be run when mouse enters the component.
@@ -306,7 +314,7 @@ abstract class UIComponent {
     /**
      * Adds a method to be run when mouse enters the component.
      */
-    fun onMouseEnter(method: Runnable) = apply {
+    fun onMouseEnterRunnable(method: Runnable) = apply {
         mouseEnterAction = method::run
     }
 
@@ -320,7 +328,7 @@ abstract class UIComponent {
     /**
      * Adds a method to be run when mouse leaves the component.
      */
-    fun onMouseLeave(method: Runnable) = apply {
+    fun onMouseLeaveRunnable(method: Runnable) = apply {
         mouseLeaveAction = method::run
     }
 
@@ -334,7 +342,7 @@ abstract class UIComponent {
     /**
      * Adds a method to be run when mouse scrolls while in the component.
      */
-    fun onMouseScroll(method: Consumer<Int>) = apply {
+    fun onMouseScrollConsumer(method: Consumer<Int>) = apply {
         mouseScrollAction = method::accept
     }
 }

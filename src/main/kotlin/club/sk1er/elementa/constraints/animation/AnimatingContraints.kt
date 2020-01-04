@@ -128,7 +128,7 @@ class AnimatingConstraints(
         completeAction = method
     }
 
-    fun onComplete(method: Runnable) = apply {
+    fun onCompleteRunnable(method: Runnable) = apply {
         completeAction = method::run
     }
 
