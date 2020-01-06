@@ -11,7 +11,8 @@ import java.awt.Color
 class ExampleGui : GuiScreen() {
     private val window: Window = Window()
 
-    private val myText = UIWrappedText("this is a test of really long text that wont fit on just one line inside of the gui")
+    private val myText =
+        UIWrappedText("this is a test of really long text that wont fit on just one line inside of the gui")
 
 
     private val settings = UIBlock(Color(0, 172, 193, 255))
@@ -65,6 +66,27 @@ class ExampleGui : GuiScreen() {
             }
         }
 
+        val bigBlock = UIBlock(Color.RED).constrain {
+            x = CenterConstraint()
+            y = CenterConstraint()
+            width = 200.pixels()
+            height = 200.pixels()
+        } childOf window effect ScissorEffect()
+
+        val exceedingBlock = UIBlock(Color.GREEN).constrain {
+            x = 150.pixels()
+            y = 150.pixels()
+            width = 100.pixels()
+            height = 100.pixels()
+        } childOf bigBlock effect ScissorEffect()
+
+        val innerExceedingBlock = UIBlock(Color.CYAN).constrain {
+            x = 25.pixels()
+            y = 25.pixels()
+            width = 100.pixels()
+            height = 100.pixels()
+        } childOf exceedingBlock
+
 //        UIImage.ofURL(URL("https://avatars3.githubusercontent.com/u/10331479?s=460&v=4"))
 //            .setWidth(RelativeConstraint())
 //            .setHeight(RelativeConstraint())
@@ -99,7 +121,7 @@ class ExampleGui : GuiScreen() {
         myText.setText(myText.getText() + typedChar)
     }
 
-    private class Slider(text: String, yConstraint: PositionConstraint): UIContainer() {
+    private class Slider(text: String, yConstraint: PositionConstraint) : UIContainer() {
         private val slider = UICircle(5f, Color(0, 0, 0, 255))
 
 
