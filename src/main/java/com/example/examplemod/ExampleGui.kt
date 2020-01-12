@@ -137,6 +137,11 @@ class ExampleGui : GuiScreen() {
         window.mouseDrag(mouseX, mouseY, clickedMouseButton)
     }
 
+    override fun mouseReleased(mouseX: Int, mouseY: Int, state: Int) {
+        super.mouseReleased(mouseX, mouseY, state)
+        window.mouseRelease()
+    }
+
     override fun handleMouseInput() {
         super.handleMouseInput()
         val delta = Mouse.getEventDWheel().coerceIn(-1, 1)

@@ -24,7 +24,7 @@ class ScrollComponent : UIContainer() {
     private var offset = 0f
     private var scrollAdjustEvent: (scrollPercentage: Float, percentageOfParent: Float) -> Unit = ::updateScrollBar
     private var scrollBarGrip: UIComponent? = null
-    private var dragBeginPos = 0f
+    private var dragBeginPos = -1f
 
     init {
         super.addChild(actualHolder)
@@ -59,7 +59,13 @@ class ScrollComponent : UIContainer() {
         }
 
         component.onMouseDrag { _, mouseY, _ ->
+            if (dragBeginPos == -1f) return@onMouseDrag
+
             updateGrip(component, mouseY)
+        }
+
+        component.onMouseRelease {
+            dragBeginPos = -1f
         }
 
         onScroll(0)
@@ -112,6 +118,8 @@ class ScrollComponent : UIContainer() {
     }
 
     private fun calculateActualHeight(): Float {
+        if (actualHolder.children.isEmpty()) return 0f
+
         return actualHolder.children.last().getBottom() - actualHolder.children.first().getTop()
     }
 

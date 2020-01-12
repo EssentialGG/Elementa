@@ -229,7 +229,6 @@ abstract class UIComponent {
     open fun mouseRelease() {
         mouseReleaseAction()
         this.children.forEach { it.mouseRelease() }
-
     }
 
     /**
