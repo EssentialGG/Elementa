@@ -67,12 +67,12 @@ class ExampleGui : GuiScreen() {
             }
         }
 
-        val scroller = ScrollComponent().constrain {
+        val scroller = (ScrollComponent().constrain {
             x = CenterConstraint()
             y = 30.pixels()
             width = RelativeConstraint(0.7f)
             height = RelativeConstraint(0.8f)
-        } childOf window
+        } childOf window) as ScrollComponent
 
         repeat(13) {
             UIBlock(Color.GREEN).constrain {
@@ -82,6 +82,26 @@ class ExampleGui : GuiScreen() {
                 height = RelativeConstraint(0.098f)
             } childOf scroller
         }
+
+        val friendsListScrollBar = UIBlock(Color.CYAN).constrain {
+            x = 0.pixels(alignOpposite = true)
+            width = 6.pixels()
+            height = FillConstraint()
+        } childOf window
+
+        val friendsListScrollBarGripContainer = UIContainer().constrain {
+            x = CenterConstraint()
+            y = 2.pixels()
+            width = RelativeConstraint(1f) - 2.pixels()
+            height = RelativeConstraint(1f) - 4.pixels()
+        } childOf friendsListScrollBar
+
+        val friendsListScrollBarGrip = UIBlock(Color.BLACK).constrain {
+            width = RelativeConstraint(1f)
+            height = RelativeConstraint(1f)
+        } childOf friendsListScrollBarGripContainer
+
+        scroller.setScrollBarComponent(friendsListScrollBarGrip)
 
 //        UIImage.ofURL(URL("https://avatars3.githubusercontent.com/u/10331479?s=460&v=4"))
 //            .setWidth(RelativeConstraint())
@@ -110,6 +130,11 @@ class ExampleGui : GuiScreen() {
     override fun mouseClicked(mouseX: Int, mouseY: Int, mouseButton: Int) {
         super.mouseClicked(mouseX, mouseY, mouseButton)
         window.mouseClick(mouseX, mouseY, mouseButton)
+    }
+
+    override fun mouseClickMove(mouseX: Int, mouseY: Int, clickedMouseButton: Int, timeSinceLastClick: Long) {
+        super.mouseClickMove(mouseX, mouseY, clickedMouseButton, timeSinceLastClick)
+        window.mouseDrag(mouseX, mouseY, clickedMouseButton)
     }
 
     override fun handleMouseInput() {

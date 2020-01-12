@@ -27,7 +27,7 @@ class AnimatingConstraints(
     }
 
     @JvmOverloads
-    fun setXAnimation(strategy: AnimationStrategy, time: Float, newConstraint: PositionConstraint, delay: Float = 0f) = apply {
+    fun setXAnimation(strategy: AnimationStrategy, time: Float, newConstraint: XConstraint, delay: Float = 0f) = apply {
         val totalFrames = time * Window.of(component).animationFPS
         val totalDelay = delay * Window.of(component).animationFPS
 
@@ -41,7 +41,7 @@ class AnimatingConstraints(
     }
 
     @JvmOverloads
-    fun setYAnimation(strategy: AnimationStrategy, time: Float, newConstraint: PositionConstraint, delay: Float = 0f) = apply {
+    fun setYAnimation(strategy: AnimationStrategy, time: Float, newConstraint: YConstraint, delay: Float = 0f) = apply {
         val totalFrames = time * Window.of(component).animationFPS
         val totalDelay = delay * Window.of(component).animationFPS
 
@@ -55,7 +55,7 @@ class AnimatingConstraints(
     }
 
     @JvmOverloads
-    fun setWidthAnimation(strategy: AnimationStrategy, time: Float, newConstraint: SizeConstraint, delay: Float = 0f) = apply {
+    fun setWidthAnimation(strategy: AnimationStrategy, time: Float, newConstraint: WidthConstraint, delay: Float = 0f) = apply {
         val totalFrames = time * Window.of(component).animationFPS
         val totalDelay = delay * Window.of(component).animationFPS
 
@@ -69,7 +69,7 @@ class AnimatingConstraints(
     }
 
     @JvmOverloads
-    fun setHeightAnimation(strategy: AnimationStrategy, time: Float, newConstraint: SizeConstraint, delay: Float = 0f) = apply {
+    fun setHeightAnimation(strategy: AnimationStrategy, time: Float, newConstraint: HeightConstraint, delay: Float = 0f) = apply {
         val totalFrames = time * Window.of(component).animationFPS
         val totalDelay = delay * Window.of(component).animationFPS
 

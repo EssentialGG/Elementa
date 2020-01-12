@@ -238,6 +238,8 @@ abstract class UIComponent {
      * Most common use is on the [Window] object.
      */
     open fun mouseScroll(delta: Int) {
+        if (delta == 0) return
+
         if (isHovered()) mouseScrollAction(delta)
         this.children.forEach { it.mouseScroll(delta) }
     }
