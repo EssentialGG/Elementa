@@ -2,8 +2,11 @@ package club.sk1er.elementa.dsl
 
 import club.sk1er.elementa.constraints.*
 
-fun SuperConstraint<Float>.min(minConstraint: SuperConstraint<Float>) =
+infix fun SuperConstraint<Float>.min(minConstraint: SuperConstraint<Float>) =
     MinConstraint(this, minConstraint)
+
+infix fun SuperConstraint<Float>.max(minConstraint: SuperConstraint<Float>) =
+    MaxConstraint(this, minConstraint)
 
 fun SuperConstraint<Float>.minMax(minConstraint: SuperConstraint<Float>, maxConstraint: SuperConstraint<Float>) =
     MaxConstraint(MinConstraint(this, minConstraint), maxConstraint)
