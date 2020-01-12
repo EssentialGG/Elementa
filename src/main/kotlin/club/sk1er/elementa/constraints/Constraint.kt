@@ -1,7 +1,6 @@
 package club.sk1er.elementa.constraints
 
 import club.sk1er.elementa.UIComponent
-import club.sk1er.elementa.UIConstraints
 import java.awt.Color
 
 /**
@@ -121,3 +120,5 @@ interface ColorConstraint : SuperConstraint<Color> {
         return cachedValue
     }
 }
+
+interface MasterConstraint : PositionConstraint, SizeConstraint

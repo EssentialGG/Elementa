@@ -1,15 +1,14 @@
 package club.sk1er.elementa.constraints
 
 import club.sk1er.elementa.UIComponent
-import java.lang.UnsupportedOperationException
 
 /**
- * Clamps the width to be the max of [constraint] and [maxConstraint]
+ * Clamps [constraint] to be AT MOST [maxConstraint]
  */
-class MaxSizeConstraint(
-    private val constraint: SizeConstraint,
-    private val maxConstraint: SizeConstraint
-) : SizeConstraint {
+class MaxConstraint(
+    private val constraint: SuperConstraint<Float>,
+    private val maxConstraint: SuperConstraint<Float>
+) : MasterConstraint {
     override var cachedValue = 0f
     override var recalculate = true
     override var constrainTo: UIComponent? = null
@@ -21,60 +20,42 @@ class MaxSizeConstraint(
     }
 
     override fun getWidthImpl(component: UIComponent): Float {
-        return constraint.getWidth(component).coerceAtMost(maxConstraint.getWidth(component))
+        return (constraint as WidthConstraint).getWidth(component)
+            .coerceAtMost((maxConstraint as WidthConstraint).getWidth(component))
     }
 
     override fun getHeightImpl(component: UIComponent): Float {
-        return constraint.getHeight(component).coerceAtMost(maxConstraint.getHeight(component))
+        return (constraint as HeightConstraint).getHeight(component)
+            .coerceAtMost((maxConstraint as HeightConstraint).getHeight(component))
     }
 
     override fun getRadiusImpl(component: UIComponent): Float {
-        return constraint.getRadius(component).coerceAtMost(maxConstraint.getRadius(component))
-    }
-
-    override fun to(component: UIComponent) = apply {
-        throw UnsupportedOperationException("Constraint.to(UIComponent) is not available in this context!")
-    }
-}
-
-/**
- * Clamps the width to be the max of [constraint] and [maxConstraint]
- */
-class MaxPositionConstraint(
-        private val constraint: PositionConstraint,
-        private val maxConstraint: PositionConstraint
-) : PositionConstraint {
-    override var cachedValue = 0f
-    override var recalculate = true
-    override var constrainTo: UIComponent? = null
-
-    override fun animationFrame() {
-        super.animationFrame()
-        constraint.animationFrame()
-        maxConstraint.animationFrame()
+        return (constraint as RadiusConstraint).getRadius(component)
+            .coerceAtMost((maxConstraint as RadiusConstraint).getRadius(component))
     }
 
     override fun getXPositionImpl(component: UIComponent): Float {
-        return constraint.getXPosition(component).coerceAtMost(maxConstraint.getXPosition(component))
+        return (constraint as XConstraint).getXPosition(component)
+            .coerceAtMost((maxConstraint as XConstraint).getXPosition(component))
     }
 
     override fun getYPositionImpl(component: UIComponent): Float {
-        return constraint.getYPosition(component).coerceAtMost(maxConstraint.getYPosition(component))
+        return (constraint as YConstraint).getYPosition(component)
+            .coerceAtMost((maxConstraint as YConstraint).getYPosition(component))
     }
 
     override fun to(component: UIComponent) = apply {
-        throw UnsupportedOperationException("Constraint.to(UIComponent) is not available in this context!")
+        throw UnsupportedOperationException("Constraint.to(UIComponent) is not available in this context, please apply this to the components beforehand.")
     }
 }
 
-
 /**
- * Clamps the width to be the min of [constraint] and [minConstraint]
+ * Clamps [constraint] to be AT LEAST [minConstraint]
  */
-class MinSizeConstraint(
-    private val constraint: SizeConstraint,
-    private val minConstraint: SizeConstraint
-) : SizeConstraint {
+class MinConstraint(
+    private val constraint: SuperConstraint<Float>,
+    private val minConstraint: SuperConstraint<Float>
+) : MasterConstraint {
     override var cachedValue = 0f
     override var recalculate = true
     override var constrainTo: UIComponent? = null
@@ -86,48 +67,31 @@ class MinSizeConstraint(
     }
 
     override fun getWidthImpl(component: UIComponent): Float {
-        return constraint.getWidth(component).coerceAtLeast(minConstraint.getWidth(component))
+        return (constraint as WidthConstraint).getWidth(component)
+            .coerceAtLeast((minConstraint as WidthConstraint).getWidth(component))
     }
 
     override fun getHeightImpl(component: UIComponent): Float {
-        return constraint.getHeight(component).coerceAtLeast(minConstraint.getHeight(component))
+        return (constraint as HeightConstraint).getHeight(component)
+            .coerceAtLeast((minConstraint as HeightConstraint).getHeight(component))
     }
 
     override fun getRadiusImpl(component: UIComponent): Float {
-        return constraint.getRadius(component).coerceAtLeast(minConstraint.getRadius(component))
-    }
-
-    override fun to(component: UIComponent) = apply {
-        throw UnsupportedOperationException("Constraint.to(UIComponent) is not available in this context!")
-    }
-}
-
-/**
- * Clamps the width to be the min of [constraint] and [minConstraint]
- */
-class MinPositionConstraint(
-        private val constraint: PositionConstraint,
-        private val minConstraint: PositionConstraint
-) : PositionConstraint {
-    override var cachedValue = 0f
-    override var recalculate = true
-    override var constrainTo: UIComponent? = null
-
-    override fun animationFrame() {
-        super.animationFrame()
-        constraint.animationFrame()
-        minConstraint.animationFrame()
+        return (constraint as RadiusConstraint).getRadius(component)
+            .coerceAtLeast((minConstraint as RadiusConstraint).getRadius(component))
     }
 
     override fun getXPositionImpl(component: UIComponent): Float {
-        return constraint.getXPosition(component).coerceAtLeast(minConstraint.getXPosition(component))
+        return (constraint as XConstraint).getXPosition(component)
+            .coerceAtLeast((minConstraint as XConstraint).getXPosition(component))
     }
 
     override fun getYPositionImpl(component: UIComponent): Float {
-        return constraint.getYPosition(component).coerceAtLeast(minConstraint.getYPosition(component))
+        return (constraint as YConstraint).getYPosition(component)
+            .coerceAtLeast((minConstraint as YConstraint).getYPosition(component))
     }
 
     override fun to(component: UIComponent) = apply {
-        throw UnsupportedOperationException("Constraint.to(UIComponent) is not available in this context!")
+        throw UnsupportedOperationException("Constraint.to(UIComponent) is not available in this context, please apply this to the components beforehand.")
     }
 }

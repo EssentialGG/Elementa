@@ -1,9 +1,11 @@
 package club.sk1er.elementa.constraints
 
 import club.sk1er.elementa.UIComponent
-import java.lang.UnsupportedOperationException
 
-class AdditivePositionConstraint(private val constraint1: PositionConstraint, private val constraint2: PositionConstraint) : PositionConstraint {
+class AdditiveConstraint(
+    private val constraint1: SuperConstraint<Float>,
+    private val constraint2: SuperConstraint<Float>
+) : MasterConstraint {
     override var cachedValue = 0f
     override var recalculate = true
     override var constrainTo: UIComponent? = null
@@ -15,38 +17,33 @@ class AdditivePositionConstraint(private val constraint1: PositionConstraint, pr
     }
 
     override fun getXPositionImpl(component: UIComponent): Float {
-        return constraint1.getXPosition(component) + constraint2.getXPosition(component) - (constrainTo ?: component.parent).getLeft()
+        return (constraint1 as XConstraint).getXPosition(component) +
+                (constraint2 as XConstraint).getXPosition(component) -
+                (constrainTo ?: component.parent).getLeft()
     }
 
     override fun getYPositionImpl(component: UIComponent): Float {
-        return constraint1.getYPosition(component) + constraint2.getYPosition(component) - (constrainTo ?: component.parent).getTop()
-    }
-}
-
-class AdditiveSizeConstraint(private val constraint1: SizeConstraint, private val constraint2: SizeConstraint) : SizeConstraint {
-    override var cachedValue = 0f
-    override var recalculate = true
-    override var constrainTo: UIComponent? = null
-
-    override fun animationFrame() {
-        super.animationFrame()
-        constraint1.animationFrame()
-        constraint2.animationFrame()
+        return (constraint1 as YConstraint).getYPosition(component) +
+                (constraint2 as YConstraint).getYPosition(component) -
+                (constrainTo ?: component.parent).getTop()
     }
 
     override fun getWidthImpl(component: UIComponent): Float {
-        return constraint1.getWidth(component) + constraint2.getWidth(component)
+        return (constraint1 as WidthConstraint).getWidth(component) +
+                (constraint2 as WidthConstraint).getWidth(component)
     }
 
     override fun getHeightImpl(component: UIComponent): Float {
-        return constraint1.getHeight(component) + constraint2.getHeight(component)
+        return (constraint1 as HeightConstraint).getHeight(component) +
+                (constraint2 as HeightConstraint).getHeight(component)
     }
 
     override fun getRadiusImpl(component: UIComponent): Float {
-        return constraint1.getRadius(component) + constraint2.getRadius(component)
+        return (constraint1 as RadiusConstraint).getRadius(component) +
+                (constraint2 as RadiusConstraint).getRadius(component)
     }
 
-    override fun to(component: UIComponent) = apply {
-        throw UnsupportedOperationException("Constraint.to(UIComponent) is not available in this context!")
+    override fun to(component: UIComponent): SuperConstraint<Float> {
+        throw UnsupportedOperationException("Constraint.to(UIComponent) is not available in this context, please apply this to the components beforehand.")
     }
 }
