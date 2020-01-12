@@ -6,6 +6,7 @@ import club.sk1er.elementa.constraints.animation.Animations
 import club.sk1er.elementa.dsl.*
 import club.sk1er.elementa.effects.ScissorEffect
 import net.minecraft.client.gui.GuiScreen
+import org.lwjgl.input.Mouse
 import java.awt.Color
 
 class ExampleGui : GuiScreen() {
@@ -66,26 +67,21 @@ class ExampleGui : GuiScreen() {
             }
         }
 
-        val bigBlock = UIBlock(Color.RED).constrain {
+        val scroller = ScrollComponent().constrain {
             x = CenterConstraint()
-            y = CenterConstraint()
-            width = 200.pixels()
-            height = 200.pixels()
-        } childOf window effect ScissorEffect()
+            y = 30.pixels()
+            width = RelativeConstraint(0.7f)
+            height = RelativeConstraint(0.8f)
+        } childOf window
 
-        val exceedingBlock = UIBlock(Color.GREEN).constrain {
-            x = 150.pixels()
-            y = 150.pixels()
-            width = 100.pixels()
-            height = 100.pixels()
-        } childOf bigBlock effect ScissorEffect()
-
-        val innerExceedingBlock = UIBlock(Color.CYAN).constrain {
-            x = 25.pixels()
-            y = 25.pixels()
-            width = 100.pixels()
-            height = 100.pixels()
-        } childOf exceedingBlock
+        repeat(13) {
+            UIBlock(Color.GREEN).constrain {
+                x = 1.pixels()
+                y = SiblingConstraint() + 1.pixels()
+                width = RelativeConstraint() - 2.pixels()
+                height = RelativeConstraint(0.098f)
+            } childOf scroller
+        }
 
 //        UIImage.ofURL(URL("https://avatars3.githubusercontent.com/u/10331479?s=460&v=4"))
 //            .setWidth(RelativeConstraint())
@@ -114,6 +110,12 @@ class ExampleGui : GuiScreen() {
     override fun mouseClicked(mouseX: Int, mouseY: Int, mouseButton: Int) {
         super.mouseClicked(mouseX, mouseY, mouseButton)
         window.mouseClick(mouseX, mouseY, mouseButton)
+    }
+
+    override fun handleMouseInput() {
+        super.handleMouseInput()
+        val delta = Mouse.getEventDWheel().coerceIn(-1, 1)
+        window.mouseScroll(delta)
     }
 
     override fun keyTyped(typedChar: Char, keyCode: Int) {
