@@ -20,17 +20,20 @@ class UICircle @JvmOverloads constructor(radius: Float = 0f, color: Color = Colo
         setRadius(radius.pixels())
     }
 
-    override fun isHovered(): Boolean {
-        val res = Window.of(this).scaledResolution
-        val mc = Minecraft.getMinecraft()
+    override fun getLeft(): Float {
+        return super.getLeft() - getRadius()
+    }
 
-        val mouseX = Mouse.getX() * res.scaledWidth / mc.displayWidth
-        val mouseY = res.scaledHeight - Mouse.getY() * res.scaledHeight / mc.displayHeight - 1f
+    override fun getRight(): Float {
+        return super.getRight() + getRadius()
+    }
 
-        return (mouseX > getLeft() - getRadius()
-                && mouseY > getTop() - getRadius()
-                && mouseX < getLeft() + getRadius()
-                && mouseY < getTop() + getRadius())
+    override fun getTop(): Float {
+        return super.getTop() - getRadius()
+    }
+
+    override fun getBottom(): Float {
+        return super.getBottom() + getRadius()
     }
 
     override fun draw() {
