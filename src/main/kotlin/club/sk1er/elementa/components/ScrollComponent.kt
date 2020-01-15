@@ -88,7 +88,7 @@ class ScrollComponent : UIContainer() {
         offset += (delta * 15)
         actualHolder.animate {
             val range = calculateOffsetRange()
-            offset = offset.coerceIn(range)
+            offset = if (range.isEmpty()) 0f else offset.coerceIn(range)
 
             setYAnimation(Animations.IN_SIN, 0.1f, offset.pixels())
 

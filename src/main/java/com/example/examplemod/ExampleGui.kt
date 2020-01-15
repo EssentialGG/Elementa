@@ -74,7 +74,7 @@ class ExampleGui : GuiScreen() {
             height = RelativeConstraint(0.8f)
         } childOf window) as ScrollComponent
 
-        repeat(13) {
+        repeat(5) {
             UIBlock(Color.GREEN).constrain {
                 x = 1.pixels()
                 y = SiblingConstraint() + 1.pixels()
