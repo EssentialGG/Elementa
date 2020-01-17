@@ -58,8 +58,12 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
         if (x2 < getLeft() || x1 > getRight() || y2 < getTop() || y1 > getBottom()) return false
 
         val currentScissor = ScissorEffect.currentScissorState ?: return true
+        val sf = scaledResolution.scaleFactor
 
-        return x2 > currentScissor.x && x1 < currentScissor.x + currentScissor.width && y2 > currentScissor.y && y1 < currentScissor.y + currentScissor.height
+        val realX = currentScissor.x / sf
+        val realY = ((scaledResolution.scaledHeight * sf) - currentScissor.y) / sf
+
+        return x2 > realX && x1 < realX + currentScissor.width / sf && y2 > realY && y1 < realY + currentScissor.height / sf
     }
 
     companion object {
