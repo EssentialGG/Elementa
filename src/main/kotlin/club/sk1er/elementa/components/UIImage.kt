@@ -1,7 +1,6 @@
 package club.sk1er.elementa.components
 
 import club.sk1er.elementa.UIComponent
-import club.sk1er.elementa.dsl.pixels
 import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.client.renderer.Tessellator
 import net.minecraft.client.renderer.texture.DynamicTexture
@@ -11,29 +10,42 @@ import java.awt.image.BufferedImage
 import java.io.File
 import java.net.URL
 import javax.imageio.ImageIO
+import kotlin.concurrent.thread
 
-open class UIImage(private var image: BufferedImage?) : UIComponent() {
+open class UIImage(private val imageFuture: () -> BufferedImage) : UIComponent() {
+    private var loadedImage: BufferedImage? = null
     private lateinit var texture: DynamicTexture
-
-    init {
-        val img = image ?: throw IllegalArgumentException("image must not be null.")
-        setWidth(img.width.pixels())
-        setHeight(img.height.pixels())
-    }
+    private var fetching = false
 
     override fun draw() {
         beforeDraw()
-
-        if (image != null) {
-            texture = DynamicTexture(image)
-            image = null
-        }
 
         val x = this.getLeft().toDouble()
         val y = this.getTop().toDouble()
         val width = this.getWidth().toDouble()
         val height = this.getHeight().toDouble()
         val color = this.getColor()
+
+        if (loadingImage != null) {
+            loadingTexture = DynamicTexture(loadingImage)
+            loadingImage = null
+        }
+
+        val textureToUse: DynamicTexture
+
+        if (loadedImage != null) {
+            texture = DynamicTexture(loadedImage)
+            textureToUse = texture
+        } else {
+            if (!fetching && Window.of(this).isAreaVisible(x, y, x + width, y + width)) {
+                fetching = true
+                thread {
+                    loadedImage = imageFuture()
+                }
+            }
+
+            textureToUse = loadingTexture
+        }
 
         if (color.alpha == 0) {
             return
@@ -48,7 +60,7 @@ open class UIImage(private var image: BufferedImage?) : UIComponent() {
             color.blue / 255f, color.alpha / 255f
         )
         GlStateManager.scale(1f, 1f, 50f)
-        GlStateManager.bindTexture(texture.glTextureId)
+        GlStateManager.bindTexture(textureToUse.glTextureId)
         GlStateManager.enableTexture2D()
 
         val tessellator = Tessellator.getInstance()
@@ -68,16 +80,22 @@ open class UIImage(private var image: BufferedImage?) : UIComponent() {
     }
 
     companion object {
+        @JvmStatic
         fun ofFile(file: File): UIImage {
-            return UIImage(ImageIO.read(file))
+            return UIImage { ImageIO.read(file) }
         }
 
+        @JvmStatic
         fun ofURL(url: URL): UIImage {
-            return UIImage(ImageIO.read(url))
+            return UIImage { ImageIO.read(url) }
         }
 
+        @JvmStatic
         fun ofResource(path: String): UIImage {
-            return UIImage(ImageIO.read(this::class.java.getResourceAsStream(path)))
+            return UIImage { ImageIO.read(this::class.java.getResourceAsStream(path)) }
         }
+
+        private var loadingImage = ImageIO.read(this::class.java.getResourceAsStream("/loading.png"))
+        private lateinit var loadingTexture: DynamicTexture
     }
 }

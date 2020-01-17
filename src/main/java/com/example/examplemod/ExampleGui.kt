@@ -8,6 +8,7 @@ import club.sk1er.elementa.effects.ScissorEffect
 import net.minecraft.client.gui.GuiScreen
 import org.lwjgl.input.Mouse
 import java.awt.Color
+import java.net.URL
 
 class ExampleGui : GuiScreen() {
     private val window: Window = Window()
@@ -74,14 +75,21 @@ class ExampleGui : GuiScreen() {
             height = RelativeConstraint(0.8f)
         } childOf window) as ScrollComponent
 
-        repeat(5) {
-            UIBlock(Color.GREEN).constrain {
+        repeat(15) {
+            UIImage.ofURL(URL("https://visage.surgeplay.com/face/32/02f62a6be7484546b9ff26e3ab4b1076")).constrain {
                 x = 1.pixels()
                 y = SiblingConstraint() + 1.pixels()
                 width = RelativeConstraint() - 2.pixels()
                 height = RelativeConstraint(0.098f)
             } childOf scroller
         }
+
+        UIImage.ofURL(URL("https://visage.surgeplay.com/face/32/1173617851a0481c830ab35e143ddd1b")).constrain {
+            x = 1.pixels()
+            y = SiblingConstraint() + 1.pixels()
+            width = RelativeConstraint() - 2.pixels()
+            height = RelativeConstraint(0.098f)
+        } childOf scroller
 
         val friendsListScrollBar = UIBlock(Color.CYAN).constrain {
             x = 0.pixels(alignOpposite = true)
@@ -103,7 +111,7 @@ class ExampleGui : GuiScreen() {
 
         scroller.setScrollBarComponent(friendsListScrollBarGrip)
 
-//        UIImage.ofURL(URL("https://avatars3.githubusercontent.com/u/10331479?s=460&v=4"))
+//        UIImage.ofURL(URL("https://visage.surgeplay.com/face/32/02f62a6be7484546b9ff26e3ab4b1076"))
 //            .setWidth(RelativeConstraint())
 //            .setHeight(RelativeConstraint())
 //            .childOf(window)

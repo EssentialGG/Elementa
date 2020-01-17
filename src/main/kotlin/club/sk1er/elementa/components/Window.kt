@@ -1,6 +1,7 @@
 package club.sk1er.elementa.components
 
 import club.sk1er.elementa.UIComponent
+import club.sk1er.elementa.effects.ScissorEffect
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.ScaledResolution
 import org.lwjgl.opengl.GL11
@@ -53,6 +54,14 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
     override fun getRight() = getWidth()
     override fun getBottom() = getHeight()
 
+    fun isAreaVisible(x1: Double, y1: Double, x2: Double, y2: Double): Boolean {
+        if (x2 < getLeft() || x1 > getRight() || y2 < getTop() || y1 > getBottom()) return false
+
+        val currentScissor = ScissorEffect.currentScissorState ?: return true
+
+        return x2 > currentScissor.x && x1 < currentScissor.x + currentScissor.width && y2 > currentScissor.y && y1 < currentScissor.y + currentScissor.height
+    }
+
     companion object {
         fun of(component: UIComponent): Window {
             var current = component
@@ -65,7 +74,8 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
                 throw IllegalStateException("No window parent? It's possible you haven't called Window.addChild() at this point in time.")
             }
 
-            return current as? Window ?: throw IllegalStateException("No window parent? It's possible you haven't called Window.addChild() at this point in time.")
+            return current as? Window
+                ?: throw IllegalStateException("No window parent? It's possible you haven't called Window.addChild() at this point in time.")
         }
     }
 }
