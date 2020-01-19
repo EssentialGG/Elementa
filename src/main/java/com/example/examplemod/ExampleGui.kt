@@ -68,6 +68,12 @@ class ExampleGui : GuiScreen() {
             }
         }
 
+        val text = UIText("My text").constrain {
+            x = CenterConstraint()
+            y = 2.pixels()
+            textScale = 2.pixels()
+        }
+
         val scroller = (ScrollComponent().constrain {
             x = CenterConstraint()
             y = 30.pixels()
