@@ -13,9 +13,7 @@ import java.net.URL
 class ExampleGui : GuiScreen() {
     private val window: Window = Window()
 
-    private val myText =
-        UIWrappedText("this is a test of really long text that wont fit on just one line inside of the gui")
-
+    private val myText = UITextInput()
 
     private val settings = UIBlock(Color(0, 172, 193, 255))
         .setX(5.pixels())
@@ -49,16 +47,16 @@ class ExampleGui : GuiScreen() {
     init {
         myText.setY(SiblingConstraint())
             .setWidth(RelativeConstraint())
-            .setTextScale(2.pixels())
+        myText.active = true
 
-        val blocky = UIBlock()
-            .setX(CenterConstraint())
-            .setY(CenterConstraint())
-            .setWidth(50.pixels())
-            .setHeight(10.pixels())
-            .addChild(UIText("I'm longer than my container"))
-            .effect(ScissorEffect())
-            .childOf(window)
+        val blocky = UIBlock().constrain {
+            x = CenterConstraint()
+            y = CenterConstraint()
+            width = 50.pixels()
+            height = 10.pixels()
+        }.addChild(
+                UIText("I'm longer than my container")
+        ) effect ScissorEffect() childOf window
 
         blocky.animate {
             setWidthAnimation(Animations.OUT_CIRCULAR, 3f, ChildBasedSizeConstraint())
@@ -158,7 +156,7 @@ class ExampleGui : GuiScreen() {
 
     override fun keyTyped(typedChar: Char, keyCode: Int) {
         super.keyTyped(typedChar, keyCode)
-        myText.setText(myText.getText() + typedChar)
+        window.keyType(typedChar, keyCode)
     }
 
     private class Slider(text: String, yConstraint: PositionConstraint) : UIContainer() {

@@ -26,6 +26,7 @@ abstract class UIComponent {
     private var mouseLeaveAction: () -> Unit = {}
     private var mouseScrollAction: (delta: Int) -> Unit = {}
     private var mouseDragAction: (mouseX: Float, mouseY: Float, button: Int) -> Unit = { _, _, _ -> }
+    private var keyTypeAction: (typedChar: Char, keyCode: Int) -> Unit = { _, _ -> }
 
     private var currentlyHovered = false
 
@@ -253,6 +254,11 @@ abstract class UIComponent {
         children.forEach { it.mouseDrag(mouseX, mouseY, button) }
     }
 
+    open fun keyType(typedChar: Char, keyCode: Int) {
+        keyTypeAction(typedChar, keyCode)
+        children.forEach { it.keyType(typedChar, keyCode) }
+    }
+
     open fun animationFrame() {
         val constraints = getConstraints()
 
@@ -345,5 +351,9 @@ abstract class UIComponent {
      */
     fun onMouseScrollConsumer(method: Consumer<Int>) = apply {
         mouseScrollAction = method::accept
+    }
+
+    fun onKeyType(method: (typedChar: Char, keyCode: Int) -> Unit) = apply {
+        keyTypeAction = method
     }
 }
