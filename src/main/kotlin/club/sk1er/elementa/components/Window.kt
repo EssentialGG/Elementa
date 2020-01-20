@@ -61,9 +61,9 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
         val sf = scaledResolution.scaleFactor
 
         val realX = currentScissor.x / sf
-        val realY = ((scaledResolution.scaledHeight * sf) - currentScissor.y) / sf
+        val bottomY = ((scaledResolution.scaledHeight * sf) - currentScissor.y) / sf
 
-        return x2 > realX && x1 < realX + currentScissor.width / sf && y2 > realY && y1 < realY + currentScissor.height / sf
+        return x2 > realX && x1 < realX + currentScissor.width / sf && y2 >= bottomY - (currentScissor.height / sf) && y1 <= bottomY
     }
 
     companion object {
