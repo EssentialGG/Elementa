@@ -13,7 +13,8 @@ import java.net.URL
 class ExampleGui : GuiScreen() {
     private val window: Window = Window()
 
-    private val myText = UITextInput()
+    private val myTextBox = UIBlock(Color(0, 0, 0, 255))
+    private val myText = UITextInput(wrapped = false)
 
     private val settings = UIBlock(Color(0, 172, 193, 255))
         .setX(5.pixels())
@@ -37,7 +38,7 @@ class ExampleGui : GuiScreen() {
                 ),
             Slider("Slider 1", 30.pixels()),
             Slider("Second Slider", 65.pixels()),
-            myText,
+            myTextBox.addChild(myText),
             UIBlock(Color.RED)
                 .setY(SiblingConstraint())
                 .setWidth(RelativeConstraint())
@@ -45,9 +46,20 @@ class ExampleGui : GuiScreen() {
         ) childOf window
 
     init {
-        myText.setY(SiblingConstraint())
-            .setWidth(RelativeConstraint())
-        myText.active = true
+        myTextBox.constrain {
+            y = SiblingConstraint()
+            width = ChildBasedSizeConstraint()
+            height = ChildBasedSizeConstraint()
+        }.onMouseClick { _, _, _ ->
+            myText.active = true
+        } effect ScissorEffect()
+
+        myText.minWidth = 50.pixels()
+        myText.maxWidth = RelativeConstraint().to(settings) as WidthConstraint
+
+        window.onMouseClick { _, _, _ ->
+            myText.active = false
+        }
 
         val blocky = UIBlock().constrain {
             x = CenterConstraint()
