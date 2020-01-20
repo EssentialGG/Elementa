@@ -6,6 +6,8 @@ import club.sk1er.elementa.constraints.animation.AnimatingConstraints
 import club.sk1er.elementa.effects.Effect
 import net.minecraft.client.Minecraft
 import org.lwjgl.input.Mouse
+import org.lwjgl.opengl.GL11
+import org.lwjgl.util.glu.GLU
 import java.util.concurrent.CopyOnWriteArrayList
 import java.util.function.Consumer
 

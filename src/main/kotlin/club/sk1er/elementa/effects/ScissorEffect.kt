@@ -51,9 +51,9 @@ class ScissorEffect @JvmOverloads constructor(
             height = min(y2, oldY2) - y
         }
 
-        glScissor(x, y, width, height)
+        glScissor(x, y, width.coerceAtLeast(0), height.coerceAtLeast(0))
 
-        currentScissorState = ScissorState(x, y, width, height)
+        currentScissorState = ScissorState(x, y, width.coerceAtLeast(0), height.coerceAtLeast(0))
     }
 
     override fun beforeChildrenDraw(component: UIComponent) {

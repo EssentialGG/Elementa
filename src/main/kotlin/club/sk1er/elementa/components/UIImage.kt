@@ -13,7 +13,7 @@ import javax.imageio.ImageIO
 import kotlin.concurrent.thread
 
 open class UIImage(private val imageFuture: () -> BufferedImage) : UIComponent() {
-    private var loadedImage: BufferedImage? = null
+    private var image: BufferedImage? = null
     private lateinit var texture: DynamicTexture
     private var fetching = false
 
@@ -26,30 +26,36 @@ open class UIImage(private val imageFuture: () -> BufferedImage) : UIComponent()
         val height = this.getHeight().toDouble()
         val color = this.getColor()
 
-        if (loadingImage != null) {
-            loadingTexture = DynamicTexture(loadingImage)
-            loadingImage = null
+        if (!Window.of(this).isAreaVisible(x, y, x + width, y + width)) {
+            return super.draw()
         }
 
-        val textureToUse: DynamicTexture
+        createLoadingTexture()
 
-        if (loadedImage != null) {
-            texture = DynamicTexture(loadedImage)
-            textureToUse = texture
-            loadedImage = null
-        } else {
-            if (!fetching && Window.of(this).isAreaVisible(x, y, x + width, y + width)) {
-                fetching = true
-                thread {
-                    loadedImage = imageFuture()
-                }
+        val textureToUse: DynamicTexture = when {
+            image != null -> {
+                texture = DynamicTexture(image)
+                image = null
+
+                texture
             }
+            ::texture.isInitialized -> {
+                texture
+            }
+            else -> {
+                if (!fetching) {
+                    fetching = true
+                    thread {
+                        image = imageFuture()
+                    }
+                }
 
-            textureToUse = loadingTexture
+                loadingTexture
+            }
         }
 
         if (color.alpha == 0) {
-            return
+            return super.draw()
         }
 
         GL11.glPushMatrix()
@@ -98,5 +104,12 @@ open class UIImage(private val imageFuture: () -> BufferedImage) : UIComponent()
 
         private var loadingImage = ImageIO.read(this::class.java.getResourceAsStream("/loading.png"))
         private lateinit var loadingTexture: DynamicTexture
+
+        private fun createLoadingTexture() {
+            if (loadingImage != null) {
+                loadingTexture = DynamicTexture(loadingImage)
+                loadingImage = null
+            }
+        }
     }
 }
