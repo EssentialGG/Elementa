@@ -36,6 +36,7 @@ open class UIImage(private val imageFuture: () -> BufferedImage) : UIComponent()
         if (loadedImage != null) {
             texture = DynamicTexture(loadedImage)
             textureToUse = texture
+            loadedImage = null
         } else {
             if (!fetching && Window.of(this).isAreaVisible(x, y, x + width, y + width)) {
                 fetching = true
