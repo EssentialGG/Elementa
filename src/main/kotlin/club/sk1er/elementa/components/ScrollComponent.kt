@@ -8,6 +8,7 @@ import club.sk1er.elementa.dsl.animate
 import club.sk1er.elementa.dsl.constrain
 import club.sk1er.elementa.dsl.pixels
 import club.sk1er.elementa.effects.ScissorEffect
+import java.util.concurrent.CopyOnWriteArrayList
 import kotlin.math.abs
 
 /**
@@ -25,6 +26,7 @@ class ScrollComponent : UIContainer() {
     private var scrollAdjustEvent: (scrollPercentage: Float, percentageOfParent: Float) -> Unit = ::updateScrollBar
     private var scrollBarGrip: UIComponent? = null
     private var dragBeginPos = -1f
+    private val allChildren = CopyOnWriteArrayList<UIComponent>()
 
     init {
         super.addChild(actualHolder)
@@ -67,6 +69,12 @@ class ScrollComponent : UIContainer() {
         component.onMouseRelease {
             dragBeginPos = -1f
         }
+
+        onScroll(0)
+    }
+
+    fun filterChildren(filter: (component: UIComponent) -> Boolean) {
+        actualHolder.children = allChildren.filterTo(CopyOnWriteArrayList(), filter)
 
         onScroll(0)
     }
@@ -131,8 +139,9 @@ class ScrollComponent : UIContainer() {
 
     override fun addChild(component: UIComponent) = apply {
         actualHolder.addChild(component)
-        val range = calculateOffsetRange()
+        allChildren.add(component)
 
+        val range = calculateOffsetRange()
         scrollAdjustEvent(abs(offset) / range.width(), calculateActualHeight() / this.getHeight())
     }
 
