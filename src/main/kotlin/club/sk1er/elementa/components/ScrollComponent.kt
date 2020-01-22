@@ -19,7 +19,7 @@ import kotlin.math.abs
  *
  * Also prevents scrolling past what should be reasonable.
  */
-class ScrollComponent(emptyString: String = "") : UIContainer() {
+class ScrollComponent(emptyString: String = "", private val scrollOpposite: Boolean = false) : UIContainer() {
     private val actualHolder = UIContainer().constrain {
         width = RelativeConstraint(1f)
         height = RelativeConstraint(1f)
@@ -55,7 +55,6 @@ class ScrollComponent(emptyString: String = "") : UIContainer() {
                 offset = if (range.isEmpty()) 0f else offset.coerceIn(range)
 
                 setYAnimation(Animations.IN_SIN, 0.1f, offset.pixels())
-
             }
 
             // Run our scroll adjust event, normally updating [scrollBarGrip]
@@ -99,7 +98,7 @@ class ScrollComponent(emptyString: String = "") : UIContainer() {
             dragBeginPos = -1f
         }
 
-        onScroll(0)
+        needsUpdate = true
     }
 
     fun filterChildren(filter: (component: UIComponent) -> Boolean) {
@@ -109,7 +108,7 @@ class ScrollComponent(emptyString: String = "") : UIContainer() {
             actualHolder.addChild(emptyText)
         }
 
-        onScroll(0)
+        needsUpdate = true
     }
 
     private fun updateGrip(component: UIComponent, mouseY: Float) {
@@ -117,16 +116,25 @@ class ScrollComponent(emptyString: String = "") : UIContainer() {
         val maxY = component.parent.getBottom()
 
         val dragDelta = mouseY - dragBeginPos
-        val newPos = component.getTop() + dragDelta - minY
-        val percentage = newPos / (maxY - minY)
 
-        offset = -(percentage * calculateActualHeight())
+        offset = if (scrollOpposite) {
+            val newPos = maxY - component.getBottom() - dragDelta
+            val percentage = newPos / (maxY - minY)
 
-        onScroll(0)
+            percentage * calculateActualHeight()
+        } else {
+            val newPos = component.getTop() + dragDelta - minY
+            val percentage = newPos / (maxY - minY)
+
+            -(percentage * calculateActualHeight())
+        }
+
+        needsUpdate = true
     }
 
     private fun onScroll(delta: Int) {
         offset += (delta * 15)
+
         needsUpdate = true
     }
 
@@ -140,7 +148,10 @@ class ScrollComponent(emptyString: String = "") : UIContainer() {
             setYAnimation(
                 Animations.IN_SIN, 0.1f, object : YConstraint {
                     override fun getYPositionImpl(component: UIComponent): Float {
-                        return component.parent.getTop() + (component.parent.getHeight() - component.getHeight()) * scrollPercentage
+                        val offset = (component.parent.getHeight() - component.getHeight()) * scrollPercentage
+
+                        return if (scrollOpposite) component.parent.getBottom() - component.getHeight() - offset
+                                else component.parent.getTop() + offset
                     }
 
                     override var cachedValue = 0f
@@ -154,13 +165,17 @@ class ScrollComponent(emptyString: String = "") : UIContainer() {
     private fun calculateActualHeight(): Float {
         if (actualHolder.children.isEmpty()) return 0f
 
-        return actualHolder.children.last().getBottom() - actualHolder.children.first().getTop()
+        return if (scrollOpposite) {
+            actualHolder.children.first().getBottom() - actualHolder.children.last().getTop()
+        } else {
+            actualHolder.children.last().getBottom() - actualHolder.children.first().getTop()
+        }
     }
 
     private fun calculateOffsetRange(): ClosedFloatingPointRange<Float> {
         val actualHeight = calculateActualHeight()
         val maxNegative = this.getHeight() - actualHeight
-        return maxNegative..0f
+        return if (scrollOpposite) 0f..-maxNegative else maxNegative..0f
     }
 
     override fun addChild(component: UIComponent) = apply {
