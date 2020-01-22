@@ -185,6 +185,7 @@ class ScrollComponent(emptyString: String = "", private val scrollOpposite: Bool
         actualHolder.removeChild(emptyText)
 
         actualHolder.children.add(pos, component)
+        component.parent = actualHolder
         allChildren.add(component)
 
         needsUpdate = true
@@ -192,6 +193,10 @@ class ScrollComponent(emptyString: String = "", private val scrollOpposite: Bool
 
     fun setChildren(components: List<UIComponent>) = apply {
         actualHolder.children = CopyOnWriteArrayList(components.ifEmpty { listOf(emptyText) })
+        actualHolder.children.forEach { it.parent = actualHolder }
+
+        allChildren.clear()
+        allChildren.addAll(actualHolder.children)
 
         needsUpdate = true
     }
