@@ -24,7 +24,11 @@ class ExampleMod {
     @SubscribeEvent
     fun tick(event: TickEvent.ClientTickEvent) {
         if (gui != null) {
-            Minecraft.getMinecraft().displayGuiScreen(gui)
+            try {
+                Minecraft.getMinecraft().displayGuiScreen(gui)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
             gui = null
         }
     }

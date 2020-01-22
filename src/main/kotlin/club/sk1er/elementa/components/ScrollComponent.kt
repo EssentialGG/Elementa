@@ -187,5 +187,14 @@ class ScrollComponent(emptyString: String = "", private val scrollOpposite: Bool
         needsUpdate = true
     }
 
+    fun insertChild(component: UIComponent, pos: Int = 0) = apply {
+        actualHolder.removeChild(emptyText)
+
+        actualHolder.children.add(pos, component)
+        allChildren.add(component)
+
+        needsUpdate = true
+    }
+
     private fun ClosedFloatingPointRange<Float>.width() = abs(this.start - this.endInclusive)
 }
