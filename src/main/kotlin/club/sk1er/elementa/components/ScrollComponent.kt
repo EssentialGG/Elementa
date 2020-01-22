@@ -1,12 +1,15 @@
 package club.sk1er.elementa.components
 
 import club.sk1er.elementa.UIComponent
+import club.sk1er.elementa.constraints.CenterConstraint
 import club.sk1er.elementa.constraints.RelativeConstraint
+import club.sk1er.elementa.constraints.SiblingConstraint
 import club.sk1er.elementa.constraints.YConstraint
 import club.sk1er.elementa.constraints.animation.Animations
 import club.sk1er.elementa.dsl.animate
 import club.sk1er.elementa.dsl.constrain
 import club.sk1er.elementa.dsl.pixels
+import club.sk1er.elementa.dsl.plus
 import club.sk1er.elementa.effects.ScissorEffect
 import java.util.concurrent.CopyOnWriteArrayList
 import kotlin.math.abs
@@ -16,10 +19,15 @@ import kotlin.math.abs
  *
  * Also prevents scrolling past what should be reasonable.
  */
-class ScrollComponent : UIContainer() {
+class ScrollComponent(emptyString: String = "") : UIContainer() {
     private val actualHolder = UIContainer().constrain {
         width = RelativeConstraint(1f)
         height = RelativeConstraint(1f)
+    }
+
+    private val emptyText = UIText(emptyString).constrain {
+        x = CenterConstraint()
+        y = SiblingConstraint() + 4.pixels()
     }
 
     private var offset = 0f
@@ -27,13 +35,34 @@ class ScrollComponent : UIContainer() {
     private var scrollBarGrip: UIComponent? = null
     private var dragBeginPos = -1f
     private val allChildren = CopyOnWriteArrayList<UIComponent>()
+    private var needsUpdate = true
 
     init {
         super.addChild(actualHolder)
-
+        actualHolder.addChild(emptyText)
         this.enableEffects(ScissorEffect())
 
         onMouseScroll(::onScroll)
+    }
+
+    override fun draw() {
+        if (needsUpdate) {
+            needsUpdate = false
+            val range = calculateOffsetRange()
+
+            // Recalculate our scroll box and move the content inside if needed.
+            actualHolder.animate {
+                offset = if (range.isEmpty()) 0f else offset.coerceIn(range)
+
+                setYAnimation(Animations.IN_SIN, 0.1f, offset.pixels())
+
+            }
+
+            // Run our scroll adjust event, normally updating [scrollBarGrip]
+            scrollAdjustEvent(abs(offset) / range.width(), this.getHeight() / calculateActualHeight())
+        }
+
+        super.draw()
     }
 
     fun setScrollAdjustEvent(event: (scrollPercentage: Float, percentageOfParent: Float) -> Unit) {
@@ -74,7 +103,11 @@ class ScrollComponent : UIContainer() {
     }
 
     fun filterChildren(filter: (component: UIComponent) -> Boolean) {
-        actualHolder.children = allChildren.filterTo(CopyOnWriteArrayList(), filter)
+        actualHolder.children = CopyOnWriteArrayList(allChildren.filter(filter))
+
+        if (actualHolder.children.size == 0) {
+            actualHolder.addChild(emptyText)
+        }
 
         onScroll(0)
     }
@@ -94,14 +127,7 @@ class ScrollComponent : UIContainer() {
 
     private fun onScroll(delta: Int) {
         offset += (delta * 15)
-        actualHolder.animate {
-            val range = calculateOffsetRange()
-            offset = if (range.isEmpty()) 0f else offset.coerceIn(range)
-
-            setYAnimation(Animations.IN_SIN, 0.1f, offset.pixels())
-
-            scrollAdjustEvent(abs(offset) / range.width(), this.getHeight() / calculateActualHeight())
-        }
+        needsUpdate = true
     }
 
     private fun updateScrollBar(scrollPercentage: Float, percentageOfParent: Float) {
@@ -138,11 +164,12 @@ class ScrollComponent : UIContainer() {
     }
 
     override fun addChild(component: UIComponent) = apply {
+        actualHolder.removeChild(emptyText)
+
         actualHolder.addChild(component)
         allChildren.add(component)
 
-        val range = calculateOffsetRange()
-        scrollAdjustEvent(abs(offset) / range.width(), calculateActualHeight() / this.getHeight())
+        needsUpdate = true
     }
 
     private fun ClosedFloatingPointRange<Float>.width() = abs(this.start - this.endInclusive)
