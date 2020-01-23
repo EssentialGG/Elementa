@@ -192,6 +192,9 @@ class ScrollComponent(emptyString: String = "", private val scrollOpposite: Bool
     }
 
     fun searchAndInsert(components: List<UIComponent>, comparison: (UIComponent) -> Int) {
+        if (components.isEmpty()) return
+
+        actualHolder.children.remove(emptyText)
         val searchIndex = actualHolder.children.binarySearch(comparison = comparison)
 
         components.forEach { it.parent = actualHolder }
