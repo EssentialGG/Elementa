@@ -199,7 +199,7 @@ class ScrollComponent(emptyString: String = "", private val scrollOpposite: Bool
 
         components.forEach { it.parent = actualHolder }
         allChildren.addAll(components)
-        actualHolder.children.addAll(-searchIndex - 1, components)
+        actualHolder.children.addAll(-(searchIndex + 1), components)
 
         needsUpdate = true
     }
