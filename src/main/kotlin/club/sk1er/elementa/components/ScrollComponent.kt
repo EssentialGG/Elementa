@@ -31,7 +31,7 @@ class ScrollComponent(emptyString: String = "", private val scrollOpposite: Bool
     }
 
     private var offset = 0f
-    private var scrollAdjustEvent: (scrollPercentage: Float, percentageOfParent: Float) -> Unit = ::updateScrollBar
+    private val scrollAdjustEvents: MutableList<(scrollPercentage: Float, percentageOfParent: Float) -> Unit> = mutableListOf(::updateScrollBar)
     private var scrollBarGrip: UIComponent? = null
     private var dragBeginPos = -1f
     private val allChildren = CopyOnWriteArrayList<UIComponent>()
@@ -58,14 +58,16 @@ class ScrollComponent(emptyString: String = "", private val scrollOpposite: Bool
             }
 
             // Run our scroll adjust event, normally updating [scrollBarGrip]
-            scrollAdjustEvent(abs(offset) / range.width(), this.getHeight() / calculateActualHeight())
+            val percent = abs(offset) / range.width()
+            val percentageOfParent = this.getHeight() / calculateActualHeight()
+            scrollAdjustEvents.forEach { it(percent, percentageOfParent) }
         }
 
         super.draw()
     }
 
-    fun setScrollAdjustEvent(event: (scrollPercentage: Float, percentageOfParent: Float) -> Unit) {
-        scrollAdjustEvent = event
+    fun addScrollAdjustEvent(event: (scrollPercentage: Float, percentageOfParent: Float) -> Unit) {
+        scrollAdjustEvents.add(event)
     }
 
     /**
