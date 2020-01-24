@@ -50,12 +50,15 @@ open class UITextInput @JvmOverloads constructor(
             } else if (keyCode == 28 || keyCode == 156) {
                 activateAction(text)
             } else if (
-                (keyCode in 2..13) ||
-                (keyCode in 16..27) ||
-                (keyCode in 30..41) ||
-                (keyCode in 43..53) ||
-                (keyCode in 73..83) ||
-                (keyCode == 55) || (keyCode == 181) || (keyCode == 57)
+                keyCode in 2..13 ||
+                keyCode in 16..27 ||
+                keyCode in 30..41 ||
+                keyCode in 43..53 ||
+                keyCode in 71..83 ||
+                keyCode in 145..147 ||
+                keyCode == 55 ||
+                keyCode == 181 ||
+                keyCode == 57
             ) {
                 this.text += typedChar
             }

@@ -104,7 +104,10 @@ class ScrollComponent(emptyString: String = "", private val scrollOpposite: Bool
     }
 
     fun filterChildren(filter: (component: UIComponent) -> Boolean) {
-        setChildren(allChildren.filter(filter))
+        actualHolder.children = CopyOnWriteArrayList(allChildren.filter(filter).ifEmpty { listOf(emptyText) })
+        actualHolder.children.forEach { it.parent = actualHolder }
+
+        needsUpdate = true
     }
 
     private fun updateGrip(component: UIComponent, mouseY: Float) {
