@@ -10,7 +10,7 @@ import net.minecraft.client.renderer.GlStateManager
  * this component's width & height constrains.
  */
 open class UIWrappedText @JvmOverloads constructor(private var text: String = "", private var shadow: Boolean = true) : UIComponent() {
-    private val charWidth = Minecraft.getMinecraft().fontRendererObj.getCharWidth('x') + 2
+    private val charWidth = Minecraft.getMinecraft().fontRendererObj.getCharWidth('x')
     private var textWidth: Float = Minecraft.getMinecraft().fontRendererObj.getStringWidth(text).toFloat()
 
     init {
@@ -60,14 +60,18 @@ open class UIWrappedText @JvmOverloads constructor(private var text: String = ""
 
         GlStateManager.scale(getTextScale().toDouble(), getTextScale().toDouble(), 1.0)
 
-
-        Minecraft.getMinecraft().fontRendererObj.drawSplitString(
-            text,
-            x.toInt(),
-            y.toInt(),
-            width.toInt(),
-            color.rgb
-        )
+        try {
+            Minecraft.getMinecraft().fontRendererObj.drawSplitString(
+                text,
+                x.toInt(),
+                y.toInt(),
+                width.toInt(),
+                color.rgb
+            )
+        } catch (e: StackOverflowError) {
+            // We probably couldn't wrap the text properly
+            text = ""
+        }
 
         GlStateManager.scale(1 / getTextScale().toDouble(), 1 / getTextScale().toDouble(), 1.0)
 
