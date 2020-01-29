@@ -91,8 +91,8 @@ class ExampleGui : GuiScreen() {
             height = RelativeConstraint(0.8f)
         } childOf window) as ScrollComponent
 
-        repeat(15) {
-            UIImage.ofURL(URL("https://visage.surgeplay.com/face/32/02f62a6be7484546b9ff26e3ab4b1076")).constrain {
+        repeat(100) {
+            UIBlock(Color.GREEN).constrain {
                 x = 1.pixels()
                 y = SiblingConstraint() + 1.pixels()
                 width = RelativeConstraint() - 2.pixels()

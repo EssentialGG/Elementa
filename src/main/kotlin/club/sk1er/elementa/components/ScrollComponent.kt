@@ -11,8 +11,14 @@ import club.sk1er.elementa.dsl.constrain
 import club.sk1er.elementa.dsl.pixels
 import club.sk1er.elementa.dsl.plus
 import club.sk1er.elementa.effects.ScissorEffect
+import net.minecraft.client.Minecraft
+import net.minecraft.client.renderer.texture.DynamicTexture
+import org.lwjgl.input.Mouse
+import java.awt.Color
 import java.util.concurrent.CopyOnWriteArrayList
+import javax.imageio.ImageIO
 import kotlin.math.abs
+
 
 /**
  * Basic scroll component that will only draw what is currently visible.
@@ -31,11 +37,16 @@ class ScrollComponent(emptyString: String = "", private val scrollOpposite: Bool
     }
 
     private var offset = 0f
-    private val scrollAdjustEvents: MutableList<(scrollPercentage: Float, percentageOfParent: Float) -> Unit> = mutableListOf(::updateScrollBar)
+    private val scrollAdjustEvents: MutableList<(scrollPercentage: Float, percentageOfParent: Float) -> Unit> = mutableListOf(
+        ::updateScrollBar
+    )
     private var scrollBarGrip: UIComponent? = null
     private var dragBeginPos = -1f
     private val allChildren = CopyOnWriteArrayList<UIComponent>()
     private var needsUpdate = true
+
+    private var isAutoScrolling = false
+    private var autoScrollBegin: Pair<Float, Float> = -1f to -1f
 
     init {
         super.addChild(actualHolder)
@@ -43,9 +54,14 @@ class ScrollComponent(emptyString: String = "", private val scrollOpposite: Bool
         this.enableEffects(ScissorEffect())
 
         onMouseScroll(::onScroll)
+        onMouseClick(::onClick)
     }
 
     override fun draw() {
+        if (!createdScrollTexture) {
+            loadCursor()
+        }
+
         if (needsUpdate) {
             needsUpdate = false
             val range = calculateOffsetRange()
@@ -64,6 +80,18 @@ class ScrollComponent(emptyString: String = "", private val scrollOpposite: Bool
         }
 
         super.draw()
+
+        // We need to draw the auto-scroll image on top of our children
+        if (isAutoScrolling) {
+            UIImage.drawTexture(
+                scrollTexture,
+                Color.WHITE,
+                autoScrollBegin.first.toDouble() + getLeft() - 12,
+                autoScrollBegin.second.toDouble() + getTop() - 12,
+                24.0,
+                24.0
+            )
+        }
     }
 
     fun addScrollAdjustEvent(event: (scrollPercentage: Float, percentageOfParent: Float) -> Unit) {
@@ -150,7 +178,7 @@ class ScrollComponent(emptyString: String = "", private val scrollOpposite: Bool
                         val offset = (component.parent.getHeight() - component.getHeight()) * scrollPercentage
 
                         return if (scrollOpposite) component.parent.getBottom() - component.getHeight() - offset
-                                else component.parent.getTop() + offset
+                        else component.parent.getTop() + offset
                     }
 
                     override var cachedValue = 0f
@@ -175,6 +203,41 @@ class ScrollComponent(emptyString: String = "", private val scrollOpposite: Bool
         val actualHeight = calculateActualHeight()
         val maxNegative = this.getHeight() - actualHeight
         return if (scrollOpposite) 0f..-maxNegative else maxNegative..0f
+    }
+
+    private fun onClick(mouseX: Float, mouseY: Float, mouseButton: Int) {
+        if (isAutoScrolling) {
+            isAutoScrolling = false
+            return
+        }
+
+        if (mouseButton == 2) {
+            // Middle click, begin the auto scroll
+            isAutoScrolling = true
+            autoScrollBegin = mouseX to mouseY
+        }
+    }
+
+    override fun animationFrame() {
+        super.animationFrame()
+
+        if (!isAutoScrolling) return
+        val yBegin = autoScrollBegin.second + getTop()
+
+        val sr = Window.of(this).scaledResolution
+        val scaledHeight = sr.scaledHeight
+        val mc = Minecraft.getMinecraft()
+        val currentY = scaledHeight - Mouse.getY() * scaledHeight / mc.displayHeight - 1
+        val currentX = Mouse.getX() * sr.scaledWidth / mc.displayWidth
+
+        if (currentY < getTop() || currentY > getBottom()) return
+        if (currentX < getLeft() || currentX > getRight()) return
+
+        val deltaY = currentY - yBegin
+        val percent = deltaY / ((getTop() - getBottom()) / 2)
+
+        offset += (percent * 5)
+        needsUpdate = true
     }
 
     override fun addChild(component: UIComponent) = apply {
@@ -223,4 +286,16 @@ class ScrollComponent(emptyString: String = "", private val scrollOpposite: Bool
     }
 
     private fun ClosedFloatingPointRange<Float>.width() = abs(this.start - this.endInclusive)
+
+    companion object {
+        private lateinit var scrollTexture: DynamicTexture
+        private var createdScrollTexture = false
+
+        fun loadCursor() {
+            val img = ImageIO.read(this::class.java.getResourceAsStream("/scroll.png"))
+            scrollTexture = DynamicTexture(img)
+
+            createdScrollTexture = true
+        }
+    }
 }
