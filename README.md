@@ -2,30 +2,48 @@
 [![](https://jitpack.io/v/sk1erllc/Elementa.svg)](https://jitpack.io/#sk1erllc/Elementa)
 
 Elementa (from the name of the first book published on Geometry by Euclid) is a library
-that aims to make GUI creation extremely simple. It's based on a couple key concepts, some that
-may already be familiar from the browser's DOM.
+that aims to make GUI creation extremely simple. It's based on a couple key concepts, some of which
+may already be familiar to those who have worked with a browser's DOM.
+
+The library is based around the idea of being [declarative](https://en.wikipedia.org/wiki/Declarative_programming).
+This is a shift from how one would normally do graphics programming in Minecraft, or most other coding in general.
+In Elementa, you do not have to write code to calculate _how_ to place a component at a certain point on the screen,
+instead you simply have to describe _what_ you want.
 
 ## Components
 
-All of the drawing in Elementa is done via UIComponents. There is a parent component, `Window`
-that forms the root of the component tree. All components have exactly `1` parent, and all components have
-`0-n` children.
+All of the drawing in Elementa is done via UIComponents. There is a root component named `Window`
+that MUST be in the hierarchy of all components, thus making it the top of the component tree. 
+All components have exactly `1` parent, and all components have `0-n` children.
 
-To create a component, simply instantiate an existing implementation, such as `UIBlock`, 
+To create a component, simply instantiate an existing implementation such as `UIBlock`, 
 or extend `UIComponent` yourself.
 
 ```kotlin
-// Manually create and store a window instance. If this were for a GuiScreen,
-// you would need to manually call window.draw() every frame, as well as for the other events.
+// Manually create and store a window instance. The Window is the entry point for Elementa's event system,
+// in that you must call events on the window instance manually, the most common of which would be Window#draw.
+// This call must be made every frame or else the library will never render your components. In the case of
+// drawing in a GuiScreen, you would call this method from your overriden GuiScreen#drawScreen method.
 val window = Window()
 
-val box = UIBlock().childOf(window)
+// Here we are creating an instance of one of the simplest components available, a UIBlock.
+// Next, we have to add it to our hierarchy in some way, and in this instance we want it to be
+// a child of the Window. Now that it is in the hierarchy, it will be drawn when we render our Window.
+val box = UIBlock(Color.RED /* java.awt.Color */).childOf(window)
 ```
 
 ## Constraints
 
 All components have a set of constraints that determine its X/Y position, width/height, and color.
-The default set of constraints sets a component's x, y, width, height, and color to be 0.
+The default set of constraints sets a component's x, y, width, height to be 0, and color to be Color.WHITE.
+
+A key thing to realize with these components is that everything is relative to its parent. When we
+center a component, it will be in the center of its _direct_ parent, whether it is the Window or
+perhaps another UIBlock.
+
+This also showcases exactly how declarative the library is. Our code is saying that we would like our box
+to be in the center of our parent, and that is all we need to do. No code to figure out how to position it there,
+no code to calculate. We simply describe exactly what we want, and Elementa will do the rest for you.
 
 ```kotlin
 val box = UIBlock()
@@ -39,13 +57,14 @@ val box = UIBlock()
 
 ## Effects
 
-Additionally, a component can have a list of effects. Effects deal with special rendering effects.
-Currently, there exists only one, `ScissorEffect`, that restricts all drawing to be inside of said
-component's bounds.
+Additionally, a component can have a list of effects, special modifiers that can affect the rendering of
+a component or its children. The most commonly used effect as of now is the `ScissorEffect`. When enabled for
+an arbitrary component, this effect restricts all of it's children to be drawn inside of its own boundaries.
+Anything drawn outside of that area will simply be cut off. Any component that is not a child (direct or indirect)
+of the component where the effect is enabled will not have their rendering affected.
 
 ```kotlin
-val box = UIBlock()
-    .enableEffects(ScissorEffect())
+val box = UIBlock() effect ScissorEffect()
 ```
 
 ## Animations
@@ -60,7 +79,8 @@ the `Animations` enum.
 
 ```kotlin
 box.animate {
-    // Algorithm, length, new constraint
+    // Algorithm, length, new constraint, and optionally, delay.
+    // All times are in seconds.
     setWidthAnimation(Animations.OUT_EXP, 0.5f, ChildBasedSizeConstraint(2f))
 }
 ``` 
@@ -82,12 +102,16 @@ box.animate {
 }
 
 // Runs a single time when the mouse moves from a state of not hovering to hovering.
-box.onHover {
-    // Animate, set color, etc.
+box.onMouseEnter {
+    // Animate, set color, run business logic, etc.
 }
 ```
 
-There are more examples than solely those two, and they can be found throughout `UIComponent`.
+There are many more events than solely those two, and they can be found throughout `UIComponent`.
+Keep in mind that all events stem from the Window component, and events must be manually
+called on the Window. For example, in order to receive an `onMouseClick` event,
+you MUST call Window#mouseClick. In a GuiScreen, this would be done by overriding the `mouseClicked`
+method.
 
 ## All together
 
@@ -115,7 +139,7 @@ box.animate {
     }
 }
 
-box.onHover {
+box.onMouseEnter {
     // Animate, set color, etc.
 }
 ```
