@@ -33,6 +33,14 @@ open class UIText @JvmOverloads constructor(private var text: String = "", priva
      */
     fun getTextWidth() = textWidth
 
+    override fun getWidth(): Float {
+        return super.getWidth() * getTextScale()
+    }
+
+    override fun getHeight(): Float {
+        return super.getHeight() * getTextScale()
+    }
+
     override fun draw() {
         beforeDraw()
 

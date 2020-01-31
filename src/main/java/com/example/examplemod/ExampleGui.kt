@@ -5,6 +5,7 @@ import club.sk1er.elementa.constraints.*
 import club.sk1er.elementa.constraints.animation.Animations
 import club.sk1er.elementa.dsl.*
 import club.sk1er.elementa.effects.ScissorEffect
+import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiScreen
 import org.lwjgl.input.Mouse
 import java.awt.Color
@@ -99,6 +100,19 @@ class ExampleGui : GuiScreen() {
                 height = RelativeConstraint(0.098f)
             } childOf scroller
         }
+
+        UIBlock(Color.RED).constrain {
+            x = CenterConstraint()
+            y = 10.pixels(true)
+            width = (Minecraft.getMinecraft().fontRendererObj.getStringWidth("My big text!") * 2f).pixels()
+            height = 18.pixels()
+        } childOf window
+
+        UIText("My big text!").constrain {
+            x = CenterConstraint()
+            y = 10.pixels(true)
+            textScale = 2.pixels()
+        } childOf window
 
         UIImage.ofURL(URL("https://visage.surgeplay.com/face/32/1173617851a0481c830ab35e143ddd1b")).constrain {
             x = 1.pixels()
