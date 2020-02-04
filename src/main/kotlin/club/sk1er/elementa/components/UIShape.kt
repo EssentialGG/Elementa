@@ -1,7 +1,8 @@
 package club.sk1er.elementa.components
 
 import club.sk1er.elementa.UIComponent
-import club.sk1er.elementa.constraints.ConstantColorConstraint
+import club.sk1er.elementa.dsl.asConstraint
+import club.sk1er.elementa.dsl.childOf
 import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.client.renderer.Tessellator
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats
@@ -9,13 +10,20 @@ import org.lwjgl.opengl.GL11
 import java.awt.Color
 
 // feeling cute, might delete this class later
-open class UIShape : UIComponent() {
-    var vertexes = mutableListOf<UIPoint>()
+open class UIShape @JvmOverloads constructor(color: Color = Color(0, 0, 0, 0)) : UIComponent() {
+    private var vertexes = mutableListOf<UIPoint>()
     var drawMode = GL11.GL_POLYGON
 
     init {
-        setColor(ConstantColorConstraint(Color(0, 0, 0, 0)))
+        setColor(color.asConstraint())
     }
+
+    fun addVertex(point: UIPoint) {
+        this.parent.addChild(point)
+        vertexes.add(point)
+    }
+
+    fun getVertexes() = vertexes
 
     override fun draw() {
         beforeDraw()

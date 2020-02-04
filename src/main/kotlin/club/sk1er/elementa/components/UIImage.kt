@@ -18,6 +18,8 @@ open class UIImage(private val imageFuture: () -> BufferedImage) : UIComponent()
     private var image: BufferedImage? = null
     private lateinit var texture: DynamicTexture
     private var fetching = false
+    var imageWidth = 1f
+    var imageHeight = 1f
 
     override fun draw() {
         beforeDraw()
@@ -37,6 +39,8 @@ open class UIImage(private val imageFuture: () -> BufferedImage) : UIComponent()
         val textureToUse: DynamicTexture = when {
             image != null -> {
                 texture = DynamicTexture(image)
+                imageWidth = image!!.width.toFloat()
+                imageHeight = image!!.height.toFloat()
                 image = null
 
                 texture
