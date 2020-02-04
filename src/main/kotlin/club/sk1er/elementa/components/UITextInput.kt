@@ -15,6 +15,11 @@ open class UITextInput @JvmOverloads constructor(
 ) : UIComponent() {
 
     private val placeholderWidth = Minecraft.getMinecraft().fontRendererObj.getStringWidth(placeholder).toFloat()
+    private val internalMouseClickAction = { mouseX: Float, mouseY: Float, button: Int ->
+        if (active) {
+            // TODO move cursor
+        }
+    }
 
     var text: String = ""
         set(value) {
@@ -26,6 +31,7 @@ open class UITextInput @JvmOverloads constructor(
     var textOffset: Float = 0f
 
     var cursor: UIComponent = UIBlock(Color(255, 255, 255, 0))
+    var cursorLocation = 0
     var active: Boolean = false
         set(value) {
             field = value
@@ -45,8 +51,15 @@ open class UITextInput @JvmOverloads constructor(
             if (!active) return@onKeyType
 
             if (keyCode == 14) {
-                if (this.text.isEmpty()) return@onKeyType
-                this.text = this.text.substring(0, this.text.length - 1)
+                // backspace
+                if (text.isEmpty()) return@onKeyType
+                text = text.substring(0, text.length - 1)
+            } else if (keyCode == 203) {
+                // left arrow
+                if (cursorLocation > 0) cursorLocation--
+            } else if (keyCode == 205) {
+                // right arrow
+                if (cursorLocation < text.length) cursorLocation++
             } else if (keyCode == 28 || keyCode == 156) {
                 activateAction(text)
             } else if (
@@ -60,7 +73,9 @@ open class UITextInput @JvmOverloads constructor(
                 keyCode == 181 ||
                 keyCode == 57
             ) {
-                this.text += typedChar
+                // normal key input
+                text += typedChar
+                cursorLocation++
             }
         }
 
@@ -70,6 +85,11 @@ open class UITextInput @JvmOverloads constructor(
             width = 1.pixels()
             height = 8.pixels()
         } childOf this
+    }
+
+    override fun mouseClick(mouseX: Int, mouseY: Int, button: Int) {
+        if (isHovered()) internalMouseClickAction(mouseX - getLeft(), mouseY - getTop(), button)
+        super.mouseClick(mouseX, mouseY, button)
     }
 
     override fun draw() {

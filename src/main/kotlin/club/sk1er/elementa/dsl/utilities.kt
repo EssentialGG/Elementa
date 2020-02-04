@@ -7,7 +7,14 @@ import java.awt.Color
 
 fun String.width() = Minecraft.getMinecraft().fontRendererObj.getStringWidth(this)
 
-@JvmOverloads fun Int.pixels(alignOpposite: Boolean = false) = PixelConstraint(this.toFloat(), alignOpposite)
-@JvmOverloads fun Float.pixels(alignOpposite: Boolean = false) = PixelConstraint(this, alignOpposite)
+@JvmOverloads
+fun Int.pixels(alignOpposite: Boolean = false, alignOutside: Boolean = false): PixelConstraint {
+    return PixelConstraint(this.toFloat(), alignOpposite, alignOutside)
+}
+
+@JvmOverloads
+fun Float.pixels(alignOpposite: Boolean = false, alignOutside: Boolean = false): PixelConstraint {
+    return PixelConstraint(this, alignOpposite, alignOutside)
+}
 
 fun Color.asConstraint() = ConstantColorConstraint(this)

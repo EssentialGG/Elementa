@@ -1,11 +1,13 @@
 package com.example.examplemod
 
+import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.components.*
 import club.sk1er.elementa.constraints.*
 import club.sk1er.elementa.constraints.animation.Animations
 import club.sk1er.elementa.dsl.*
 import club.sk1er.elementa.effects.ScissorEffect
 import net.minecraft.client.gui.GuiScreen
+import org.lwjgl.input.Mouse
 import java.awt.Color
 import java.net.URL
 
@@ -19,7 +21,37 @@ class ExampleServerList : GuiScreen() {
     } childOf window) as ScrollComponent
 
     init {
-        serverList.addChild(ServerBlock("Hypixel", "mc.hypixel.net", UIImage.ofURL(URL("https://i.imgur.com/rZYAHbE.png")), UIImage.ofURL(URL("https://i.imgur.com/iFawofh.png"))))
+        serverList.addChildren(
+            ServerBlock(
+                "Hypixel",
+                "mc.hypixel.net",
+                UIImage.ofURL(URL("https://i.imgur.com/rZYAHbE.png")),
+                UIImage.ofURL(URL("https://i.imgur.com/iFawofh.png"))
+            ),
+            ServerBlock(
+                "Mineplex",
+                "us.mineplex.com",
+                UIImage.ofURL(URL("https://imgur.com/TmvUI18.png")),
+                UIImage.ofURL(URL("https://imgur.com/hVvpUex.png"))
+            ),
+            ServerBlock(
+                "Hive",
+                "play.hivemc.com",
+                UIImage.ofURL(URL("https://imgur.com/OyE5sMI.png")),
+                UIImage.ofURL(URL("https://imgur.com/pVrcZ4E.png"))
+            ),
+            ServerBlock(
+                "Wynncraft",
+                "play.wynncraft.com",
+                UIImage.ofURL(URL("https://imgur.com/i3nXXvQ.png")),
+                UIImage.ofURL(URL("https://imgur.com/CNP8VwC.png"))
+            ),
+            ServerBlock(
+                "My Shit Server",
+                "mc.kerbybit.com"
+            )
+        )
+
     }
 
     override fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
@@ -33,34 +65,117 @@ class ExampleServerList : GuiScreen() {
         window.mouseClick(mouseX, mouseY, mouseButton)
     }
 
-    private class ServerBlock(val name: String, val ip: String, val logo: UIImage, val banner: UIImage) : UIBlock(Color(0, 0, 0, 100)) {
-        val glow = UIShape(Color(200, 200, 200, 100))
+    override fun handleMouseInput() {
+        super.handleMouseInput()
+        val delta = Mouse.getEventDWheel().coerceIn(-1, 1)
+        window.mouseScroll(delta)
+    }
+
+    override fun keyTyped(typedChar: Char, keyCode: Int) {
+        super.keyTyped(typedChar, keyCode)
+        window.keyType(typedChar, keyCode)
+    }
+
+    private class ServerBlock(
+        val name: String,
+        val ip: String,
+        val logo: UIComponent = UIText(name),
+        val banner: UIImage = defaultBanner
+    ) : UIBlock(Color(0, 0, 0, 100)) {
+
+        var inOptions = false
+
+        val glow = UIShape(Color(200, 200, 200, 30))
+        val optionContainer = UIContainer()
+
+        val nameInputBox = UIBlock(Color(0, 0, 0, 150))
+        val nameInput = UITextInput(placeholder = "\u00a77Server Name", wrapped = false)
+
+        val ipInputBox = UIBlock(Color(0, 0, 0, 150))
+        val ipInput = UITextInput(placeholder = "\u00a77Server IP", wrapped = false)
 
         init {
             constrain {
                 x = CenterConstraint()
                 y = SiblingConstraint() + 10.pixels()
-                width = RelativeConstraint(2 / 3f)
-                height = 75.pixels()
+                width = RelativeConstraint(2 / 3f).max(500.pixels())
+                height = AspectConstraint(1/5f)
             }.onMouseEnter {
+                if (inOptions) return@onMouseEnter
                 banner.animate {
-                    setWidthAnimation(Animations.OUT_EXP, 1f, RelativeConstraint() + 20.pixels())
+                    setWidthAnimation(Animations.OUT_EXP, 0.5f, RelativeConstraint() + 20.pixels())
+                }
+                glow.animate {
+                    setColorAnimation(Animations.OUT_EXP, 0.5f, Color(255, 255, 255, 75).asConstraint())
                 }
                 glow.getVertexes()[1].animate {
-                    setXAnimation(Animations.OUT_EXP, 1f, 60.pixels(true))
+                    setXAnimation(Animations.OUT_EXP, 0.5f, 60.pixels(true))
                 }
                 glow.getVertexes()[2].animate {
                     setXAnimation(Animations.OUT_EXP, 1f, 80.pixels(true))
                 }
             }.onMouseLeave {
+                if (inOptions) return@onMouseLeave
                 banner.animate {
                     setWidthAnimation(Animations.OUT_EXP, 1f, RelativeConstraint())
                 }
+                glow.animate {
+                    setColorAnimation(Animations.OUT_EXP, 1f, Color(255, 255, 255, 30).asConstraint())
+                }
                 glow.getVertexes()[1].animate {
-                    setXAnimation(Animations.OUT_EXP, 1f, 20.pixels(true))
+                    setXAnimation(Animations.OUT_EXP, 2f, 20.pixels(true))
                 }
                 glow.getVertexes()[2].animate {
                     setXAnimation(Animations.OUT_EXP, 1f, 40.pixels(true))
+                }
+            }.onMouseClick { _, _, mouseButton ->
+                when (mouseButton) {
+                    0 -> {
+                        if (inOptions) {
+                            nameInput.active = false
+                            ipInput.active = false
+                        } else {
+                            // TODO connect to server using this.ip
+                        }
+                    }
+                    1 -> {
+                        inOptions = !inOptions
+                        if (inOptions) {
+                            optionContainer.animate {
+                                setXAnimation(Animations.OUT_EXP, 1f, 0.pixels(alignOpposite = true))
+                            }
+                            banner.animate {
+                                setWidthAnimation(Animations.OUT_EXP, 1f, RelativeConstraint() + 40.pixels())
+                            }
+                            glow.animate {
+                                setColorAnimation(Animations.OUT_EXP, 1f, Color(255, 255, 255, 100).asConstraint())
+                            }
+                            glow.getVertexes()[1].animate {
+                                setXAnimation(Animations.OUT_EXP, 1f, 200.pixels(true))
+                            }
+                            glow.getVertexes()[2].animate {
+                                setXAnimation(Animations.OUT_EXP, 1f, 205.pixels(true))
+                            }
+                        } else {
+                            nameInput.active = false
+                            ipInput.active = false
+                            optionContainer.animate {
+                                setXAnimation(Animations.OUT_EXP, 1f, 0.pixels(alignOpposite = true, alignOutside = true))
+                            }
+                            banner.animate {
+                                setWidthAnimation(Animations.OUT_EXP, 1f, RelativeConstraint() + 20.pixels())
+                            }
+                            glow.animate {
+                                setColorAnimation(Animations.OUT_EXP, 1f, Color(255, 255, 255, 75).asConstraint())
+                            }
+                            glow.getVertexes()[1].animate {
+                                setXAnimation(Animations.OUT_EXP, 1f, 60.pixels(true))
+                            }
+                            glow.getVertexes()[2].animate {
+                                setXAnimation(Animations.OUT_EXP, 1f, 80.pixels(true))
+                            }
+                        }
+                    }
                 }
             } effect ScissorEffect()
 
@@ -74,8 +189,12 @@ class ExampleServerList : GuiScreen() {
             logo.constrain {
                 x = 5.pixels()
                 y = CenterConstraint()
-                width = ImageAspectConstraint()
-                height = RelativeConstraint(0.75f)
+                width = RelativeConstraint(1/3f)
+                height = when (logo) {
+                    is UIImage -> ImageAspectConstraint()
+                    is UIText -> TextAspectConstraint()
+                    else -> AspectConstraint()
+                }
             } childOf this
 
             glow childOf this
@@ -83,6 +202,53 @@ class ExampleServerList : GuiScreen() {
             glow.addVertex(UIPoint(20.pixels(true), 0.pixels()))
             glow.addVertex(UIPoint(40.pixels(true), 0.pixels(true)))
             glow.addVertex(UIPoint(0.pixels(true), 0.pixels(true)))
+
+            optionContainer.constrain {
+                x = 0.pixels(alignOpposite = true, alignOutside = true)
+                width = 200.pixels()
+                height = RelativeConstraint()
+            } childOf this
+
+
+            nameInputBox.constrain {
+                x = 30.pixels()
+                y = 10.pixels()
+                width = ChildBasedSizeConstraint() + 10.pixels()
+                height = ChildBasedSizeConstraint() + 8.pixels()
+            }.onMouseClick { _, _, _ ->
+                nameInput.active = true
+            } effect ScissorEffect() childOf optionContainer
+
+            nameInput.text = name
+            nameInput.minWidth = 75.pixels()
+            nameInput.maxWidth = 75.pixels()
+            nameInput.constrain {
+                x = 5.pixels()
+                y = CenterConstraint()
+                width = 50.pixels()
+            } childOf nameInputBox
+
+            ipInputBox.constrain {
+                x = 30.pixels()
+                y = SiblingConstraint() + 5.pixels()
+                width = ChildBasedSizeConstraint() + 10.pixels()
+                height = ChildBasedSizeConstraint() + 8.pixels()
+            }.onMouseClick { _, _, _ ->
+                ipInput.active = true
+            } effect ScissorEffect() childOf optionContainer
+
+            ipInput.text = ip
+            ipInput.minWidth = 75.pixels()
+            ipInput.maxWidth = 75.pixels()
+            ipInput.constrain {
+                x = 5.pixels()
+                y = CenterConstraint()
+                width = 50.pixels()
+            } childOf ipInputBox
+        }
+
+        companion object {
+            val defaultBanner = UIImage.ofURL(URL("https://imgur.com/caLyNoy.png"))
         }
     }
 }
