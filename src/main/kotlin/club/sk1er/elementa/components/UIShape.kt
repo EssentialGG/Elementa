@@ -2,7 +2,6 @@ package club.sk1er.elementa.components
 
 import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.dsl.asConstraint
-import club.sk1er.elementa.dsl.childOf
 import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.client.renderer.Tessellator
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats
@@ -23,7 +22,7 @@ open class UIShape @JvmOverloads constructor(color: Color = Color(0, 0, 0, 0)) :
         vertexes.add(point)
     }
 
-    fun getVertexes() = vertexes
+    fun getVertices() = vertexes
 
     override fun draw() {
         beforeDraw()

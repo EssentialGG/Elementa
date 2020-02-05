@@ -87,11 +87,12 @@ class ExampleServerList : GuiScreen() {
 
         val glow = UIShape(Color(200, 200, 200, 30))
         val optionContainer = UIContainer()
+        val optionGlow = UIShape(Color(200, 200, 200, 100))
 
-        val nameInputBox = UIBlock(Color(0, 0, 0, 150))
+        val nameInputBox = UIBlock(Color(0, 0, 0, 175))
         val nameInput = UITextInput(placeholder = "\u00a77Server Name", wrapped = false)
 
-        val ipInputBox = UIBlock(Color(0, 0, 0, 150))
+        val ipInputBox = UIBlock(Color(0, 0, 0, 175))
         val ipInput = UITextInput(placeholder = "\u00a77Server IP", wrapped = false)
 
         init {
@@ -108,10 +109,10 @@ class ExampleServerList : GuiScreen() {
                 glow.animate {
                     setColorAnimation(Animations.OUT_EXP, 0.5f, Color(255, 255, 255, 75).asConstraint())
                 }
-                glow.getVertexes()[1].animate {
+                glow.getVertices()[1].animate {
                     setXAnimation(Animations.OUT_EXP, 0.5f, 60.pixels(true))
                 }
-                glow.getVertexes()[2].animate {
+                glow.getVertices()[2].animate {
                     setXAnimation(Animations.OUT_EXP, 1f, 80.pixels(true))
                 }
             }.onMouseLeave {
@@ -122,10 +123,10 @@ class ExampleServerList : GuiScreen() {
                 glow.animate {
                     setColorAnimation(Animations.OUT_EXP, 1f, Color(255, 255, 255, 30).asConstraint())
                 }
-                glow.getVertexes()[1].animate {
+                glow.getVertices()[1].animate {
                     setXAnimation(Animations.OUT_EXP, 2f, 20.pixels(true))
                 }
-                glow.getVertexes()[2].animate {
+                glow.getVertices()[2].animate {
                     setXAnimation(Animations.OUT_EXP, 1f, 40.pixels(true))
                 }
             }.onMouseClick { _, _, mouseButton ->
@@ -147,14 +148,17 @@ class ExampleServerList : GuiScreen() {
                             banner.animate {
                                 setWidthAnimation(Animations.OUT_EXP, 1f, RelativeConstraint() + 40.pixels())
                             }
-                            glow.animate {
-                                setColorAnimation(Animations.OUT_EXP, 1f, Color(255, 255, 255, 100).asConstraint())
+                            optionGlow.getVertices()[1].animate {
+                                setXAnimation(Animations.OUT_EXP, 1f, 20.pixels(true))
                             }
-                            glow.getVertexes()[1].animate {
-                                setXAnimation(Animations.OUT_EXP, 1f, 200.pixels(true))
+                            optionGlow.getVertices()[2].animate {
+                                setXAnimation(Animations.OUT_EXP, 2f, 40.pixels(true))
                             }
-                            glow.getVertexes()[2].animate {
-                                setXAnimation(Animations.OUT_EXP, 1f, 205.pixels(true))
+                            glow.getVertices()[1].animate {
+                                setXAnimation(Animations.OUT_EXP, 0.5f, 0.pixels())
+                            }
+                            glow.getVertices()[2].animate {
+                                setXAnimation(Animations.OUT_EXP, 0.5f, 0.pixels())
                             }
                         } else {
                             nameInput.active = false
@@ -165,13 +169,16 @@ class ExampleServerList : GuiScreen() {
                             banner.animate {
                                 setWidthAnimation(Animations.OUT_EXP, 1f, RelativeConstraint() + 20.pixels())
                             }
-                            glow.animate {
-                                setColorAnimation(Animations.OUT_EXP, 1f, Color(255, 255, 255, 75).asConstraint())
+                            optionGlow.getVertices()[1].animate {
+                                setXAnimation(Animations.OUT_EXP, 0.5f, 0.pixels(true))
                             }
-                            glow.getVertexes()[1].animate {
+                            optionGlow.getVertices()[2].animate {
+                                setXAnimation(Animations.OUT_EXP, 1f, 0.pixels(true))
+                            }
+                            glow.getVertices()[1].animate {
                                 setXAnimation(Animations.OUT_EXP, 1f, 60.pixels(true))
                             }
-                            glow.getVertexes()[2].animate {
+                            glow.getVertices()[2].animate {
                                 setXAnimation(Animations.OUT_EXP, 1f, 80.pixels(true))
                             }
                         }
@@ -203,9 +210,15 @@ class ExampleServerList : GuiScreen() {
             glow.addVertex(UIPoint(40.pixels(true), 0.pixels(true)))
             glow.addVertex(UIPoint(0.pixels(true), 0.pixels(true)))
 
+            optionGlow childOf this
+            optionGlow.addVertex(UIPoint(0.pixels(true), 0.pixels()))
+            optionGlow.addVertex(UIPoint(0.pixels(true), 0.pixels()))
+            optionGlow.addVertex(UIPoint(0.pixels(true), 0.pixels(true)))
+            optionGlow.addVertex(UIPoint(0.pixels(true), 0.pixels(true)))
+
             optionContainer.constrain {
                 x = 0.pixels(alignOpposite = true, alignOutside = true)
-                width = 200.pixels()
+                width = 125.pixels()
                 height = RelativeConstraint()
             } childOf this
 
