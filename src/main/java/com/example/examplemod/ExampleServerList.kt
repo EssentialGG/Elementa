@@ -47,7 +47,7 @@ class ExampleServerList : GuiScreen() {
                 UIImage.ofURL(URL("https://imgur.com/CNP8VwC.png"))
             ),
             ServerBlock(
-                "My Shit Server",
+                "My Server",
                 "mc.kerbybit.com"
             )
         )
