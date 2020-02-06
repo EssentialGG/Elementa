@@ -15,48 +15,67 @@ class ExampleGui : GuiScreen() {
     private val window: Window = Window()
 
     private val myTextBox = UIBlock(Color(0, 0, 0, 255))
-    private val myText = UITextInput(wrapped = false)
+    private val myText = UITextInput(placeholder = "Text Input", wrapped = false)
 
-    private val settings = UIBlock(Color(0, 172, 193, 255))
-        .setX(5.pixels())
-        .setY(5.pixels())
-        .setWidth(RelativeConstraint(0.3f))
-        .setHeight(FillConstraint() + (-5).pixels())
-        .addChildren(
-            UIBlock(Color(0, 124, 145, 255))
-                .setWidth(FillConstraint())
-                .setHeight(PixelConstraint(20f))
-                .addChildren(
-                    UIText("Settings").setX(5.pixels()).setY(CenterConstraint()),
-                    UIBlock(Color(93, 222, 255, 255))
-                        .setX(5.pixels(true))
-                        .setY(5.pixels())
-                        .setWidth(10.pixels())
-                        .setHeight(10.pixels())
-                        .onMouseClick { _, _, _ ->
-                            closeSettings()
-                        }
-                ),
-            Slider("Slider 1", 30.pixels()),
-            Slider("Second Slider", 65.pixels()),
-            myTextBox.addChild(myText),
-            UIBlock(Color.RED)
-                .setY(SiblingConstraint())
-                .setWidth(RelativeConstraint())
-                .setHeight(5.pixels())
-        ) childOf window
+    private val settings = UIBlock(Color(0, 172, 193, 255)).constrain {
+        x = 5.pixels()
+        y = 5.pixels()
+        width = RelativeConstraint(0.3f)
+        height = FillConstraint() - 5.pixels()
+    }.addChildren(
+        UIBlock(Color(0, 124, 145, 255)).constrain {
+            width = FillConstraint()
+            height = 20.pixels()
+        }.addChildren(
+            UIText("Settings").constrain {
+                x = 5.pixels()
+                y = CenterConstraint()
+            },
+            UIBlock(Color(93, 222, 255, 255)).constrain {
+                x = 5.pixels(true)
+                y = 5.pixels()
+                width = 10.pixels()
+                height = 10.pixels()
+            }.onMouseClick { _, _, _ -> closeSettings() }
+        ),
+        UIBlock(Color(0, 0, 0, 255)).constrain {
+            x = 5.pixels()
+            y = SiblingConstraint() + 5.pixels()
+            width = FillConstraint() - 5.pixels()
+            height = 20.pixels()
+        }.onMouseClick { _, _, _ ->
+            window.addChild(Notify(title = "Example Notification", text = "This is a test notification"))
+        }.addChild(
+            UIText("Notify").constrain {
+                x = CenterConstraint()
+                y = CenterConstraint()
+            }
+        ),
+        Slider("Slider 1", SiblingConstraint() + 10.pixels()),
+        Slider("Second Slider", SiblingConstraint()),
+        myTextBox.addChild(myText),
+        UIBlock(Color.RED).constrain {
+            y = SiblingConstraint()
+            width = RelativeConstraint()
+            height = 5.pixels()
+        }
+    ) childOf window
 
     init {
         myTextBox.constrain {
             y = SiblingConstraint()
-            width = ChildBasedSizeConstraint()
-            height = ChildBasedSizeConstraint()
+            width = ChildBasedSizeConstraint() + 4.pixels()
+            height = ChildBasedSizeConstraint() + 4.pixels()
         }.onMouseClick { _, _, _ ->
             myText.active = true
         } effect ScissorEffect()
 
-        myText.minWidth = 50.pixels()
-        myText.maxWidth = RelativeConstraint().to(settings) as WidthConstraint
+        myText.minWidth = 100.pixels()
+        myText.maxWidth = RelativeConstraint().to(settings) - 4.pixels() as WidthConstraint
+        myText.constrain {
+            x = 2.pixels()
+            y = CenterConstraint()
+        }
 
         window.onMouseClick { _, _, _ ->
             myText.active = false
@@ -68,7 +87,7 @@ class ExampleGui : GuiScreen() {
             width = 50.pixels()
             height = 10.pixels()
         }.addChild(
-            UIText("I'm longer than my container")
+                UIText("I'm longer than my container")
         ) effect ScissorEffect() childOf window
 
         blocky.animate {
@@ -229,6 +248,33 @@ class ExampleGui : GuiScreen() {
         fun unhover() {
             slider.animate {
                 setRadiusAnimation(Animations.OUT_EXP, 1f, 5.pixels())
+            }
+        }
+    }
+
+    private class Notify(text: String, title: String? = null): UIBlock(Color.RED) {
+        init {
+            if (title != null) {
+                addChild(
+                    UIText(title).constrain {
+                        x = CenterConstraint()
+                        y = 5.pixels()
+                    }
+                )
+            }
+
+            addChild(
+                UIWrappedText(text).constrain {
+                    x = 2.pixels()
+                    y = SiblingConstraint() + 2.pixels()
+                    width = FillConstraint() - 2.pixels()
+                }
+            )
+            constrain {
+                x = 0.pixels(true)
+                y = 0.pixels()
+                width = 150.pixels()
+                height = ChildBasedSizeConstraint()
             }
         }
     }
