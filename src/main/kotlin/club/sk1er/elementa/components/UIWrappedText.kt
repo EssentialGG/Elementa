@@ -68,6 +68,7 @@ open class UIWrappedText @JvmOverloads constructor(private var text: String = ""
             text = ""
         }
 
+        GlStateManager.translate(-x.toDouble(), -y.toDouble(), 0.0)
         GlStateManager.scale(1 / getTextScale().toDouble(), 1 / getTextScale().toDouble(), 1.0)
 
         super.draw()
