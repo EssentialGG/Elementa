@@ -13,13 +13,26 @@ sealed class AnimationComponent<T>(
     private val delayFrames: Int
 ) : SuperConstraint<T> {
     private var elapsedFrames = 0
+    private var animationPaused = false
 
     override fun animationFrame() {
         super.animationFrame()
 
-        if (complete()) return
+        if (complete() || animationPaused) return
 
         elapsedFrames++
+    }
+
+    fun stop() {
+        elapsedFrames = totalFrames + delayFrames
+    }
+
+    fun pause() {
+        animationPaused = true
+    }
+
+    fun resume() {
+        animationPaused = false
     }
 
     fun complete() = elapsedFrames - delayFrames >= totalFrames
