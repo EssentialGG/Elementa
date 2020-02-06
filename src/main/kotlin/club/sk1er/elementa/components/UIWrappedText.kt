@@ -59,15 +59,10 @@ open class UIWrappedText @JvmOverloads constructor(private var text: String = ""
         GlStateManager.enableBlend()
 
         GlStateManager.scale(getTextScale().toDouble(), getTextScale().toDouble(), 1.0)
+        GlStateManager.translate(x.toDouble(), y.toDouble(), 0.0)
 
         try {
-            Minecraft.getMinecraft().fontRendererObj.drawSplitString(
-                text,
-                x.toInt(),
-                y.toInt(),
-                width.toInt(),
-                color.rgb
-            )
+            Minecraft.getMinecraft().fontRendererObj.drawSplitString(text, 0, 0, width.toInt(), color.rgb)
         } catch (e: StackOverflowError) {
             // We probably couldn't wrap the text properly
             text = ""

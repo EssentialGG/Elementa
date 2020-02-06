@@ -22,7 +22,7 @@ class AnimatingConstraints(
         this.color = oldConstraints.color
     }
 
-    fun begin() {
+    fun begin() = apply {
         component.animateTo(this)
     }
 

@@ -2,14 +2,13 @@ package com.example.examplemod
 
 import club.sk1er.elementa.components.*
 import club.sk1er.elementa.constraints.*
+import club.sk1er.elementa.constraints.animation.AnimationComponent
 import club.sk1er.elementa.constraints.animation.Animations
 import club.sk1er.elementa.dsl.*
 import club.sk1er.elementa.effects.ScissorEffect
-import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiScreen
 import org.lwjgl.input.Mouse
 import java.awt.Color
-import java.net.URL
 
 class ExampleGui : GuiScreen() {
     private val window: Window = Window()
@@ -44,7 +43,9 @@ class ExampleGui : GuiScreen() {
             width = FillConstraint() - 5.pixels()
             height = 20.pixels()
         }.onMouseClick { _, _, _ ->
-            window.addChild(Notify(title = "Example Notification", text = "This is a test notification"))
+            val notification = Notify(title = "Example Notification", text = "This is a test notification with a really long text line")
+            window.addChild(notification)
+            notification.animateIn()
         }.addChild(
             UIText("Notify").constrain {
                 x = CenterConstraint()
@@ -104,61 +105,61 @@ class ExampleGui : GuiScreen() {
             textScale = 2.pixels()
         }
 
-        val scroller = (ScrollComponent().constrain {
-            x = CenterConstraint()
-            y = 30.pixels()
-            width = RelativeConstraint(0.7f)
-            height = RelativeConstraint(0.8f)
-        } childOf window) as ScrollComponent
-
-        repeat(100) {
-            UIBlock(Color.GREEN).constrain {
-                x = 1.pixels()
-                y = SiblingConstraint() + 1.pixels()
-                width = RelativeConstraint() - 2.pixels()
-                height = RelativeConstraint(0.098f)
-            } childOf scroller
-        }
-
-        UIBlock(Color.RED).constrain {
-            x = CenterConstraint()
-            y = 10.pixels(true)
-            width = (Minecraft.getMinecraft().fontRendererObj.getStringWidth("My big text!") * 2f).pixels()
-            height = 18.pixels()
-        } childOf window
-
-        UIText("My big text!").constrain {
-            x = CenterConstraint()
-            y = 10.pixels(true)
-            textScale = 2.pixels()
-        } childOf window
-
-        UIImage.ofURL(URL("https://visage.surgeplay.com/face/32/1173617851a0481c830ab35e143ddd1b")).constrain {
-            x = 1.pixels()
-            y = SiblingConstraint() + 1.pixels()
-            width = RelativeConstraint() - 2.pixels()
-            height = RelativeConstraint(0.098f)
-        } childOf scroller
-
-        val friendsListScrollBar = UIBlock(Color.CYAN).constrain {
-            x = 0.pixels(alignOpposite = true)
-            width = 6.pixels()
-            height = FillConstraint()
-        } childOf window
-
-        val friendsListScrollBarGripContainer = UIContainer().constrain {
-            x = CenterConstraint()
-            y = 2.pixels()
-            width = RelativeConstraint(1f) - 2.pixels()
-            height = RelativeConstraint(1f) - 4.pixels()
-        } childOf friendsListScrollBar
-
-        val friendsListScrollBarGrip = UIBlock(Color.BLACK).constrain {
-            width = RelativeConstraint(1f)
-            height = RelativeConstraint(1f)
-        } childOf friendsListScrollBarGripContainer
-
-        scroller.setScrollBarComponent(friendsListScrollBarGrip)
+//        val scroller = (ScrollComponent().constrain {
+//            x = CenterConstraint()
+//            y = 30.pixels()
+//            width = RelativeConstraint(0.7f)
+//            height = RelativeConstraint(0.8f)
+//        } childOf window) as ScrollComponent
+//
+//        repeat(100) {
+//            UIBlock(Color.GREEN).constrain {
+//                x = 1.pixels()
+//                y = SiblingConstraint() + 1.pixels()
+//                width = RelativeConstraint() - 2.pixels()
+//                height = RelativeConstraint(0.098f)
+//            } childOf scroller
+//        }
+//
+//        UIBlock(Color.RED).constrain {
+//            x = CenterConstraint()
+//            y = 10.pixels(true)
+//            width = (Minecraft.getMinecraft().fontRendererObj.getStringWidth("My big text!") * 2f).pixels()
+//            height = 18.pixels()
+//        } childOf window
+//
+//        UIText("My big text!").constrain {
+//            x = CenterConstraint()
+//            y = 10.pixels(true)
+//            textScale = 2.pixels()
+//        } childOf window
+//
+//        UIImage.ofURL(URL("https://visage.surgeplay.com/face/32/1173617851a0481c830ab35e143ddd1b")).constrain {
+//            x = 1.pixels()
+//            y = SiblingConstraint() + 1.pixels()
+//            width = RelativeConstraint() - 2.pixels()
+//            height = RelativeConstraint(0.098f)
+//        } childOf scroller
+//
+//        val friendsListScrollBar = UIBlock(Color.CYAN).constrain {
+//            x = 0.pixels(alignOpposite = true)
+//            width = 6.pixels()
+//            height = FillConstraint()
+//        } childOf window
+//
+//        val friendsListScrollBarGripContainer = UIContainer().constrain {
+//            x = CenterConstraint()
+//            y = 2.pixels()
+//            width = RelativeConstraint(1f) - 2.pixels()
+//            height = RelativeConstraint(1f) - 4.pixels()
+//        } childOf friendsListScrollBar
+//
+//        val friendsListScrollBarGrip = UIBlock(Color.BLACK).constrain {
+//            width = RelativeConstraint(1f)
+//            height = RelativeConstraint(1f)
+//        } childOf friendsListScrollBarGripContainer
+//
+//        scroller.setScrollBarComponent(friendsListScrollBarGrip)
 
 //        UIImage.ofURL(URL("https://visage.surgeplay.com/face/32/02f62a6be7484546b9ff26e3ab4b1076"))
 //            .setWidth(RelativeConstraint())
@@ -252,29 +253,113 @@ class ExampleGui : GuiScreen() {
         }
     }
 
-    private class Notify(text: String, title: String? = null): UIBlock(Color.RED) {
+    private class Notify(text: String, title: String? = null, var delay: Float = 3f): UIBlock(Color(0, 0, 0, 200)) {
+        private val timer = UIBlock(Color(0, 170, 255, 255)).constrain {
+            y = 0.pixels(true)
+            height = 7.pixels()
+        } childOf this
+
+        private val glow = UIShape(Color(255, 255, 255, 30))
+
+        private val timerAnimation = timer.makeAnimation()
+
+        private var clicked = false
+
         init {
+            glow childOf this
+            glow.addVertex(UIPoint(0.pixels(true), 0.pixels()))
+            glow.addVertex(UIPoint(0.pixels(true), 0.pixels()))
+            glow.addVertex(UIPoint(0.pixels(true), 0.pixels(true)))
+            glow.addVertex(UIPoint(0.pixels(true), 0.pixels(true)))
+
             if (title != null) {
                 addChild(
                     UIText(title).constrain {
-                        x = CenterConstraint()
+                        x = 2.pixels()
                         y = 5.pixels()
+                        textScale = 1.5f.pixels()
                     }
                 )
             }
 
             addChild(
-                UIWrappedText(text).constrain {
-                    x = 2.pixels()
-                    y = SiblingConstraint() + 2.pixels()
-                    width = FillConstraint() - 2.pixels()
-                }
+                    UIWrappedText(text, true).constrain {
+                        x = 2.pixels()
+                        y = SiblingConstraint() + 6.pixels()
+                        width = FillConstraint() - 2.pixels()
+                    }
             )
+
             constrain {
-                x = 0.pixels(true)
-                y = 0.pixels()
-                width = 150.pixels()
-                height = ChildBasedSizeConstraint()
+                x = 0.pixels(alignOpposite = true, alignOutside = true)
+                y = 5.pixels(true)
+                width = 155.pixels()
+                height = ChildBasedSizeConstraint() + 11.pixels()
+            }.onMouseEnter {
+                if (clicked) return@onMouseEnter
+                (timerAnimation.width as? AnimationComponent<*>)?.pause()
+                glow.animate {
+                    setColorAnimation(Animations.OUT_EXP, 1f, Color(255, 255, 255, 75).asConstraint())
+                }
+                glow.getVertices()[1].animate {
+                    setXAnimation(Animations.OUT_EXP, 1f, 20.pixels(true))
+                }
+                glow.getVertices()[2].animate {
+                    setXAnimation(Animations.OUT_EXP, 2f, 24.pixels(true))
+                }
+            }.onMouseLeave {
+                if (clicked) return@onMouseLeave
+                (timerAnimation.width as? AnimationComponent<*>)?.resume()
+                glow.animate {
+                    setColorAnimation(Animations.OUT_EXP, 1f, Color(255, 255, 255, 30).asConstraint())
+                }
+                glow.getVertices()[1].animate {
+                    setXAnimation(Animations.OUT_EXP, 1f, 10.pixels(true))
+                }
+                glow.getVertices()[2].animate {
+                    setXAnimation(Animations.OUT_EXP, 2f, 14.pixels(true))
+                }
+            }.onMouseClick { _, _, _ ->
+                clicked = true
+                glow.getVertices()[1].animate {
+                    setXAnimation(Animations.OUT_EXP, 1f, 0.pixels())
+                    onComplete {
+                        animateOut()
+                    }
+                }
+                glow.getVertices()[2].animate {
+                    setXAnimation(Animations.OUT_EXP, 1.5f, 0.pixels())
+                }
+            }
+        }
+
+        fun animateIn() {
+            animate {
+                setXAnimation(Animations.OUT_EXP, 0.5f, 5.pixels(true))
+                onComplete {
+                    animateTimer()
+                }
+            }
+        }
+
+        private fun animateTimer() {
+            glow.getVertices()[1].animate {
+                setXAnimation(Animations.OUT_EXP, 1f, 10.pixels(true))
+            }
+            glow.getVertices()[2].animate {
+                setXAnimation(Animations.OUT_EXP, 2f, 14.pixels(true))
+            }
+            timerAnimation
+                .setWidthAnimation(Animations.LINEAR, delay, RelativeConstraint(), 0.5f)
+                .begin()
+                .onComplete {
+                    animateOut()
+                }
+        }
+
+        private fun animateOut() {
+            animate {
+                setXAnimation(Animations.IN_EXP, 0.5f, 0.pixels(alignOpposite = true, alignOutside = true), 0.5f)
             }
         }
     }
