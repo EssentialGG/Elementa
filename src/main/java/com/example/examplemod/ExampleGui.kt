@@ -299,7 +299,7 @@ class ExampleGui : GuiScreen() {
                 if (clicked) return@onMouseEnter
                 (timerAnimation.width as? AnimationComponent<*>)?.pause()
                 glow.animate {
-                    setColorAnimation(Animations.OUT_EXP, 1f, Color(255, 255, 255, 75).asConstraint())
+                    setColorAnimation(Animations.OUT_EXP, 1f, Color(255, 255, 255, 50).asConstraint())
                 }
                 glow.getVertices()[1].animate {
                     setXAnimation(Animations.OUT_EXP, 1f, 20.pixels(true))
@@ -321,14 +321,17 @@ class ExampleGui : GuiScreen() {
                 }
             }.onMouseClick { _, _, _ ->
                 clicked = true
+                glow.animate {
+                    setColorAnimation(Animations.OUT_EXP, 0.5f, Color(100, 100, 100, 255).asConstraint())
+                }
                 glow.getVertices()[1].animate {
-                    setXAnimation(Animations.OUT_EXP, 1f, 0.pixels())
+                    setXAnimation(Animations.OUT_EXP, 0.5f, 0.pixels())
                     onComplete {
                         animateOut()
                     }
                 }
                 glow.getVertices()[2].animate {
-                    setXAnimation(Animations.OUT_EXP, 1.5f, 0.pixels())
+                    setXAnimation(Animations.OUT_EXP, 1f, 0.pixels())
                 }
             }
         }
