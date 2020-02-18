@@ -9,7 +9,12 @@ import net.minecraft.client.renderer.GlStateManager
  * Simple text component that draws its given [text] at the scale determined by
  * this component's width & height constrains.
  */
-open class UIWrappedText @JvmOverloads constructor(private var text: String = "", private var shadow: Boolean = true) : UIComponent() {
+open class UIWrappedText @JvmOverloads constructor(
+    private var text: String = "",
+    private var shadow: Boolean = true,
+    private var centered: Boolean = false
+) : UIComponent() {
+
     private val charWidth = Minecraft.getMinecraft().fontRendererObj.getCharWidth('x')
     private var textWidth: Float = Minecraft.getMinecraft().fontRendererObj.getStringWidth(text).toFloat()
 
@@ -62,7 +67,13 @@ open class UIWrappedText @JvmOverloads constructor(private var text: String = ""
         GlStateManager.translate(x.toDouble(), y.toDouble(), 0.0)
 
         try {
-            Minecraft.getMinecraft().fontRendererObj.drawSplitString(text, 0, 0, width.toInt(), color.rgb)
+            val lines = Minecraft.getMinecraft().fontRendererObj.listFormattedStringToWidth(text, width.toInt())
+            lines.forEachIndexed { i, line ->
+                val xOffset = if (centered)
+                    (width - Minecraft.getMinecraft().fontRendererObj.getStringWidth(line)) / 2f
+                else 0f
+                Minecraft.getMinecraft().fontRendererObj.drawString(line, xOffset, i * 9f, color.rgb, shadow)
+            }
         } catch (e: StackOverflowError) {
             // We probably couldn't wrap the text properly
             text = ""

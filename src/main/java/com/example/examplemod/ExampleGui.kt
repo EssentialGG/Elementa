@@ -59,6 +59,19 @@ class ExampleGui : GuiScreen() {
             y = SiblingConstraint()
             width = RelativeConstraint()
             height = 5.pixels()
+        },
+        UIWrappedText("Example of some longer wrapped text with shadow").constrain {
+            y = SiblingConstraint()
+            width = RelativeConstraint()
+        },
+        UIBlock(Color.RED).constrain {
+            y = SiblingConstraint()
+            width = RelativeConstraint()
+            height = 5.pixels()
+        },
+        UIWrappedText("More example of longer text wrapped and centered", shadow = true, centered = true).constrain {
+            y = SiblingConstraint()
+            width = RelativeConstraint()
         }
     ) childOf window
 
