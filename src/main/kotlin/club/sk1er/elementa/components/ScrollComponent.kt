@@ -42,11 +42,12 @@ class ScrollComponent(emptyString: String = "", private val scrollOpposite: Bool
     )
     private var scrollBarGrip: UIComponent? = null
     private var dragBeginPos = -1f
-    private val allChildren = CopyOnWriteArrayList<UIComponent>()
     private var needsUpdate = true
 
     private var isAutoScrolling = false
     private var autoScrollBegin: Pair<Float, Float> = -1f to -1f
+
+    val allChildren = CopyOnWriteArrayList<UIComponent>()
 
     init {
         super.addChild(actualHolder)
