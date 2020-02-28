@@ -21,6 +21,14 @@ open class UIImage(private val imageFuture: () -> BufferedImage) : UIComponent()
     var imageWidth = 1f
     var imageHeight = 1f
 
+    @Throws(Throwable::class)
+    protected fun finalize() {
+        val glTextureId = texture.glTextureId
+        if (glTextureId != 0 && glTextureId != -1) {
+            GlStateManager.deleteTexture(glTextureId);
+        }
+    }
+
     override fun draw() {
         beforeDraw()
 
