@@ -3,9 +3,38 @@ package club.sk1er.elementa.constraints
 import club.sk1er.elementa.UIComponent
 import net.minecraft.util.MathHelper
 import java.awt.Color
-import java.lang.UnsupportedOperationException
 import kotlin.math.sin
 import kotlin.random.Random
+
+/**
+ * Sets the color to be a constant, determined color.
+ */
+class ConstantColorConstraint(private val color: Color) : ColorConstraint {
+    override var cachedValue = Color.WHITE
+    override var recalculate = true
+    override var constrainTo: UIComponent? = null
+
+    override fun getColorImpl(component: UIComponent): Color {
+        return color
+    }
+
+    override fun to(component: UIComponent) = apply {
+        throw UnsupportedOperationException("Constraint.to(UIComponent) is not available in this context!")
+    }
+}
+
+/**
+ * Sets the color to be constant but with an alpha based off of its parent.
+ */
+class AlphaAspectColorConstraint(private val color: Color, private val value: Float = 1f): ColorConstraint {
+    override var cachedValue = Color.WHITE
+    override var recalculate = true
+    override var constrainTo: UIComponent? = null
+
+    override fun getColorImpl(component: UIComponent): Color {
+        return Color(color.red, color.green, color.blue, ((constrainTo ?: component.parent).getColor().alpha * value).toInt())
+    }
+}
 
 /**
  * Changes this component's color every frame, using a sin wave to create
@@ -39,6 +68,6 @@ class RainbowColorConstraint(private val alpha: Int = 255, private val speed: Fl
     }
 
     override fun to(component: UIComponent) = apply {
-        throw UnsupportedOperationException("Constraint.to(UIComponent) is not available in this context!")
+        throw java.lang.UnsupportedOperationException("Constraint.to(UIComponent) is not available in this context!")
     }
 }
