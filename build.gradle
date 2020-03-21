@@ -11,6 +11,8 @@ buildscript {
             name = "forge"
             url = "https://files.minecraftforge.net/maven"
         }
+        flatDir dirs: 'libs'
+
     }
     dependencies {
         classpath "net.minecraftforge.gradle:ForgeGradle:" + (
@@ -70,6 +72,8 @@ repositories {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    provided files("libs/UniveralCraft{$mcVersion}.jar")
+
 }
 
 processResources {
