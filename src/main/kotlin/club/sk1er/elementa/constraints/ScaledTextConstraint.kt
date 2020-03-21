@@ -2,6 +2,7 @@ package club.sk1er.elementa.constraints
 
 import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.components.UIText
+import club.sk1er.mods.core.universal.UniversalGraphicsHandler
 import net.minecraft.client.Minecraft
 import java.lang.UnsupportedOperationException
 
@@ -13,11 +14,10 @@ class ScaledTextConstraint(private var scale: Float) : SizeConstraint {
     override var recalculate = true
     override var constrainTo: UIComponent? = null
 
-    private var fontRenderer = Minecraft.getMinecraft().fontRendererObj
 
     override fun getWidthImpl(component: UIComponent): Float {
         return when (component) {
-            is UIText -> scale * fontRenderer.getStringWidth(component.getText())
+            is UIText -> scale * UniversalGraphicsHandler.getStringWidth(component.getText())
             else -> throw IllegalAccessException("ScaledTextConstraint can only be used with UIText")
         }
     }

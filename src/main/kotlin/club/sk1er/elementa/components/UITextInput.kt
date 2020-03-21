@@ -4,17 +4,16 @@ import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.constraints.WidthConstraint
 import club.sk1er.elementa.constraints.animation.Animations
 import club.sk1er.elementa.dsl.*
-import net.minecraft.client.Minecraft
-import net.minecraft.client.renderer.GlStateManager
+import club.sk1er.mods.core.universal.UniversalGraphicsHandler
 import java.awt.Color
 
 open class UITextInput @JvmOverloads constructor(
-    private val placeholder: String = "",
-    var wrapped: Boolean = true,
-    var shadow: Boolean = true
+        private val placeholder: String = "",
+        var wrapped: Boolean = true,
+        var shadow: Boolean = true
 ) : UIComponent() {
 
-    private val placeholderWidth = Minecraft.getMinecraft().fontRendererObj.getStringWidth(placeholder).toFloat()
+    private val placeholderWidth = UniversalGraphicsHandler.getStringWidth(placeholder).toFloat()
     private val internalMouseClickAction = { mouseX: Float, mouseY: Float, button: Int ->
         if (active) {
             // TODO move cursor
@@ -24,10 +23,10 @@ open class UITextInput @JvmOverloads constructor(
     var text: String = ""
         set(value) {
             field = value
-            textWidth = Minecraft.getMinecraft().fontRendererObj.getStringWidth(text).toFloat()
+            textWidth = UniversalGraphicsHandler.getStringWidth(text).toFloat()
             updateAction(value)
         }
-    var textWidth: Float = Minecraft.getMinecraft().fontRendererObj.getStringWidth(text).toFloat()
+    var textWidth: Float = UniversalGraphicsHandler.getStringWidth(text).toFloat()
     var textOffset: Float = 0f
 
     var cursor: UIComponent = UIBlock(Color(255, 255, 255, 0))
@@ -39,8 +38,8 @@ open class UITextInput @JvmOverloads constructor(
             else cursor.setColor(Color(255, 255, 255, 0).asConstraint())
         }
 
-    var maxWidth: WidthConstraint = Minecraft.getMinecraft().fontRendererObj.getStringWidth(placeholder).pixels()
-    var minWidth: WidthConstraint = Minecraft.getMinecraft().fontRendererObj.getStringWidth(placeholder).pixels()
+    var maxWidth: WidthConstraint = UniversalGraphicsHandler.getStringWidth(placeholder).pixels()
+    var minWidth: WidthConstraint = UniversalGraphicsHandler.getStringWidth(placeholder).pixels()
 
     private var updateAction: (text: String) -> Unit = {}
     private var activateAction: (text: String) -> Unit = {}
@@ -63,15 +62,15 @@ open class UITextInput @JvmOverloads constructor(
             } else if (keyCode == 28 || keyCode == 156) {
                 activateAction(text)
             } else if (
-                keyCode in 2..13 ||
-                keyCode in 16..27 ||
-                keyCode in 30..41 ||
-                keyCode in 43..53 ||
-                keyCode in 71..83 ||
-                keyCode in 145..147 ||
-                keyCode == 55 ||
-                keyCode == 181 ||
-                keyCode == 57
+                    keyCode in 2..13 ||
+                    keyCode in 16..27 ||
+                    keyCode in 30..41 ||
+                    keyCode in 43..53 ||
+                    keyCode in 71..83 ||
+                    keyCode in 145..147 ||
+                    keyCode == 55 ||
+                    keyCode == 181 ||
+                    keyCode == 57
             ) {
                 // normal key input
                 text += typedChar
@@ -100,24 +99,24 @@ open class UITextInput @JvmOverloads constructor(
         val width = getWidth() / getTextScale()
         val color = getColor()
 
-        GlStateManager.enableBlend()
+        UniversalGraphicsHandler.enableBlend()
 
-        GlStateManager.scale(getTextScale().toDouble(), getTextScale().toDouble(), 1.0)
+        UniversalGraphicsHandler.scale(getTextScale().toDouble(), getTextScale().toDouble(), 1.0)
 
         val displayText = if (text.isEmpty() && !this.active) placeholder else text
 
         if (wrapped) {
-            val lines = Minecraft.getMinecraft().fontRendererObj.listFormattedStringToWidth(displayText, width.toInt())
+            val lines = UniversalGraphicsHandler.listFormattedStringToWidth(displayText, width.toInt())
             alignCursor(lines)
             lines.forEachIndexed { index, line ->
-                Minecraft.getMinecraft().fontRendererObj.drawString(line, x, y + index * 9, color.rgb, shadow)
+                UniversalGraphicsHandler.drawString(line, x, y + index * 9, color.rgb, shadow)
             }
         } else {
             alignCursor()
-            Minecraft.getMinecraft().fontRendererObj.drawString(displayText, x + textOffset, y, color.rgb, shadow)
+            UniversalGraphicsHandler.drawString(displayText, x + textOffset, y, color.rgb, shadow)
         }
 
-        GlStateManager.scale(1 / getTextScale().toDouble(), 1 / getTextScale().toDouble(), 1.0)
+        UniversalGraphicsHandler.scale(1 / getTextScale().toDouble(), 1 / getTextScale().toDouble(), 1.0)
 
 
         super.draw()
@@ -143,7 +142,7 @@ open class UITextInput @JvmOverloads constructor(
         val width = if (text.isEmpty() && !this.active) placeholderWidth else textWidth
 
         if (wrapped) {
-            cursor.setX((Minecraft.getMinecraft().fontRendererObj.getStringWidth(lines.last()) + 1).pixels())
+            cursor.setX((UniversalGraphicsHandler.getStringWidth(lines.last()) + 1).pixels())
             cursor.setY(((lines.size - 1) * 9).pixels())
             setHeight((lines.size * 9).pixels())
         } else {

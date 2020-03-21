@@ -2,6 +2,9 @@ buildscript {
     ext.kotlin_version = "1.3.61"
     ext.dokka_version = "0.10.0"
 
+    def f = file("gradle/mcversion.txt")
+
+    project.ext.mcVersion = f.exists() ? f.readLines().first() as int : 10809
     repositories {
         jcenter()
         maven {
@@ -10,7 +13,12 @@ buildscript {
         }
     }
     dependencies {
-        classpath "net.minecraftforge.gradle:ForgeGradle:2.1-SNAPSHOT"
+        classpath "net.minecraftforge.gradle:ForgeGradle:" + (
+                mcVersion >= 11200 ? '2.3-SNAPSHOT' :
+                        mcVersion >= 10904 ? '2.2-SNAPSHOT' :
+                                mcVersion >= 10809 ? "2.1-SNAPSHOT" :
+                                        "invalid"
+        )
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "org.jetbrains.dokka:dokka-gradle-plugin:${dokka_version}"
     }
@@ -27,9 +35,27 @@ archivesBaseName = modBaseName
 sourceCompatibility = targetCompatibility = 1.8
 
 minecraft {
-    version = '1.8.9-11.15.1.1722'
+    version = [
+            11202: '1.12.2-14.23.0.2486',
+            11201: '1.12.1-14.22.0.2444',
+            11200: '1.12-14.21.1.2387',
+            11102: '1.11.2-13.20.0.2216',
+            11100: '1.11-13.19.1.2188',
+            11002: '1.10.2-12.18.2.2099',
+            10904: '1.9.4-12.17.0.1976',
+            10809: '1.8.9-11.15.1.2318-1.8.9'
+    ][mcVersion]
+    mappings = [
+            11202: "snapshot_20170615",
+            11201: "snapshot_20170615",
+            11200: "snapshot_20170615",
+            11102: "snapshot_20161220",
+            11100: "snapshot_20161111",
+            11002: "snapshot_20160518",
+            10904: "snapshot_20160518",
+            10809: "stable_22"
+    ][mcVersion]
     runDir = "run"
-    mappings = project.mcpVersion
     // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
 }
 
@@ -78,3 +104,49 @@ artifacts {
 jar {
     exclude('com/example/examplemod/**')
 }
+
+apply from: 'preprocessor.gradle'
+
+ext {
+    customMCVersion = -1
+}
+
+task changeMcVersion() {
+    doLast {
+        def version
+
+        if (customMCVersion != -1) {
+            println "Running forced " + customMCVersion
+            version = customMCVersion
+        } else if (project.hasProperty("minecraftVersion")) {
+            version = project.minecraftVersion
+        } else {
+            version = 10809
+            println "Defaulting to version 1.8.9..."
+        }
+
+        project.ext.mcVersion = version
+        def f = file("gradle/mcversion.txt")
+        f.delete()
+        f.createNewFile()
+        f.write(version.toString())
+
+        println "MC target version is $version"
+        def vars = [MC: version as int]
+        project.convertTree(vars, 'src/main/java')
+        project.convertTree(vars, 'src/main/kotlin')
+        project.convertTree(vars, 'src/main/resources')
+    }
+}
+
+
+task changeToDefaultVersion {
+    doLast {
+        customMCVersion = 10809
+    }
+}
+
+deobfCompileDummyTask.finalizedBy(changeMcVersion)
+
+build.finalizedBy(changeToDefaultVersion)
+changeToDefaultVersion.finalizedBy(changeMcVersion)

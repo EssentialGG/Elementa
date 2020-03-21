@@ -2,6 +2,7 @@ package club.sk1er.elementa.components
 
 import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.effects.ScissorEffect
+import club.sk1er.mods.core.universal.UniversalGraphicsHandler
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.ScaledResolution
 import org.lwjgl.opengl.GL11
@@ -19,8 +20,8 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
     }
 
     override fun draw() {
-        GL11.glClear(GL11.GL_STENCIL_BUFFER_BIT)
-        GL11.glClearStencil(0)
+        UniversalGraphicsHandler.glClear(GL11.GL_STENCIL_BUFFER_BIT)
+        UniversalGraphicsHandler.glClearStencil(0)
 
         scaledResolution = ScaledResolution(Minecraft.getMinecraft())
 

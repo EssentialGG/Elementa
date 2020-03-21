@@ -3,9 +3,9 @@ package club.sk1er.elementa.components
 import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.dsl.asConstraint
 import club.sk1er.elementa.dsl.pixels
+import club.sk1er.mods.core.universal.UniversalGraphicsHandler
 import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.GlStateManager
-import net.minecraft.client.renderer.Tessellator
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats
 import org.lwjgl.input.Mouse
 import org.lwjgl.opengl.GL11
@@ -44,34 +44,35 @@ class UICircle @JvmOverloads constructor(radius: Float = 0f, color: Color = Colo
         if (color.alpha == 0) return super.draw()
 
 
-        GL11.glPushMatrix()
+        UniversalGraphicsHandler.pushMatrix()
 
-        GlStateManager.enableBlend()
-        GlStateManager.disableTexture2D()
+        UniversalGraphicsHandler.enableBlend()
+        UniversalGraphicsHandler.disableTexture2D()
 
-        val tessellator = Tessellator.getInstance()
-        val worldRenderer = tessellator.worldRenderer
+        val worldRenderer = UniversalGraphicsHandler.getFromTessellator()
 
-        GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0)
+        UniversalGraphicsHandler.tryBlendFuncSeparate(770, 771, 1, 0)
 
-        GlStateManager.color(color.red.toFloat() / 255f, color.green.toFloat() / 255f, color.blue.toFloat() / 255f, color.alpha.toFloat() / 255f)
+        val red = color.red.toFloat() / 255f
+        val green = color.green.toFloat() / 255f
+        val blue = color.blue.toFloat() / 255f
+        val alpha = color.alpha.toFloat() / 255f
 
-        worldRenderer.begin(GL11.GL_POLYGON, DefaultVertexFormats.POSITION)
+        worldRenderer.begin(GL11.GL_POLYGON, DefaultVertexFormats.POSITION_COLOR)
 
         var theta = 0.0
         for (i in 0 until steps) {
-            worldRenderer.pos(cos(theta) * r + x,  -sin(theta) * r + y, 0.0).endVertex()
+            worldRenderer.pos(cos(theta) * r + x, -sin(theta) * r + y, 0.0).color(red, green, blue, alpha).endVertex()
             theta += (2 * PI) / steps
         }
 
-        tessellator.draw()
+        UniversalGraphicsHandler.draw()
 
-        GlStateManager.color(1f, 1f, 1f, 1f)
 
         GlStateManager.enableTexture2D()
         GlStateManager.disableBlend()
 
-        GL11.glPopMatrix()
+        UniversalGraphicsHandler.popMatrix()
 
         super.draw()
     }

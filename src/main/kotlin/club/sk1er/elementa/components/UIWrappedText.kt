@@ -2,6 +2,8 @@ package club.sk1er.elementa.components
 
 import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.dsl.pixels
+import club.sk1er.mods.core.universal.UniversalGraphicsHandler
+import club.sk1er.mods.core.universal.UniversalMinecraft
 import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.GlStateManager
 
@@ -10,13 +12,13 @@ import net.minecraft.client.renderer.GlStateManager
  * this component's width & height constrains.
  */
 open class UIWrappedText @JvmOverloads constructor(
-    private var text: String = "",
-    private var shadow: Boolean = true,
-    private var centered: Boolean = false
+        private var text: String = "",
+        private var shadow: Boolean = true,
+        private var centered: Boolean = false
 ) : UIComponent() {
 
-    private val charWidth = Minecraft.getMinecraft().fontRendererObj.getCharWidth('x')
-    private var textWidth: Float = Minecraft.getMinecraft().fontRendererObj.getStringWidth(text).toFloat()
+    private val charWidth = UniversalGraphicsHandler.getCharWidth('x')
+    private var textWidth: Float = UniversalGraphicsHandler.getStringWidth(text).toFloat()
 
     init {
         setWidth(textWidth.pixels())
@@ -25,7 +27,7 @@ open class UIWrappedText @JvmOverloads constructor(
     fun getText() = text
     fun setText(text: String) = apply {
         this.text = text
-        textWidth = Minecraft.getMinecraft().fontRendererObj.getStringWidth(text).toFloat()
+        textWidth = UniversalGraphicsHandler.getStringWidth(text).toFloat()
     }
 
     fun getShadow() = shadow
@@ -38,7 +40,7 @@ open class UIWrappedText @JvmOverloads constructor(
 
     override fun getHeight(): Float {
         val width = getWidth() / getTextScale()
-        val lines = Minecraft.getMinecraft().fontRendererObj.listFormattedStringToWidth(text, width.toInt())
+        val lines = UniversalGraphicsHandler.listFormattedStringToWidth(text, width.toInt())
 
         return lines.size * 9f * getTextScale()
     }
@@ -61,26 +63,26 @@ open class UIWrappedText @JvmOverloads constructor(
             return super.draw()
         }
 
-        GlStateManager.enableBlend()
+        UniversalGraphicsHandler.enableBlend()
 
-        GlStateManager.scale(getTextScale().toDouble(), getTextScale().toDouble(), 1.0)
-        GlStateManager.translate(x.toDouble(), y.toDouble(), 0.0)
+        UniversalGraphicsHandler.scale(getTextScale().toDouble(), getTextScale().toDouble(), 1.0)
+        UniversalGraphicsHandler.translate(x.toDouble(), y.toDouble(), 0.0)
 
         try {
-            val lines = Minecraft.getMinecraft().fontRendererObj.listFormattedStringToWidth(text, width.toInt())
+            val lines = UniversalGraphicsHandler.listFormattedStringToWidth(text, width.toInt())
             lines.forEachIndexed { i, line ->
                 val xOffset = if (centered)
-                    (width - Minecraft.getMinecraft().fontRendererObj.getStringWidth(line)) / 2f
+                    (width - UniversalGraphicsHandler.getStringWidth(line)) / 2f
                 else 0f
-                Minecraft.getMinecraft().fontRendererObj.drawString(line, xOffset, i * 9f, color.rgb, shadow)
+                UniversalGraphicsHandler.drawString(line, xOffset, i * 9f, color.rgb, shadow)
             }
         } catch (e: StackOverflowError) {
             // We probably couldn't wrap the text properly
             text = ""
         }
 
-        GlStateManager.translate(-x.toDouble(), -y.toDouble(), 0.0)
-        GlStateManager.scale(1 / getTextScale().toDouble(), 1 / getTextScale().toDouble(), 1.0)
+        UniversalGraphicsHandler.translate(-x.toDouble(), -y.toDouble(), 0.0)
+        UniversalGraphicsHandler.scale(1 / getTextScale().toDouble(), 1 / getTextScale().toDouble(), 1.0)
 
         super.draw()
     }

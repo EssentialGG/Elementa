@@ -1,6 +1,7 @@
 package club.sk1er.elementa.components
 
 import club.sk1er.elementa.UIComponent
+import club.sk1er.mods.core.universal.UniversalGraphicsHandler
 import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.client.renderer.Tessellator
 import net.minecraft.client.renderer.texture.AbstractTexture
@@ -25,7 +26,7 @@ open class UIImage(private val imageFuture: () -> BufferedImage) : UIComponent()
     protected fun finalize() {
         val glTextureId = texture.glTextureId
         if (glTextureId != 0 && glTextureId != -1) {
-            GlStateManager.deleteTexture(glTextureId);
+            UniversalGraphicsHandler.deleteTexture(glTextureId);
         }
     }
 
@@ -111,30 +112,28 @@ open class UIImage(private val imageFuture: () -> BufferedImage) : UIComponent()
             width: Double,
             height: Double
         ) {
-            GL11.glPushMatrix()
+            UniversalGraphicsHandler.pushMatrix()
 
-            GlStateManager.enableBlend()
-            GlStateManager.enableAlpha()
-            GlStateManager.color(
-                color.red / 255f, color.green / 255f,
-                color.blue / 255f, color.alpha / 255f
-            )
-            GlStateManager.scale(1f, 1f, 50f)
-            GlStateManager.bindTexture(texture.glTextureId)
-            GlStateManager.enableTexture2D()
+            UniversalGraphicsHandler.enableBlend()
+            UniversalGraphicsHandler.enableAlpha()
+            UniversalGraphicsHandler.scale(1f, 1f, 50f)
+            UniversalGraphicsHandler.bindTexture(texture.glTextureId)
+            UniversalGraphicsHandler.enableTexture2D()
+            val red = color.red.toFloat() / 255f
+            val green = color.green.toFloat() / 255f
+            val blue = color.blue.toFloat() / 255f
+            val alpha = color.alpha.toFloat() / 255f
+            val worldRenderer = UniversalGraphicsHandler.getFromTessellator()
 
-            val tessellator = Tessellator.getInstance()
-            val worldRenderer = tessellator.worldRenderer
+            worldRenderer.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR)
 
-            worldRenderer.begin(7, DefaultVertexFormats.POSITION_TEX)
+            worldRenderer.pos(x, y + height, 0.0).tex(0.0, 1.0).color(red, green, blue, alpha).endVertex()
+            worldRenderer.pos(x + width, y + height, 0.0).tex(1.0, 1.0).color(red, green, blue, alpha).endVertex()
+            worldRenderer.pos(x + width, y, 0.0).tex(1.0, 0.0).color(red, green, blue, alpha).endVertex()
+            worldRenderer.pos(x, y, 0.0).tex(0.0, 0.0).color(red, green, blue, alpha).endVertex()
+            UniversalGraphicsHandler.draw()
 
-            worldRenderer.pos(x, y + height, 0.0).tex(0.0, 1.0).endVertex()
-            worldRenderer.pos(x + width, y + height, 0.0).tex(1.0, 1.0).endVertex()
-            worldRenderer.pos(x + width, y, 0.0).tex(1.0, 0.0).endVertex()
-            worldRenderer.pos(x, y, 0.0).tex(0.0, 0.0).endVertex()
-            tessellator.draw()
-
-            GL11.glPopMatrix()
+            UniversalGraphicsHandler.popMatrix()
         }
     }
 }

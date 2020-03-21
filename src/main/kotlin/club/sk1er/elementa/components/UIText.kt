@@ -2,6 +2,8 @@ package club.sk1er.elementa.components
 
 import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.dsl.pixels
+import club.sk1er.mods.core.universal.UniversalGraphicsHandler
+import club.sk1er.mods.core.universal.UniversalMinecraft
 import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.GlStateManager
 
@@ -11,7 +13,7 @@ import net.minecraft.client.renderer.GlStateManager
  */
 open class UIText @JvmOverloads constructor(private var text: String = "", private var shadow: Boolean = true) : UIComponent() {
 
-    private var textWidth: Float = Minecraft.getMinecraft().fontRendererObj.getStringWidth(text).toFloat()
+    private var textWidth: Float = UniversalGraphicsHandler.getStringWidth(text).toFloat()
 
     init {
         setWidth(textWidth.pixels())
@@ -21,7 +23,7 @@ open class UIText @JvmOverloads constructor(private var text: String = "", priva
     fun getText() = text
     @JvmOverloads fun setText(text: String, adjustWidth: Boolean = true) = apply {
         this.text = text
-        textWidth = Minecraft.getMinecraft().fontRendererObj.getStringWidth(text).toFloat()
+        textWidth =UniversalGraphicsHandler.getStringWidth(text).toFloat()
         if (adjustWidth) setWidth(textWidth.pixels())
     }
 
@@ -50,11 +52,11 @@ open class UIText @JvmOverloads constructor(private var text: String = "", priva
         val height = getHeight() / 9f
         val color = getColor()
 
-        GlStateManager.enableBlend()
+        UniversalGraphicsHandler.enableBlend()
 
-        GlStateManager.scale(width.toDouble(), height.toDouble(), 1.0)
-        Minecraft.getMinecraft().fontRendererObj.drawString(text, x / width, y / height, color.rgb, shadow)
-        GlStateManager.scale(1 / width.toDouble(), 1 / height.toDouble(), 1.0)
+        UniversalGraphicsHandler.scale(width.toDouble(), height.toDouble(), 1.0)
+        UniversalGraphicsHandler.drawString(text, x / width, y / height, color.rgb, shadow)
+        UniversalGraphicsHandler.scale(1 / width.toDouble(), 1 / height.toDouble(), 1.0)
 
         super.draw()
     }

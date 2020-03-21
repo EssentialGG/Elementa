@@ -1,7 +1,7 @@
 package club.sk1er.elementa.constraints
 
 import club.sk1er.elementa.UIComponent
-import net.minecraft.util.MathHelper
+import club.sk1er.mods.core.universal.UniversalMathHelper
 import java.awt.Color
 import kotlin.math.sin
 import kotlin.random.Random
@@ -26,13 +26,14 @@ class ConstantColorConstraint(private val color: Color) : ColorConstraint {
 /**
  * Sets the color to be constant but with an alpha based off of its parent.
  */
-class AlphaAspectColorConstraint(private val color: Color, private val value: Float = 1f): ColorConstraint {
+class AlphaAspectColorConstraint(private val color: Color, private val value: Float = 1f) : ColorConstraint {
     override var cachedValue = Color.WHITE
     override var recalculate = true
     override var constrainTo: UIComponent? = null
 
     override fun getColorImpl(component: UIComponent): Color {
-        return Color(color.red, color.green, color.blue, ((constrainTo ?: component.parent).getColor().alpha * value).toInt())
+        return Color(color.red, color.green, color.blue, ((constrainTo
+                ?: component.parent).getColor().alpha * value).toInt())
     }
 }
 
@@ -60,10 +61,10 @@ class RainbowColorConstraint(private val alpha: Int = 255, private val speed: Fl
         val blue = ((sin(currentStep / speed + 4 * Math.PI / 3) + 0.75) * 170).toInt()
 
         currentColor = Color(
-            MathHelper.clamp_int(red, 0, 255),
-            MathHelper.clamp_int(green, 0, 255),
-            MathHelper.clamp_int(blue, 0, 255),
-            MathHelper.clamp_int(alpha, 0, 255)
+            UniversalMathHelper.clamp_int(red, 0, 255),
+            UniversalMathHelper.clamp_int(green, 0, 255),
+            UniversalMathHelper.clamp_int(blue, 0, 255),
+            UniversalMathHelper.clamp_int(alpha, 0, 255)
         )
     }
 
