@@ -3,7 +3,7 @@ pipeline {
   stages {
     stage('Initialize') {
       steps {
-        sh '''echo username=sk1erdeploy'\n'password=${env.DEPLOY_TOKEN} > gradle.properties.private'''
+        sh '''echo username=sk1erdeploy'\n'password=${github-deploy} > gradle.properties.private'''
         sh "./gradlew preprocessResources"
       }
     }
