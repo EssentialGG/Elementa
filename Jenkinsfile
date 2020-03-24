@@ -9,7 +9,7 @@ pipeline {
     }
     stage('Build') {
       steps {
-        sh "./gradlew build -PBUILD_ID=${env.BUILD_ID} --no-daemon"
+        sh "./gradlew jar -PBUILD_ID=${env.BUILD_ID} --no-daemon"
       }
     }
 

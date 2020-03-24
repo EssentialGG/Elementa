@@ -175,8 +175,6 @@ dependencies {
     }
     println("libs/UniversalCraft" + mcVersion+".jar")
     provided files("../../libs/UniversalCraft" + mcVersion+".jar")
-
-
 }
 
 processResources {
