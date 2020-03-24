@@ -23,9 +23,9 @@ pipeline {
     }
     stage('Deploy') {
             steps {
-                nexusPublisher nexusInstanceId: 'sk1errepo', nexusRepositoryId: 'maven-releases', packages: [[$class: 'MavenPackage', mavenAssetList: [[classifier: '', extension: '', filePath: 'versions/1.8.9/build/libs/UniversalCraft1.8.9-${BUILD_ID}.jar']], mavenCoordinate: [artifactId: 'Elementa', groupId: 'club.sk1er', packaging: 'jar', version: '${BUILD_ID}-10809']]]
-                nexusPublisher nexusInstanceId: 'sk1errepo', nexusRepositoryId: 'maven-releases', packages: [[$class: 'MavenPackage', mavenAssetList: [[classifier: '', extension: '', filePath: 'versions/1.12.2/build/libs/UniversalCraft1.12.2-${BUILD_ID}.jar']], mavenCoordinate: [artifactId: 'Elementa', groupId: 'club.sk1er', packaging: 'jar', version: '${BUILD_ID}-11202']]]
- //               nexusPublisher nexusInstanceId: 'sk1errepo', nexusRepositoryId: 'maven-releases', packages: [[$class: 'MavenPackage', mavenAssetList: [[classifier: '', extension: '', filePath: 'versions/1.15.2/build/libs/UniversalCraft1.15.2-${BUILD_ID}.jar']], mavenCoordinate: [artifactId: 'UniversalCraft', groupId: 'club.sk1er', packaging: 'jar', version: '${BUILD_ID}-11502']]]
+                nexusPublisher nexusInstanceId: 'sk1errepo', nexusRepositoryId: 'maven-releases', packages: [[$class: 'MavenPackage', mavenAssetList: [[classifier: '', extension: '', filePath: 'versions/1.8.9/build/libs/Elementa1.8.9-${BUILD_ID}.jar']], mavenCoordinate: [artifactId: 'Elementa', groupId: 'club.sk1er', packaging: 'jar', version: '${BUILD_ID}-10809']]]
+                nexusPublisher nexusInstanceId: 'sk1errepo', nexusRepositoryId: 'maven-releases', packages: [[$class: 'MavenPackage', mavenAssetList: [[classifier: '', extension: '', filePath: 'versions/1.12.2/build/libs/Elementa1.12.2-${BUILD_ID}.jar']], mavenCoordinate: [artifactId: 'Elementa', groupId: 'club.sk1er', packaging: 'jar', version: '${BUILD_ID}-11202']]]
+ //               nexusPublisher nexusInstanceId: 'sk1errepo', nexusRepositoryId: 'maven-releases', packages: [[$class: 'MavenPackage', mavenAssetList: [[classifier: '', extension: '', filePath: 'versions/1.15.2/build/libs/Elementa1.15.2-${BUILD_ID}.jar']], mavenCoordinate: [artifactId: 'Elementa', groupId: 'club.sk1er', packaging: 'jar', version: '${BUILD_ID}-11502']]]
             }
         }
   }

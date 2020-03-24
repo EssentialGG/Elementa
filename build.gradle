@@ -67,7 +67,7 @@ apply from: '../../sk1erllc_github_packages.gradle'
 
 version = this.properties.getOrDefault("BUILD_ID", "LOCAL") //BUILD_ID
 group = "club.sk1er" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = "Elementa " + project.name
+archivesBaseName = "Elementa" + project.name
 
 sourceCompatibility = targetCompatibility = 1.8
 compileJava.options.encoding = 'UTF-8'
