@@ -1,78 +1,181 @@
+// For those who want the bleeding edge
 buildscript {
     ext.kotlin_version = "1.3.61"
     ext.dokka_version = "0.10.0"
-
-    def f = file("gradle/mcversion.txt")
-
-    project.ext.mcVersion = f.exists() ? f.readLines().first() as int : 10809
     repositories {
         jcenter()
+        mavenCentral()
         maven {
-            name = "forge"
             url = "https://files.minecraftforge.net/maven"
         }
+        maven {
+            url = "https://jitpack.io"
+        }
         flatDir dirs: 'libs'
-
     }
+
     dependencies {
-        classpath "net.minecraftforge.gradle:ForgeGradle:" + (
-                mcVersion >= 11200 ? '2.3-SNAPSHOT' :
-                        mcVersion >= 10904 ? '2.2-SNAPSHOT' :
-                                mcVersion >= 10809 ? "2.1-SNAPSHOT" :
-                                        "invalid"
-        )
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "org.jetbrains.dokka:dokka-gradle-plugin:${dokka_version}"
+        classpath 'com.github.jengelman.gradle.plugins:shadow:4.0.2'
+        if (project.name == "1.14-fabric") {
+            classpath 'fabric-loom:fabric-loom.gradle.plugin:0.2.2-SNAPSHOT'
+        } else if (project.name == "1.15.2") {
+            classpath('net.minecraftforge.gradle:ForgeGradle:3.+') {
+                exclude group: 'trove', module: 'trove' // preprocessor/idea requires more recent one
+            }
+        } else {
+            classpath('com.github.ReplayMod:ForgeGradle:' + (
+                    project.name == "1.12.2" ? 'd5c13801' : // FG 2.3
+                            'ab81684e'  // FG 2.1
+            )) {
+                exclude group: 'net.sf.trove4j', module: 'trove4j' // preprocessor/idea requires more recent one
+                exclude group: 'trove', module: 'trove' // different name same thing
+            }
+        }
     }
 }
-
-apply plugin: "net.minecraftforge.gradle.forge"
+apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'kotlin'
 apply plugin: 'org.jetbrains.dokka'
 
-version = modVersion
-group = modGroup
-archivesBaseName = modBaseName
-
-sourceCompatibility = targetCompatibility = 1.8
-
-minecraft {
-    version = [
-            11202: '1.12.2-14.23.0.2486',
-            11201: '1.12.1-14.22.0.2444',
-            11200: '1.12-14.21.1.2387',
-            11102: '1.11.2-13.20.0.2216',
-            11100: '1.11-13.19.1.2188',
-            11002: '1.10.2-12.18.2.2099',
-            10904: '1.9.4-12.17.0.1976',
-            10809: '1.8.9-11.15.1.2318-1.8.9'
-    ][mcVersion]
-    mappings = [
-            11202: "snapshot_20170615",
-            11201: "snapshot_20170615",
-            11200: "snapshot_20170615",
-            11102: "snapshot_20161220",
-            11100: "snapshot_20161111",
-            11002: "snapshot_20160518",
-            10904: "snapshot_20160518",
-            10809: "stable_22"
-    ][mcVersion]
-    runDir = "run"
-    // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
-}
 
 repositories {
     mavenCentral()
     jcenter()
     maven {
-        name = 'sponge'
-        url = 'https://repo.spongepowered.org/maven'
+        name = "kryonet"
+        url = "http://clojars.org/repo/"
     }
+    maven {
+        url 'https://repository.apache.org/content/repositories/releases/org/apache/xmlgraphics/'
+    }
+    maven { url 'https://jitpack.io' }
+
+}
+
+
+apply plugin: project.name == "1.15.2" ? 'net.minecraftforge.gradle' : 'net.minecraftforge.gradle.forge'
+apply plugin: 'com.replaymod.preprocess'
+mcVersion = project.ext.mcVersion
+
+preprocess {
+    vars.put("MC", mcVersion)
+}
+
+
+apply from: '../../sk1erllc_github_packages.gradle'
+
+version = this.properties.getOrDefault("BUILD_ID", "LOCAL") //BUILD_ID
+group = "club.sk1er" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+archivesBaseName = "Elementa " + project.name
+
+sourceCompatibility = targetCompatibility = 1.8
+compileJava.options.encoding = 'UTF-8'
+minecraft {
+    if (!project.name.equals("1.15.2")) {
+        version = [
+                11202: '1.12.2-14.23.0.2486',
+                11201: '1.12.1-14.22.0.2444',
+                11200: '1.12-14.21.1.2387',
+                11102: '1.11.2-13.20.0.2216',
+                11100: '1.11-13.19.1.2188',
+                11002: '1.10.2-12.18.2.2099',
+                10904: '1.9.4-12.17.0.1976',
+                10809: '1.8.9-11.15.1.2318-1.8.9'
+        ][mcVersion]
+        mappings = [
+                11202: "snapshot_20170615",
+                11201: "snapshot_20170615",
+                11200: "snapshot_20170615",
+                11102: "snapshot_20161220",
+                11100: "snapshot_20161111",
+                11002: "snapshot_20160518",
+                10904: "snapshot_20160518",
+                10809: "stable_22"
+        ][mcVersion]
+
+
+        runDir = "run"
+        makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
+    } else {
+        mappings channel: 'snapshot', version: '20200220-1.15.1'
+        accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+
+        // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
+
+        // accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+
+        // Default run configurations.
+        // These can be tweaked, removed, or duplicated as needed.
+        runs {
+            client {
+                workingDirectory project.file('run')
+
+                // Recommended logging data for a userdev environment
+                property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+
+                // Recommended logging level for the console
+                property 'forge.logging.console.level', 'debug'
+
+                mods {
+                    examplemod {
+                        source sourceSets.main
+                    }
+                }
+            }
+
+            server {
+                workingDirectory project.file('run')
+
+                // Recommended logging data for a userdev environment
+                property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+
+                // Recommended logging level for the console
+                property 'forge.logging.console.level', 'debug'
+
+                mods {
+                    examplemod {
+                        source sourceSets.main
+                    }
+                }
+            }
+
+            data {
+                workingDirectory project.file('run')
+
+                // Recommended logging data for a userdev environment
+                property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+
+                // Recommended logging level for the console
+                property 'forge.logging.console.level', 'debug'
+
+                args '--mod', 'examplemod', '--all', '--output', file('src/generated/resources/')
+
+                mods {
+                    examplemod {
+                        source sourceSets.main
+                    }
+                }
+            }
+        }
+    }
+
+}
+
+configurations {
+    embed
+    compile.extendsFrom(embed)
 }
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-    provided files("libs/UniveralCraft{$mcVersion}.jar")
+    implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+    if(mcVersion == 11502) {
+        minecraft 'net.minecraftforge:forge:1.15.2-31.1.18'
+    }
+    println("libs/UniversalCraft" + mcVersion+".jar")
+    provided files("../../libs/UniversalCraft" + mcVersion+".jar")
+
 
 }
 
@@ -95,7 +198,6 @@ dokka {
     outputFormat = 'html'
     outputDirectory = "$buildDir/dokka"
 }
-
 task sourcesJar(type: Jar, dependsOn: classes) {
     classifier = 'sources'
     from sourceSets.main.allSource
@@ -108,49 +210,3 @@ artifacts {
 jar {
     exclude('com/example/examplemod/**')
 }
-
-apply from: 'preprocessor.gradle'
-
-ext {
-    customMCVersion = -1
-}
-
-task changeMcVersion() {
-    doLast {
-        def version
-
-        if (customMCVersion != -1) {
-            println "Running forced " + customMCVersion
-            version = customMCVersion
-        } else if (project.hasProperty("minecraftVersion")) {
-            version = project.minecraftVersion
-        } else {
-            version = 10809
-            println "Defaulting to version 1.8.9..."
-        }
-
-        project.ext.mcVersion = version
-        def f = file("gradle/mcversion.txt")
-        f.delete()
-        f.createNewFile()
-        f.write(version.toString())
-
-        println "MC target version is $version"
-        def vars = [MC: version as int]
-        project.convertTree(vars, 'src/main/java')
-        project.convertTree(vars, 'src/main/kotlin')
-        project.convertTree(vars, 'src/main/resources')
-    }
-}
-
-
-task changeToDefaultVersion {
-    doLast {
-        customMCVersion = 10809
-    }
-}
-
-deobfCompileDummyTask.finalizedBy(changeMcVersion)
-
-build.finalizedBy(changeToDefaultVersion)
-changeToDefaultVersion.finalizedBy(changeMcVersion)
