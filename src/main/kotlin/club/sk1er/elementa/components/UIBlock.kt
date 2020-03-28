@@ -26,7 +26,6 @@ open class UIBlock(color: Color = Color(0, 0, 0, 0)) : UIComponent() {
         val color = getColor()
         if (color.alpha == 0) return super.draw()
 
-
         UniversalGraphicsHandler.pushMatrix()
 
         UniversalGraphicsHandler.enableBlend()
