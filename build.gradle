@@ -62,9 +62,6 @@ preprocess {
     vars.put("MC", mcVersion)
 }
 
-
-apply from: '../../sk1erllc_github_packages.gradle'
-
 version = this.properties.getOrDefault("BUILD_ID", "LOCAL") //BUILD_ID
 group = "club.sk1er" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "Elementa" + project.name

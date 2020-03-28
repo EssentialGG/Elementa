@@ -39,5 +39,4 @@ usercache.json
 usernamecache.json
 *.txt
 
-gradle.properties.private
 versions/*/tmp.srg
