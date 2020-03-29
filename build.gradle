@@ -182,7 +182,6 @@ processResources {
         exclude "mcmod.info"
         exclude "mods.toml"
         exclude "META-INF/mods.toml"
-        exclude "pack.mcmeta"
 
     }
 }
@@ -204,7 +203,6 @@ jar {
     exclude('com/example/examplemod/**')
     exclude("META-INF/mods.toml")
     exclude("mods.toml")
-    exclude("pack.mcmeta")
     manifest {
         attributes(
                 'FMLModType': 'LIBRARY'
