@@ -6,6 +6,9 @@ import club.sk1er.mods.core.universal.UniversalGraphicsHandler
 import club.sk1er.mods.core.universal.UniversalResolutionUtil
 import org.lwjgl.opengl.GL11
 
+//#if MC>=11500
+//$$ import com.mojang.blaze3d.matrix.MatrixStack;
+//#endif
 /**
  * "Root" component. All components MUST have a Window in their hierarchy in order to do any rendering
  * or animating.
@@ -20,7 +23,7 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
 
     override fun draw() {
         //#if MC>=11500
-        //$$ UniversalGraphicsHandler.setStack(new MatrixStack());
+        //$$ UniversalGraphicsHandler.setStack(MatrixStack());
         //#endif
         UniversalGraphicsHandler.glClear(GL11.GL_STENCIL_BUFFER_BIT)
         UniversalGraphicsHandler.glClearStencil(0)

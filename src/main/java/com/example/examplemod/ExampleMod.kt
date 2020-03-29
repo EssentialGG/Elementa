@@ -45,6 +45,11 @@ class ExampleMod {
     //#endif
     @SubscribeEvent
     fun tick(event: TickEvent.ClientTickEvent) {
+        //#if MC>11500
+        //$$ if(UniversalMinecraft.getWorld() !=null && UniversalMinecraft.getMinecraft().currentScreen == null) {
+        //$$          gui = ExampleGui()
+        //$$      }
+        //#endif
         if (gui != null) {
             try {
                 Minecraft.getMinecraft().displayGuiScreen(gui)
