@@ -4,10 +4,9 @@ import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.dsl.asConstraint
 import club.sk1er.elementa.dsl.pixels
 import club.sk1er.mods.core.universal.UniversalGraphicsHandler
-import net.minecraft.client.Minecraft
+import club.sk1er.mods.core.universal.UniversalMouse
 import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats
-import org.lwjgl.input.Mouse
 import org.lwjgl.opengl.GL11
 import java.awt.Color
 import kotlin.math.PI
@@ -22,15 +21,14 @@ class UICircle @JvmOverloads constructor(radius: Float = 0f, color: Color = Colo
 
     override fun isHovered(): Boolean {
         val res = Window.of(this).scaledResolution
-        val mc = Minecraft.getMinecraft()
 
-        val mouseX = Mouse.getX() * res.scaledWidth / mc.displayWidth
-        val mouseY = res.scaledHeight - Mouse.getY() * res.scaledHeight / mc.displayHeight - 1f
+        val mouseX = UniversalMouse.getScaledX();
+        val mouseY = res.scaledHeight - UniversalMouse.getScaledY() - 1f
 
         return (mouseX > getLeft() - getRadius()
-                && mouseY > getTop() - getRadius()
-                && mouseX < getLeft() + getRadius()
-                && mouseY < getTop() + getRadius())
+            && mouseY > getTop() - getRadius()
+            && mouseX < getLeft() + getRadius()
+            && mouseY < getTop() + getRadius())
     }
 
     override fun draw() {
@@ -69,8 +67,8 @@ class UICircle @JvmOverloads constructor(radius: Float = 0f, color: Color = Colo
         UniversalGraphicsHandler.draw()
 
 
-        GlStateManager.enableTexture2D()
-        GlStateManager.disableBlend()
+        UniversalGraphicsHandler.enableTexture2D()
+        UniversalGraphicsHandler.disableBlend()
 
         UniversalGraphicsHandler.popMatrix()
 

@@ -173,19 +173,14 @@ dependencies {
     if (mcVersion == 11502) {
         minecraft 'net.minecraftforge:forge:1.15.2-31.1.18'
     }
-    embed "club.sk1er:UniversalCraft:26-$mcVersion-SNAPSHOT"
+    embed "club.sk1er:UniversalCraft:43-${mcVersion}-SNAPSHOT"
 }
 
 processResources {
-    inputs.property "version", project.version
-    inputs.property "mcversion", project.minecraft.version
 
     from(sourceSets.main.resources.srcDirs) {
         include "mcmod.info"
-
-        expand "version": project.version, "mcversion": project.minecraft.version
     }
-
     from(sourceSets.main.resources.srcDirs) {
         exclude "mcmod.info"
     }

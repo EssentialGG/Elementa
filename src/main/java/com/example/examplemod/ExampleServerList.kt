@@ -6,12 +6,11 @@ import club.sk1er.elementa.constraints.*
 import club.sk1er.elementa.constraints.animation.Animations
 import club.sk1er.elementa.dsl.*
 import club.sk1er.elementa.effects.ScissorEffect
-import net.minecraft.client.gui.GuiScreen
-import org.lwjgl.input.Mouse
+import club.sk1er.mods.core.universal.UniversalScreen
 import java.awt.Color
 import java.net.URL
 
-class ExampleServerList : GuiScreen() {
+class ExampleServerList : UniversalScreen() {
     val window = Window()
 
     val serverList = (ScrollComponent().constrain {
@@ -65,12 +64,9 @@ class ExampleServerList : GuiScreen() {
         window.mouseClick(mouseX, mouseY, mouseButton)
     }
 
-    override fun handleMouseInput() {
-        super.handleMouseInput()
-        val delta = Mouse.getEventDWheel().coerceIn(-1, 1)
-        window.mouseScroll(delta)
+    override fun onMouseScroll(delta: Int) {
+        window.mouseScroll(delta.coerceIn(-1, 1))
     }
-
     override fun keyTyped(typedChar: Char, keyCode: Int) {
         super.keyTyped(typedChar, keyCode)
         window.keyType(typedChar, keyCode)

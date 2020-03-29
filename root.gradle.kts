@@ -11,11 +11,11 @@ plugins {
 configurations.register("compileClasspath")
 
 preprocess {
-    //    "1.15.2"(11502, "srg") {
-//        "1.12.2"(11202, "srg",file("versions/1.15.2-1.12.2.txt")) {
-    "1.12.2"(11202, "srg") {
-        "1.8.9"(10809, "srg", file("versions/1.12.2-1.8.9.txt"))
+    "1.15.2"(11502, "srg") {
+        "1.12.2"(11202, "srg", file("versions/1.15.2-1.12.2.txt")) {
+//    "1.12.2"(11202, "srg") {
+            "1.8.9"(10809, "srg", file("versions/1.12.2-1.8.9.txt"))
+        }
     }
-//    }
 
 }

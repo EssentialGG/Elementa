@@ -6,11 +6,11 @@ import club.sk1er.elementa.constraints.animation.AnimationComponent
 import club.sk1er.elementa.constraints.animation.Animations
 import club.sk1er.elementa.dsl.*
 import club.sk1er.elementa.effects.ScissorEffect
-import net.minecraft.client.gui.GuiScreen
-import org.lwjgl.input.Mouse
-import java.awt.Color
+import club.sk1er.mods.core.universal.UniversalScreen
 
-class ExampleGui : GuiScreen() {
+import java.awt.Color
+class ExampleGui : UniversalScreen() {
+
     private val window: Window = Window()
 
     private val myTextBox = UIBlock(Color(0, 0, 0, 255))
@@ -192,13 +192,13 @@ class ExampleGui : GuiScreen() {
     private fun closeSettings() {
         window.removeChild(settings)
     }
-
     override fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
         super.drawScreen(mouseX, mouseY, partialTicks)
         window.draw()
     }
 
     override fun mouseClicked(mouseX: Int, mouseY: Int, mouseButton: Int) {
+        println("Mouse click")
         super.mouseClicked(mouseX, mouseY, mouseButton)
         window.mouseClick(mouseX, mouseY, mouseButton)
     }
@@ -213,10 +213,8 @@ class ExampleGui : GuiScreen() {
         window.mouseRelease()
     }
 
-    override fun handleMouseInput() {
-        super.handleMouseInput()
-        val delta = Mouse.getEventDWheel().coerceIn(-1, 1)
-        window.mouseScroll(delta)
+    override fun onMouseScroll(delta: Int) {
+        window.mouseScroll(delta.coerceIn(-1, 1))
     }
 
     override fun keyTyped(typedChar: Char, keyCode: Int) {

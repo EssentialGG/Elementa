@@ -1,7 +1,7 @@
 package club.sk1er.elementa.shaders
 
+import club.sk1er.mods.core.universal.UniversalGraphicsHandler
 import net.minecraft.client.renderer.GlStateManager
-import net.minecraft.client.renderer.OpenGlHelper.*
 import org.lwjgl.opengl.ARBShaderObjects
 import org.lwjgl.opengl.GL20
 
@@ -17,58 +17,58 @@ open class Shader(private val name: String) {
 
     fun bindIfUsable() {
         if (usable) {
-            glUseProgram(program)
+            UniversalGraphicsHandler.glUseProgram(program)
             GlStateManager.disableBlend()
         }
     }
 
     fun unbindIfUsable() {
         if (usable) {
-            glUseProgram(0)
+            UniversalGraphicsHandler.glUseProgram(0)
         }
     }
 
     private fun createShader() {
-        program = glCreateProgram()
+        program = UniversalGraphicsHandler.glCreateProgram()
 
-        vertShader = glCreateShader(GL_VERTEX_SHADER)
+        vertShader = UniversalGraphicsHandler.glCreateShader(GL20.GL_VERTEX_SHADER)
         if (Shaders.newShaders)
             GL20.glShaderSource(vertShader, readShader("vsh"))
         else
             ARBShaderObjects.glShaderSourceARB(vertShader, readShader("vsh"))
-        glCompileShader(vertShader)
+        UniversalGraphicsHandler.glCompileShader(vertShader)
 
-        if (glGetShaderi(vertShader, GL_COMPILE_STATUS) != 1) {
-            println(glGetShaderInfoLog(vertShader, 32768))
+        if (UniversalGraphicsHandler.glGetShaderi(vertShader, GL20.GL_COMPILE_STATUS) != 1) {
+            println(UniversalGraphicsHandler.glGetShaderInfoLog(vertShader, 32768))
             return
         }
 
-        fragShader = glCreateShader(GL_FRAGMENT_SHADER)
+        fragShader = UniversalGraphicsHandler.glCreateShader(GL20.GL_FRAGMENT_SHADER)
         if (Shaders.newShaders)
             GL20.glShaderSource(fragShader, readShader("fsh"))
         else
             ARBShaderObjects.glShaderSourceARB(fragShader, readShader("fsh"))
-        glCompileShader(fragShader)
+        UniversalGraphicsHandler.glCompileShader(fragShader)
 
-        if (glGetShaderi(fragShader, GL_COMPILE_STATUS) != 1) {
-            println(glGetShaderInfoLog(fragShader, 32768))
+        if (UniversalGraphicsHandler.glGetShaderi(fragShader, GL20.GL_COMPILE_STATUS) != 1) {
+            println(UniversalGraphicsHandler.glGetShaderInfoLog(fragShader, 32768))
             return
         }
 
-        glAttachShader(program, vertShader)
-        glAttachShader(program, fragShader)
+        UniversalGraphicsHandler.glAttachShader(program, vertShader)
+        UniversalGraphicsHandler.glAttachShader(program, fragShader)
 
-        glLinkProgram(program)
+        UniversalGraphicsHandler.glLinkProgram(program)
 
-        if (glGetProgrami(program, GL_LINK_STATUS) != 1) {
-            println(glGetProgramInfoLog(program, 32768))
+        if (UniversalGraphicsHandler.glGetProgrami(program, GL20.GL_LINK_STATUS) != 1) {
+            println(UniversalGraphicsHandler.glGetProgramInfoLog(program, 32768))
             return
         }
 
         if (Shaders.newShaders) GL20.glValidateProgram(program) else ARBShaderObjects.glValidateProgramARB(program)
 
-        if (glGetProgrami(program, GL20.GL_VALIDATE_STATUS) != 1) {
-            println(glGetProgramInfoLog(program, 32768))
+        if (UniversalGraphicsHandler.glGetProgrami(program, GL20.GL_VALIDATE_STATUS) != 1) {
+            println(UniversalGraphicsHandler.glGetProgramInfoLog(program, 32768))
             return
         }
 

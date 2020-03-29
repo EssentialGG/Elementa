@@ -11,9 +11,9 @@ import club.sk1er.elementa.dsl.constrain
 import club.sk1er.elementa.dsl.pixels
 import club.sk1er.elementa.dsl.plus
 import club.sk1er.elementa.effects.ScissorEffect
-import net.minecraft.client.Minecraft
+import club.sk1er.mods.core.universal.UniversalGraphicsHandler
+import club.sk1er.mods.core.universal.UniversalMouse
 import net.minecraft.client.renderer.texture.DynamicTexture
-import org.lwjgl.input.Mouse
 import java.awt.Color
 import java.util.concurrent.CopyOnWriteArrayList
 import javax.imageio.ImageIO
@@ -226,9 +226,8 @@ class ScrollComponent(emptyString: String = "", private val scrollOpposite: Bool
 
         val sr = Window.of(this).scaledResolution
         val scaledHeight = sr.scaledHeight
-        val mc = Minecraft.getMinecraft()
-        val currentY = scaledHeight - Mouse.getY() * scaledHeight / mc.displayHeight - 1
-        val currentX = Mouse.getX() * sr.scaledWidth / mc.displayWidth
+        val currentY = scaledHeight - UniversalMouse.getScaledY() - 1
+        val currentX = UniversalMouse.getScaledX()
 
         if (currentY < getTop() || currentY > getBottom()) return
         if (currentX < getLeft() || currentX > getRight()) return
@@ -293,7 +292,7 @@ class ScrollComponent(emptyString: String = "", private val scrollOpposite: Bool
 
         fun loadCursor() {
             val img = ImageIO.read(this::class.java.getResourceAsStream("/scroll.png"))
-            scrollTexture = DynamicTexture(img)
+            scrollTexture = UniversalGraphicsHandler.getTexture(img)
 
             createdScrollTexture = true
         }

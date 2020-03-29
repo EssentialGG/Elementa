@@ -2,12 +2,9 @@ package club.sk1er.elementa.components
 
 import club.sk1er.elementa.UIComponent
 import club.sk1er.mods.core.universal.UniversalGraphicsHandler
-import net.minecraft.client.renderer.GlStateManager
-import net.minecraft.client.renderer.Tessellator
 import net.minecraft.client.renderer.texture.AbstractTexture
 import net.minecraft.client.renderer.texture.DynamicTexture
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats
-import org.lwjgl.opengl.GL11
 import java.awt.Color
 import java.awt.image.BufferedImage
 import java.io.File
@@ -47,7 +44,7 @@ open class UIImage(private val imageFuture: () -> BufferedImage) : UIComponent()
 
         val textureToUse: DynamicTexture = when {
             image != null -> {
-                texture = DynamicTexture(image)
+                texture = UniversalGraphicsHandler.getTexture(image)
                 imageWidth = image!!.width.toFloat()
                 imageHeight = image!!.height.toFloat()
                 image = null
@@ -99,7 +96,7 @@ open class UIImage(private val imageFuture: () -> BufferedImage) : UIComponent()
 
         private fun createLoadingTexture() {
             if (loadingImage != null) {
-                loadingTexture = DynamicTexture(loadingImage)
+                loadingTexture = UniversalGraphicsHandler.getTexture(loadingImage)
                 loadingImage = null
             }
         }

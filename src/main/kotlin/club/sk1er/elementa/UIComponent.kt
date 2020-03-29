@@ -4,8 +4,9 @@ import club.sk1er.elementa.components.Window
 import club.sk1er.elementa.constraints.*
 import club.sk1er.elementa.constraints.animation.AnimatingConstraints
 import club.sk1er.elementa.effects.Effect
+import club.sk1er.mods.core.universal.UniversalMouse
+import club.sk1er.mods.core.universal.UniversalResolutionUtil
 import net.minecraft.client.Minecraft
-import org.lwjgl.input.Mouse
 import java.util.concurrent.CopyOnWriteArrayList
 import java.util.function.Consumer
 
@@ -170,8 +171,8 @@ abstract class UIComponent {
         val res = Window.of(this).scaledResolution
         val mc = Minecraft.getMinecraft()
 
-        val mouseX = Mouse.getX() * res.scaledWidth / mc.displayWidth
-        val mouseY = res.scaledHeight - Mouse.getY() * res.scaledHeight / mc.displayHeight - 1f
+        val mouseX = UniversalMouse.getScaledX()
+        val mouseY = res.scaledHeight - UniversalMouse.getTrueY() * res.scaledHeight / UniversalResolutionUtil.getInstance().windowHeight - 1f
 
         return (mouseX > getLeft()
                 && mouseX < getRight()

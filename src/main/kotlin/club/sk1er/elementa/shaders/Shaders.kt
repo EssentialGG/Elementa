@@ -1,8 +1,7 @@
 package club.sk1er.elementa.shaders
 
-import net.minecraft.client.renderer.OpenGlHelper.areShadersSupported
-import org.lwjgl.opengl.GLContext
+import club.sk1er.mods.core.universal.UniversalGraphicsHandler
 
 object Shaders {
-    val newShaders = areShadersSupported() && GLContext.getCapabilities().OpenGL21
+    val newShaders = UniversalGraphicsHandler.areShadersSupported()
 }
