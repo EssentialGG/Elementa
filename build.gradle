@@ -180,6 +180,10 @@ processResources {
     }
     from(sourceSets.main.resources.srcDirs) {
         exclude "mcmod.info"
+        exclude "mods.toml"
+        exclude "META-INF/mods.toml"
+        exclude "pack.mcmeta"
+
     }
 }
 
@@ -198,6 +202,14 @@ artifacts {
 
 jar {
     exclude('com/example/examplemod/**')
+    exclude("META-INF/mods.toml")
+    exclude("mods.toml")
+    exclude("pack.mcmeta")
+    manifest {
+        attributes(
+                'FMLModType': 'LIBRARY'
+        )
+    }
 }
 
 publishing {
