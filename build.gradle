@@ -62,9 +62,6 @@ preprocess {
     vars.put("MC", mcVersion)
 }
 
-
-apply from: '../../sk1erllc_github_packages.gradle'
-
 version = this.properties.getOrDefault("BUILD_ID", "LOCAL") //BUILD_ID
 group = "club.sk1er" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "Elementa" + project.name
@@ -213,7 +210,7 @@ publishing {
                 def dependenciesNode = asNode().appendNode('dependencies')
 
                 configurations.implementation.allDependencies.each {
-                    if (it.group != null && (it.name != null || "unspecified" == it.name) && it.version != null) {
+                    if (it.group != null && it.name != null && it.name != "forge" && it.version != null) {
                         def dependencyNode = dependenciesNode.appendNode('dependency')
                         dependencyNode.appendNode('groupId', it.group)
                         dependencyNode.appendNode('artifactId', it.name)
