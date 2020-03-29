@@ -15,11 +15,14 @@ class ExampleGui : UniversalScreen() {
 
     private val myTextBox = UIBlock(Color(0, 0, 0, 255))
     private val myText = UITextInput(placeholder = "Text Input", wrapped = false)
-
+    private val scroll = ScrollComponent().constrain {
+        width = RelativeConstraint(.3f)
+        height = RelativeConstraint(1f)
+    } childOf window
     private val settings = UIBlock(Color(0, 172, 193, 255)).constrain {
         x = 5.pixels()
         y = 5.pixels()
-        width = RelativeConstraint(0.3f)
+        width = RelativeConstraint(1f)
         height = FillConstraint() - 5.pixels()
     }.addChildren(
         UIBlock(Color(0, 124, 145, 255)).constrain {
@@ -73,9 +76,10 @@ class ExampleGui : UniversalScreen() {
             y = SiblingConstraint()
             width = RelativeConstraint()
         }
-    ) childOf window
+    ) childOf scroll
 
     init {
+
         myTextBox.constrain {
             y = SiblingConstraint()
             width = ChildBasedSizeConstraint() + 4.pixels()
@@ -118,12 +122,7 @@ class ExampleGui : UniversalScreen() {
             textScale = 2.pixels()
         }
 
-//        val scroller = (ScrollComponent().constrain {
-//            x = CenterConstraint()
-//            y = 30.pixels()
-//            width = RelativeConstraint(0.7f)
-//            height = RelativeConstraint(0.8f)
-//        } childOf window) as ScrollComponent
+
 //
 //        repeat(100) {
 //            UIBlock(Color.GREEN).constrain {
@@ -198,7 +197,6 @@ class ExampleGui : UniversalScreen() {
     }
 
     override fun mouseClicked(mouseX: Int, mouseY: Int, mouseButton: Int) {
-        println("Mouse click")
         super.mouseClicked(mouseX, mouseY, mouseButton)
         window.mouseClick(mouseX, mouseY, mouseButton)
     }

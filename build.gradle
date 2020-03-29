@@ -170,7 +170,7 @@ dependencies {
     if (mcVersion == 11502) {
         minecraft 'net.minecraftforge:forge:1.15.2-31.1.18'
     }
-    embed "club.sk1er:UniversalCraft:1.1.0-${mcVersion}"
+    embed "club.sk1er:UniversalCraft:1.1.1-${mcVersion}"
 }
 
 processResources {
