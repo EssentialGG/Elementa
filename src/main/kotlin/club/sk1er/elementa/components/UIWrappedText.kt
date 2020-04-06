@@ -57,6 +57,11 @@ open class UIWrappedText @JvmOverloads constructor(
         val width = getWidth() / getTextScale()
         val color = getColor()
 
+        // We aren't visible, don't draw
+        if (color.alpha <= 10) {
+            return super.draw()
+        }
+
         if (width <= charWidth) {
             // If we are smaller than a char, we can't physically split this string into
             // "width" strings, so we'll prefer a no-op to an error.

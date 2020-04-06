@@ -52,6 +52,11 @@ open class UIText @JvmOverloads constructor(private var text: String = "", priva
         val height = getHeight() / 9f
         val color = getColor()
 
+        // We aren't visible, don't draw
+        if (color.alpha <= 10) {
+            return super.draw()
+        }
+
         UniversalGraphicsHandler.enableBlend()
 
         UniversalGraphicsHandler.scale(width.toDouble(), height.toDouble(), 1.0)
