@@ -187,7 +187,19 @@ abstract class UIComponent {
     open fun draw() {
         beforeChildrenDraw()
 
-        this.children.forEach(UIComponent::draw)
+        val parentWindow = Window.of(this)
+
+        this.children.forEach { child ->
+            // If the child is outside the current viewport, don't waste time drawing
+            if (!parentWindow.isAreaVisible(
+                    child.getLeft().toDouble(),
+                    child.getTop().toDouble(),
+                    child.getBottom().toDouble(),
+                    child.getRight().toDouble())
+            ) return@forEach
+
+            child.draw()
+        }
 
         if (isHovered() && !currentlyHovered) {
             mouseEnterAction()

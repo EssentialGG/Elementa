@@ -36,10 +36,6 @@ open class UIImage(private val imageFuture: () -> BufferedImage) : UIComponent()
         val height = this.getHeight().toDouble()
         val color = this.getColor()
 
-        if (!Window.of(this).isAreaVisible(x, y, x + width, y + width)) {
-            return super.draw()
-        }
-
         createLoadingTexture()
 
         val textureToUse: DynamicTexture = when {
