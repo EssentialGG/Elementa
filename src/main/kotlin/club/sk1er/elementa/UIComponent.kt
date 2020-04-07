@@ -159,9 +159,9 @@ abstract class UIComponent {
 
     open fun getTop() = constraints.getY()
 
-    open fun getRight() = getLeft() + constraints.getWidth()
+    open fun getRight() = getLeft() + getWidth()
 
-    open fun getBottom() = getTop() + constraints.getHeight()
+    open fun getBottom() = getTop() + getHeight()
 
     open fun getWidth() = constraints.getWidth()
 

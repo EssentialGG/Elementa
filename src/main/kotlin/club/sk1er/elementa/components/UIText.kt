@@ -3,15 +3,13 @@ package club.sk1er.elementa.components
 import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.dsl.pixels
 import club.sk1er.mods.core.universal.UniversalGraphicsHandler
-import club.sk1er.mods.core.universal.UniversalMinecraft
-import net.minecraft.client.Minecraft
-import net.minecraft.client.renderer.GlStateManager
 
 /**
  * Simple text component that draws its given [text] at the scale determined by
  * this component's width & height constrains.
  */
-open class UIText @JvmOverloads constructor(private var text: String = "", private var shadow: Boolean = true) : UIComponent() {
+open class UIText @JvmOverloads constructor(private var text: String = "", private var shadow: Boolean = true) :
+    UIComponent() {
 
     private var textWidth: Float = UniversalGraphicsHandler.getStringWidth(text).toFloat()
 
@@ -21,9 +19,11 @@ open class UIText @JvmOverloads constructor(private var text: String = "", priva
     }
 
     fun getText() = text
-    @JvmOverloads fun setText(text: String, adjustWidth: Boolean = true) = apply {
+
+    @JvmOverloads
+    fun setText(text: String, adjustWidth: Boolean = true) = apply {
         this.text = text
-        textWidth =UniversalGraphicsHandler.getStringWidth(text).toFloat()
+        textWidth = UniversalGraphicsHandler.getStringWidth(text).toFloat()
         if (adjustWidth) setWidth(textWidth.pixels())
     }
 
