@@ -28,31 +28,37 @@ open class UIBlock(color: Color = Color(0, 0, 0, 0)) : UIComponent() {
 
         UniversalGraphicsHandler.pushMatrix()
 
-        UniversalGraphicsHandler.enableBlend()
-        UniversalGraphicsHandler.disableTexture2D()
-
-        val worldRenderer = UniversalGraphicsHandler.getFromTessellator()
-
-        UniversalGraphicsHandler.tryBlendFuncSeparate(770, 771, 1, 0)
-
-        val red = color.red.toFloat() / 255f
-        val green = color.green.toFloat() / 255f
-        val blue = color.blue.toFloat() / 255f
-        val alpha = color.alpha.toFloat() / 255f
-
-        worldRenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR)
-        worldRenderer.pos(x, y2, 0.0).color(red, green, blue, alpha).endVertex()
-        worldRenderer.pos(x2, y2, 0.0).color(red, green, blue, alpha).endVertex()
-        worldRenderer.pos(x2, y, 0.0).color(red, green, blue, alpha).endVertex()
-        worldRenderer.pos(x, y, 0.0).color(red, green, blue, alpha).endVertex()
-        UniversalGraphicsHandler.draw()
-
-
-        UniversalGraphicsHandler.enableTexture2D()
-        UniversalGraphicsHandler.disableBlend()
+        drawBlock(color, x, y, x2, y2)
 
         UniversalGraphicsHandler.popMatrix()
 
         super.draw()
+    }
+
+    companion object {
+        fun drawBlock(color: Color, x1: Double, y1: Double, x2: Double, y2: Double) {
+            UniversalGraphicsHandler.enableBlend()
+            UniversalGraphicsHandler.disableTexture2D()
+
+            val worldRenderer = UniversalGraphicsHandler.getFromTessellator()
+
+            UniversalGraphicsHandler.tryBlendFuncSeparate(770, 771, 1, 0)
+
+            val red = color.red.toFloat() / 255f
+            val green = color.green.toFloat() / 255f
+            val blue = color.blue.toFloat() / 255f
+            val alpha = color.alpha.toFloat() / 255f
+
+            worldRenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR)
+            worldRenderer.pos(x1, y2, 0.0).color(red, green, blue, alpha).endVertex()
+            worldRenderer.pos(x2, y2, 0.0).color(red, green, blue, alpha).endVertex()
+            worldRenderer.pos(x2, y1, 0.0).color(red, green, blue, alpha).endVertex()
+            worldRenderer.pos(x1, y1, 0.0).color(red, green, blue, alpha).endVertex()
+            UniversalGraphicsHandler.draw()
+
+
+            UniversalGraphicsHandler.enableTexture2D()
+            UniversalGraphicsHandler.disableBlend()
+        }
     }
 }

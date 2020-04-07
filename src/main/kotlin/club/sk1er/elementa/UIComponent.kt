@@ -1,12 +1,16 @@
 package club.sk1er.elementa
 
+import club.sk1er.elementa.components.UIBlock
 import club.sk1er.elementa.components.Window
 import club.sk1er.elementa.constraints.*
 import club.sk1er.elementa.constraints.animation.AnimatingConstraints
 import club.sk1er.elementa.effects.Effect
+import club.sk1er.elementa.effects.ScissorEffect
 import club.sk1er.mods.core.universal.UniversalMouse
 import club.sk1er.mods.core.universal.UniversalResolutionUtil
 import net.minecraft.client.Minecraft
+import org.lwjgl.opengl.GL11
+import java.awt.Color
 import java.util.concurrent.CopyOnWriteArrayList
 import java.util.function.Consumer
 
@@ -185,6 +189,34 @@ abstract class UIComponent {
      * Also does some housekeeping dealing with hovering and effects.
      */
     open fun draw() {
+        // Draw colored outline around the components
+        if (IS_DEBUG) {
+            if (ScissorEffect.currentScissorState != null) {
+                GL11.glDisable(GL11.GL_SCISSOR_TEST)
+            }
+
+            val left = getLeft().toDouble()
+            val right = getRight().toDouble()
+            val top = getTop().toDouble()
+            val bottom = getBottom().toDouble()
+
+            // Top outline block
+            UIBlock.drawBlock(DEBUG_COLOR, left - DEBUG_OUTLINE_WIDTH, top - DEBUG_OUTLINE_WIDTH, right + DEBUG_OUTLINE_WIDTH, top)
+
+            // Right outline block
+            UIBlock.drawBlock(DEBUG_COLOR, right, top, right + DEBUG_OUTLINE_WIDTH, bottom)
+
+            // Bottom outline block
+            UIBlock.drawBlock(DEBUG_COLOR, left - DEBUG_OUTLINE_WIDTH, bottom, right + DEBUG_OUTLINE_WIDTH, bottom + DEBUG_OUTLINE_WIDTH)
+
+            // Left outline block
+            UIBlock.drawBlock(DEBUG_COLOR, left - DEBUG_OUTLINE_WIDTH, top, left, bottom)
+
+            if (ScissorEffect.currentScissorState != null) {
+                GL11.glEnable(GL11.GL_SCISSOR_TEST)
+            }
+        }
+
         beforeChildrenDraw()
 
         val parentWindow = Window.of(this)
@@ -369,5 +401,11 @@ abstract class UIComponent {
 
     fun onKeyType(method: (typedChar: Char, keyCode: Int) -> Unit) = apply {
         keyTypeAction = method
+    }
+
+    companion object {
+        val IS_DEBUG = System.getProperty("elementa.debug")?.toBoolean() ?: false
+        val DEBUG_COLOR = Color(255, 0, 255)
+        val DEBUG_OUTLINE_WIDTH = System.getProperty("elementa.debug.width")?.toDoubleOrNull() ?: 2.0
     }
 }
