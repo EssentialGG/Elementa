@@ -4,14 +4,14 @@ import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.UIConstraints
 import club.sk1er.elementa.effects.Effect
 
-fun UIComponent.constrain(config: UIConstraints.() -> Unit) = apply {
+fun <T : UIComponent> T.constrain(config: UIConstraints.() -> Unit) = apply {
     getConstraints().config()
 }
 
-infix fun UIComponent.childOf(parent: UIComponent) = apply {
+infix fun <T : UIComponent> T.childOf(parent: UIComponent) = apply {
     parent.addChild(this)
 }
 
-infix fun UIComponent.effect(effect: Effect) = apply {
+infix fun <T : UIComponent> T.effect(effect: Effect) = apply {
     this.enableEffect(effect)
 }
