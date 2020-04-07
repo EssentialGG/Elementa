@@ -4,6 +4,7 @@ import club.sk1er.elementa.components.UIBlock
 import club.sk1er.elementa.components.Window
 import club.sk1er.elementa.constraints.*
 import club.sk1er.elementa.constraints.animation.AnimatingConstraints
+import club.sk1er.elementa.dsl.animate
 import club.sk1er.elementa.effects.Effect
 import club.sk1er.elementa.effects.ScissorEffect
 import club.sk1er.mods.core.universal.UniversalMouse
@@ -35,6 +36,14 @@ abstract class UIComponent {
     private var keyTypeAction: (typedChar: Char, keyCode: Int) -> Unit = { _, _ -> }
 
     private var currentlyHovered = false
+    private var beforeHideAnimation: AnimatingConstraints.() -> Unit = { }
+    private var afterUnhideAnimation: AnimatingConstraints.() -> Unit = { }
+
+    /**
+     * Required for [unhide] so it can insert this component
+     * back into the same position
+     */
+    private var indexInParent = 0
 
     /**
      * Adds [component] to this component's children tree,
@@ -401,6 +410,54 @@ abstract class UIComponent {
 
     fun onKeyType(method: (typedChar: Char, keyCode: Int) -> Unit) = apply {
         keyTypeAction = method
+    }
+
+    /*
+     Hide API
+     */
+
+    /**
+     * Hides this component. Behind the scenes, "hiding" entails removal of this component
+     * from the entire hierarchy, leading to changes in sibling/children relationships.
+     *
+     * This also means hidden components will no longer receive events, or be drawn in any way.
+     */
+    fun hide() {
+        animate {
+            this.beforeHideAnimation()
+
+            val comp = this.completeAction
+            onComplete {
+                comp()
+
+                indexInParent = parent.children.indexOf(this@UIComponent)
+                parent.removeChild(this@UIComponent)
+            }
+        }
+    }
+
+    /**
+     * Re-enables this component. This will do the opposite of [hide] and re-add this component
+     * to the hierarchy, underneath the same parent.
+     */
+    fun unhide(useLastPosition: Boolean = true) {
+        if (useLastPosition && indexInParent >= 0 && indexInParent < parent.children.size) {
+            parent.children.add(indexInParent, this@UIComponent)
+        } else {
+            parent.children.add(this@UIComponent)
+        }
+
+        animate {
+            this.afterUnhideAnimation()
+        }
+    }
+
+    fun animateBeforeHide(animation: AnimatingConstraints.() -> Unit) {
+        beforeHideAnimation = animation
+    }
+
+    fun animateAfterUnhide(animation: AnimatingConstraints.() -> Unit) {
+        afterUnhideAnimation = animation
     }
 
     companion object {

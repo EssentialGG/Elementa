@@ -9,6 +9,7 @@ import club.sk1er.elementa.effects.ScissorEffect
 import club.sk1er.mods.core.universal.UniversalScreen
 
 import java.awt.Color
+
 class ExampleGui : UniversalScreen() {
 
     private val window: Window = Window()
@@ -19,6 +20,9 @@ class ExampleGui : UniversalScreen() {
         width = RelativeConstraint(.3f)
         height = RelativeConstraint(1f)
     } childOf window
+
+    private val notification = (Notify("") childOf window).apply { hide() }
+
     private val settings = UIBlock(Color(0, 172, 193, 255)).constrain {
         x = 5.pixels()
         y = 5.pixels()
@@ -46,9 +50,12 @@ class ExampleGui : UniversalScreen() {
             width = FillConstraint() - 5.pixels()
             height = 20.pixels()
         }.onMouseClick { _, _, _ ->
-            val notification = Notify(title = "Example Notification", text = "This is a test notification with a really long text line")
-            window.addChild(notification)
-            notification.animateIn()
+            notification.setText(
+                title = "Example Notification",
+                text = "This is a test notification with a really long text line"
+            )
+
+            notification.unhide()
         }.addChild(
             UIText("Notify").constrain {
                 x = CenterConstraint()
@@ -63,19 +70,19 @@ class ExampleGui : UniversalScreen() {
             width = RelativeConstraint()
             height = 5.pixels()
         },
-        UIWrappedText("Example of some longer wrapped text with shadow").constrain {
-            y = SiblingConstraint()
-            width = RelativeConstraint()
-        },
+//        UIWrappedText("Example of some longer wrapped text with shadow").constrain {
+//            y = SiblingConstraint()
+//            width = RelativeConstraint()
+//        },
         UIBlock(Color.RED).constrain {
             y = SiblingConstraint()
             width = RelativeConstraint()
             height = 5.pixels()
-        },
+        }/*,
         UIWrappedText("More example of longer text wrapped and centered", shadow = true, centered = true).constrain {
             y = SiblingConstraint()
             width = RelativeConstraint()
-        }
+        }*/
     ) childOf scroll
 
     init {
@@ -105,7 +112,7 @@ class ExampleGui : UniversalScreen() {
             width = 50.pixels()
             height = 10.pixels()
         }.addChild(
-                UIText("I'm longer than my container")
+            UIText("I'm longer than my container")
         ) effect ScissorEffect() childOf window
 
         blocky.animate {
@@ -191,6 +198,7 @@ class ExampleGui : UniversalScreen() {
     private fun closeSettings() {
         window.removeChild(settings)
     }
+
     override fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
         super.drawScreen(mouseX, mouseY, partialTicks)
         window.draw()
@@ -262,16 +270,25 @@ class ExampleGui : UniversalScreen() {
         }
     }
 
-    private class Notify(text: String, title: String? = null, var delay: Float = 3f): UIBlock(Color(0, 0, 0, 200)) {
+    private class Notify(textString: String, titleString: String? = null, var delay: Float = 3f) : UIBlock(Color(0, 0, 0, 200)) {
         private val timer = UIBlock(Color(0, 170, 255, 255)).constrain {
             y = 0.pixels(true)
             height = 7.pixels()
         } childOf this
 
         private val glow = UIShape(Color(255, 255, 255, 30))
+        private val text = UIWrappedText(textString, true).constrain {
+            x = 2.pixels()
+            y = SiblingConstraint() + 6.pixels()
+            width = FillConstraint() - 2.pixels()
+        }
+        private val title = UIText(titleString ?: "").constrain {
+            x = 2.pixels()
+            y = 5.pixels()
+            textScale = 1.5f.pixels()
+        }
 
         private val timerAnimation = timer.makeAnimation()
-
         private var clicked = false
 
         init {
@@ -281,23 +298,11 @@ class ExampleGui : UniversalScreen() {
             glow.addVertex(UIPoint(0.pixels(true), 0.pixels(true)))
             glow.addVertex(UIPoint(0.pixels(true), 0.pixels(true)))
 
-            if (title != null) {
-                addChild(
-                    UIText(title).constrain {
-                        x = 2.pixels()
-                        y = 5.pixels()
-                        textScale = 1.5f.pixels()
-                    }
-                )
+            if (titleString != null) {
+                title childOf this
             }
 
-            addChild(
-                    UIWrappedText(text, true).constrain {
-                        x = 2.pixels()
-                        y = SiblingConstraint() + 6.pixels()
-                        width = FillConstraint() - 2.pixels()
-                    }
-            )
+            text childOf this
 
             constrain {
                 x = 0.pixels(alignOpposite = true, alignOutside = true)
@@ -306,7 +311,7 @@ class ExampleGui : UniversalScreen() {
                 height = ChildBasedSizeConstraint() + 11.pixels()
             }.onMouseEnter {
                 if (clicked) return@onMouseEnter
-                (timerAnimation.width as? AnimationComponent<*>)?.pause()
+                timerAnimation.width.pauseIfSupported()
                 glow.animate {
                     setColorAnimation(Animations.OUT_EXP, 1f, Color(255, 255, 255, 50).asConstraint())
                 }
@@ -318,7 +323,7 @@ class ExampleGui : UniversalScreen() {
                 }
             }.onMouseLeave {
                 if (clicked) return@onMouseLeave
-                (timerAnimation.width as? AnimationComponent<*>)?.resume()
+                timerAnimation.width.resumeIfSupported()
                 glow.animate {
                     setColorAnimation(Animations.OUT_EXP, 1f, Color(255, 255, 255, 30).asConstraint())
                 }
@@ -336,22 +341,33 @@ class ExampleGui : UniversalScreen() {
                 glow.getVertices()[1].animate {
                     setXAnimation(Animations.OUT_EXP, 0.5f, 0.pixels())
                     onComplete {
-                        animateOut()
+                        hide()
                     }
                 }
                 glow.getVertices()[2].animate {
                     setXAnimation(Animations.OUT_EXP, 1f, 0.pixels())
                 }
             }
-        }
 
-        fun animateIn() {
-            animate {
+            animateBeforeHide {
+                setXAnimation(Animations.IN_EXP, 0.5f, 0.pixels(alignOpposite = true, alignOutside = true), 0.5f)
+            }
+
+            animateAfterUnhide {
+                timer.setWidth(0.pixels())
+
                 setXAnimation(Animations.OUT_EXP, 0.5f, 5.pixels(true))
                 onComplete {
                     animateTimer()
                 }
             }
+        }
+
+        fun setText(text: String, title: String? = null) {
+            this.text.setText(text)
+            this.title.setText(title ?: "")
+
+            if (!children.contains(this.title)) this.title childOf this
         }
 
         private fun animateTimer() {
@@ -365,14 +381,8 @@ class ExampleGui : UniversalScreen() {
                 .setWidthAnimation(Animations.LINEAR, delay, RelativeConstraint(), 0.5f)
                 .begin()
                 .onComplete {
-                    animateOut()
+                    hide()
                 }
-        }
-
-        private fun animateOut() {
-            animate {
-                setXAnimation(Animations.IN_EXP, 0.5f, 0.pixels(alignOpposite = true, alignOutside = true), 0.5f)
-            }
         }
     }
 }
