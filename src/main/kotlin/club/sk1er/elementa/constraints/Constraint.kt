@@ -1,6 +1,7 @@
 package club.sk1er.elementa.constraints
 
 import club.sk1er.elementa.UIComponent
+import club.sk1er.elementa.constraints.animation.AnimationComponent
 import java.awt.Color
 
 /**
@@ -20,6 +21,18 @@ interface SuperConstraint <T> {
 
     fun to(component: UIComponent) = apply {
         constrainTo = component
+    }
+
+    fun pauseIfSupported() {
+        (this as? AnimationComponent<*>)?.pause()
+    }
+
+    fun resumeIfSupported() {
+        (this as? AnimationComponent<*>)?.resume()
+    }
+
+    fun stopIfSupported() {
+        (this as? AnimationComponent<*>)?.stop()
     }
 }
 
