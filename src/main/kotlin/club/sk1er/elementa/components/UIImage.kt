@@ -1,6 +1,8 @@
-package club.sk1er.elementa.components.image
+package club.sk1er.elementa.components
 
 import club.sk1er.elementa.UIComponent
+import club.sk1er.elementa.components.image.DefaultLoadingImage
+import club.sk1er.elementa.components.image.ImageProvider
 import club.sk1er.elementa.utils.drawTexture
 import club.sk1er.mods.core.universal.UniversalGraphicsHandler
 import net.minecraft.client.renderer.texture.AbstractTexture
@@ -19,6 +21,13 @@ open class UIImage(
 
     var imageWidth = 0
     var imageHeight = 0
+
+    @Deprecated(
+        "Please provide a completable future instead",
+        ReplaceWith("CompletableFuture.supplyAsync(imageFunction)", "java.util.concurrent.CompletableFuture"),
+        level = DeprecationLevel.ERROR
+    )
+    constructor(imageFunction: () -> BufferedImage) : this(CompletableFuture.supplyAsync(imageFunction))
 
     override fun draw() {
         beforeDraw()
