@@ -7,13 +7,16 @@ import club.sk1er.elementa.utils.drawTexture
 import club.sk1er.mods.core.universal.UniversalGraphicsHandler
 import net.minecraft.client.renderer.texture.AbstractTexture
 import net.minecraft.client.renderer.texture.DynamicTexture
-import org.lwjgl.opengl.Display
-import org.lwjgl.opengl.SharedDrawable
 import java.awt.image.BufferedImage
 import java.io.File
 import java.net.URL
 import java.util.concurrent.CompletableFuture
 import javax.imageio.ImageIO
+
+//#if MC<11500
+import org.lwjgl.opengl.Display
+import org.lwjgl.opengl.SharedDrawable
+//#endif
 
 open class UIImage(
     private val imageFuture: CompletableFuture<BufferedImage>,
@@ -32,12 +35,15 @@ open class UIImage(
     constructor(imageFunction: () -> BufferedImage) : this(CompletableFuture.supplyAsync(imageFunction))
 
     init {
+        //#if MC<11500
         val sharedDrawable = SharedDrawable(Display.getDrawable())
+        //#endif
 
         imageFuture.thenAccept { image ->
             imageWidth = image.width
             imageHeight = image.height
 
+            //#if MC<11500
             try {
                 sharedDrawable.makeCurrent()
 
@@ -47,6 +53,9 @@ open class UIImage(
             } finally {
                 sharedDrawable.releaseContext()
             }
+            //#else
+            //$$ texture = UniversalGraphicsHandler.getTexture(image)
+            //#endif
         }
     }
 

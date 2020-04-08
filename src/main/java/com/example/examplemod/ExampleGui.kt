@@ -244,7 +244,9 @@ class ExampleGui : UniversalScreen() {
         window.keyType(typedChar, keyCode)
     }
 
+    //#if MC<11500
     override fun doesGuiPauseGame() = false
+    //#endif
 
     private class Slider(text: String, yConstraint: PositionConstraint) : UIContainer() {
         private val slider = UICircle(5f, Color(0, 0, 0, 255))
