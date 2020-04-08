@@ -11,6 +11,7 @@ import club.sk1er.elementa.dsl.constrain
 import club.sk1er.elementa.dsl.pixels
 import club.sk1er.elementa.dsl.plus
 import club.sk1er.elementa.effects.ScissorEffect
+import club.sk1er.elementa.utils.drawTexture
 import club.sk1er.mods.core.universal.UniversalGraphicsHandler
 import club.sk1er.mods.core.universal.UniversalMouse
 import net.minecraft.client.renderer.texture.DynamicTexture
@@ -83,7 +84,7 @@ class ScrollComponent(emptyString: String = "", private val scrollOpposite: Bool
 
         // We need to draw the auto-scroll image on top of our children
         if (isAutoScrolling) {
-            UIImage.drawTexture(
+            drawTexture(
                 scrollTexture,
                 Color.WHITE,
                 autoScrollBegin.first.toDouble() + getLeft() - 12,

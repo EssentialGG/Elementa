@@ -129,6 +129,12 @@ class ExampleGui : UniversalScreen() {
             textScale = 2.pixels()
         }
 
+        BlurHashImage("LEHV6nWB2yk8pyoJadR*.7kCMdnj").constrain {
+            x = CenterConstraint()
+            y = CenterConstraint()
+            width = RelativeConstraint(0.25f)
+            height = RelativeConstraint(0.25f)
+        } childOf window
 
 //
 //        repeat(100) {

@@ -1,6 +1,7 @@
 package club.sk1er.elementa.components
 
 import club.sk1er.elementa.UIComponent
+import club.sk1er.elementa.utils.drawTexture
 import club.sk1er.mods.core.universal.UniversalGraphicsHandler
 import net.minecraft.client.renderer.texture.AbstractTexture
 import net.minecraft.client.renderer.texture.DynamicTexture
@@ -95,38 +96,6 @@ open class UIImage(private val imageFuture: () -> BufferedImage) : UIComponent()
                 loadingTexture = UniversalGraphicsHandler.getTexture(loadingImage)
                 loadingImage = null
             }
-        }
-
-        internal fun drawTexture(
-            texture: AbstractTexture,
-            color: Color,
-            x: Double,
-            y: Double,
-            width: Double,
-            height: Double
-        ) {
-            UniversalGraphicsHandler.pushMatrix()
-
-            UniversalGraphicsHandler.enableBlend()
-            UniversalGraphicsHandler.enableAlpha()
-            UniversalGraphicsHandler.scale(1f, 1f, 50f)
-            UniversalGraphicsHandler.bindTexture(texture.glTextureId)
-            UniversalGraphicsHandler.enableTexture2D()
-            val red = color.red.toFloat() / 255f
-            val green = color.green.toFloat() / 255f
-            val blue = color.blue.toFloat() / 255f
-            val alpha = color.alpha.toFloat() / 255f
-            val worldRenderer = UniversalGraphicsHandler.getFromTessellator()
-
-            worldRenderer.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR)
-
-            worldRenderer.pos(x, y + height, 0.0).tex(0.0, 1.0).color(red, green, blue, alpha).endVertex()
-            worldRenderer.pos(x + width, y + height, 0.0).tex(1.0, 1.0).color(red, green, blue, alpha).endVertex()
-            worldRenderer.pos(x + width, y, 0.0).tex(1.0, 0.0).color(red, green, blue, alpha).endVertex()
-            worldRenderer.pos(x, y, 0.0).tex(0.0, 0.0).color(red, green, blue, alpha).endVertex()
-            UniversalGraphicsHandler.draw()
-
-            UniversalGraphicsHandler.popMatrix()
         }
     }
 }
