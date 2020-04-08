@@ -1,7 +1,7 @@
 package club.sk1er.elementa.constraints
 
 import club.sk1er.elementa.UIComponent
-import club.sk1er.elementa.components.UIImage
+import club.sk1er.elementa.components.image.UIImage
 import java.lang.UnsupportedOperationException
 
 /**
@@ -15,9 +15,6 @@ class MaxImageConstraint : WidthConstraint, HeightConstraint {
 
     override fun getWidthImpl(component: UIComponent): Float {
         if (component !is UIImage) throw UnsupportedOperationException("MaxImageConstraint is not available in this context!")
-        val constrainer = constrainTo ?: component.parent
-
-
         return (constrainTo ?: component.parent).getRight() - component.getLeft()
     }
 

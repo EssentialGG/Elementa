@@ -1,15 +1,11 @@
 package club.sk1er.elementa.constraints
 
 import club.sk1er.elementa.UIComponent
-import club.sk1er.elementa.components.UIImage
+import club.sk1er.elementa.components.image.UIImage
 import java.lang.UnsupportedOperationException
 
 /**
- * For size:
- * Sets the width/height to be [value] multiple of its own height/width respectively.
- *
- * For position:
- * Sets the x/y position to be [value] multiple of its own y/x position respectively.
+ * Sets the width/height to be the correct aspect of its own height/width respectively.
  */
 class ImageAspectConstraint : WidthConstraint, HeightConstraint {
     override var cachedValue = 0f

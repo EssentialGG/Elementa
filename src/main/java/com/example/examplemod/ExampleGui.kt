@@ -1,14 +1,15 @@
 package com.example.examplemod
 
 import club.sk1er.elementa.components.*
+import club.sk1er.elementa.components.image.BlurHashImage
 import club.sk1er.elementa.constraints.*
-import club.sk1er.elementa.constraints.animation.AnimationComponent
 import club.sk1er.elementa.constraints.animation.Animations
 import club.sk1er.elementa.dsl.*
 import club.sk1er.elementa.effects.ScissorEffect
 import club.sk1er.mods.core.universal.UniversalScreen
 
 import java.awt.Color
+import java.net.URL
 
 class ExampleGui : UniversalScreen() {
 
@@ -129,7 +130,16 @@ class ExampleGui : UniversalScreen() {
             textScale = 2.pixels()
         }
 
-        BlurHashImage("LEHV6nWB2yk8pyoJadR*.7kCMdnj").constrain {
+        (UIBlock(Color.RED).constrain {
+            x = CenterConstraint()
+            y = 5.pixels()
+            width = 10.pixels()
+            height = 10.pixels()
+        } childOf window).animate {
+            setWidthAnimation(Animations.LINEAR, 5f, 150.pixels())
+        }
+
+        BlurHashImage/*.ofURL*/("LbHewdGsm#z|0Xn4s%snrFX6RhTH"/*, URL("https://i.imgur.com/y2BeHU8.jpg")*/).constrain {
             x = CenterConstraint()
             y = CenterConstraint()
             width = RelativeConstraint(0.25f)
@@ -233,6 +243,8 @@ class ExampleGui : UniversalScreen() {
         super.keyTyped(typedChar, keyCode)
         window.keyType(typedChar, keyCode)
     }
+
+    override fun doesGuiPauseGame() = false
 
     private class Slider(text: String, yConstraint: PositionConstraint) : UIContainer() {
         private val slider = UICircle(5f, Color(0, 0, 0, 255))
