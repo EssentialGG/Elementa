@@ -1,6 +1,7 @@
 package club.sk1er.elementa.components.image
 
 import club.sk1er.elementa.UIComponent
+import club.sk1er.elementa.components.UIImage
 import club.sk1er.elementa.utils.decodeBlurHash
 import club.sk1er.elementa.utils.drawTexture
 import club.sk1er.mods.core.universal.UniversalGraphicsHandler
@@ -22,7 +23,6 @@ open class BlurHashImage(private val hash: String) : UIComponent(), ImageProvide
                 val sizeDifference = abs(dimensions.first * dimensions.second - preferredWidth * preferredHeight)
 
                 if (sizeDifference > SIZE_THRESHOLD) {
-                    println("Regenerating image")
                     dimensions = preferredWidth to preferredHeight
                     texture = generateTexture()
                 }

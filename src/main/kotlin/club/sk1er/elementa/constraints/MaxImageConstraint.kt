@@ -1,7 +1,7 @@
 package club.sk1er.elementa.constraints
 
 import club.sk1er.elementa.UIComponent
-import club.sk1er.elementa.components.image.UIImage
+import club.sk1er.elementa.components.UIImage
 import java.lang.UnsupportedOperationException
 
 /**

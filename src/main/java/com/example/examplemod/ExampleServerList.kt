@@ -2,7 +2,6 @@ package com.example.examplemod
 
 import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.components.*
-import club.sk1er.elementa.components.image.UIImage
 import club.sk1er.elementa.constraints.*
 import club.sk1er.elementa.constraints.animation.Animations
 import club.sk1er.elementa.dsl.*
@@ -18,7 +17,7 @@ class ExampleServerList : UniversalScreen() {
         y = 30.pixels()
         width = RelativeConstraint()
         height = RelativeConstraint()
-    } childOf window) as ScrollComponent
+    } childOf window)
 
     init {
         serverList.addChildren(
