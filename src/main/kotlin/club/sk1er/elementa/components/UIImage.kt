@@ -7,6 +7,8 @@ import club.sk1er.elementa.utils.drawTexture
 import club.sk1er.mods.core.universal.UniversalGraphicsHandler
 import net.minecraft.client.renderer.texture.AbstractTexture
 import net.minecraft.client.renderer.texture.DynamicTexture
+import org.lwjgl.opengl.Display
+import org.lwjgl.opengl.SharedDrawable
 import java.awt.image.BufferedImage
 import java.io.File
 import java.net.URL
@@ -29,6 +31,25 @@ open class UIImage(
     )
     constructor(imageFunction: () -> BufferedImage) : this(CompletableFuture.supplyAsync(imageFunction))
 
+    init {
+        val sharedDrawable = SharedDrawable(Display.getDrawable())
+
+        imageFuture.thenAccept { image ->
+            imageWidth = image.width
+            imageHeight = image.height
+
+            try {
+                sharedDrawable.makeCurrent()
+
+                texture = UniversalGraphicsHandler.getTexture(image)
+            } catch (e: Throwable) {
+                e.printStackTrace()
+            } finally {
+                sharedDrawable.releaseContext()
+            }
+        }
+    }
+
     override fun draw() {
         beforeDraw()
 
@@ -49,16 +70,6 @@ open class UIImage(
 
     override fun getTexture(preferredWidth: Int, preferredHeight: Int): AbstractTexture {
         if (::texture.isInitialized) {
-            return texture
-        }
-
-        if (imageFuture.isDone) {
-            val image = imageFuture.get()
-
-            imageWidth = image.width
-            imageHeight = image.height
-
-            texture = UniversalGraphicsHandler.getTexture(image)
             return texture
         }
 
