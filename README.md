@@ -10,6 +10,21 @@ This is a shift from how one would normally do graphics programming in Minecraft
 In Elementa, you do not have to write code to calculate _how_ to place a component at a certain point on the screen,
 instead you simply have to describe _what_ you want.
 
+## Dependency
+
+In your repository block, add:
+```groovy
+maven {
+    url = "https://repo.sk1er.club/repository/maven-public"
+}
+```
+
+In your dependencies block, add:
+
+```groovy
+implementation "club.sk1er:Elementa:1.6.0-$mcVersion"
+```
+
 ## Components
 
 All of the drawing in Elementa is done via UIComponents. There is a root component named `Window`
