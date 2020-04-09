@@ -1,7 +1,6 @@
 package club.sk1er.elementa.utils
 
 import club.sk1er.mods.core.universal.UniversalGraphicsHandler
-import javafx.scene.paint.Color.rgb
 import net.minecraft.client.renderer.texture.AbstractTexture
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats
 import java.awt.Color
