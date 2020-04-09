@@ -35,27 +35,23 @@ open class UIImage(
     constructor(imageFunction: () -> BufferedImage) : this(CompletableFuture.supplyAsync(imageFunction))
 
     init {
-        //#if MC<11500
-        val sharedDrawable = SharedDrawable(Display.getDrawable())
-        //#endif
+//        val sharedDrawable = SharedDrawable(Display.getDrawable())
 
         imageFuture.thenAccept { image ->
             imageWidth = image.width
             imageHeight = image.height
 
-            //#if MC<11500
-            try {
-                sharedDrawable.makeCurrent()
+//            try {
+//                sharedDrawable.makeCurrent()
+//
+//                texture = UniversalGraphicsHandler.getTexture(image)
+//            } catch (e: Throwable) {
+//                e.printStackTrace()
+//            } finally {
+//                sharedDrawable.releaseContext()
+//            }
 
-                texture = UniversalGraphicsHandler.getTexture(image)
-            } catch (e: Throwable) {
-                e.printStackTrace()
-            } finally {
-                sharedDrawable.releaseContext()
-            }
-            //#else
-            //$$ texture = UniversalGraphicsHandler.getTexture(image)
-            //#endif
+            texture = UniversalGraphicsHandler.getTexture(image)
         }
     }
 
