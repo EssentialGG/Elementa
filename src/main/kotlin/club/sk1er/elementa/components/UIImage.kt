@@ -19,8 +19,8 @@ open class UIImage(
 ) : UIComponent(), ImageProvider {
     private lateinit var texture: DynamicTexture
 
-    var imageWidth = 0
-    var imageHeight = 0
+    var imageWidth = 1f
+    var imageHeight = 1f
 
     @Deprecated(
         "Please provide a completable future instead",
@@ -55,8 +55,8 @@ open class UIImage(
         if (imageFuture.isDone) {
             val image = imageFuture.get()
 
-            imageWidth = image.width
-            imageHeight = image.height
+            imageWidth = image.width.toFloat()
+            imageHeight = image.height.toFloat()
             texture = UniversalGraphicsHandler.getTexture(image)
         }
 

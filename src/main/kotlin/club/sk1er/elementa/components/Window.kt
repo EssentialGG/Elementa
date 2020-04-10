@@ -60,16 +60,26 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
     override fun getRight() = getWidth()
     override fun getBottom() = getHeight()
 
-    fun isAreaVisible(x1: Double, y1: Double, x2: Double, y2: Double): Boolean {
-        if (x2 < getLeft() || x1 > getRight() || y2 < getTop() || y1 > getBottom()) return false
+    fun isAreaVisible(left: Double, top: Double, right: Double, bottom: Double): Boolean {
+        if (right < getLeft() ||
+            left > getRight() ||
+            bottom < getTop() ||
+            top > getBottom()
+        ) return false
 
         val currentScissor = ScissorEffect.currentScissorState ?: return true
         val sf = scaledResolution.scaleFactor
 
         val realX = currentScissor.x / sf
-        val bottomY = ((scaledResolution.scaledHeight * sf) - currentScissor.y) / sf
+        val realWidth = currentScissor.width / sf
 
-        return x2 > realX && x1 < realX + currentScissor.width / sf && y2 >= bottomY - (currentScissor.height / sf) && y1 <= bottomY
+        val bottomY = ((scaledResolution.scaledHeight * sf) - currentScissor.y) / sf
+        val realHeight = currentScissor.height / sf
+
+        return right > realX &&
+                left < realX + realWidth &&
+                bottom >= bottomY - realHeight &&
+                top <= bottomY
     }
 
     companion object {

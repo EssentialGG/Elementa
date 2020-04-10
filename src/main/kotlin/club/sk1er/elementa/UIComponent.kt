@@ -235,8 +235,8 @@ abstract class UIComponent {
             if (!parentWindow.isAreaVisible(
                     child.getLeft().toDouble(),
                     child.getTop().toDouble(),
-                    child.getBottom().toDouble(),
-                    child.getRight().toDouble())
+                    child.getRight().toDouble(),
+                    child.getBottom().toDouble())
             ) return@forEach
 
             child.draw()
