@@ -13,11 +13,6 @@ import java.net.URL
 import java.util.concurrent.CompletableFuture
 import javax.imageio.ImageIO
 
-//#if MC<11500
-import org.lwjgl.opengl.Display
-import org.lwjgl.opengl.SharedDrawable
-//#endif
-
 open class UIImage(
     private val imageFuture: CompletableFuture<BufferedImage>,
     private val loadingImage: ImageProvider = DefaultLoadingImage
@@ -33,27 +28,6 @@ open class UIImage(
         level = DeprecationLevel.ERROR
     )
     constructor(imageFunction: () -> BufferedImage) : this(CompletableFuture.supplyAsync(imageFunction))
-
-    init {
-//        val sharedDrawable = SharedDrawable(Display.getDrawable())
-
-        imageFuture.thenAccept { image ->
-            imageWidth = image.width
-            imageHeight = image.height
-
-//            try {
-//                sharedDrawable.makeCurrent()
-//
-//                texture = UniversalGraphicsHandler.getTexture(image)
-//            } catch (e: Throwable) {
-//                e.printStackTrace()
-//            } finally {
-//                sharedDrawable.releaseContext()
-//            }
-
-            texture = UniversalGraphicsHandler.getTexture(image)
-        }
-    }
 
     override fun draw() {
         beforeDraw()
@@ -76,6 +50,14 @@ open class UIImage(
     override fun getTexture(preferredWidth: Int, preferredHeight: Int): AbstractTexture {
         if (::texture.isInitialized) {
             return texture
+        }
+
+        if (imageFuture.isDone) {
+            val image = imageFuture.get()
+
+            imageWidth = image.width
+            imageHeight = image.height
+            texture = UniversalGraphicsHandler.getTexture(image)
         }
 
         return loadingImage.getTexture(preferredWidth, preferredHeight)
