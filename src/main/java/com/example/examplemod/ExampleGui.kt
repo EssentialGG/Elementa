@@ -139,7 +139,7 @@ class ExampleGui : UniversalScreen() {
             setWidthAnimation(Animations.LINEAR, 5f, 150.pixels())
         }
 
-        BlurHashImage.ofURL("LbHewdGsm#z|0Xn4s%snrFX6RhTH", URL("https://i.imgur.com/y2BeHU8.jpg")).constrain {
+        BlurHashImage.ofURL("L4ESU,OD1e#:=GwwJSAr1M,r|]Ar", URL("https://i.imgur.com/Pc6iMw3.png")).constrain {
             x = CenterConstraint()
             y = CenterConstraint()
             width = RelativeConstraint(0.25f)

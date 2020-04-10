@@ -38,8 +38,7 @@ class ScrollComponent(emptyString: String = "", private val scrollOpposite: Bool
     }
 
     private var offset = 0f
-    private val scrollAdjustEvents: MutableList<(scrollPercentage: Float, percentageOfParent: Float) -> Unit>
-            = mutableListOf(::updateScrollBar)
+    private val scrollAdjustEvents: MutableList<(Float, Float) -> Unit> = mutableListOf(::updateScrollBar)
     private var scrollBarGrip: UIComponent? = null
     private var dragBeginPos = -1f
     private var needsUpdate = true

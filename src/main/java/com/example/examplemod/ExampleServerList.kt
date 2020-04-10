@@ -2,6 +2,7 @@ package com.example.examplemod
 
 import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.components.*
+import club.sk1er.elementa.components.image.BlurHashImage
 import club.sk1er.elementa.constraints.*
 import club.sk1er.elementa.constraints.animation.Animations
 import club.sk1er.elementa.dsl.*
@@ -25,7 +26,7 @@ class ExampleServerList : UniversalScreen() {
                 "Hypixel",
                 "mc.hypixel.net",
                 UIImage.ofURL(URL("https://i.imgur.com/rZYAHbE.png")),
-                UIImage.ofURL(URL("https://i.imgur.com/iFawofh.png"))
+                BlurHashImage.ofURL("L49ZWHE19at,}HIW9^%KM^J.g3#R", URL("https://i.imgur.com/iFawofh.png"))
             ),
             ServerBlock(
                 "Mineplex",
@@ -72,11 +73,11 @@ class ExampleServerList : UniversalScreen() {
         window.keyType(typedChar, keyCode)
     }
 
-    private class ServerBlock(
+    class ServerBlock(
         val name: String,
         val ip: String,
         val logo: UIComponent = UIText(name),
-        val banner: UIImage = defaultBanner
+        val banner: UIComponent = defaultBanner
     ) : UIBlock(Color(0, 0, 0, 100)) {
 
         var inOptions = false
