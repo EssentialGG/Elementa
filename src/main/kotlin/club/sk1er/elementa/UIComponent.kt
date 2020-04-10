@@ -232,7 +232,7 @@ abstract class UIComponent {
 
         this.children.forEach { child ->
             // If the child is outside the current viewport, don't waste time drawing
-            if (!parentWindow.isAreaVisible(
+            if (!this.alwaysDrawChildren() && !parentWindow.isAreaVisible(
                     child.getLeft().toDouble(),
                     child.getTop().toDouble(),
                     child.getRight().toDouble(),
@@ -320,6 +320,10 @@ abstract class UIComponent {
         constraints.animationFrame()
 
         this.children.forEach(UIComponent::animationFrame)
+    }
+
+    open fun alwaysDrawChildren(): Boolean {
+        return false
     }
 
     /**

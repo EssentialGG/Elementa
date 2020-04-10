@@ -248,6 +248,10 @@ class ScrollComponent(emptyString: String = "", private val scrollOpposite: Bool
         needsUpdate = true
     }
 
+    override fun alwaysDrawChildren(): Boolean {
+        return true
+    }
+
     fun insertChild(component: UIComponent, pos: Int = 0) = apply {
         actualHolder.removeChild(emptyText)
 
