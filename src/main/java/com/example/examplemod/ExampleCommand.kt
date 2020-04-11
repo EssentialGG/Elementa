@@ -1,6 +1,7 @@
 package com.example.examplemod
 
 //#if MC<=11202
+import club.sk1er.elementa.svg.SVGParser
 import net.minecraft.command.CommandBase
 import net.minecraft.command.ICommandSender
 import net.minecraft.server.MinecraftServer
@@ -14,7 +15,9 @@ class ExampleCommand : CommandBase() {
     override fun getRequiredPermissionLevel() = 0
 
     override fun processCommand(sender: ICommandSender?, args: Array<String>) {
-       ExampleMod.gui = ExampleServerList() // ExampleGui()
+//        SVGParser.parseFromResource("/cut.svg")
+
+       ExampleMod.gui = ExampleGui()
     }
     //#else
     //$$ override fun getName() = "example"

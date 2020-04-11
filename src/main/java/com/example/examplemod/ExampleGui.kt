@@ -139,6 +139,14 @@ class ExampleGui : UniversalScreen() {
             setWidthAnimation(Animations.LINEAR, 5f, 150.pixels())
         }
 
+        SVGComponent.ofResource("/cut.svg").constrain {
+            x = CenterConstraint()
+            y = 25.pixels()
+            width = (24 * 2.25f).pixels()
+            height = (24 * 2.25f).pixels()
+            color = Color.RED.asConstraint()
+        } childOf window
+
         BlurHashImage.ofURL("L4ESU,OD1e#:=GwwJSAr1M,r|]Ar", URL("https://i.imgur.com/Pc6iMw3.png")).constrain {
             x = CenterConstraint()
             y = CenterConstraint()
