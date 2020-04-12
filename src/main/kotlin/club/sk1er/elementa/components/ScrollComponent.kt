@@ -30,9 +30,8 @@ class ScrollComponent(
 ) : UIContainer() {
     private val actualHolder = UIContainer().constrain {
         x = innerPadding.pixels()
-        y = innerPadding.pixels()
         width = RelativeConstraint(1f) - innerPadding.pixels()
-        height = RelativeConstraint(1f) - innerPadding.pixels()
+        height = RelativeConstraint(1f)
     }
 
     private val emptyText = UIText(emptyString).constrain {
@@ -204,8 +203,8 @@ class ScrollComponent(
 
     private fun calculateOffsetRange(): ClosedFloatingPointRange<Float> {
         val actualHeight = calculateActualHeight()
-        val maxNegative = this.getHeight() - actualHeight
-        return if (scrollOpposite) 0f..-maxNegative else maxNegative..0f
+        val maxNegative = this.getHeight() - actualHeight - innerPadding
+        return if (scrollOpposite) (-innerPadding)..-maxNegative else maxNegative..(innerPadding)
     }
 
     private fun onClick(mouseX: Float, mouseY: Float, mouseButton: Int) {
