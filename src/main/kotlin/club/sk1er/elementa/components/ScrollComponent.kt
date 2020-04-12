@@ -40,7 +40,7 @@ class ScrollComponent(
         y = SiblingConstraint() + 4.pixels()
     }
 
-    private var offset = 0f
+    private var offset = innerPadding
     private val scrollAdjustEvents: MutableList<(Float, Float) -> Unit> = mutableListOf(::updateScrollBar)
     private var scrollBarGrip: UIComponent? = null
     private var dragBeginPos = -1f
@@ -71,7 +71,7 @@ class ScrollComponent(
 
             // Recalculate our scroll box and move the content inside if needed.
             actualHolder.animate {
-                offset = if (range.isEmpty()) 0f else offset.coerceIn(range)
+                offset = if (range.isEmpty()) innerPadding else offset.coerceIn(range)
 
                 setYAnimation(Animations.IN_SIN, 0.1f, offset.pixels())
             }
