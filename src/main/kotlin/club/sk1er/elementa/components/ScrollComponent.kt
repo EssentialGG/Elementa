@@ -6,10 +6,7 @@ import club.sk1er.elementa.constraints.RelativeConstraint
 import club.sk1er.elementa.constraints.SiblingConstraint
 import club.sk1er.elementa.constraints.YConstraint
 import club.sk1er.elementa.constraints.animation.Animations
-import club.sk1er.elementa.dsl.animate
-import club.sk1er.elementa.dsl.constrain
-import club.sk1er.elementa.dsl.pixels
-import club.sk1er.elementa.dsl.plus
+import club.sk1er.elementa.dsl.*
 import club.sk1er.elementa.effects.ScissorEffect
 import club.sk1er.elementa.utils.drawTexture
 import club.sk1er.mods.core.universal.UniversalGraphicsHandler
@@ -26,10 +23,16 @@ import kotlin.math.abs
  *
  * Also prevents scrolling past what should be reasonable.
  */
-class ScrollComponent(emptyString: String = "", private val scrollOpposite: Boolean = false) : UIContainer() {
+class ScrollComponent(
+    emptyString: String = "",
+    private val scrollOpposite: Boolean = false,
+    private val innerPadding: Float = 0f
+) : UIContainer() {
     private val actualHolder = UIContainer().constrain {
-        width = RelativeConstraint(1f)
-        height = RelativeConstraint(1f)
+        x = innerPadding.pixels()
+        y = innerPadding.pixels()
+        width = RelativeConstraint(1f) - innerPadding.pixels()
+        height = RelativeConstraint(1f) - innerPadding.pixels()
     }
 
     private val emptyText = UIText(emptyString).constrain {
