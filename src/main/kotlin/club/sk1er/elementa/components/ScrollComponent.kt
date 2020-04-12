@@ -30,6 +30,7 @@ class ScrollComponent(
 ) : UIContainer() {
     private val actualHolder = UIContainer().constrain {
         x = innerPadding.pixels()
+        y = innerPadding.pixels()
         width = RelativeConstraint(1f) - innerPadding.pixels()
         height = RelativeConstraint(1f)
     }
