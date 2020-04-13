@@ -445,6 +445,10 @@ abstract class UIComponent {
      * to the hierarchy, underneath the same parent.
      */
     fun unhide(useLastPosition: Boolean = true) {
+        if (parent.children.contains(this)) {
+            return
+        }
+
         if (useLastPosition && indexInParent >= 0 && indexInParent < parent.children.size) {
             parent.children.add(indexInParent, this@UIComponent)
         } else {
