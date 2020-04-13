@@ -38,6 +38,7 @@ abstract class UIComponent {
     private var currentlyHovered = false
     private var beforeHideAnimation: AnimatingConstraints.() -> Unit = { }
     private var afterUnhideAnimation: AnimatingConstraints.() -> Unit = { }
+    private var focusedComponent: UIComponent? = null
 
     /**
      * Required for [unhide] so it can insert this component
@@ -182,7 +183,6 @@ abstract class UIComponent {
      */
     open fun isHovered(): Boolean {
         val res = Window.of(this).scaledResolution
-        val mc = Minecraft.getMinecraft()
 
         val mouseX = UniversalMouse.getScaledX()
         val mouseY = res.scaledHeight - UniversalMouse.getTrueY() * res.scaledHeight / UniversalResolutionUtil.getInstance().windowHeight - 1f
@@ -242,16 +242,6 @@ abstract class UIComponent {
             child.draw()
         }
 
-        if (isHovered() && !currentlyHovered) {
-            mouseEnterAction()
-            currentlyHovered = true
-        }
-
-        if (!isHovered() && currentlyHovered) {
-            mouseLeaveAction()
-            currentlyHovered = false
-        }
-
         afterDraw()
     }
 
@@ -267,6 +257,24 @@ abstract class UIComponent {
         features.forEach { it.beforeChildrenDraw(this) }
     }
 
+    open fun mouseMove() {
+        val hovered = isHovered()
+
+        if (hovered && !currentlyHovered) {
+            mouseEnterAction()
+            currentlyHovered = true
+        } else if (!hovered && currentlyHovered) {
+            mouseLeaveAction()
+            currentlyHovered = false
+        }
+
+        if (focusedComponent != null) {
+            focusedComponent?.mouseMove()
+        } else {
+            this.children.forEach { it.mouseMove() }
+        }
+    }
+
     /**
      * Runs the set [onMouseClick] method for the component and it's children.
      * Use this in the proper mouse click event to cascade all component's mouse click events.
@@ -274,7 +282,12 @@ abstract class UIComponent {
      */
     open fun mouseClick(mouseX: Int, mouseY: Int, button: Int) {
         if (isHovered()) mouseClickAction( mouseX - getLeft(), mouseY - getTop(), button)
-        this.children.forEach { it.mouseClick(mouseX, mouseY, button) }
+
+        if (focusedComponent != null) {
+            focusedComponent?.mouseClick(mouseX, mouseY, button)
+        } else {
+            this.children.forEach { it.mouseClick(mouseX, mouseY, button) }
+        }
     }
 
     /**
@@ -284,7 +297,12 @@ abstract class UIComponent {
      */
     open fun mouseRelease() {
         mouseReleaseAction()
-        this.children.forEach { it.mouseRelease() }
+
+        if (focusedComponent != null) {
+            focusedComponent?.mouseRelease()
+        } else {
+            this.children.forEach { it.mouseRelease() }
+        }
     }
 
     /**
@@ -296,7 +314,12 @@ abstract class UIComponent {
         if (delta == 0) return
 
         if (isHovered()) mouseScrollAction(delta)
-        this.children.forEach { it.mouseScroll(delta) }
+
+        if (focusedComponent != null) {
+            focusedComponent?.mouseScroll(delta)
+        } else {
+            this.children.forEach { it.mouseScroll(delta) }
+        }
     }
 
     /**
@@ -306,12 +329,22 @@ abstract class UIComponent {
      */
     open fun mouseDrag(mouseX: Int, mouseY: Int, button: Int) {
         mouseDragAction(mouseX - getLeft(), mouseY - getTop(), button)
-        children.forEach { it.mouseDrag(mouseX, mouseY, button) }
+
+        if (focusedComponent != null) {
+            focusedComponent?.mouseDrag(mouseX, mouseY, button)
+        } else {
+            children.forEach { it.mouseDrag(mouseX, mouseY, button) }
+        }
     }
 
     open fun keyType(typedChar: Char, keyCode: Int) {
         keyTypeAction(typedChar, keyCode)
-        children.forEach { it.keyType(typedChar, keyCode) }
+
+        if (focusedComponent != null) {
+            focusedComponent?.keyType(typedChar, keyCode)
+        } else {
+            children.forEach { it.keyType(typedChar, keyCode) }
+        }
     }
 
     open fun animationFrame() {
@@ -425,6 +458,9 @@ abstract class UIComponent {
      * from the entire hierarchy, leading to changes in sibling/children relationships.
      *
      * This also means hidden components will no longer receive events, or be drawn in any way.
+     *
+     * NOTE: Make sure to release any focus on this component, because it will likely cause
+     * unintended side effects.
      */
     fun hide() {
         animate {
@@ -466,6 +502,36 @@ abstract class UIComponent {
 
     fun animateAfterUnhide(animation: AnimatingConstraints.() -> Unit) {
         afterUnhideAnimation = animation
+    }
+
+    /**
+     * Focus API
+     */
+
+    /**
+     * Focus a component. Focusing means that this component will only propagate keyboard
+     * and mouse events to the currently focused component. The component to be focused does
+     * NOT have to be a direct child of this component, in fact, it is not even necessary
+     * that the component passed is a descendent at all.
+     */
+    fun focus(component: UIComponent) {
+        focusedComponent = component
+    }
+
+    fun grabParentFocus() {
+        parent.focus(this)
+    }
+
+    /**
+     * Remove the currently focused component. This means all of this component's children
+     * will receive all events normally again.
+     */
+    fun unfocus() {
+        focusedComponent = null
+    }
+
+    fun releaseParentFocus() {
+        parent.unfocus()
     }
 
     companion object {

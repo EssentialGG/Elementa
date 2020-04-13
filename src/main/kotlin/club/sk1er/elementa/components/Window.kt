@@ -38,6 +38,8 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
             this.systemTime += 1000 / animationFPS;
         }
 
+        mouseMove()
+
         super.draw()
     }
 

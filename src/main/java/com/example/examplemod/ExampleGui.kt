@@ -51,12 +51,14 @@ class ExampleGui : UniversalScreen() {
             width = FillConstraint() - 5.pixels()
             height = 20.pixels()
         }.onMouseClick { _, _, _ ->
+
             notification.setText(
                 title = "Example Notification",
                 text = "This is a test notification with a really long text line"
             )
 
             notification.unhide()
+            notification.grabParentFocus()
         }.addChild(
             UIText("Notify").constrain {
                 x = CenterConstraint()
@@ -371,10 +373,15 @@ class ExampleGui : UniversalScreen() {
 
             animateBeforeHide {
                 setXAnimation(Animations.IN_EXP, 0.5f, 0.pixels(alignOpposite = true, alignOutside = true), 0.5f)
+
+                onComplete {
+                    releaseParentFocus()
+                }
             }
 
             animateAfterUnhide {
                 timer.setWidth(0.pixels())
+                clicked = false
 
                 setXAnimation(Animations.OUT_EXP, 0.5f, 5.pixels(true))
                 onComplete {
