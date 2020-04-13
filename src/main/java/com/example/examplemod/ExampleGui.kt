@@ -141,7 +141,7 @@ class ExampleGui : UniversalScreen() {
             setWidthAnimation(Animations.LINEAR, 5f, 150.pixels())
         }
 
-        SVGComponent.ofResource("/aperture.svg").constrain {
+        SVGComponent.ofResource("/activity.svg").constrain {
             x = CenterConstraint()
             y = 25.pixels()
             width = (24 * 2.25f).pixels()

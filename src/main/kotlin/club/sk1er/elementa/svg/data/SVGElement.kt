@@ -7,5 +7,7 @@ abstract class SVGElement {
 
     abstract fun getVertexCount(): Int
 
+    open fun applyAttributes() { }
+
     abstract fun createBuffer(buffer: FloatBuffer): Int
 }

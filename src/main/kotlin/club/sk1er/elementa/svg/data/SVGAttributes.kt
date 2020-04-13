@@ -7,30 +7,27 @@ data class SVGAttributes(
     var strokeWidth: Float? = null,
     var transform: Transform? = null
 ) {
-    fun modify(pointX: Float, pointY: Float): Pair<Float, Float> {
-        return transform?.modify(pointX, pointY) ?: pointX to pointY
+    fun modify(point: Point) {
+        transform?.modify(point)
     }
 }
 
 data class Transform(
     var rotation: Rotation? = null
 ) {
-    fun modify(pointX: Float, pointY: Float): Pair<Float, Float> {
-        return rotation?.rotate(pointX, pointY) ?: pointX to pointY
+    fun modify(point: Point) {
+        rotation?.rotate(point)
     }
 }
 
 data class Rotation(val angle: Int, val originX: Float?, val originY: Float?) {
-    fun rotate(
-        pointX: Float,
-        pointY: Float
-    ): Pair<Float, Float> {
+    fun rotate(point: Point) {
         val s = sin(Math.toRadians(angle.toDouble()))
         val c = cos(Math.toRadians(angle.toDouble()))
 
         // translate point back to origin:
-        val normalX = pointX - (originX ?: 0f)
-        val normalY = pointY - (originY ?: 0f)
+        val normalX = point.x - (originX ?: 0f)
+        val normalY = point.y - (originY ?: 0f)
 
         // rotate point
         var newX = (normalX * c - normalY * s).toFloat()
@@ -40,6 +37,7 @@ data class Rotation(val angle: Int, val originX: Float?, val originY: Float?) {
         newX += (originX ?: 0f)
         newY += (originY ?: 0f)
 
-        return newX to newY
+        point.x = newX
+        point.y = newY
     }
 }

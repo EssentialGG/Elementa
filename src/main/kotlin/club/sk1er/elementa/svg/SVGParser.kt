@@ -23,6 +23,7 @@ object SVGParser {
             val el = when (it.name) {
                 "circle" -> SVGCircle.from(it)
                 "line" -> SVGLine.from(it)
+                "polyline" -> SVGPolyline.from(it)
                 else -> throw UnsupportedOperationException("Element type ${it.name} is not supported!")
             }
 
