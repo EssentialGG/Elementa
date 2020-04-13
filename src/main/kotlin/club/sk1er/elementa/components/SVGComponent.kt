@@ -1,18 +1,13 @@
 package club.sk1er.elementa.components
 
 import club.sk1er.elementa.UIComponent
-import club.sk1er.elementa.svg.SVG
-import club.sk1er.elementa.svg.SVGCircle
-import club.sk1er.elementa.svg.SVGLine
 import club.sk1er.elementa.svg.SVGParser
+import club.sk1er.elementa.svg.data.SVG
 import club.sk1er.mods.core.universal.UniversalGraphicsHandler
 import net.minecraft.client.renderer.GlStateManager
 import org.lwjgl.BufferUtils
 import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL15
-import kotlin.math.PI
-import kotlin.math.cos
-import kotlin.math.sin
 
 class SVGComponent(private val svg: SVG) : UIComponent() {
     private var vboID = -1
