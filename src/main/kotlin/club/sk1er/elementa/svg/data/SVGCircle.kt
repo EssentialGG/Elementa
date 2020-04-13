@@ -24,6 +24,8 @@ data class SVGCircle(val cx: Float, val cy: Float, val r: Float) : SVGElement() 
         return GL11.GL_LINE_LOOP
     }
 
+    override fun drawSmoothPoints() = false
+
     companion object {
         const val VERTEX_COUNT = 20
 

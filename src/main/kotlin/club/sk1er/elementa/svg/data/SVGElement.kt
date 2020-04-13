@@ -9,5 +9,9 @@ abstract class SVGElement {
 
     open fun applyAttributes() { }
 
+    open fun drawSmoothPoints(): Boolean {
+        return true
+    }
+
     abstract fun createBuffer(buffer: FloatBuffer): Int
 }

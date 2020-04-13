@@ -43,18 +43,25 @@ class SVGComponent(private val svg: SVG) : UIComponent() {
         UniversalGraphicsHandler.translate(x, y, 0.0)
         UniversalGraphicsHandler.scale(xScale, yScale, 0.0)
 
+        GL11.glPointSize(strokeWidth.toFloat())
         GL11.glLineWidth(strokeWidth.toFloat())
         GL11.glEnable(GL11.GL_LINE_SMOOTH)
+        GL11.glEnable(GL11.GL_POINT_SMOOTH)
 
         GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vboID)
         GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY)
         GL11.glVertexPointer(2, GL11.GL_FLOAT, 0, 0)
 
-        vboData.forEach { (drawType, startIndex, vertexCount) ->
+        vboData.forEach { (drawType, startIndex, vertexCount, drawPoints) ->
             GL11.glDrawArrays(drawType, startIndex, vertexCount)
+
+            if (drawPoints) {
+                GL11.glDrawArrays(GL11.GL_POINTS, startIndex, vertexCount)
+            }
         }
 
         GL11.glDisable(GL11.GL_LINE_SMOOTH)
+        GL11.glDisable(GL11.GL_POINT_SMOOTH)
         GL11.glDisableClientState(GL11.GL_VERTEX_ARRAY)
         GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0)
 
@@ -79,7 +86,7 @@ class SVGComponent(private val svg: SVG) : UIComponent() {
         vboData = svg.elements.map { el ->
             val vertexCount = el.getVertexCount()
 
-            VBOData(el.createBuffer(vertexBuffer), currPos, vertexCount)
+            VBOData(el.createBuffer(vertexBuffer), currPos, vertexCount, el.drawSmoothPoints())
                 .also { currPos += vertexCount }
         }
 
@@ -95,7 +102,7 @@ class SVGComponent(private val svg: SVG) : UIComponent() {
             return SVGComponent(SVGParser.parseFromResource(resourcePath))
         }
 
-        private data class VBOData(val drawType: Int, val startIndex: Int, val count: Int)
+        private data class VBOData(val drawType: Int, val startIndex: Int, val count: Int, val drawPoints: Boolean)
 
         private val duplicateMap = mutableMapOf<SVG, List<VBOData>>()
     }
