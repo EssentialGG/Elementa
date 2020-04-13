@@ -2,6 +2,7 @@ package club.sk1er.elementa.svg
 
 import club.sk1er.elementa.svg.data.*
 import org.dom4j.Document
+import org.dom4j.Element
 import org.dom4j.io.SAXReader
 import java.lang.UnsupportedOperationException
 
@@ -19,19 +20,21 @@ object SVGParser {
         val svgHeight = svg.attributeValue("height", "24").toInt()
         val svgStrokeWidth = svg.attributeValue("stroke-width", "1").toFloat()
 
-        val elements = svg.elements().map {
-            val el = when (it.name) {
-                "circle" -> SVGCircle.from(it)
-                "line" -> SVGLine.from(it)
-                "polyline" -> SVGPolyline.from(it)
+        val elements = svg.elements().flatMap {
+            val els = when (it.name) {
+                "circle" -> listOf(SVGCircle.from(it))
+                "line" -> listOf(SVGLine.from(it))
+                "polyline" -> listOf(SVGPolyline.from(it))
+                "path" -> parsePath(it)
                 else -> throw UnsupportedOperationException("Element type ${it.name} is not supported!")
             }
 
             it.attributeValue("transform")?.let { attribute ->
-                el.attributes.transform = parseTransform(attribute)
+                val transform = parseTransform(attribute)
+                els.forEach { el -> el.attributes.transform = transform }
             }
 
-            el
+            els
         }
 
         return SVG(elements, svgWidth, svgHeight, svgStrokeWidth)
@@ -62,5 +65,9 @@ object SVGParser {
         }
 
         return transform
+    }
+
+    private fun parsePath(el: Element): List<SVGElement> {
+        return PathParser(el.attributeValue("d").trim()).parse()
     }
 }
