@@ -15,8 +15,6 @@ class ExampleCommand : CommandBase() {
     override fun getRequiredPermissionLevel() = 0
 
     override fun processCommand(sender: ICommandSender?, args: Array<String>) {
-//        SVGParser.parseFromResource("/cut.svg")
-
        ExampleMod.gui = ExampleGui()
     }
     //#else

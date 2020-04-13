@@ -6,10 +6,7 @@ import club.sk1er.elementa.constraints.RelativeConstraint
 import club.sk1er.elementa.constraints.SiblingConstraint
 import club.sk1er.elementa.constraints.YConstraint
 import club.sk1er.elementa.constraints.animation.Animations
-import club.sk1er.elementa.dsl.animate
-import club.sk1er.elementa.dsl.constrain
-import club.sk1er.elementa.dsl.pixels
-import club.sk1er.elementa.dsl.plus
+import club.sk1er.elementa.dsl.*
 import club.sk1er.elementa.effects.ScissorEffect
 import club.sk1er.elementa.utils.drawTexture
 import club.sk1er.mods.core.universal.UniversalGraphicsHandler
@@ -26,9 +23,15 @@ import kotlin.math.abs
  *
  * Also prevents scrolling past what should be reasonable.
  */
-class ScrollComponent(emptyString: String = "", private val scrollOpposite: Boolean = false) : UIContainer() {
+class ScrollComponent(
+    emptyString: String = "",
+    private val scrollOpposite: Boolean = false,
+    private val innerPadding: Float = 0f
+) : UIContainer() {
     private val actualHolder = UIContainer().constrain {
-        width = RelativeConstraint(1f)
+        x = innerPadding.pixels()
+        y = innerPadding.pixels()
+        width = RelativeConstraint(1f) - innerPadding.pixels()
         height = RelativeConstraint(1f)
     }
 
@@ -37,7 +40,7 @@ class ScrollComponent(emptyString: String = "", private val scrollOpposite: Bool
         y = SiblingConstraint() + 4.pixels()
     }
 
-    private var offset = 0f
+    private var offset = innerPadding
     private val scrollAdjustEvents: MutableList<(Float, Float) -> Unit> = mutableListOf(::updateScrollBar)
     private var scrollBarGrip: UIComponent? = null
     private var dragBeginPos = -1f
@@ -68,7 +71,7 @@ class ScrollComponent(emptyString: String = "", private val scrollOpposite: Bool
 
             // Recalculate our scroll box and move the content inside if needed.
             actualHolder.animate {
-                offset = if (range.isEmpty()) 0f else offset.coerceIn(range)
+                offset = if (range.isEmpty()) innerPadding else offset.coerceIn(range)
 
                 setYAnimation(Animations.IN_SIN, 0.1f, offset.pixels())
             }
@@ -201,8 +204,8 @@ class ScrollComponent(emptyString: String = "", private val scrollOpposite: Bool
 
     private fun calculateOffsetRange(): ClosedFloatingPointRange<Float> {
         val actualHeight = calculateActualHeight()
-        val maxNegative = this.getHeight() - actualHeight
-        return if (scrollOpposite) 0f..-maxNegative else maxNegative..0f
+        val maxNegative = this.getHeight() - actualHeight - innerPadding
+        return if (scrollOpposite) (-innerPadding)..-maxNegative else maxNegative..(innerPadding)
     }
 
     private fun onClick(mouseX: Float, mouseY: Float, mouseButton: Int) {

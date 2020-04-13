@@ -6,8 +6,12 @@ import java.lang.UnsupportedOperationException
 /**
  * Similar to a [SiblingConstraint], except it tries to fit
  * itself inline if possible. If not possible, it falls back to the next line.
+ *
+ * @param padding spacing to apply selectively when it makes sense.
+ * On the X axis this means it will apply when crammed,
+ * on the Y axis this means it will apply when NOT crammed.
  */
-class CramSiblingConstraint : SiblingConstraint() {
+class CramSiblingConstraint(private val padding: Float = 0f) : SiblingConstraint() {
     override var cachedValue = 0f
     override var recalculate = true
     override var constrainTo: UIComponent? = null
@@ -21,8 +25,8 @@ class CramSiblingConstraint : SiblingConstraint() {
 
         val sibling = component.parent.children[index - 1]
 
-        if (sibling.getRight() + component.getWidth() < component.parent.getRight()) {
-            return sibling.getRight()
+        if (sibling.getRight() + component.getWidth() + padding < component.parent.getRight()) {
+            return sibling.getRight() + padding
         }
 
         return component.parent.getLeft()
@@ -37,11 +41,11 @@ class CramSiblingConstraint : SiblingConstraint() {
 
         val sibling = component.parent.children[index - 1]
 
-        if (sibling.getRight() + component.getWidth() < component.parent.getRight()) {
+        if (sibling.getRight() + component.getWidth() + padding < component.parent.getRight()) {
             return sibling.getTop()
         }
 
-        return getLowestPoint(sibling, component.parent, index)
+        return getLowestPoint(sibling, component.parent, index) + padding
     }
 
     override fun to(component: UIComponent) = apply {
