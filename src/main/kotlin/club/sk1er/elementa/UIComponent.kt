@@ -14,6 +14,8 @@ import org.lwjgl.opengl.GL11
 import java.awt.Color
 import java.util.concurrent.CopyOnWriteArrayList
 import java.util.function.Consumer
+import kotlin.math.PI
+import kotlin.math.sin
 
 /**
  * UIComponent is the base of all drawing, meaning
@@ -209,17 +211,19 @@ abstract class UIComponent {
             val top = getTop().toDouble()
             val bottom = getBottom().toDouble()
 
+            val color = getDebugColor(depth(), (parent.hashCode() / PI) % PI)
+
             // Top outline block
-            UIBlock.drawBlock(DEBUG_COLOR, left - DEBUG_OUTLINE_WIDTH, top - DEBUG_OUTLINE_WIDTH, right + DEBUG_OUTLINE_WIDTH, top)
+            UIBlock.drawBlock(color, left - DEBUG_OUTLINE_WIDTH, top - DEBUG_OUTLINE_WIDTH, right + DEBUG_OUTLINE_WIDTH, top)
 
             // Right outline block
-            UIBlock.drawBlock(DEBUG_COLOR, right, top, right + DEBUG_OUTLINE_WIDTH, bottom)
+            UIBlock.drawBlock(color, right, top, right + DEBUG_OUTLINE_WIDTH, bottom)
 
             // Bottom outline block
-            UIBlock.drawBlock(DEBUG_COLOR, left - DEBUG_OUTLINE_WIDTH, bottom, right + DEBUG_OUTLINE_WIDTH, bottom + DEBUG_OUTLINE_WIDTH)
+            UIBlock.drawBlock(color, left - DEBUG_OUTLINE_WIDTH, bottom, right + DEBUG_OUTLINE_WIDTH, bottom + DEBUG_OUTLINE_WIDTH)
 
             // Left outline block
-            UIBlock.drawBlock(DEBUG_COLOR, left - DEBUG_OUTLINE_WIDTH, top, left, bottom)
+            UIBlock.drawBlock(color, left - DEBUG_OUTLINE_WIDTH, top, left, bottom)
 
             if (ScissorEffect.currentScissorState != null) {
                 GL11.glEnable(GL11.GL_SCISSOR_TEST)
@@ -357,6 +361,22 @@ abstract class UIComponent {
 
     open fun alwaysDrawChildren(): Boolean {
         return false
+    }
+
+    fun depth(): Int {
+        var current = this
+        var depth = 0
+
+        try {
+            while (current !is Window && current.parent != current) {
+                current = current.parent
+                depth++
+            }
+        } catch (e: UninitializedPropertyAccessException) {
+            throw IllegalStateException("No window parent? It's possible you haven't called Window.addChild() at this point in time.")
+        }
+
+        return depth
     }
 
     /**
@@ -536,7 +556,15 @@ abstract class UIComponent {
 
     companion object {
         val IS_DEBUG = System.getProperty("elementa.debug")?.toBoolean() ?: false
-        val DEBUG_COLOR = Color(255, 0, 255)
         val DEBUG_OUTLINE_WIDTH = System.getProperty("elementa.debug.width")?.toDoubleOrNull() ?: 2.0
+
+        private fun getDebugColor(depth: Int, offset: Double): Color {
+            val step = depth.toDouble() / PI + offset
+
+            val red = ((sin((step)) + 0.75) * 170).toInt().coerceIn(0..255)
+            val green = ((sin(step + 2 * Math.PI / 3) + 0.75) * 170).toInt().coerceIn(0..255)
+            val blue = ((sin(step + 4 * Math.PI / 3) + 0.75) * 170).toInt().coerceIn(0..255)
+            return Color(red, green, blue, 255)
+        }
     }
 }
