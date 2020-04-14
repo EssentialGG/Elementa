@@ -27,7 +27,7 @@ data class SVGCircle(val cx: Float, val cy: Float, val r: Float) : SVGElement() 
     override fun drawSmoothPoints() = false
 
     companion object {
-        const val VERTEX_COUNT = 20
+        const val VERTEX_COUNT = 25
 
         fun from(element: Element): SVGCircle {
             return SVGCircle(
