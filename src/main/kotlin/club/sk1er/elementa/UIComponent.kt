@@ -7,6 +7,7 @@ import club.sk1er.elementa.constraints.animation.AnimatingConstraints
 import club.sk1er.elementa.dsl.animate
 import club.sk1er.elementa.effects.Effect
 import club.sk1er.elementa.effects.ScissorEffect
+import club.sk1er.elementa.utils.TriConsumer
 import club.sk1er.mods.core.universal.UniversalMouse
 import club.sk1er.mods.core.universal.UniversalResolutionUtil
 import net.minecraft.client.Minecraft
@@ -394,9 +395,9 @@ abstract class UIComponent {
     /**
      * Adds a method to be run when mouse is clicked within the component.
      */
-//    fun onMouseClickConsumer(method: ) = apply {
-//        mouseClickAction = method::accept
-//    }
+    fun onMouseClickConsumer(method: TriConsumer<Float, Float, Int>) = apply {
+        mouseClickAction = { t: Float, u: Float, v: Int -> method.accept(t, u, v) }
+    }
 
     /**
      * Adds a method to be run when mouse is released within the component.
