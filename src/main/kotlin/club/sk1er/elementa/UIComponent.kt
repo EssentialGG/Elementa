@@ -128,6 +128,10 @@ abstract class UIComponent {
         this.features.add(effect)
     }
 
+    fun setChildOf(parent: UIComponent) = apply {
+        parent.addChild(this)
+    }
+
     fun setX(constraint: XConstraint) = apply {
         this.constraints.withX(constraint)
     }

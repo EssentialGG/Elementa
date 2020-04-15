@@ -27,7 +27,7 @@ implementation "club.sk1er:Elementa:1.6.4-$mcVersion"
 
 ## Components
 
-All of the drawing in Elementa is done via UIComponents. There is a root component named `Window`
+All the drawing in Elementa is done via UIComponents. There is a root component named `Window`
 that MUST be in the hierarchy of all components, thus making it the top of the component tree. 
 All components have exactly `1` parent, and all components have `0-n` children.
 
