@@ -13,6 +13,7 @@ import net.minecraft.client.Minecraft
 import org.lwjgl.opengl.GL11
 import java.awt.Color
 import java.util.concurrent.CopyOnWriteArrayList
+import java.util.function.BiConsumer
 import java.util.function.Consumer
 import kotlin.math.PI
 import kotlin.math.sin
@@ -29,13 +30,13 @@ abstract class UIComponent {
     private val features = mutableListOf<Effect>()
     private var constraints = UIConstraints(this)
 
-    private var mouseClickAction: (mouseX: Float, mouseY: Float, button: Int) -> Unit = { _, _, _ -> }
-    private var mouseReleaseAction: () -> Unit = {}
-    private var mouseEnterAction: () -> Unit = {}
-    private var mouseLeaveAction: () -> Unit = {}
-    private var mouseScrollAction: (delta: Int) -> Unit = {}
-    private var mouseDragAction: (mouseX: Float, mouseY: Float, button: Int) -> Unit = { _, _, _ -> }
-    private var keyTypeAction: (typedChar: Char, keyCode: Int) -> Unit = { _, _ -> }
+    private var mouseClickAction: UIComponent.(mouseX: Float, mouseY: Float, button: Int) -> Unit = { _, _, _ -> }
+    private var mouseReleaseAction: UIComponent.() -> Unit = {}
+    private var mouseEnterAction: UIComponent.() -> Unit = {}
+    private var mouseLeaveAction: UIComponent.() -> Unit = {}
+    private var mouseScrollAction: UIComponent.(delta: Int) -> Unit = {}
+    private var mouseDragAction: UIComponent.(mouseX: Float, mouseY: Float, button: Int) -> Unit = { _, _, _ -> }
+    private var keyTypeAction: UIComponent.(typedChar: Char, keyCode: Int) -> Unit = { _, _ -> }
 
     private var currentlyHovered = false
     private var beforeHideAnimation: AnimatingConstraints.() -> Unit = { }
@@ -386,7 +387,7 @@ abstract class UIComponent {
     /**
      * Adds a method to be run when mouse is clicked within the component.
      */
-    fun onMouseClick(method: (mouseX: Float, mouseY: Float, mouseButton: Int) -> Unit) = apply {
+    fun onMouseClick(method: UIComponent.(mouseX: Float, mouseY: Float, mouseButton: Int) -> Unit) = apply {
         mouseClickAction = method
     }
 
@@ -400,7 +401,7 @@ abstract class UIComponent {
     /**
      * Adds a method to be run when mouse is released within the component.
      */
-    fun onMouseRelease(method: () -> Unit) = apply {
+    fun onMouseRelease(method: UIComponent.() -> Unit) = apply {
         mouseReleaseAction = method
     }
 
@@ -408,14 +409,14 @@ abstract class UIComponent {
      * Adds a method to be run when mouse is released within the component.
      */
     fun onMouseReleaseRunnable(method: Runnable) = apply {
-        mouseReleaseAction = method::run
+        mouseReleaseAction = { method.run() }
     }
 
     /**
      * Adds a method to be run when mouse is dragged anywhere on screen.
      * This does not check if mouse is in component.
      */
-    fun onMouseDrag(method: (mouseX: Float, mouseY: Float, mouseButton: Int) -> Unit) = apply {
+    fun onMouseDrag(method: UIComponent.(mouseX: Float, mouseY: Float, mouseButton: Int) -> Unit) = apply {
         mouseDragAction = method
     }
 
@@ -430,7 +431,7 @@ abstract class UIComponent {
     /**
      * Adds a method to be run when mouse enters the component.
      */
-    fun onMouseEnter(method: () -> Unit) = apply {
+    fun onMouseEnter(method: UIComponent.() -> Unit) = apply {
         mouseEnterAction = method
     }
 
@@ -438,13 +439,13 @@ abstract class UIComponent {
      * Adds a method to be run when mouse enters the component.
      */
     fun onMouseEnterRunnable(method: Runnable) = apply {
-        mouseEnterAction = method::run
+        mouseEnterAction = { method.run() }
     }
 
     /**
      * Adds a method to be run when mouse leaves the component.
      */
-    fun onMouseLeave(method: () -> Unit) = apply {
+    fun onMouseLeave(method: UIComponent.() -> Unit) = apply {
         mouseLeaveAction = method
     }
 
@@ -452,13 +453,13 @@ abstract class UIComponent {
      * Adds a method to be run when mouse leaves the component.
      */
     fun onMouseLeaveRunnable(method: Runnable) = apply {
-        mouseLeaveAction = method::run
+        mouseLeaveAction = { method.run() }
     }
 
     /**
      * Adds a method to be run when mouse scrolls while in the component.
      */
-    fun onMouseScroll(method: (delta: Int) -> Unit) = apply {
+    fun onMouseScroll(method: UIComponent.(delta: Int) -> Unit) = apply {
         mouseScrollAction = method
     }
 
@@ -466,11 +467,15 @@ abstract class UIComponent {
      * Adds a method to be run when mouse scrolls while in the component.
      */
     fun onMouseScrollConsumer(method: Consumer<Int>) = apply {
-        mouseScrollAction = method::accept
+        mouseScrollAction = { method.accept(it) }
     }
 
-    fun onKeyType(method: (typedChar: Char, keyCode: Int) -> Unit) = apply {
+    fun onKeyType(method: UIComponent.(typedChar: Char, keyCode: Int) -> Unit) = apply {
         keyTypeAction = method
+    }
+
+    fun onKeyTypeConsumer(method: BiConsumer<Char, Int>) {
+        keyTypeAction = { t: Char, u: Int -> method.accept(t, u) }
     }
 
     /*

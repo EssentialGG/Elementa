@@ -56,8 +56,8 @@ class ScrollComponent(
         actualHolder.addChild(emptyText)
         this.enableEffects(ScissorEffect())
 
-        onMouseScroll(::onScroll)
-        onMouseClick(::onClick)
+        onMouseScroll { onScroll(it) }
+        onMouseClick { mouseX, mouseY, mouseButton ->  onClick(mouseX, mouseY, mouseButton) }
     }
 
     override fun draw() {
@@ -115,7 +115,7 @@ class ScrollComponent(
     fun setScrollBarComponent(component: UIComponent) {
         scrollBarGrip = component
 
-        component.parent.onMouseScroll(::onScroll)
+        component.parent.onMouseScroll { onScroll(it) }
 
         component.onMouseClick { _, mouseY, _ ->
             dragBeginPos = mouseY
