@@ -425,9 +425,9 @@ abstract class UIComponent {
      * Adds a method to be run when mouse is dragged anywhere on screen.
      * This does not check if mouse is in component.
      */
-//    fun onMouseDragConsumer(method: ) = apply {
-//        mouseDragAction = method::accept
-//    }
+    fun onMouseDragConsumer(method: TriConsumer<Float, Float, Int>) = apply {
+        mouseDragAction = { t: Float, u: Float, v: Int -> method.accept(t, u, v) }
+    }
 
     /**
      * Adds a method to be run when mouse enters the component.
