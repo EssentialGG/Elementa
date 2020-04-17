@@ -97,6 +97,10 @@ class SVGComponent(private val svg: SVG) : UIComponent() {
         GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0)
     }
 
+    fun finalize() {
+        GL15.glDeleteBuffers(vboID)
+    }
+
     companion object {
         fun ofResource(resourcePath: String): SVGComponent {
             return SVGComponent(SVGParser.parseFromResource(resourcePath))
