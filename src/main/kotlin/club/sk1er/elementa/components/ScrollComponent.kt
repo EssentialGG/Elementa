@@ -23,7 +23,7 @@ import kotlin.math.abs
  *
  * Also prevents scrolling past what should be reasonable.
  */
-class ScrollComponent(
+class ScrollComponent @JvmOverloads constructor(
     emptyString: String = "",
     private val scrollOpposite: Boolean = false,
     private val innerPadding: Float = 0f
