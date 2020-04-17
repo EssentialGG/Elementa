@@ -66,8 +66,7 @@ class PathParser(private var dataString: String) {
                         firstPos = originalPoint
                     }
 
-                    currentPos.x = 0f
-                    currentPos.y += parseFloat()
+                    currentPos.y = parseFloat()
 
                     elements.add(SVGLine(originalPoint, currentPos.copy()))
                 }
@@ -89,8 +88,7 @@ class PathParser(private var dataString: String) {
                         firstPos = originalPoint
                     }
 
-                    currentPos.x += parseFloat()
-                    currentPos.y = 0f
+                    currentPos.x = parseFloat()
 
                     elements.add(SVGLine(originalPoint, currentPos.copy()))
                 }
