@@ -5,8 +5,8 @@ import club.sk1er.elementa.constraints.*
 import club.sk1er.elementa.constraints.animation.Animations
 import club.sk1er.elementa.dsl.*
 import club.sk1er.elementa.effects.ScissorEffect
+import club.sk1er.mods.core.universal.UniversalKeyboard
 import club.sk1er.mods.core.universal.UniversalScreen
-import org.lwjgl.input.Keyboard
 import java.awt.Color
 
 /**
@@ -473,8 +473,9 @@ class ExampleGui : UniversalScreen() {
         super.initGui()
 
         // Since we want our users to be able to hold a key
-        // to type. This is a base LWJGL function.
-        Keyboard.enableRepeatEvents(true)
+        // to type. This is a wrapper around a base LWJGL function.
+        // - Keyboard.enableRepeatEvents in <= 1.12.2
+        UniversalKeyboard.enableRepeatEvents(true)
     }
 
     override fun onGuiClosed() {
@@ -482,6 +483,6 @@ class ExampleGui : UniversalScreen() {
 
         // We need to disable repeat events when leaving
         // the gui.
-        Keyboard.enableRepeatEvents(true)
+        UniversalKeyboard.enableRepeatEvents(false)
     }
 }
