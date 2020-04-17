@@ -26,6 +26,7 @@ object SVGParser {
                 "line" -> listOf(SVGLine.from(it))
                 "polyline" -> listOf(SVGPolyline.from(it))
                 "path" -> parsePath(it)
+                "rect" -> listOf(SVGRect.from(it))
                 else -> throw UnsupportedOperationException("Element type ${it.name} is not supported!")
             }
 
