@@ -55,7 +55,7 @@ class SVGComponent(private val svg: SVG) : UIComponent() {
         vboData.forEach { (drawType, startIndex, vertexCount, drawPoints) ->
             GL11.glDrawArrays(drawType, startIndex, vertexCount)
 
-            if (drawPoints) {
+            if (drawPoints && svg.roundLineJoins) {
                 GL11.glDrawArrays(GL11.GL_POINTS, startIndex, vertexCount)
             }
         }

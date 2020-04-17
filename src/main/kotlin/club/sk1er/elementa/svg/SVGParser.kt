@@ -19,6 +19,8 @@ object SVGParser {
         val svgWidth = svg.attributeValue("width", "24").toInt()
         val svgHeight = svg.attributeValue("height", "24").toInt()
         val svgStrokeWidth = svg.attributeValue("stroke-width", "1").toFloat()
+        val svgRoundLineCaps = svg.attributeValue("stroke-linecap") != null
+        val svgRoundLineJoins = svg.attributeValue("stroke-linejoin", "1") != null
 
         val elements = svg.elements().flatMap {
             val els = when (it.name) {
@@ -38,7 +40,7 @@ object SVGParser {
             els
         }
 
-        return SVG(elements, svgWidth, svgHeight, svgStrokeWidth)
+        return SVG(elements, svgWidth, svgHeight, svgStrokeWidth, svgRoundLineCaps, svgRoundLineJoins)
     }
 
     private fun parseTransform(attributeString: String): Transform {

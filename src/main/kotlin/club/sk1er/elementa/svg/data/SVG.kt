@@ -4,5 +4,7 @@ data class SVG(
     val elements: List<SVGElement>,
     val width: Int,
     val height: Int,
-    val strokeWidth: Float
+    val strokeWidth: Float,
+    val roundLineCaps: Boolean,
+    val roundLineJoins: Boolean
 )
