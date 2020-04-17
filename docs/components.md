@@ -6,6 +6,10 @@ and have examples given for how to use them effectively. All the example code
 here is compiled into a GUI [here](../src/main/java/com/example/examplemod/ComponentsGui.kt)
 that can be played around with and modified to see how each component works.
 
+What the entire playground GUI looks like:
+
+![Playground GUI Photo](https://i.imgur.com/1WhLRya.png)
+
 - [UIContainer](#uicontainer)
 - [UIBlock](#uiblock)
 - [UIText](#uitext)
