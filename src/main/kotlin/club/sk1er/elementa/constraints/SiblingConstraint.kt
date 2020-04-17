@@ -8,7 +8,10 @@ import club.sk1er.elementa.UIComponent
  * Intended for use in either the x or y direction but not both at the same time.
  * If you would like for components to try and fit inline, use [CramSiblingConstraint]
  */
-open class SiblingConstraint @JvmOverloads constructor(private val alignOpposite: Boolean = false) : PositionConstraint {
+open class SiblingConstraint @JvmOverloads constructor(
+    private val padding: Float = 0f,
+    private val alignOpposite: Boolean = false
+) : PositionConstraint {
     override var cachedValue = 0f
     override var recalculate = true
     override var constrainTo: UIComponent? = null
@@ -19,11 +22,11 @@ open class SiblingConstraint @JvmOverloads constructor(private val alignOpposite
         if (alignOpposite) {
             if (index == 0) return component.parent.getRight() - component.getWidth()
             val sibling = component.parent.children[index - 1]
-            return getLeftmostPoint(sibling, component.parent, index) - component.getWidth()
+            return getLeftmostPoint(sibling, component.parent, index) - component.getWidth() - padding
         } else {
             if (index == 0) return component.parent.getLeft()
             val sibling = component.parent.children[index - 1]
-            return getRightmostPoint(sibling, component.parent, index)
+            return getRightmostPoint(sibling, component.parent, index) + padding
         }
     }
 
@@ -33,11 +36,11 @@ open class SiblingConstraint @JvmOverloads constructor(private val alignOpposite
         if (alignOpposite) {
             if (index == 0) return component.parent.getBottom() - component.getHeight()
             val sibling = component.parent.children[index - 1]
-            return getHighestPoint(sibling, component.parent, index) - component.getHeight()
+            return getHighestPoint(sibling, component.parent, index) - component.getHeight() - padding
         } else {
             if (index == 0) return component.parent.getTop()
             val sibling = component.parent.children[index - 1]
-            return getLowestPoint(sibling, component.parent, index)
+            return getLowestPoint(sibling, component.parent, index) + padding
         }
     }
 
