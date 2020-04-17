@@ -10,7 +10,7 @@ import java.awt.Color
 /**
  * Extremely simple component that simply draws a colored rectangle.
  */
-open class UIBlock(color: Color = Color(0, 0, 0, 0)) : UIComponent() {
+open class UIBlock(color: Color = Color.WHITE) : UIComponent() {
     init {
         setColor(color.asConstraint())
     }
