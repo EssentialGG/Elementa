@@ -58,6 +58,8 @@ open class UIImage(
             imageWidth = image.width.toFloat()
             imageHeight = image.height.toFloat()
             texture = UniversalGraphicsHandler.getTexture(image)
+
+            imageFuture.obtrudeValue(null)
         }
 
         return loadingImage.getTexture(preferredWidth, preferredHeight)
