@@ -39,7 +39,7 @@ class SVGComponent(private val svg: SVG) : UIComponent() {
         UniversalGraphicsHandler.enableBlend()
         UniversalGraphicsHandler.disableTexture2D()
 
-        GlStateManager.color(color.red / 255f, color.green / 255f, color.blue / 255f)
+        GL11.glColor4f(color.red / 255f, color.green / 255f, color.blue / 255f, 1f)
         UniversalGraphicsHandler.translate(x, y, 0.0)
         UniversalGraphicsHandler.scale(xScale, yScale, 0.0)
 
