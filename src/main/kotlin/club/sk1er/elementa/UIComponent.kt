@@ -7,13 +7,17 @@ import club.sk1er.elementa.constraints.animation.AnimatingConstraints
 import club.sk1er.elementa.dsl.animate
 import club.sk1er.elementa.effects.Effect
 import club.sk1er.elementa.effects.ScissorEffect
+import club.sk1er.elementa.utils.TriConsumer
 import club.sk1er.mods.core.universal.UniversalMouse
 import club.sk1er.mods.core.universal.UniversalResolutionUtil
 import net.minecraft.client.Minecraft
 import org.lwjgl.opengl.GL11
 import java.awt.Color
 import java.util.concurrent.CopyOnWriteArrayList
+import java.util.function.BiConsumer
 import java.util.function.Consumer
+import kotlin.math.PI
+import kotlin.math.sin
 
 /**
  * UIComponent is the base of all drawing, meaning
@@ -27,13 +31,13 @@ abstract class UIComponent {
     private val features = mutableListOf<Effect>()
     private var constraints = UIConstraints(this)
 
-    private var mouseClickAction: (mouseX: Float, mouseY: Float, button: Int) -> Unit = { _, _, _ -> }
-    private var mouseReleaseAction: () -> Unit = {}
-    private var mouseEnterAction: () -> Unit = {}
-    private var mouseLeaveAction: () -> Unit = {}
-    private var mouseScrollAction: (delta: Int) -> Unit = {}
-    private var mouseDragAction: (mouseX: Float, mouseY: Float, button: Int) -> Unit = { _, _, _ -> }
-    private var keyTypeAction: (typedChar: Char, keyCode: Int) -> Unit = { _, _ -> }
+    private var mouseClickAction: UIComponent.(mouseX: Float, mouseY: Float, button: Int) -> Unit = { _, _, _ -> }
+    private var mouseReleaseAction: UIComponent.() -> Unit = {}
+    private var mouseEnterAction: UIComponent.() -> Unit = {}
+    private var mouseLeaveAction: UIComponent.() -> Unit = {}
+    private var mouseScrollAction: UIComponent.(delta: Int) -> Unit = {}
+    private var mouseDragAction: UIComponent.(mouseX: Float, mouseY: Float, button: Int) -> Unit = { _, _, _ -> }
+    private var keyTypeAction: UIComponent.(typedChar: Char, keyCode: Int) -> Unit = { _, _ -> }
 
     private var currentlyHovered = false
     private var beforeHideAnimation: AnimatingConstraints.() -> Unit = { }
@@ -126,6 +130,10 @@ abstract class UIComponent {
         this.features.add(effect)
     }
 
+    fun setChildOf(parent: UIComponent) = apply {
+        parent.addChild(this)
+    }
+
     fun setX(constraint: XConstraint) = apply {
         this.constraints.withX(constraint)
     }
@@ -209,17 +217,19 @@ abstract class UIComponent {
             val top = getTop().toDouble()
             val bottom = getBottom().toDouble()
 
+            val color = getDebugColor(depth(), (parent.hashCode() / PI) % PI)
+
             // Top outline block
-            UIBlock.drawBlock(DEBUG_COLOR, left - DEBUG_OUTLINE_WIDTH, top - DEBUG_OUTLINE_WIDTH, right + DEBUG_OUTLINE_WIDTH, top)
+            UIBlock.drawBlock(color, left - DEBUG_OUTLINE_WIDTH, top - DEBUG_OUTLINE_WIDTH, right + DEBUG_OUTLINE_WIDTH, top)
 
             // Right outline block
-            UIBlock.drawBlock(DEBUG_COLOR, right, top, right + DEBUG_OUTLINE_WIDTH, bottom)
+            UIBlock.drawBlock(color, right, top, right + DEBUG_OUTLINE_WIDTH, bottom)
 
             // Bottom outline block
-            UIBlock.drawBlock(DEBUG_COLOR, left - DEBUG_OUTLINE_WIDTH, bottom, right + DEBUG_OUTLINE_WIDTH, bottom + DEBUG_OUTLINE_WIDTH)
+            UIBlock.drawBlock(color, left - DEBUG_OUTLINE_WIDTH, bottom, right + DEBUG_OUTLINE_WIDTH, bottom + DEBUG_OUTLINE_WIDTH)
 
             // Left outline block
-            UIBlock.drawBlock(DEBUG_COLOR, left - DEBUG_OUTLINE_WIDTH, top, left, bottom)
+            UIBlock.drawBlock(color, left - DEBUG_OUTLINE_WIDTH, top, left, bottom)
 
             if (ScissorEffect.currentScissorState != null) {
                 GL11.glEnable(GL11.GL_SCISSOR_TEST)
@@ -359,24 +369,40 @@ abstract class UIComponent {
         return false
     }
 
+    fun depth(): Int {
+        var current = this
+        var depth = 0
+
+        try {
+            while (current !is Window && current.parent != current) {
+                current = current.parent
+                depth++
+            }
+        } catch (e: UninitializedPropertyAccessException) {
+            throw IllegalStateException("No window parent? It's possible you haven't called Window.addChild() at this point in time.")
+        }
+
+        return depth
+    }
+
     /**
      * Adds a method to be run when mouse is clicked within the component.
      */
-    fun onMouseClick(method: (mouseX: Float, mouseY: Float, mouseButton: Int) -> Unit) = apply {
+    fun onMouseClick(method: UIComponent.(mouseX: Float, mouseY: Float, mouseButton: Int) -> Unit) = apply {
         mouseClickAction = method
     }
 
     /**
      * Adds a method to be run when mouse is clicked within the component.
      */
-//    fun onMouseClickConsumer(method: ) = apply {
-//        mouseClickAction = method::accept
-//    }
+    fun onMouseClickConsumer(method: TriConsumer<Float, Float, Int>) = apply {
+        mouseClickAction = { t: Float, u: Float, v: Int -> method.accept(t, u, v) }
+    }
 
     /**
      * Adds a method to be run when mouse is released within the component.
      */
-    fun onMouseRelease(method: () -> Unit) = apply {
+    fun onMouseRelease(method: UIComponent.() -> Unit) = apply {
         mouseReleaseAction = method
     }
 
@@ -384,14 +410,14 @@ abstract class UIComponent {
      * Adds a method to be run when mouse is released within the component.
      */
     fun onMouseReleaseRunnable(method: Runnable) = apply {
-        mouseReleaseAction = method::run
+        mouseReleaseAction = { method.run() }
     }
 
     /**
      * Adds a method to be run when mouse is dragged anywhere on screen.
      * This does not check if mouse is in component.
      */
-    fun onMouseDrag(method: (mouseX: Float, mouseY: Float, mouseButton: Int) -> Unit) = apply {
+    fun onMouseDrag(method: UIComponent.(mouseX: Float, mouseY: Float, mouseButton: Int) -> Unit) = apply {
         mouseDragAction = method
     }
 
@@ -399,14 +425,14 @@ abstract class UIComponent {
      * Adds a method to be run when mouse is dragged anywhere on screen.
      * This does not check if mouse is in component.
      */
-//    fun onMouseDragConsumer(method: ) = apply {
-//        mouseDragAction = method::accept
-//    }
+    fun onMouseDragConsumer(method: TriConsumer<Float, Float, Int>) = apply {
+        mouseDragAction = { t: Float, u: Float, v: Int -> method.accept(t, u, v) }
+    }
 
     /**
      * Adds a method to be run when mouse enters the component.
      */
-    fun onMouseEnter(method: () -> Unit) = apply {
+    fun onMouseEnter(method: UIComponent.() -> Unit) = apply {
         mouseEnterAction = method
     }
 
@@ -414,13 +440,13 @@ abstract class UIComponent {
      * Adds a method to be run when mouse enters the component.
      */
     fun onMouseEnterRunnable(method: Runnable) = apply {
-        mouseEnterAction = method::run
+        mouseEnterAction = { method.run() }
     }
 
     /**
      * Adds a method to be run when mouse leaves the component.
      */
-    fun onMouseLeave(method: () -> Unit) = apply {
+    fun onMouseLeave(method: UIComponent.() -> Unit) = apply {
         mouseLeaveAction = method
     }
 
@@ -428,13 +454,13 @@ abstract class UIComponent {
      * Adds a method to be run when mouse leaves the component.
      */
     fun onMouseLeaveRunnable(method: Runnable) = apply {
-        mouseLeaveAction = method::run
+        mouseLeaveAction = { method.run() }
     }
 
     /**
      * Adds a method to be run when mouse scrolls while in the component.
      */
-    fun onMouseScroll(method: (delta: Int) -> Unit) = apply {
+    fun onMouseScroll(method: UIComponent.(delta: Int) -> Unit) = apply {
         mouseScrollAction = method
     }
 
@@ -442,11 +468,15 @@ abstract class UIComponent {
      * Adds a method to be run when mouse scrolls while in the component.
      */
     fun onMouseScrollConsumer(method: Consumer<Int>) = apply {
-        mouseScrollAction = method::accept
+        mouseScrollAction = { method.accept(it) }
     }
 
-    fun onKeyType(method: (typedChar: Char, keyCode: Int) -> Unit) = apply {
+    fun onKeyType(method: UIComponent.(typedChar: Char, keyCode: Int) -> Unit) = apply {
         keyTypeAction = method
+    }
+
+    fun onKeyTypeConsumer(method: BiConsumer<Char, Int>) {
+        keyTypeAction = { t: Char, u: Int -> method.accept(t, u) }
     }
 
     /*
@@ -536,7 +566,15 @@ abstract class UIComponent {
 
     companion object {
         val IS_DEBUG = System.getProperty("elementa.debug")?.toBoolean() ?: false
-        val DEBUG_COLOR = Color(255, 0, 255)
         val DEBUG_OUTLINE_WIDTH = System.getProperty("elementa.debug.width")?.toDoubleOrNull() ?: 2.0
+
+        private fun getDebugColor(depth: Int, offset: Double): Color {
+            val step = depth.toDouble() / PI + offset
+
+            val red = ((sin((step)) + 0.75) * 170).toInt().coerceIn(0..255)
+            val green = ((sin(step + 2 * Math.PI / 3) + 0.75) * 170).toInt().coerceIn(0..255)
+            val blue = ((sin(step + 4 * Math.PI / 3) + 0.75) * 170).toInt().coerceIn(0..255)
+            return Color(red, green, blue, 255)
+        }
     }
 }

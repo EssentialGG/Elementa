@@ -18,7 +18,6 @@ import kotlin.math.sin
  */
 open class UIRoundedRectangle @JvmOverloads constructor(radius: Float, var steps: Int = 10) : UIComponent() {
     init {
-        setColor(Color(0, 0, 0, 0).asConstraint())
         setRadius(radius.pixels())
     }
 

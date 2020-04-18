@@ -22,12 +22,12 @@ maven {
 In your dependencies block, add:
 
 ```groovy
-implementation "club.sk1er:Elementa:1.6.0-$mcVersion"
+implementation "club.sk1er:Elementa:1.6.4-$mcVersion"
 ```
 
 ## Components
 
-All of the drawing in Elementa is done via UIComponents. There is a root component named `Window`
+All the drawing in Elementa is done via UIComponents. There is a root component named `Window`
 that MUST be in the hierarchy of all components, thus making it the top of the component tree. 
 All components have exactly `1` parent, and all components have `0-n` children.
 
@@ -131,7 +131,7 @@ method.
 ## All together
 
 This is a basic excerpt of code from an Elementa GUI. To see a more fleshed out
-example, look to the `SettingsGui` class.
+example, look to the [ExampleGui class](src/main/java/com/example/examplemod/ExampleGui.kt).
 
 ```kotlin
 val window = Window()

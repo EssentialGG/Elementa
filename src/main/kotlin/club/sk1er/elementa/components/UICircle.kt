@@ -13,29 +13,33 @@ import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
 
-class UICircle @JvmOverloads constructor(radius: Float = 0f, color: Color = Color(0, 0, 0, 0), var steps: Int = 40) : UIComponent() {
+class UICircle @JvmOverloads constructor(radius: Float = 0f, color: Color = Color.WHITE, var steps: Int = 40) : UIComponent() {
     init {
         setColor(color.asConstraint())
         setRadius(radius.pixels())
     }
 
-    override fun isHovered(): Boolean {
-        val res = Window.of(this).scaledResolution
+    override fun getLeft(): Float {
+        return getConstraints().getX() - getRadius()
+    }
 
-        val mouseX = UniversalMouse.getScaledX();
-        val mouseY = res.scaledHeight - UniversalMouse.getScaledY() - 1f
+    override fun getTop(): Float {
+        return getConstraints().getY() - getRadius()
+    }
 
-        return (mouseX > getLeft() - getRadius()
-            && mouseY > getTop() - getRadius()
-            && mouseX < getLeft() + getRadius()
-            && mouseY < getTop() + getRadius())
+    override fun getWidth(): Float {
+        return getRadius() * 2
+    }
+
+    override fun getHeight(): Float {
+        return getRadius() * 2
     }
 
     override fun draw() {
         beforeDraw()
 
-        val x = getLeft().toDouble()
-        val y = getTop().toDouble()
+        val x = getConstraints().getX().toDouble()
+        val y = getConstraints().getY().toDouble()
         val r = getRadius().toDouble()
 
         val color = getColor()
