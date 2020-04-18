@@ -206,7 +206,6 @@ class ExampleGui : UniversalScreen() {
         // where the drag begun.
         private var dragOffset = 0f to 0f
 
-
         val textArea: UITextInput
 
         init {

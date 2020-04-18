@@ -171,6 +171,7 @@ dependencies {
         minecraft 'net.minecraftforge:forge:1.15.2-31.1.18'
     }
     embed "club.sk1er:UniversalCraft:1.1.4-${mcVersion}"
+    embed "org.dom4j:dom4j:2.1.1"
 }
 
 processResources {

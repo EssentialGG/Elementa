@@ -1,6 +1,7 @@
 package com.example.examplemod
 
 //#if MC<=11202
+import club.sk1er.elementa.svg.SVGParser
 import net.minecraft.command.CommandBase
 import net.minecraft.command.ICommandSender
 import net.minecraft.server.MinecraftServer
