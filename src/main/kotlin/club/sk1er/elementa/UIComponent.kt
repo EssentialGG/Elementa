@@ -182,6 +182,10 @@ abstract class UIComponent {
 
     open fun getColor() = constraints.getColor()
 
+    open fun isPositionCenter(): Boolean {
+        return false
+    }
+
     /**
      * Checks if the player's mouse is currently on top of this component.
      *

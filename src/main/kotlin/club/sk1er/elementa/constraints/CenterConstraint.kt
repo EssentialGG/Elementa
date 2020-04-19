@@ -11,10 +11,22 @@ class CenterConstraint : PositionConstraint {
     override var constrainTo: UIComponent? = null
 
     override fun getXPositionImpl(component: UIComponent): Float {
-        return (constrainTo ?: component.parent).getLeft() + (constrainTo ?: component.parent).getWidth() / 2 - component.getWidth() / 2
+        val parent = constrainTo ?: component.parent
+
+        return if (component.isPositionCenter()) {
+            parent.getLeft() + parent.getWidth() / 2
+        } else {
+            parent.getLeft() + parent.getWidth() / 2 - component.getWidth() / 2
+        }
     }
 
     override fun getYPositionImpl(component: UIComponent): Float {
-        return (constrainTo ?: component.parent).getTop() + (constrainTo ?: component.parent).getHeight() / 2 - component.getHeight() / 2
+        val parent = constrainTo ?: component.parent
+
+        return if (component.isPositionCenter()) {
+            parent.getTop() + parent.getHeight() / 2
+        } else {
+            parent.getTop() + parent.getHeight() / 2 - component.getHeight() / 2
+        }
     }
 }

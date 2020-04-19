@@ -35,6 +35,10 @@ class UICircle @JvmOverloads constructor(radius: Float = 0f, color: Color = Colo
         return getRadius() * 2
     }
 
+    override fun isPositionCenter(): Boolean {
+        return true
+    }
+
     override fun draw() {
         beforeDraw()
 
