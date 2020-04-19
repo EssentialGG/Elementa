@@ -21,7 +21,7 @@ maven {
 In your dependencies block, add:
 
 ```groovy
-implementation "club.sk1er:Elementa:1.7.0-$mcVersion"
+implementation "club.sk1er:Elementa:1.7.1-$mcVersion"
 ```
 
 ## Components
