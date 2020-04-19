@@ -10,7 +10,6 @@ import club.sk1er.elementa.effects.ScissorEffect
 import club.sk1er.elementa.utils.TriConsumer
 import club.sk1er.mods.core.universal.UniversalMouse
 import club.sk1er.mods.core.universal.UniversalResolutionUtil
-import net.minecraft.client.Minecraft
 import org.lwjgl.opengl.GL11
 import java.awt.Color
 import java.util.concurrent.CopyOnWriteArrayList
@@ -27,8 +26,8 @@ abstract class UIComponent {
     open lateinit var parent: UIComponent
     open var children = CopyOnWriteArrayList<UIComponent>()
         internal set
+    val effects = mutableListOf<Effect>()
 
-    private val features = mutableListOf<Effect>()
     private var constraints = UIConstraints(this)
 
     private var mouseClickAction: UIComponent.(mouseX: Float, mouseY: Float, button: Int) -> Unit = { _, _, _ -> }
@@ -120,14 +119,22 @@ abstract class UIComponent {
      * Enables a set of effects to be applied when this component draws.
      */
     fun enableEffects(vararg effects: Effect) = apply {
-        this.features.addAll(effects)
+        this.effects.addAll(effects)
     }
 
     /**
      * Enables a single effect to be applied when the component draws.
      */
     fun enableEffect(effect: Effect) = apply {
-        this.features.add(effect)
+        this.effects.add(effect)
+    }
+
+    inline fun <reified T> removeEffect() {
+        this.effects.removeIf { it is T }
+    }
+
+    fun <T : Effect> removeEffect(clazz: Class<T>) {
+        this.effects.removeIf { clazz.isInstance(it) }
     }
 
     fun setChildOf(parent: UIComponent) = apply {
@@ -260,15 +267,15 @@ abstract class UIComponent {
     }
 
     open fun beforeDraw() {
-        features.forEach { it.beforeDraw(this) }
+        effects.forEach { it.beforeDraw(this) }
     }
 
     open fun afterDraw() {
-        features.forEach { it.afterDraw(this) }
+        effects.forEach { it.afterDraw(this) }
     }
 
     open fun beforeChildrenDraw() {
-        features.forEach { it.beforeChildrenDraw(this) }
+        effects.forEach { it.beforeChildrenDraw(this) }
     }
 
     open fun mouseMove() {
