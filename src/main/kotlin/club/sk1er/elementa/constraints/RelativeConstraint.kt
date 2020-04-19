@@ -16,7 +16,7 @@ class RelativeConstraint @JvmOverloads constructor(private val value: Float = 1f
     }
 
     override fun getYPositionImpl(component: UIComponent): Float {
-        return component.parent.getTop() + getWidth(component)
+        return component.parent.getTop() + getHeight(component)
     }
 
     override fun getWidthImpl(component: UIComponent): Float {
