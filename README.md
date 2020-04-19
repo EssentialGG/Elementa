@@ -1,5 +1,4 @@
 # Elementa
-[![](https://jitpack.io/v/sk1erllc/Elementa.svg)](https://jitpack.io/#sk1erllc/Elementa)
 
 Elementa (from the name of the first book published on Geometry by Euclid) is a library
 that aims to make GUI creation extremely simple. It's based on a couple key concepts, some of which
@@ -22,7 +21,7 @@ maven {
 In your dependencies block, add:
 
 ```groovy
-implementation "club.sk1er:Elementa:1.6.4-$mcVersion"
+implementation "club.sk1er:Elementa:1.7.0-$mcVersion"
 ```
 
 ## Components
