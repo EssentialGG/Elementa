@@ -13,7 +13,7 @@ import java.net.URL
 import java.util.concurrent.CompletableFuture
 import javax.imageio.ImageIO
 
-open class UIImage(
+open class UIImage @JvmOverloads constructor(
     private val imageFuture: CompletableFuture<BufferedImage>,
     private val loadingImage: ImageProvider = DefaultLoadingImage
 ) : UIComponent(), ImageProvider {
