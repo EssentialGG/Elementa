@@ -57,7 +57,7 @@ class ScrollComponent @JvmOverloads constructor(
         this.enableEffects(ScissorEffect())
 
         onMouseScroll { onScroll(it) }
-        onMouseClick { mouseX, mouseY, mouseButton ->  onClick(mouseX, mouseY, mouseButton) }
+        onMouseClick { event ->  onClick(event.relativeX, event.relativeY, event.mouseButton) }
     }
 
     override fun draw() {
@@ -117,8 +117,8 @@ class ScrollComponent @JvmOverloads constructor(
 
         component.parent.onMouseScroll { onScroll(it) }
 
-        component.onMouseClick { _, mouseY, _ ->
-            dragBeginPos = mouseY
+        component.onMouseClick { event ->
+            dragBeginPos = event.relativeY
         }
 
         component.onMouseDrag { _, mouseY, _ ->

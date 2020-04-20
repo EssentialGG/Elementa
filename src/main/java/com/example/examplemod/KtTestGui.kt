@@ -42,15 +42,14 @@ class KtTestGui : UniversalScreen() {
                 y = 5.pixels()
                 width = 10.pixels()
                 height = 10.pixels()
-            }.onMouseClick { _, _, _ -> closeSettings() }
+            }.onMouseClick { closeSettings() }
         ),
         UIBlock(Color(0, 0, 0, 255)).constrain {
             x = 5.pixels()
             y = SiblingConstraint() + 5.pixels()
             width = FillConstraint() - 5.pixels()
             height = 20.pixels()
-        }.onMouseClick { _, _, _ ->
-
+        }.onMouseClick {
             notification.setText(
                 title = "Example Notification",
                 text = "This is a test notification with a really long text line"
@@ -93,7 +92,7 @@ class KtTestGui : UniversalScreen() {
             y = SiblingConstraint()
             width = ChildBasedSizeConstraint() + 4.pixels()
             height = ChildBasedSizeConstraint() + 4.pixels()
-        }.onMouseClick { _, _, _ ->
+        }.onMouseClick {
             myText.active = true
         } effect ScissorEffect()
 
@@ -104,7 +103,7 @@ class KtTestGui : UniversalScreen() {
             y = CenterConstraint()
         }
 
-        window.onMouseClick { _, _, _ ->
+        window.onMouseClick {
             myText.active = false
         }
 
@@ -196,7 +195,7 @@ class KtTestGui : UniversalScreen() {
                     hover()
                 }.onMouseLeave {
                     unhover()
-                }.onMouseClick { _, _, _ ->
+                }.onMouseClick {
                     println("radius: " + slider.getRadius())
                 }
             this
@@ -290,7 +289,7 @@ class KtTestGui : UniversalScreen() {
                 glow.getVertices()[2].animate {
                     setXAnimation(Animations.OUT_EXP, 2f, 14.pixels(true))
                 }
-            }.onMouseClick { _, _, _ ->
+            }.onMouseClick {
                 clicked = true
                 glow.animate {
                     setColorAnimation(Animations.OUT_EXP, 0.5f, Color(100, 100, 100, 255).asConstraint())

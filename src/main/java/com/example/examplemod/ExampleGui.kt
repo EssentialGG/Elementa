@@ -63,8 +63,8 @@ class ExampleGui : UniversalScreen() {
             // If instead we wanted this button to have multiple children going vertically,
             // we could swap the width & height constraints.
             height = ChildBasedMaxSizeConstraint() + 4.pixels()
-        }.onMouseClick { _, _, _ ->
-            // We discard all of our parameters (mouseX, mouseY, mouseButton) for multiple reasons.
+        }.onMouseClick {
+            // We discard our parameter (the UIClickEvent) for multiple reasons.
             // For one, we don't care about the mouse's position because we already know that it is
             // inside of this component, Elementa wouldn't fire this event otherwise.
             // Secondly, we don't care about the mouse button because for simplicity we are going to
@@ -179,17 +179,22 @@ class ExampleGui : UniversalScreen() {
             color = Color.GREEN.darker().asConstraint()
         } childOf createNoteButton
 
-        window.onMouseClick { _, _, _ ->
+        window.onMouseClick {
             // When the window is clicked, we want to set all sticky notes to be inactive.
             // To do so, we need to find all children of window that are instances of [StickyNote].
             // For that, we can use the handy [childrenOfType] helper, and from there
             // set each text area to be inactive.
-            // The mouse event will occur on window first, so if this click happens to be on top
-            // of a sticky note's text area, that event will run later, setting it's text area
-            // back to active properly.
+            // In Elementa, click events follow the "bubbling" system that the browser's DOM does.
+            // The most specific, deeply nested component will receive the click event first,
+            // and then as long as that component's listeners do not stop propagation, it will
+            // bubble up to the top of the component hierarchy, eventually reaching the window component.
+            // In our case, if this particular click happens on a sticky note, it will be stopped
+            // from propagating up to the window, so we're safe to set all sticky notes to be inactive here.
             window.childrenOfType<StickyNote>().forEach {
                 it.textArea.active = false
             }
+
+            println("Firing on window!")
         }
     }
 
@@ -222,7 +227,7 @@ class ExampleGui : UniversalScreen() {
                 height = 100.pixels()
             }
 
-            onMouseClick { _, _, _ ->
+            onMouseClick {
                 // Finally, we also want to bring this sticky note to the front of all of the other notes
                 // when clicked. To do so, we need to first remove it from its parent, and then
                 // re-add it, which will place it on top. We want to do all of this to the sticky note as a whole.
@@ -261,16 +266,15 @@ class ExampleGui : UniversalScreen() {
                 // the 'X' button to delete the note will likely be 18 pixels, allowing for 3 pixels
                 // of padding on this bar.
                 height = 24.pixels()
-            }.onMouseClick { mouseX, mouseY, _ ->
+            }.onMouseClick { event ->
                 // Now, we need to modify our state to say that we are actively dragging
                 // this note around.
                 isDragging = true
 
                 // Here we are storing the absolute position of our mouse.
-                // The [mouseX] and [mouseY] parameters are already relative to our current
-                // component, so we need to add this component's position. We can access any component's
-                // current location with the [getLeft], [getTop], etc. functions.
-                dragOffset = mouseX + getLeft() to mouseY + getTop()
+                // The UIClickEvent provides us the ability to directly access those properties.
+                // It also offers [relativeX] and [relativeY] properties if necessary.
+                dragOffset = event.absoluteX to event.absoluteY
             }.onMouseRelease {
                 // As opposed to [onMouseClick], [onMouseRelease] will be called on all components
                 // no matter where the mouse currently is.
@@ -287,6 +291,7 @@ class ExampleGui : UniversalScreen() {
                 if (!isDragging) return@onMouseDrag
 
                 // We begin by calculating the mouse's absolute position.
+                // We can access the bounding box of any component with the [getLeft], [getTop], etc. functions
                 val absoluteX = mouseX + getLeft()
                 val absoluteY = mouseY + getTop()
 
@@ -349,11 +354,15 @@ class ExampleGui : UniversalScreen() {
                     // And when we unhover this button, we'll move the text back to its original black color.
                     setColorAnimation(Animations.OUT_EXP, 0.5f, Color.BLACK.asConstraint())
                 }
-            }.onMouseClick { _, _, _ ->
+            }.onMouseClick { event ->
                 // When we click the delete button, we want to remove the sticky note in its
                 // entirety from its parent, removing it from the hierarchy and essentially deleting it,
                 // as it is no longer referenced anywhere.
                 this@StickyNote.parent.removeChild(this@StickyNote)
+
+                // Don't continue passing this event up the component hierarchy because
+                // sticky notes will always try to re-add themselves to the window when clicked.
+                event.stopPropagation()
             } childOf topBar
 
             // Now we need to make the background of the area that will actually hold
@@ -414,10 +423,16 @@ class ExampleGui : UniversalScreen() {
                 // This width and height will be all of the area the user has available to type.
                 width = FillConstraint() - 2.pixels()
                 height = FillConstraint() - 2.pixels()
-            }.onMouseClick { _, _, _ ->
+            }.onMouseClick { event ->
                 // When we click inside of this text area, we want to activate it.
                 // We know that the [this] value is an instance of [UITextInput] so we can simply cast.
                 (this as UITextInput).active = true
+
+                // We don't want the Window to receive this event because it would then set our input
+                // back to inactive.
+                event.stopPropagation()
+
+                println("Firing on sticky note.")
             } childOf textHolder) as UITextInput
         }
     }

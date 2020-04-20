@@ -224,12 +224,12 @@ class ComponentsGui : UniversalScreen() {
                 width = RelativeConstraint(1f) - 2.pixels()
             } childOf box2
 
-            box1.onMouseClick { _, _, _ ->
+            box1.onMouseClick {
                 textInput1.active = true
                 textInput2.active = false
             }
 
-            box2.onMouseClick { _, _, _ ->
+            box2.onMouseClick {
                 textInput1.active = false
                 textInput2.active = true
             }

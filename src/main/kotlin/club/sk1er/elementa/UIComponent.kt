@@ -7,6 +7,7 @@ import club.sk1er.elementa.constraints.animation.AnimatingConstraints
 import club.sk1er.elementa.dsl.animate
 import club.sk1er.elementa.effects.Effect
 import club.sk1er.elementa.effects.ScissorEffect
+import club.sk1er.elementa.events.UIClickEvent
 import club.sk1er.elementa.utils.TriConsumer
 import club.sk1er.mods.core.universal.UniversalMouse
 import club.sk1er.mods.core.universal.UniversalResolutionUtil
@@ -30,7 +31,10 @@ abstract class UIComponent {
 
     private var constraints = UIConstraints(this)
 
-    private var mouseClickAction: UIComponent.(mouseX: Float, mouseY: Float, button: Int) -> Unit = { _, _, _ -> }
+    /* Bubbling Events */
+    val mouseClickListeners = mutableListOf<UIComponent.(UIClickEvent) -> Unit>()
+
+    /* Non-Bubbling Events */
     private var mouseReleaseAction: UIComponent.() -> Unit = {}
     private var mouseEnterAction: UIComponent.() -> Unit = {}
     private var mouseLeaveAction: UIComponent.() -> Unit = {}
@@ -203,13 +207,17 @@ abstract class UIComponent {
     open fun isHovered(): Boolean {
         val res = Window.of(this).scaledResolution
 
-        val mouseX = UniversalMouse.getScaledX()
+        val mouseX = UniversalMouse.getScaledX().toFloat()
         val mouseY = res.scaledHeight - UniversalMouse.getTrueY() * res.scaledHeight / UniversalResolutionUtil.getInstance().windowHeight - 1f
 
-        return (mouseX > getLeft()
-                && mouseX < getRight()
-                && mouseY > getTop()
-                && mouseY < getBottom())
+        return isPointInside(mouseX, mouseY)
+    }
+
+    open fun isPointInside(x: Float, y: Float): Boolean {
+        return x > getLeft()
+                && x < getRight()
+                && y > getTop()
+                && y < getBottom()
     }
 
     /**
@@ -231,13 +239,25 @@ abstract class UIComponent {
             val color = getDebugColor(depth(), (parent.hashCode() / PI) % PI)
 
             // Top outline block
-            UIBlock.drawBlock(color, left - DEBUG_OUTLINE_WIDTH, top - DEBUG_OUTLINE_WIDTH, right + DEBUG_OUTLINE_WIDTH, top)
+            UIBlock.drawBlock(
+                color,
+                left - DEBUG_OUTLINE_WIDTH,
+                top - DEBUG_OUTLINE_WIDTH,
+                right + DEBUG_OUTLINE_WIDTH,
+                top
+            )
 
             // Right outline block
             UIBlock.drawBlock(color, right, top, right + DEBUG_OUTLINE_WIDTH, bottom)
 
             // Bottom outline block
-            UIBlock.drawBlock(color, left - DEBUG_OUTLINE_WIDTH, bottom, right + DEBUG_OUTLINE_WIDTH, bottom + DEBUG_OUTLINE_WIDTH)
+            UIBlock.drawBlock(
+                color,
+                left - DEBUG_OUTLINE_WIDTH,
+                bottom,
+                right + DEBUG_OUTLINE_WIDTH,
+                bottom + DEBUG_OUTLINE_WIDTH
+            )
 
             // Left outline block
             UIBlock.drawBlock(color, left - DEBUG_OUTLINE_WIDTH, top, left, bottom)
@@ -257,7 +277,8 @@ abstract class UIComponent {
                     child.getLeft().toDouble(),
                     child.getTop().toDouble(),
                     child.getRight().toDouble(),
-                    child.getBottom().toDouble())
+                    child.getBottom().toDouble()
+                )
             ) return@forEach
 
             child.draw()
@@ -302,12 +323,34 @@ abstract class UIComponent {
      * Most common use is on the [Window] object.
      */
     open fun mouseClick(mouseX: Int, mouseY: Int, button: Int) {
-        if (isHovered()) mouseClickAction( mouseX - getLeft(), mouseY - getTop(), button)
-
         if (focusedComponent != null) {
-            focusedComponent?.mouseClick(mouseX, mouseY, button)
-        } else {
-            this.children.forEach { it.mouseClick(mouseX, mouseY, button) }
+            if (focusedComponent?.isPointInside(mouseX.toFloat(), mouseY.toFloat()) == true) {
+                focusedComponent?.mouseClick(mouseX, mouseY, button)
+            }
+
+            return
+        }
+
+        for (i in children.lastIndex downTo 0) {
+            val child = children[i]
+
+            if (child.isPointInside(mouseX.toFloat(), mouseY.toFloat())) {
+                return child.mouseClick(mouseX, mouseY, button)
+            }
+        }
+
+        fireMouseEvent(UIClickEvent(mouseX.toFloat(), mouseY.toFloat(), button, this, this))
+    }
+
+    private fun fireMouseEvent(event: UIClickEvent) {
+        for (listener in mouseClickListeners) {
+            this.listener(event)
+
+            if (event.propagationStoppedImmediately) return
+        }
+
+        if (!event.propagationStopped && parent != this) {
+            parent.fireMouseEvent(event.copy(currentTarget = parent))
         }
     }
 
@@ -399,15 +442,15 @@ abstract class UIComponent {
     /**
      * Adds a method to be run when mouse is clicked within the component.
      */
-    fun onMouseClick(method: UIComponent.(mouseX: Float, mouseY: Float, mouseButton: Int) -> Unit) = apply {
-        mouseClickAction = method
+    fun onMouseClick(method: UIComponent.(event: UIClickEvent) -> Unit) = apply {
+        mouseClickListeners.add(method)
     }
 
     /**
      * Adds a method to be run when mouse is clicked within the component.
      */
-    fun onMouseClickConsumer(method: TriConsumer<Float, Float, Int>) = apply {
-        mouseClickAction = { t: Float, u: Float, v: Int -> method.accept(t, u, v) }
+    fun onMouseClickConsumer(method: Consumer<UIClickEvent>) = apply {
+        mouseClickListeners.add { method.accept(it) }
     }
 
     /**

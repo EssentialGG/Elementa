@@ -126,8 +126,8 @@ class ExampleServerList : UniversalScreen() {
                 glow.getVertices()[2].animate {
                     setXAnimation(Animations.OUT_EXP, 1f, 40.pixels(true))
                 }
-            }.onMouseClick { _, _, mouseButton ->
-                when (mouseButton) {
+            }.onMouseClick { event ->
+                when (event.mouseButton) {
                     0 -> {
                         if (inOptions) {
                             nameInput.active = false
@@ -225,7 +225,7 @@ class ExampleServerList : UniversalScreen() {
                 y = 10.pixels()
                 width = ChildBasedSizeConstraint() + 10.pixels()
                 height = ChildBasedSizeConstraint() + 8.pixels()
-            }.onMouseClick { _, _, _ ->
+            }.onMouseClick {
                 nameInput.active = true
             } effect ScissorEffect() childOf optionContainer
 
@@ -243,7 +243,7 @@ class ExampleServerList : UniversalScreen() {
                 y = SiblingConstraint() + 5.pixels()
                 width = ChildBasedSizeConstraint() + 10.pixels()
                 height = ChildBasedSizeConstraint() + 8.pixels()
-            }.onMouseClick { _, _, _ ->
+            }.onMouseClick {
                 ipInput.active = true
             } effect ScissorEffect() childOf optionContainer
 
