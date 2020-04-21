@@ -65,6 +65,8 @@ class SVGComponent(private val svg: SVG) : UIComponent() {
         GL11.glDisableClientState(GL11.GL_VERTEX_ARRAY)
         GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0)
 
+        UniversalGraphicsHandler.enableTexture2D()
+
         UniversalGraphicsHandler.popMatrix()
 
         super.draw()
