@@ -554,8 +554,19 @@ abstract class UIComponent {
      *
      * NOTE: Make sure to release any focus on this component, because it will likely cause
      * unintended side effects.
+     *
+     * @param instantly normally, hiding a component will run its before-hide
+     * animations, and when they are complete, it will fully remove the component.
+     * If [instantly] is true, it will skip the animation cycle and instantly remove the component.
      */
-    fun hide() {
+    @JvmOverloads
+    fun hide(instantly: Boolean = false) {
+        if (instantly) {
+            indexInParent = parent.children.indexOf(this@UIComponent)
+            parent.removeChild(this@UIComponent)
+            return
+        }
+
         animate {
             this.beforeHideAnimation()
 
