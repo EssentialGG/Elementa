@@ -1,6 +1,7 @@
 package com.example.examplemod
 
 import club.sk1er.elementa.UIComponent
+import club.sk1er.elementa.WindowScreen
 import club.sk1er.elementa.components.*
 import club.sk1er.elementa.components.image.BlurHashImage
 import club.sk1er.elementa.constraints.*
@@ -11,9 +12,7 @@ import club.sk1er.mods.core.universal.UniversalScreen
 import java.awt.Color
 import java.net.URL
 
-class ExampleServerList : UniversalScreen() {
-    val window = Window()
-
+class ExampleServerList : WindowScreen() {
     val serverList = (ScrollComponent().constrain {
         y = 30.pixels()
         width = RelativeConstraint()
@@ -57,26 +56,6 @@ class ExampleServerList : UniversalScreen() {
                 "mc.kerbybit.com"
             )
         )
-
-    }
-
-    override fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
-        this.drawDefaultBackground()
-        super.drawScreen(mouseX, mouseY, partialTicks)
-        window.draw()
-    }
-
-    override fun mouseClicked(mouseX: Int, mouseY: Int, mouseButton: Int) {
-        super.mouseClicked(mouseX, mouseY, mouseButton)
-        window.mouseClick(mouseX, mouseY, mouseButton)
-    }
-
-    override fun onMouseScroll(delta: Int) {
-        window.mouseScroll(delta.coerceIn(-1, 1))
-    }
-    override fun keyTyped(typedChar: Char, keyCode: Int) {
-        super.keyTyped(typedChar, keyCode)
-        window.keyType(typedChar, keyCode)
     }
 
     class ServerBlock(

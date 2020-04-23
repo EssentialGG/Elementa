@@ -1,5 +1,6 @@
 package com.example.examplemod
 
+import club.sk1er.elementa.WindowScreen
 import club.sk1er.elementa.components.*
 import club.sk1er.elementa.constraints.*
 import club.sk1er.elementa.constraints.animation.Animations
@@ -17,10 +18,12 @@ import java.awt.Color
  * The example won't look particularly pretty, but that is up to the programmer
  * to design their GUIs how they wish.
  */
-class ExampleGui : UniversalScreen() {
-    // We need to construct our window first of all. All Elementa hierarchies MUST start
-    // with a window.
-    val window = Window()
+class ExampleGui : WindowScreen() {
+    // Our ExampleGui class will extend from WindowScreen
+    // which is a subclass of GuiScreen that will call all mouse/keyboard
+    // events for us.
+    // In addition, it will construct and provide us with an instance of [Window]
+    // that we can use as we need.
 
     init {
         // Here we start outlining all of our components. This code doesn't
@@ -193,8 +196,6 @@ class ExampleGui : UniversalScreen() {
             window.childrenOfType<StickyNote>().forEach {
                 it.textArea.active = false
             }
-
-            println("Firing on window!")
         }
     }
 
@@ -431,72 +432,7 @@ class ExampleGui : UniversalScreen() {
                 // We don't want the Window to receive this event because it would then set our input
                 // back to inactive.
                 event.stopPropagation()
-
-                println("Firing on sticky note.")
             } childOf textHolder) as UITextInput
         }
-    }
-
-    override fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
-        super.drawScreen(mouseX, mouseY, partialTicks)
-        drawDefaultBackground()
-
-        // Now, we need to hook up Elementa to this GuiScreen. In practice, Elementa
-        // is not constrained to being used solely inside of a GuiScreen, all the programmer
-        // needs to do is call the [Window] events when appropriate, whenever that may be.
-        // In our example, it is in the overridden [GuiScreen#drawScreen] method.
-        window.draw()
-    }
-
-    override fun mouseClicked(mouseX: Int, mouseY: Int, mouseButton: Int) {
-        super.mouseClicked(mouseX, mouseY, mouseButton)
-
-        // We also need to pass along clicks
-        window.mouseClick(mouseX, mouseY, mouseButton)
-    }
-
-    override fun mouseClickMove(mouseX: Int, mouseY: Int, clickedMouseButton: Int, timeSinceLastClick: Long) {
-        super.mouseClickMove(mouseX, mouseY, clickedMouseButton, timeSinceLastClick)
-
-        // We also need to pass along drags
-        window.mouseDrag(mouseX, mouseY, clickedMouseButton)
-    }
-
-    override fun mouseReleased(mouseX: Int, mouseY: Int, state: Int) {
-        super.mouseReleased(mouseX, mouseY, state)
-
-        // We also need to pass along mouse releases
-        window.mouseRelease()
-    }
-
-    override fun onMouseScroll(delta: Int) {
-        super.onMouseScroll(delta)
-
-        // We also need to pass along scrolling
-        window.mouseScroll(delta.coerceIn(-1, 1))
-    }
-
-    override fun keyTyped(typedChar: Char, keyCode: Int) {
-        super.keyTyped(typedChar, keyCode)
-
-        // We also need to pass along typed keys
-        window.keyType(typedChar, keyCode)
-    }
-
-    override fun initGui() {
-        super.initGui()
-
-        // Since we want our users to be able to hold a key
-        // to type. This is a wrapper around a base LWJGL function.
-        // - Keyboard.enableRepeatEvents in <= 1.12.2
-        UniversalKeyboard.enableRepeatEvents(true)
-    }
-
-    override fun onGuiClosed() {
-        super.onGuiClosed()
-
-        // We need to disable repeat events when leaving
-        // the gui.
-        UniversalKeyboard.enableRepeatEvents(false)
     }
 }

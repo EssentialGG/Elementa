@@ -1,5 +1,6 @@
 package com.example.examplemod
 
+import club.sk1er.elementa.WindowScreen
 import club.sk1er.elementa.components.*
 import club.sk1er.elementa.components.image.BlurHashImage
 import club.sk1er.elementa.constraints.*
@@ -10,9 +11,7 @@ import club.sk1er.mods.core.universal.UniversalScreen
 import java.awt.Color
 import java.net.URL
 
-class ComponentsGui : UniversalScreen() {
-    val window = Window()
-
+class ComponentsGui : WindowScreen() {
     init {
         ComponentType("UIContainer") {
             val bar = UIBlock().constrain {
@@ -262,31 +261,6 @@ class ComponentsGui : UniversalScreen() {
                 height = 75.pixels()
             } childOf this
         } childOf window
-    }
-
-    override fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
-        super.drawScreen(mouseX, mouseY, partialTicks)
-        drawDefaultBackground()
-
-        window.draw()
-    }
-
-    override fun mouseClicked(mouseX: Int, mouseY: Int, mouseButton: Int) {
-        super.mouseClicked(mouseX, mouseY, mouseButton)
-
-        window.mouseClick(mouseX, mouseY, mouseButton)
-    }
-
-    override fun keyTyped(typedChar: Char, keyCode: Int) {
-        super.keyTyped(typedChar, keyCode)
-
-        window.keyType(typedChar, keyCode)
-    }
-
-    override fun onMouseScroll(delta: Int) {
-        super.onMouseScroll(delta)
-
-        window.mouseScroll(delta)
     }
 
     class ComponentType(componentName: String, initBlock: ComponentType.() -> Unit) : UIContainer() {

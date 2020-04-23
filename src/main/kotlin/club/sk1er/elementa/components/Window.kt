@@ -3,6 +3,7 @@ package club.sk1er.elementa.components
 import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.effects.ScissorEffect
 import club.sk1er.mods.core.universal.UniversalGraphicsHandler
+import club.sk1er.mods.core.universal.UniversalMouse
 import club.sk1er.mods.core.universal.UniversalResolutionUtil
 import org.lwjgl.opengl.GL11
 
@@ -15,7 +16,9 @@ import org.lwjgl.opengl.GL11
  */
 class Window(val animationFPS: Int = 244) : UIComponent() {
     private var systemTime = -1L
-    var scaledResolution = UniversalResolutionUtil.getInstance()
+    private var currentMouseButton = -1
+
+    var scaledResolution: UniversalResolutionUtil = UniversalResolutionUtil.getInstance()
 
     init {
         super.parent = this
@@ -41,6 +44,26 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
         mouseMove()
 
         super.draw()
+    }
+
+    override fun mouseClick(mouseX: Int, mouseY: Int, button: Int) {
+        super.mouseClick(mouseX, mouseY, button)
+
+        currentMouseButton = button
+    }
+
+    override fun mouseRelease() {
+        super.mouseRelease()
+
+        currentMouseButton = -1
+    }
+
+    override fun animationFrame() {
+        if (currentMouseButton != -1) {
+            dragMouse(UniversalMouse.getScaledX(), scaledResolution.scaledHeight - UniversalMouse.getScaledY(), currentMouseButton)
+        }
+
+        super.animationFrame()
     }
 
     override fun getLeft(): Float {

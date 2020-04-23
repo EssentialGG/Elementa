@@ -1,5 +1,6 @@
 package com.example.examplemod
 
+import club.sk1er.elementa.WindowScreen
 import club.sk1er.elementa.components.*
 import club.sk1er.elementa.components.image.BlurHashImage
 import club.sk1er.elementa.constraints.*
@@ -11,9 +12,7 @@ import club.sk1er.mods.core.universal.UniversalScreen
 import java.awt.Color
 import java.net.URL
 
-class KtTestGui : UniversalScreen() {
-    private val window: Window = Window()
-
+class KtTestGui : WindowScreen() {
     private val myTextBox = UIBlock(Color(0, 0, 0, 255))
     private val myText = UITextInput(placeholder = "Text Input", wrapped = false)
     private val scroll = ScrollComponent().constrain {
@@ -149,35 +148,6 @@ class KtTestGui : UniversalScreen() {
 
     private fun closeSettings() {
         window.removeChild(settings)
-    }
-
-    override fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
-        super.drawScreen(mouseX, mouseY, partialTicks)
-        window.draw()
-    }
-
-    override fun mouseClicked(mouseX: Int, mouseY: Int, mouseButton: Int) {
-        super.mouseClicked(mouseX, mouseY, mouseButton)
-        window.mouseClick(mouseX, mouseY, mouseButton)
-    }
-
-    override fun mouseClickMove(mouseX: Int, mouseY: Int, clickedMouseButton: Int, timeSinceLastClick: Long) {
-        super.mouseClickMove(mouseX, mouseY, clickedMouseButton, timeSinceLastClick)
-        window.mouseDrag(mouseX, mouseY, clickedMouseButton)
-    }
-
-    override fun mouseReleased(mouseX: Int, mouseY: Int, state: Int) {
-        super.mouseReleased(mouseX, mouseY, state)
-        window.mouseRelease()
-    }
-
-    override fun onMouseScroll(delta: Int) {
-        window.mouseScroll(delta.coerceIn(-1, 1))
-    }
-
-    override fun keyTyped(typedChar: Char, keyCode: Int) {
-        super.keyTyped(typedChar, keyCode)
-        window.keyType(typedChar, keyCode)
     }
 
     //#if MC<11500

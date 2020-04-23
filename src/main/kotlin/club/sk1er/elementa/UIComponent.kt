@@ -386,18 +386,27 @@ abstract class UIComponent {
         }
     }
 
+
+    @Deprecated(
+        "You no longer need to call mouseDrag manually, Elementa handles it internally.",
+        level = DeprecationLevel.ERROR
+    )
+    open fun mouseDrag(mouseX: Int, mouseY: Int, button: Int) {
+        // no-op
+    }
+
     /**
      * Runs the set [onMouseDrag] method for the component and it's children.
      * Use this in the proper mouse drag event to cascade all component's mouse scroll events.
      * Most common use is on the [Window] object.
      */
-    open fun mouseDrag(mouseX: Int, mouseY: Int, button: Int) {
+    open fun dragMouse(mouseX: Int, mouseY: Int, button: Int) {
         mouseDragAction(mouseX - getLeft(), mouseY - getTop(), button)
 
         if (focusedComponent != null) {
-            focusedComponent?.mouseDrag(mouseX, mouseY, button)
+            focusedComponent?.dragMouse(mouseX, mouseY, button)
         } else {
-            children.forEach { it.mouseDrag(mouseX, mouseY, button) }
+            children.forEach { it.dragMouse(mouseX, mouseY, button) }
         }
     }
 
