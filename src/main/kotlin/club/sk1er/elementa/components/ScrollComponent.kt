@@ -8,6 +8,7 @@ import club.sk1er.elementa.constraints.YConstraint
 import club.sk1er.elementa.constraints.animation.Animations
 import club.sk1er.elementa.dsl.*
 import club.sk1er.elementa.effects.ScissorEffect
+import club.sk1er.elementa.svg.SVGParser
 import club.sk1er.elementa.utils.drawTexture
 import club.sk1er.mods.core.universal.UniversalGraphicsHandler
 import club.sk1er.mods.core.universal.UniversalMouse
@@ -26,7 +27,8 @@ import kotlin.math.abs
 class ScrollComponent @JvmOverloads constructor(
     emptyString: String = "",
     private val scrollOpposite: Boolean = false,
-    private val innerPadding: Float = 0f
+    private val innerPadding: Float = 0f,
+    private val scrollIconColor: Color = Color.WHITE
 ) : UIContainer() {
     private val actualHolder = UIContainer().constrain {
         x = innerPadding.pixels()
@@ -60,11 +62,17 @@ class ScrollComponent @JvmOverloads constructor(
         onMouseClick { event ->  onClick(event.relativeX, event.relativeY, event.mouseButton) }
     }
 
-    override fun draw() {
-        if (!createdScrollTexture) {
-            loadCursor()
-        }
+    private val scrollSVGComponent = (SVGComponent(scrollSVG).constrain {
+        width = 24.pixels()
+        height = 24.pixels()
 
+        color = scrollIconColor.asConstraint()
+    }).also {
+        super.addChild(it)
+        it.hide()
+    }
+
+    override fun draw() {
         if (needsUpdate) {
             needsUpdate = false
             val range = calculateOffsetRange()
@@ -83,18 +91,6 @@ class ScrollComponent @JvmOverloads constructor(
         }
 
         super.draw()
-
-        // We need to draw the auto-scroll image on top of our children
-        if (isAutoScrolling) {
-            drawTexture(
-                scrollTexture,
-                Color.WHITE,
-                autoScrollBegin.first.toDouble() + getLeft() - 12,
-                autoScrollBegin.second.toDouble() + getTop() - 12,
-                24.0,
-                24.0
-            )
-        }
     }
 
     fun addScrollAdjustEvent(event: (scrollPercentage: Float, percentageOfParent: Float) -> Unit) {
@@ -211,6 +207,7 @@ class ScrollComponent @JvmOverloads constructor(
     private fun onClick(mouseX: Float, mouseY: Float, mouseButton: Int) {
         if (isAutoScrolling) {
             isAutoScrolling = false
+            scrollSVGComponent.hide()
             return
         }
 
@@ -218,6 +215,13 @@ class ScrollComponent @JvmOverloads constructor(
             // Middle click, begin the auto scroll
             isAutoScrolling = true
             autoScrollBegin = mouseX to mouseY
+
+            scrollSVGComponent.constrain {
+                x = (mouseX - 12).pixels()
+                y = (mouseY - 12).pixels()
+            }
+
+            scrollSVGComponent.unhide(useLastPosition = false)
         }
     }
 
@@ -294,14 +298,6 @@ class ScrollComponent @JvmOverloads constructor(
     private fun ClosedFloatingPointRange<Float>.width() = abs(this.start - this.endInclusive)
 
     companion object {
-        private lateinit var scrollTexture: DynamicTexture
-        private var createdScrollTexture = false
-
-        fun loadCursor() {
-            val img = ImageIO.read(this::class.java.getResourceAsStream("/scroll.png"))
-            scrollTexture = UniversalGraphicsHandler.getTexture(img)
-
-            createdScrollTexture = true
-        }
+        private val scrollSVG = SVGParser.parseFromResource("/scroll.svg")
     }
 }

@@ -29,6 +29,12 @@ class ExampleServerList : UniversalScreen() {
                 BlurHashImage.ofURL("L49ZWHE19at,}HIW9^%KM^J.g3#R", URL("https://i.imgur.com/iFawofh.png"))
             ),
             ServerBlock(
+                "Hypixel",
+                "mc.hypixel.net",
+                UIImage.ofURL(URL("https://i.imgur.com/rZYAHbE.png")),
+                BlurHashImage.ofURL("L49ZWHE19at,}HIW9^%KM^J.g3#R", URL("https://i.imgur.com/iFawofh.png"))
+            ),
+            ServerBlock(
                 "Mineplex",
                 "us.mineplex.com",
                 UIImage.ofURL(URL("https://imgur.com/TmvUI18.png")),
