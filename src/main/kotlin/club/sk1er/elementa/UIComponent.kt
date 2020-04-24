@@ -35,12 +35,12 @@ abstract class UIComponent {
     val mouseClickListeners = mutableListOf<UIComponent.(UIClickEvent) -> Unit>()
 
     /* Non-Bubbling Events */
-    private var mouseReleaseAction: UIComponent.() -> Unit = {}
-    private var mouseEnterAction: UIComponent.() -> Unit = {}
-    private var mouseLeaveAction: UIComponent.() -> Unit = {}
-    private var mouseScrollAction: UIComponent.(delta: Int) -> Unit = {}
-    private var mouseDragAction: UIComponent.(mouseX: Float, mouseY: Float, button: Int) -> Unit = { _, _, _ -> }
-    private var keyTypeAction: UIComponent.(typedChar: Char, keyCode: Int) -> Unit = { _, _ -> }
+    var mouseReleaseAction: UIComponent.() -> Unit = {}
+    var mouseEnterAction: UIComponent.() -> Unit = {}
+    var mouseLeaveAction: UIComponent.() -> Unit = {}
+    var mouseScrollAction: UIComponent.(delta: Int) -> Unit = {}
+    var mouseDragAction: UIComponent.(mouseX: Float, mouseY: Float, button: Int) -> Unit = { _, _, _ -> }
+    var keyTypeAction: UIComponent.(typedChar: Char, keyCode: Int) -> Unit = { _, _ -> }
 
     private var currentlyHovered = false
     private var beforeHideAnimation: AnimatingConstraints.() -> Unit = { }
