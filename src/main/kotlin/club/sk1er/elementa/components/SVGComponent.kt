@@ -80,12 +80,6 @@ class SVGComponent(private var svg: SVG) : UIComponent() {
     }
 
     private fun generateVBOData() {
-        val dupe = duplicateMap[svg]
-        if (dupe != null) {
-            vboData = dupe
-            return
-        }
-
         vboID = GL15.glGenBuffers()
 
         val totalVertexCount = svg.elements.sumBy { it.getVertexCount() }
@@ -116,7 +110,5 @@ class SVGComponent(private var svg: SVG) : UIComponent() {
         }
 
         private data class VBOData(val drawType: Int, val startIndex: Int, val count: Int, val drawPoints: Boolean)
-
-        private val duplicateMap = mutableMapOf<SVG, List<VBOData>>()
     }
 }
