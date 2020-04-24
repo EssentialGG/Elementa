@@ -9,9 +9,15 @@ import org.lwjgl.BufferUtils
 import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL15
 
-class SVGComponent(private val svg: SVG) : UIComponent() {
+class SVGComponent(private var svg: SVG) : UIComponent() {
     private var vboID = -1
     private lateinit var vboData: List<VBOData>
+    private var needsReload = false
+
+    fun setSVG(svg: SVG) {
+        this.svg = svg
+        needsReload = true
+    }
 
     override fun draw() {
         beforeDraw()
@@ -26,8 +32,9 @@ class SVGComponent(private val svg: SVG) : UIComponent() {
             return super.draw()
         }
 
-        if (!::vboData.isInitialized) {
+        if (!::vboData.isInitialized || needsReload) {
             generateVBOData()
+            needsReload = false
         }
 
         val xScale = width / svg.width
