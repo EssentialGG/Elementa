@@ -17,6 +17,14 @@ open class SiblingConstraint @JvmOverloads constructor(
     override var constrainTo: UIComponent? = null
 
     override fun getXPositionImpl(component: UIComponent): Float {
+        constrainTo?.let {
+            return if (alignOpposite) {
+                it.getLeft() - component.getWidth() - padding
+            } else {
+                it.getRight() + padding
+            }
+        }
+
         val index = component.parent.children.indexOf(component)
 
         if (alignOpposite) {
@@ -31,6 +39,14 @@ open class SiblingConstraint @JvmOverloads constructor(
     }
 
     override fun getYPositionImpl(component: UIComponent): Float {
+        constrainTo?.let {
+            return if (alignOpposite) {
+                it.getTop() - component.getHeight() - padding
+            } else {
+                it.getBottom() + padding
+            }
+        }
+
         val index = component.parent.children.indexOf(component)
 
         if (alignOpposite) {
