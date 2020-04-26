@@ -7,8 +7,8 @@ import club.sk1er.elementa.UIComponent
  * number of pixels.
  */
 class PixelConstraint @JvmOverloads constructor(
-    private val value: Float,
-    private val alignOpposite: Boolean = false,
+    private var value: Float,
+    private var alignOpposite: Boolean = false,
     private var alignOutside:  Boolean = false
 ) : PositionConstraint, SizeConstraint {
     override var cachedValue = 0f
@@ -20,7 +20,11 @@ class PixelConstraint @JvmOverloads constructor(
     }
 
     fun alignOpposite(value: Boolean) = apply {
-        this.alignOutside = value
+        this.alignOpposite = value
+    }
+
+    fun setValue(value: Float) = apply {
+        this.value = value
     }
 
     override fun getXPositionImpl(component: UIComponent): Float {
