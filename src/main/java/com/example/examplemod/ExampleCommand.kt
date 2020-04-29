@@ -1,10 +1,8 @@
 package com.example.examplemod
 
 //#if MC<=11202
-import club.sk1er.elementa.svg.SVGParser
 import net.minecraft.command.CommandBase
 import net.minecraft.command.ICommandSender
-import net.minecraft.server.MinecraftServer
 
 class ExampleCommand : CommandBase() {
     //#if MC<=10809
@@ -15,7 +13,7 @@ class ExampleCommand : CommandBase() {
     override fun getRequiredPermissionLevel() = 0
 
     override fun processCommand(sender: ICommandSender?, args: Array<String>) {
-       ExampleMod.gui = ExampleGui()
+       ExampleMod.gui = ComponentsGui()
     }
     //#else
     //$$ override fun getName() = "example"
