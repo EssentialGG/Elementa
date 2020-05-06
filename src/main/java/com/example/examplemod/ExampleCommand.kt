@@ -3,6 +3,7 @@ package com.example.examplemod
 //#if MC<=11202
 import net.minecraft.command.CommandBase
 import net.minecraft.command.ICommandSender
+import net.minecraft.server.MinecraftServer
 
 class ExampleCommand : CommandBase() {
     //#if MC<=10809
