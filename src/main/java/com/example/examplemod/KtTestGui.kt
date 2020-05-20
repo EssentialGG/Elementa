@@ -14,7 +14,7 @@ import java.net.URL
 
 class KtTestGui : WindowScreen() {
     private val myTextBox = UIBlock(Color(0, 0, 0, 255))
-    private val myText = UITextInput(placeholder = "Text Input", wrapped = false)
+//    private val myText = UITextInput(placeholder = "Text Input", wrapped = false)
     private val scroll = ScrollComponent().constrain {
         width = RelativeConstraint(.3f)
         height = RelativeConstraint(1f)
@@ -64,7 +64,7 @@ class KtTestGui : WindowScreen() {
         ),
         Slider("Slider 1", SiblingConstraint() + 10.pixels()),
         Slider("Second Slider", SiblingConstraint()),
-        myTextBox.addChild(myText),
+//        myTextBox.addChild(myText),
         UIBlock(Color.RED).constrain {
             y = SiblingConstraint()
             width = RelativeConstraint()
@@ -92,19 +92,19 @@ class KtTestGui : WindowScreen() {
             width = ChildBasedSizeConstraint() + 4.pixels()
             height = ChildBasedSizeConstraint() + 4.pixels()
         }.onMouseClick {
-            myText.active = true
+//            myText.active = true
         } effect ScissorEffect()
-
-        myText.minWidth = 100.pixels()
-        myText.maxWidth = RelativeConstraint().to(settings) - 4.pixels() as WidthConstraint
-        myText.constrain {
-            x = 2.pixels()
-            y = CenterConstraint()
-        }
-
-        window.onMouseClick {
-            myText.active = false
-        }
+//
+//        myText.minWidth = 100.pixels()
+//        myText.maxWidth = RelativeConstraint().to(settings) - 4.pixels() as WidthConstraint
+//        myText.constrain {
+//            x = 2.pixels()
+//            y = CenterConstraint()
+//        }
+//
+//        window.onMouseClick {
+//            myText.active = false
+//        }
 
         val blocky = UIBlock().constrain {
             x = CenterConstraint()
@@ -136,26 +136,16 @@ class KtTestGui : WindowScreen() {
             height = ChildSizeRangeConstraint() + 5.pixels()
         } childOf window
 
-        val box1 = UIBlock(Color.RED).constrain {
-            x = 5.pixels()
-            y = 5.pixels()
-            width = 5.pixels()
-            height = 5.pixels()
+        val input = UITextInput("empty").constrain {
+            x = 0.pixels()
         } childOf parent
 
-        val box2 = UIBlock(Color.GREEN).constrain {
-            x = 5.pixels(true)
-            y = 15.pixels()
-            width = 5.pixels()
-            height = 5.pixels()
-        } childOf parent
+        parent.onMouseClick {
+            input.active = true
+        }
 
-        val box3 = UIBlock(Color.MAGENTA).constrain {
-            x = 5.pixels()
-            y = 30.pixels()
-            width = 5.pixels()
-            height = 9.pixels()
-        } childOf parent
+        input.minWidth = 50.pixels()
+        input.maxWidth = 80.pixels()
 
         BlurHashImage.ofURL("L4ESU,OD1e#:=GwwJSAr1M,r|]Ar", URL("https://i.imgur.com/Pc6iMw3.png")).constrain {
             x = CenterConstraint()

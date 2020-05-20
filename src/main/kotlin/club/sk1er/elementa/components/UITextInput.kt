@@ -45,18 +45,9 @@ open class UITextInput @JvmOverloads constructor(
     private var activateAction: (text: String) -> Unit = {}
 
     init {
-        if (wrapped) {
-            setHeight(basicHeightConstraint {
-                val displayText = if (text.isEmpty() && !this.active) placeholder else text
-                val lines = UniversalGraphicsHandler.listFormattedStringToWidth(
-                    displayText,
-                    (getWidth() / getTextScale()).toInt()
-                )
-                lines.size * 9f * getTextScale()
-            })
-        } else {
-            setHeight(9.pixels())
-        }
+        setHeight(9.pixels())
+
+        alignCursor(if (text.isEmpty()) placeholder else text)
 
         onKeyType { typedChar, keyCode ->
             if (!active) return@onKeyType
@@ -106,9 +97,7 @@ open class UITextInput @JvmOverloads constructor(
     override fun draw() {
         beforeDraw()
 
-        val x = getLeft()
         val y = getTop()
-        val width = getWidth() / getTextScale()
         val color = getColor()
 
         UniversalGraphicsHandler.enableBlend()
@@ -118,14 +107,13 @@ open class UITextInput @JvmOverloads constructor(
         val displayText = if (text.isEmpty() && !this.active) placeholder else text
 
         if (wrapped) {
-            val lines = UniversalGraphicsHandler.listFormattedStringToWidth(displayText, width.toInt())
-            alignCursor(lines)
+            val lines = alignCursor(displayText)
             lines.forEachIndexed { index, line ->
-                UniversalGraphicsHandler.drawString(line, x, y + index * 9, color.rgb, shadow)
+                UniversalGraphicsHandler.drawString(line, getLeft(), y + index * 9, color.rgb, shadow)
             }
         } else {
             alignCursor()
-            UniversalGraphicsHandler.drawString(displayText, x + textOffset, y, color.rgb, shadow)
+            UniversalGraphicsHandler.drawString(displayText, getLeft() + textOffset, y, color.rgb, shadow)
         }
 
         UniversalGraphicsHandler.scale(1 / getTextScale().toDouble(), 1 / getTextScale().toDouble(), 1.0)
@@ -150,16 +138,18 @@ open class UITextInput @JvmOverloads constructor(
         activateAction = action
     }
 
-    private fun alignCursor(lines: List<String> = emptyList()) {
+    private fun alignCursor(displayText: String = ""): List<String> {
         val width = if (text.isEmpty() && !this.active) placeholderWidth else textWidth
+        setWidth(width.pixels().minMax(minWidth, maxWidth))
 
         if (wrapped) {
+            val lines = UniversalGraphicsHandler.listFormattedStringToWidth(displayText, (getWidth() / getTextScale()).toInt())
             cursor.setX((UniversalGraphicsHandler.getStringWidth(lines.last()) + 1).pixels())
             cursor.setY(((lines.size - 1) * 9).pixels())
             setHeight((lines.size * 9).pixels())
+            return lines
         } else {
             cursor.setX(width.pixels())
-            setWidth(width.pixels().minMax(minWidth, maxWidth))
             textOffset = if (active) {
                 if (width > getWidth()) {
                     cursor.setX(0.pixels(true))
@@ -167,6 +157,8 @@ open class UITextInput @JvmOverloads constructor(
                 } else 0f
             } else 0f
         }
+
+        return emptyList()
     }
 
     private fun animateCursor() {
