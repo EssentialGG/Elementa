@@ -129,14 +129,33 @@ class KtTestGui : WindowScreen() {
             textScale = 2.pixels()
         }
 
-        (UIBlock(Color.RED).constrain {
+        val parent = UIBlock(Color.GRAY).constrain {
             x = CenterConstraint()
             y = 5.pixels()
-            width = 10.pixels()
-            height = 10.pixels()
-        } childOf window).animate {
-            setWidthAnimation(Animations.LINEAR, 5f, 150.pixels())
-        }
+            width = 100.pixels()
+            height = ChildSizeRangeConstraint() + 5.pixels()
+        } childOf window
+
+        val box1 = UIBlock(Color.RED).constrain {
+            x = 5.pixels()
+            y = 5.pixels()
+            width = 5.pixels()
+            height = 5.pixels()
+        } childOf parent
+
+        val box2 = UIBlock(Color.GREEN).constrain {
+            x = 5.pixels(true)
+            y = 15.pixels()
+            width = 5.pixels()
+            height = 5.pixels()
+        } childOf parent
+
+        val box3 = UIBlock(Color.MAGENTA).constrain {
+            x = 5.pixels()
+            y = 30.pixels()
+            width = 5.pixels()
+            height = 9.pixels()
+        } childOf parent
 
         BlurHashImage.ofURL("L4ESU,OD1e#:=GwwJSAr1M,r|]Ar", URL("https://i.imgur.com/Pc6iMw3.png")).constrain {
             x = CenterConstraint()

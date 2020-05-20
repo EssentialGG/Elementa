@@ -1,6 +1,7 @@
 package club.sk1er.elementa.constraints
 
 import club.sk1er.elementa.UIComponent
+import club.sk1er.elementa.components.Window
 
 /**
  * Sets this component's width or height to be the sum of its children's width or height
@@ -46,5 +47,49 @@ class ChildBasedMaxSizeConstraint : SizeConstraint {
 
     override fun getRadiusImpl(component: UIComponent): Float {
         return (constrainTo ?: component).children.maxBy { it.getHeight() }?.getHeight()?.times(2f) ?: 0f
+    }
+}
+
+// TODO: Is there a good way to calculate this number for radii, or should this just be an invalid constraint
+//  for radius?
+class ChildSizeRangeConstraint : WidthConstraint, HeightConstraint {
+    override var cachedValue = 0f
+    override var recalculate = true
+    override var constrainTo: UIComponent? = null
+
+    override fun getWidthImpl(component: UIComponent): Float {
+        val window = Window.of(component)
+        var leftMostPoint = window.getRight()
+        var rightMostPoint = window.getLeft()
+
+        component.children.forEach {
+            if (it.getLeft() < leftMostPoint) {
+                leftMostPoint = it.getLeft()
+            }
+
+            if (it.getRight() > rightMostPoint) {
+                rightMostPoint = it.getRight()
+            }
+        }
+
+        return (rightMostPoint - leftMostPoint).coerceAtLeast(0f)
+    }
+
+    override fun getHeightImpl(component: UIComponent): Float {
+        val window = Window.of(component)
+        var topMostPoint = window.getBottom()
+        var bottomMostPoint = window.getTop()
+
+        component.children.forEach {
+            if (it.getTop() < topMostPoint) {
+                topMostPoint = it.getTop()
+            }
+
+            if (it.getBottom() > bottomMostPoint) {
+                bottomMostPoint = it.getBottom()
+            }
+        }
+
+        return (bottomMostPoint - topMostPoint).coerceAtLeast(0f)
     }
 }
