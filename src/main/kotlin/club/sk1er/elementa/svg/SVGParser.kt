@@ -20,7 +20,7 @@ object SVGParser {
         val svgHeight = svg.attributeValue("height", "24").toInt()
         val svgStrokeWidth = svg.attributeValue("stroke-width", "1").toFloat()
         val svgRoundLineCaps = svg.attributeValue("stroke-linecap") != null
-        val svgRoundLineJoins = svg.attributeValue("stroke-linejoin", "1") != null
+        val svgRoundLineJoins = svg.attributeValue("stroke-linejoin") != null
 
         val elements = svg.elements().flatMap {
             val els = when (it.name) {
