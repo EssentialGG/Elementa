@@ -45,7 +45,19 @@ open class UITextInput @JvmOverloads constructor(
     private var activateAction: (text: String) -> Unit = {}
 
     init {
-        setHeight(9.pixels())
+        if (wrapped) {
+            setHeight(basicHeightConstraint {
+                val displayText = if (text.isEmpty() && !this.active) placeholder else text
+                val lines = UniversalGraphicsHandler.listFormattedStringToWidth(
+                    displayText,
+                    (getWidth() / getTextScale()).toInt()
+                )
+                lines.size * 9f * getTextScale()
+            })
+        } else {
+            setHeight(9.pixels())
+        }
+
         onKeyType { typedChar, keyCode ->
             if (!active) return@onKeyType
 
