@@ -172,17 +172,11 @@ class ScrollComponent @JvmOverloads constructor(
 
         comp.animate {
             setYAnimation(
-                Animations.IN_SIN, 0.1f, object : YConstraint {
-                    override fun getYPositionImpl(component: UIComponent): Float {
-                        val offset = (component.parent.getHeight() - component.getHeight()) * scrollPercentage
+                Animations.IN_SIN, 0.1f, basicYConstraint { component ->
+                    val offset = (component.parent.getHeight() - component.getHeight()) * scrollPercentage
 
-                        return if (scrollOpposite) component.parent.getBottom() - component.getHeight() - offset
-                        else component.parent.getTop() + offset
-                    }
-
-                    override var cachedValue = 0f
-                    override var recalculate = true
-                    override var constrainTo: UIComponent? = null
+                    if (scrollOpposite) component.parent.getBottom() - component.getHeight() - offset
+                    else component.parent.getTop() + offset
                 }
             )
         }

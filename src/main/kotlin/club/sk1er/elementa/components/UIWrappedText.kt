@@ -2,6 +2,7 @@ package club.sk1er.elementa.components
 
 import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.constraints.HeightConstraint
+import club.sk1er.elementa.dsl.basicHeightConstraint
 import club.sk1er.elementa.dsl.pixels
 import club.sk1er.mods.core.universal.UniversalGraphicsHandler
 import club.sk1er.mods.core.universal.UniversalMinecraft
@@ -23,17 +24,11 @@ open class UIWrappedText @JvmOverloads constructor(
 
     init {
         setWidth(textWidth.pixels())
-        setHeight(object : HeightConstraint {
-            override var cachedValue = 0f
-            override var recalculate = true
-            override var constrainTo: UIComponent? = null
+        setHeight(basicHeightConstraint {
+            val width = getWidth() / getTextScale()
+            val lines = UniversalGraphicsHandler.listFormattedStringToWidth(text, width.toInt())
 
-            override fun getHeightImpl(component: UIComponent): Float {
-                val width = getWidth() / getTextScale()
-                val lines = UniversalGraphicsHandler.listFormattedStringToWidth(text, width.toInt())
-
-                return lines.size * 9f * getTextScale()
-            }
+            lines.size * 9f * getTextScale()
         })
     }
 
