@@ -45,7 +45,7 @@ abstract class UIComponent {
     private var currentlyHovered = false
     private var beforeHideAnimation: AnimatingConstraints.() -> Unit = { }
     private var afterUnhideAnimation: AnimatingConstraints.() -> Unit = { }
-    private var focusedComponent: UIComponent? = null
+    protected var focusedComponent: UIComponent? = null
 
     /**
      * Required for [unhide] so it can insert this component
@@ -342,7 +342,7 @@ abstract class UIComponent {
         fireMouseEvent(UIClickEvent(mouseX.toFloat(), mouseY.toFloat(), button, this, this))
     }
 
-    private fun fireMouseEvent(event: UIClickEvent) {
+    protected fun fireMouseEvent(event: UIClickEvent) {
         for (listener in mouseClickListeners) {
             this.listener(event)
 

@@ -8,6 +8,7 @@ import club.sk1er.elementa.constraints.YConstraint
 import club.sk1er.elementa.constraints.animation.Animations
 import club.sk1er.elementa.dsl.*
 import club.sk1er.elementa.effects.ScissorEffect
+import club.sk1er.elementa.events.UIClickEvent
 import club.sk1er.elementa.svg.SVGParser
 import club.sk1er.elementa.utils.drawTexture
 import club.sk1er.mods.core.universal.UniversalGraphicsHandler
@@ -251,6 +252,26 @@ class ScrollComponent @JvmOverloads constructor(
 
     override fun alwaysDrawChildren(): Boolean {
         return true
+    }
+
+    override fun mouseClick(mouseX: Int, mouseY: Int, button: Int) {
+        if (focusedComponent != null) {
+            if (focusedComponent?.isPointInside(mouseX.toFloat(), mouseY.toFloat()) == true) {
+                focusedComponent?.mouseClick(mouseX, mouseY, button)
+            }
+
+            return
+        }
+
+        for (i in actualHolder.children.lastIndex downTo 0) {
+            val child = actualHolder.children[i]
+
+            if (child.isPointInside(mouseX.toFloat(), mouseY.toFloat())) {
+                return child.mouseClick(mouseX, mouseY, button)
+            }
+        }
+
+        fireMouseEvent(UIClickEvent(mouseX.toFloat(), mouseY.toFloat(), button, this, this))
     }
 
     fun insertChild(component: UIComponent, pos: Int = 0) = apply {
