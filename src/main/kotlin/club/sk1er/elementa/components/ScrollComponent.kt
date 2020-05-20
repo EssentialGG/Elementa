@@ -46,6 +46,7 @@ class ScrollComponent @JvmOverloads constructor(
     private var offset = innerPadding
     private val scrollAdjustEvents: MutableList<(Float, Float) -> Unit> = mutableListOf(::updateScrollBar)
     private var scrollBarGrip: UIComponent? = null
+    private var hideScrollWhenUseless = false
     private var dragBeginPos = -1f
     private var needsUpdate = true
 
@@ -108,9 +109,14 @@ class ScrollComponent @JvmOverloads constructor(
      *  - Have a containing parent being the full height range of this scroll bar.
      *
      *  [component]'s parent's mouse events will all be overridden by this action.
+     *
+     *  If [hideWhenUseless] is enabled, [component] will have [hide] called on it when the scrollbar is full height
+     *  and dragging it would do nothing.
      */
-    fun setScrollBarComponent(component: UIComponent) {
+    @JvmOverloads
+    fun setScrollBarComponent(component: UIComponent, hideWhenUseless: Boolean = false) {
         scrollBarGrip = component
+        hideScrollWhenUseless = hideWhenUseless
 
         component.parent.onMouseScroll { onScroll(it) }
 
@@ -169,6 +175,16 @@ class ScrollComponent @JvmOverloads constructor(
         val comp = scrollBarGrip ?: return
 
         val clampedPercentage = percentageOfParent.coerceAtMost(1f)
+
+        if (hideScrollWhenUseless) {
+            if (clampedPercentage == 1f) {
+                comp.hide()
+                return
+            } else {
+                comp.unhide()
+            }
+        }
+
         comp.setHeight(RelativeConstraint(clampedPercentage))
 
         comp.animate {
