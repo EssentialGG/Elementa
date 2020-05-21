@@ -4,13 +4,14 @@ import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.constraints.WidthConstraint
 import club.sk1er.elementa.constraints.animation.Animations
 import club.sk1er.elementa.dsl.*
+import club.sk1er.elementa.utils.getStringSplitToWidth
 import club.sk1er.mods.core.universal.UniversalGraphicsHandler
 import java.awt.Color
 
 open class UITextInput @JvmOverloads constructor(
-        private val placeholder: String = "",
-        var wrapped: Boolean = true,
-        var shadow: Boolean = true
+    private val placeholder: String = "",
+    var wrapped: Boolean = true,
+    var shadow: Boolean = true
 ) : UIComponent() {
 
     private val placeholderWidth = UniversalGraphicsHandler.getStringWidth(placeholder).toFloat()
@@ -65,15 +66,15 @@ open class UITextInput @JvmOverloads constructor(
             } else if (keyCode == 28 || keyCode == 156) {
                 activateAction(text)
             } else if (
-                    keyCode in 2..13 ||
-                    keyCode in 16..27 ||
-                    keyCode in 30..41 ||
-                    keyCode in 43..53 ||
-                    keyCode in 71..83 ||
-                    keyCode in 145..147 ||
-                    keyCode == 55 ||
-                    keyCode == 181 ||
-                    keyCode == 57
+                keyCode in 2..13 ||
+                keyCode in 16..27 ||
+                keyCode in 30..41 ||
+                keyCode in 43..53 ||
+                keyCode in 71..83 ||
+                keyCode in 145..147 ||
+                keyCode == 55 ||
+                keyCode == 181 ||
+                keyCode == 57
             ) {
                 // normal key input
                 text += typedChar
@@ -143,14 +144,10 @@ open class UITextInput @JvmOverloads constructor(
         setWidth(width.pixels().minMax(minWidth, maxWidth))
 
         if (wrapped) {
-            val lines = try {
-                 UniversalGraphicsHandler.listFormattedStringToWidth(
-                    displayText,
-                    (getWidth() / getTextScale()).toInt()
-                )
-            } catch (e: StackOverflowError) {
-                emptyList<String>()
-            }
+            val lines = getStringSplitToWidth(
+                displayText,
+                getWidth() / getTextScale()
+            )
 
             cursor.setX((UniversalGraphicsHandler.getStringWidth(lines.last()) + 1).pixels())
             cursor.setY(((lines.size - 1) * 9).pixels())

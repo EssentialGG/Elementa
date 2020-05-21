@@ -4,6 +4,7 @@ import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.constraints.HeightConstraint
 import club.sk1er.elementa.dsl.basicHeightConstraint
 import club.sk1er.elementa.dsl.pixels
+import club.sk1er.elementa.utils.getStringSplitToWidth
 import club.sk1er.mods.core.universal.UniversalGraphicsHandler
 import club.sk1er.mods.core.universal.UniversalMinecraft
 import net.minecraft.client.Minecraft
@@ -26,7 +27,7 @@ open class UIWrappedText @JvmOverloads constructor(
         setWidth(textWidth.pixels())
         setHeight(basicHeightConstraint {
             val width = getWidth() / getTextScale()
-            val lines = UniversalGraphicsHandler.listFormattedStringToWidth(text, width.toInt())
+            val lines = getStringSplitToWidth(text, width)
 
             lines.size * 9f * getTextScale()
         })
@@ -71,7 +72,7 @@ open class UIWrappedText @JvmOverloads constructor(
         UniversalGraphicsHandler.translate(x.toDouble(), y.toDouble(), 0.0)
 
         try {
-            val lines = UniversalGraphicsHandler.listFormattedStringToWidth(text, width.toInt())
+            val lines = getStringSplitToWidth(text, width)
             lines.forEachIndexed { i, line ->
                 val xOffset = if (centered)
                     (width - UniversalGraphicsHandler.getStringWidth(line)) / 2f
