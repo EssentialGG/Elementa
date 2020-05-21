@@ -143,7 +143,15 @@ open class UITextInput @JvmOverloads constructor(
         setWidth(width.pixels().minMax(minWidth, maxWidth))
 
         if (wrapped) {
-            val lines = UniversalGraphicsHandler.listFormattedStringToWidth(displayText, (getWidth() / getTextScale()).toInt())
+            val lines = try {
+                 UniversalGraphicsHandler.listFormattedStringToWidth(
+                    displayText,
+                    (getWidth() / getTextScale()).toInt()
+                )
+            } catch (e: StackOverflowError) {
+                emptyList<String>()
+            }
+
             cursor.setX((UniversalGraphicsHandler.getStringWidth(lines.last()) + 1).pixels())
             cursor.setY(((lines.size - 1) * 9).pixels())
             setHeight((lines.size * 9).pixels())
