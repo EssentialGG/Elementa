@@ -66,7 +66,7 @@ class ScrollComponent @JvmOverloads constructor(
         color = scrollIconColor.asConstraint()
     }).also {
         super.addChild(it)
-        it.hide()
+        it.hide(instantly = true)
     }
 
     override fun draw() {
