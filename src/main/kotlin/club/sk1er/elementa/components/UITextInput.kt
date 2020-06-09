@@ -35,7 +35,10 @@ open class UITextInput @JvmOverloads constructor(
     var active: Boolean = false
         set(value) {
             field = value
-            if (value) animateCursor()
+            if (value)  {
+                animateCursor()
+                grabWindowFocus()
+            }
             else cursor.setColor(Color(255, 255, 255, 0).asConstraint())
         }
 
@@ -92,7 +95,6 @@ open class UITextInput @JvmOverloads constructor(
 
     override fun mouseClick(mouseX: Int, mouseY: Int, button: Int) {
         if (isHovered()) {
-            grabWindowFocus()
             internalMouseClickAction(mouseX - getLeft(), mouseY - getTop(), button)
         }
 
