@@ -39,10 +39,8 @@ open class UITextInput @JvmOverloads constructor(
             field = value
             if (value)  {
                 animateCursor()
-                grabWindowFocus()
             } else {
                 cursor.setColor(Color(255, 255, 255, 0).asConstraint())
-                releaseWindowFocus()
             }
         }
 
