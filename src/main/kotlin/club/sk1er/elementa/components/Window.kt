@@ -47,6 +47,7 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
     }
 
     override fun mouseClick(mouseX: Int, mouseY: Int, button: Int) {
+        unfocus()
         super.mouseClick(mouseX, mouseY, button)
 
         currentMouseButton = button

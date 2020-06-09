@@ -4,19 +4,14 @@ import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.constraints.CenterConstraint
 import club.sk1er.elementa.constraints.RelativeConstraint
 import club.sk1er.elementa.constraints.SiblingConstraint
-import club.sk1er.elementa.constraints.YConstraint
 import club.sk1er.elementa.constraints.animation.Animations
 import club.sk1er.elementa.dsl.*
 import club.sk1er.elementa.effects.ScissorEffect
 import club.sk1er.elementa.events.UIClickEvent
 import club.sk1er.elementa.svg.SVGParser
-import club.sk1er.elementa.utils.drawTexture
-import club.sk1er.mods.core.universal.UniversalGraphicsHandler
 import club.sk1er.mods.core.universal.UniversalMouse
-import net.minecraft.client.renderer.texture.DynamicTexture
 import java.awt.Color
 import java.util.concurrent.CopyOnWriteArrayList
-import javax.imageio.ImageIO
 import kotlin.math.abs
 
 
@@ -61,7 +56,7 @@ class ScrollComponent @JvmOverloads constructor(
         this.enableEffects(ScissorEffect())
 
         onMouseScroll { onScroll(it) }
-        onMouseClick { event ->  onClick(event.relativeX, event.relativeY, event.mouseButton) }
+        onMouseClick { event -> onClick(event.relativeX, event.relativeY, event.mouseButton) }
     }
 
     private val scrollSVGComponent = (SVGComponent(scrollSVG).constrain {
@@ -271,14 +266,6 @@ class ScrollComponent @JvmOverloads constructor(
     }
 
     override fun mouseClick(mouseX: Int, mouseY: Int, button: Int) {
-        if (focusedComponent != null) {
-            if (focusedComponent?.isPointInside(mouseX.toFloat(), mouseY.toFloat()) == true) {
-                focusedComponent?.mouseClick(mouseX, mouseY, button)
-            }
-
-            return
-        }
-
         for (i in actualHolder.children.lastIndex downTo 0) {
             val child = actualHolder.children[i]
 

@@ -91,7 +91,11 @@ open class UITextInput @JvmOverloads constructor(
     }
 
     override fun mouseClick(mouseX: Int, mouseY: Int, button: Int) {
-        if (isHovered()) internalMouseClickAction(mouseX - getLeft(), mouseY - getTop(), button)
+        if (isHovered()) {
+            grabWindowFocus()
+            internalMouseClickAction(mouseX - getLeft(), mouseY - getTop(), button)
+        }
+        
         super.mouseClick(mouseX, mouseY, button)
     }
 

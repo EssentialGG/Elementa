@@ -310,11 +310,7 @@ abstract class UIComponent {
             currentlyHovered = false
         }
 
-        if (focusedComponent != null) {
-            focusedComponent?.mouseMove()
-        } else {
-            this.children.forEach { it.mouseMove() }
-        }
+        this.children.forEach { it.mouseMove() }
     }
 
     /**
@@ -323,14 +319,6 @@ abstract class UIComponent {
      * Most common use is on the [Window] object.
      */
     open fun mouseClick(mouseX: Int, mouseY: Int, button: Int) {
-        if (focusedComponent != null) {
-            if (focusedComponent?.isPointInside(mouseX.toFloat(), mouseY.toFloat()) == true) {
-                focusedComponent?.mouseClick(mouseX, mouseY, button)
-            }
-
-            return
-        }
-
         for (i in children.lastIndex downTo 0) {
             val child = children[i]
 
@@ -362,11 +350,7 @@ abstract class UIComponent {
     open fun mouseRelease() {
         mouseReleaseAction()
 
-        if (focusedComponent != null) {
-            focusedComponent?.mouseRelease()
-        } else {
-            this.children.forEach { it.mouseRelease() }
-        }
+        this.children.forEach { it.mouseRelease() }
     }
 
     /**
@@ -379,11 +363,7 @@ abstract class UIComponent {
 
         if (isHovered()) mouseScrollAction(delta)
 
-        if (focusedComponent != null) {
-            focusedComponent?.mouseScroll(delta)
-        } else {
-            this.children.forEach { it.mouseScroll(delta) }
-        }
+        this.children.forEach { it.mouseScroll(delta) }
     }
 
 
@@ -403,19 +383,14 @@ abstract class UIComponent {
     open fun dragMouse(mouseX: Int, mouseY: Int, button: Int) {
         mouseDragAction(mouseX - getLeft(), mouseY - getTop(), button)
 
-        if (focusedComponent != null) {
-            focusedComponent?.dragMouse(mouseX, mouseY, button)
-        } else {
-            children.forEach { it.dragMouse(mouseX, mouseY, button) }
-        }
+        children.forEach { it.dragMouse(mouseX, mouseY, button) }
     }
 
     open fun keyType(typedChar: Char, keyCode: Int) {
-        keyTypeAction(typedChar, keyCode)
-
         if (focusedComponent != null) {
             focusedComponent?.keyType(typedChar, keyCode)
         } else {
+            keyTypeAction(typedChar, keyCode)
             children.forEach { it.keyType(typedChar, keyCode) }
         }
     }
@@ -614,7 +589,7 @@ abstract class UIComponent {
 
     /**
      * Focus a component. Focusing means that this component will only propagate keyboard
-     * and mouse events to the currently focused component. The component to be focused does
+     * events to the currently focused component. The component to be focused does
      * NOT have to be a direct child of this component, in fact, it is not even necessary
      * that the component passed is a descendent at all.
      */
@@ -624,6 +599,10 @@ abstract class UIComponent {
 
     fun grabParentFocus() {
         parent.focus(this)
+    }
+
+    fun grabWindowFocus() {
+        Window.of(this).focus(this)
     }
 
     /**
@@ -636,6 +615,10 @@ abstract class UIComponent {
 
     fun releaseParentFocus() {
         parent.unfocus()
+    }
+
+    fun releaseWindowFocus() {
+        Window.of(this).unfocus()
     }
 
     companion object {
