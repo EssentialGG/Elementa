@@ -1,11 +1,13 @@
 package club.sk1er.elementa.components
 
 import club.sk1er.elementa.UIComponent
+import club.sk1er.elementa.WindowScreen
 import club.sk1er.elementa.constraints.WidthConstraint
 import club.sk1er.elementa.constraints.animation.Animations
 import club.sk1er.elementa.dsl.*
 import club.sk1er.elementa.utils.getStringSplitToWidth
 import club.sk1er.mods.core.universal.UniversalGraphicsHandler
+import club.sk1er.mods.core.universal.UniversalMinecraft
 import java.awt.Color
 
 open class UITextInput @JvmOverloads constructor(
@@ -38,8 +40,10 @@ open class UITextInput @JvmOverloads constructor(
             if (value)  {
                 animateCursor()
                 grabWindowFocus()
+            } else {
+                cursor.setColor(Color(255, 255, 255, 0).asConstraint())
+                releaseWindowFocus()
             }
-            else cursor.setColor(Color(255, 255, 255, 0).asConstraint())
         }
 
     var maxWidth: WidthConstraint = UniversalGraphicsHandler.getStringWidth(placeholder).pixels()
@@ -56,7 +60,9 @@ open class UITextInput @JvmOverloads constructor(
         onKeyType { typedChar, keyCode ->
             if (!active) return@onKeyType
 
-            if (keyCode == 14) {
+            if (keyCode == 1) {
+                active = false
+            } else if (keyCode == 14) {
                 // backspace
                 if (text.isEmpty()) return@onKeyType
                 text = text.substring(0, text.length - 1)

@@ -77,7 +77,7 @@ abstract class WindowScreen(
         }
     }
 
-    protected fun defaultKeyBehavior(typedChar: Char, keyCode: Int) {
+    fun defaultKeyBehavior(typedChar: Char, keyCode: Int) {
         super.keyTyped(typedChar, keyCode)
     }
 }

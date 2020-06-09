@@ -46,6 +46,8 @@ abstract class UIComponent {
     private var beforeHideAnimation: AnimatingConstraints.() -> Unit = { }
     private var afterUnhideAnimation: AnimatingConstraints.() -> Unit = { }
     protected var focusedComponent: UIComponent? = null
+    private var onFocus: UIComponent.() -> Unit = {}
+    private var onFocusLost: UIComponent.() -> Unit = {}
 
     /**
      * Required for [unhide] so it can insert this component
@@ -595,6 +597,7 @@ abstract class UIComponent {
      */
     fun focus(component: UIComponent) {
         focusedComponent = component
+        component.onFocus()
     }
 
     fun grabParentFocus() {
@@ -605,11 +608,16 @@ abstract class UIComponent {
         Window.of(this).focus(this)
     }
 
+    fun onFocus(listener: UIComponent.() -> Unit) {
+        onFocus = listener
+    }
+
     /**
      * Remove the currently focused component. This means all of this component's children
      * will receive all events normally again.
      */
     fun unfocus() {
+        focusedComponent?.onFocusLost()
         focusedComponent = null
     }
 
@@ -619,6 +627,10 @@ abstract class UIComponent {
 
     fun releaseWindowFocus() {
         Window.of(this).unfocus()
+    }
+
+    fun onFocusLost(listener: UIComponent.() -> Unit) {
+        onFocusLost = listener
     }
 
     companion object {
