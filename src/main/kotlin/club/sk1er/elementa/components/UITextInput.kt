@@ -95,7 +95,7 @@ open class UITextInput @JvmOverloads constructor(
             grabWindowFocus()
             internalMouseClickAction(mouseX - getLeft(), mouseY - getTop(), button)
         }
-        
+
         super.mouseClick(mouseX, mouseY, button)
     }
 

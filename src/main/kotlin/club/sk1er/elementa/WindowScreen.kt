@@ -2,6 +2,7 @@ package club.sk1er.elementa
 
 import club.sk1er.elementa.components.Window
 import club.sk1er.mods.core.universal.UniversalKeyboard
+import club.sk1er.mods.core.universal.UniversalMinecraft
 import club.sk1er.mods.core.universal.UniversalScreen
 
 abstract class WindowScreen(
@@ -9,6 +10,12 @@ abstract class WindowScreen(
     private val drawDefaultBackground: Boolean = true
 ) : UniversalScreen() {
     protected val window = Window()
+
+    init {
+        window.onKeyType { typedChar, keyCode ->
+            defaultKeyBehavior(typedChar, keyCode)
+        }
+    }
 
     override fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
         super.drawScreen(mouseX, mouseY, partialTicks)
@@ -46,8 +53,6 @@ abstract class WindowScreen(
     }
 
     override fun keyTyped(typedChar: Char, keyCode: Int) {
-        super.keyTyped(typedChar, keyCode)
-
         // We also need to pass along typed keys
         window.keyType(typedChar, keyCode)
     }
@@ -70,5 +75,9 @@ abstract class WindowScreen(
         if (enableRepeatKeys) {
             UniversalKeyboard.enableRepeatEvents(false)
         }
+    }
+
+    protected fun defaultKeyBehavior(typedChar: Char, keyCode: Int) {
+        super.keyTyped(typedChar, keyCode)
     }
 }
