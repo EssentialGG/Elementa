@@ -421,8 +421,6 @@ class ExampleGui : WindowScreen() {
                 y = 2.pixels()
                 // As we've seen before, we could have used a [RelativeConstraint] here
                 // and subtracted by 4 pixels, but this way, using a [FillConstraint] is a little easier to grasp.
-                // This width and height will be all of the area the user has available to type.
-                width = FillConstraint() - 2.pixels()
                 height = FillConstraint() - 2.pixels()
             }.onMouseClick { event ->
                 // When we click inside of this text area, we want to activate it.
@@ -433,6 +431,11 @@ class ExampleGui : WindowScreen() {
                 // back to inactive.
                 event.stopPropagation()
             } childOf textHolder) as UITextInput
+
+            // Text areas can have variable widths, but in our case we want it to always be the entire
+            // width of the containing box (minus a small bit of padding)
+            textArea.minWidth = FillConstraint() - 2.pixels()
+            textArea.maxWidth = FillConstraint() - 2.pixels()
         }
     }
 }
