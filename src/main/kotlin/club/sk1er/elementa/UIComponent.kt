@@ -46,8 +46,8 @@ abstract class UIComponent {
     private var beforeHideAnimation: AnimatingConstraints.() -> Unit = { }
     private var afterUnhideAnimation: AnimatingConstraints.() -> Unit = { }
     protected var focusedComponent: UIComponent? = null
-    private var onFocus: UIComponent.() -> Unit = {}
-    private var onFocusLost: UIComponent.() -> Unit = {}
+    private var onFocus: (UIComponent.() -> Unit)? = null
+    private var onFocusLost: (UIComponent.() -> Unit)? = null
 
     /**
      * Required for [unhide] so it can insert this component
@@ -577,11 +577,11 @@ abstract class UIComponent {
         }
     }
 
-    fun animateBeforeHide(animation: AnimatingConstraints.() -> Unit) {
+    fun animateBeforeHide(animation: AnimatingConstraints.() -> Unit) = apply {
         beforeHideAnimation = animation
     }
 
-    fun animateAfterUnhide(animation: AnimatingConstraints.() -> Unit) {
+    fun animateAfterUnhide(animation: AnimatingConstraints.() -> Unit) = apply {
         afterUnhideAnimation = animation
     }
 
@@ -597,7 +597,7 @@ abstract class UIComponent {
      */
     fun focus(component: UIComponent) {
         focusedComponent = component
-        component.onFocus()
+        component.onFocus?.invoke(component)
     }
 
     fun grabParentFocus() {
@@ -608,7 +608,7 @@ abstract class UIComponent {
         Window.of(this).focus(this)
     }
 
-    fun onFocus(listener: UIComponent.() -> Unit) {
+    fun onFocus(listener: UIComponent.() -> Unit) = apply {
         onFocus = listener
     }
 
@@ -617,7 +617,8 @@ abstract class UIComponent {
      * will receive all events normally again.
      */
     fun unfocus() {
-        focusedComponent?.onFocusLost()
+        focusedComponent?.let { it.onFocusLost?.invoke(it) }
+
         focusedComponent = null
     }
 
@@ -629,7 +630,7 @@ abstract class UIComponent {
         Window.of(this).unfocus()
     }
 
-    fun onFocusLost(listener: UIComponent.() -> Unit) {
+    fun onFocusLost(listener: UIComponent.() -> Unit) = apply {
         onFocusLost = listener
     }
 

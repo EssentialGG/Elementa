@@ -14,7 +14,7 @@ class ExampleCommand : CommandBase() {
     override fun getRequiredPermissionLevel() = 0
 
     override fun processCommand(sender: ICommandSender?, args: Array<String>) {
-       ExampleMod.gui = KtTestGui()
+       ExampleMod.gui = ExampleGui()
     }
     //#else
     //$$ override fun getName() = "example"

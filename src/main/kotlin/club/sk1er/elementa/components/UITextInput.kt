@@ -59,7 +59,7 @@ open class UITextInput @JvmOverloads constructor(
             if (!active) return@onKeyType
 
             if (keyCode == 1) {
-                active = false
+                releaseWindowFocus()
             } else if (keyCode == 14) {
                 // backspace
                 if (text.isEmpty()) return@onKeyType

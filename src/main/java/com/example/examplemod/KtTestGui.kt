@@ -55,7 +55,6 @@ class KtTestGui : WindowScreen() {
             )
 
             notification.unhide()
-            notification.grabParentFocus()
         }.addChild(
             UIText("Notify").constrain {
                 x = CenterConstraint()
@@ -140,8 +139,14 @@ class KtTestGui : WindowScreen() {
             x = 0.pixels()
         } childOf parent
 
-        parent.onMouseClick {
+        input.onFocus {
             input.active = true
+        }.onFocusLost {
+            input.active = false
+        }
+
+        parent.onMouseClick {
+            input.grabWindowFocus()
         }
 
         input.minWidth = 50.pixels()
@@ -286,10 +291,6 @@ class KtTestGui : WindowScreen() {
 
             animateBeforeHide {
                 setXAnimation(Animations.IN_EXP, 0.5f, 0.pixels(alignOpposite = true, alignOutside = true), 0.5f)
-
-                onComplete {
-                    releaseParentFocus()
-                }
             }
 
             animateAfterUnhide {
