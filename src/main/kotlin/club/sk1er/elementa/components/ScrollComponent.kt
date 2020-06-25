@@ -265,6 +265,10 @@ class ScrollComponent @JvmOverloads constructor(
         return true
     }
 
+    override fun <T> childrenOfType(clazz: Class<T>): List<T> {
+        return actualHolder.childrenOfType(clazz)
+    }
+
     override fun mouseClick(mouseX: Int, mouseY: Int, button: Int) {
         for (i in actualHolder.children.lastIndex downTo 0) {
             val child = actualHolder.children[i]
