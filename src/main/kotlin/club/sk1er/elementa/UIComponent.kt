@@ -634,6 +634,18 @@ abstract class UIComponent {
         onFocusLost = listener
     }
 
+    /**
+     * Floating API
+     */
+
+    fun setFloating(floating: Boolean) {
+        if (floating) {
+            Window.of(this).addFloatingComponent(this)
+        } else {
+            Window.of(this).removeFloatingComponent(this)
+        }
+    }
+
     companion object {
         val IS_DEBUG = System.getProperty("elementa.debug")?.toBoolean() ?: false
         val DEBUG_OUTLINE_WIDTH = System.getProperty("elementa.debug.width")?.toDoubleOrNull() ?: 2.0

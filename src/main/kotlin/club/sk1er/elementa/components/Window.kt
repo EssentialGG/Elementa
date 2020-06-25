@@ -18,6 +18,8 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
     private var systemTime = -1L
     private var currentMouseButton = -1
 
+    private var floatingComponents = mutableListOf<UIComponent>()
+
     var scaledResolution: UniversalResolutionUtil = UniversalResolutionUtil.getInstance()
 
     init {
@@ -48,9 +50,15 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
 
     override fun mouseClick(mouseX: Int, mouseY: Int, button: Int) {
         unfocus()
-        super.mouseClick(mouseX, mouseY, button)
-
         currentMouseButton = button
+
+        for (floatingComponent in floatingComponents) {
+            if (floatingComponent.isPointInside(mouseX.toFloat(), mouseY.toFloat())) {
+                return floatingComponent.mouseClick(mouseX, mouseY, button)
+            }
+        }
+
+        super.mouseClick(mouseX, mouseY, button)
     }
 
     override fun mouseRelease() {
@@ -106,6 +114,16 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
                 left < realX + realWidth &&
                 bottom >= bottomY - realHeight &&
                 top <= bottomY
+    }
+
+    fun addFloatingComponent(component: UIComponent) {
+        if (floatingComponents.contains(component)) return
+
+        floatingComponents.add(component)
+    }
+
+    fun removeFloatingComponent(component: UIComponent) {
+        floatingComponents.remove(component)
     }
 
     companion object {
