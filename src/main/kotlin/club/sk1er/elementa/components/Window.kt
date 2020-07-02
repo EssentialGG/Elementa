@@ -103,6 +103,8 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
             )
         }
 
+        dealWithFocusRequests()
+
         super.animationFrame()
     }
 
