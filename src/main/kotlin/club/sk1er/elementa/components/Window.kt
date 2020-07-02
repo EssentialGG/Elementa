@@ -56,14 +56,28 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
 
         for (floatingComponent in floatingComponents) {
             if (floatingComponent.isPointInside(mouseX.toFloat(), mouseY.toFloat())) {
-                return floatingComponent.mouseClick(mouseX, mouseY, button)
+                floatingComponent.mouseClick(mouseX, mouseY, button)
+                dealWithFocusRequests()
+                return
             }
         }
 
-        if (componentRequestingFocus == focusedComponent)
-            componentRequestingFocus = null
-
         super.mouseClick(mouseX, mouseY, button)
+        dealWithFocusRequests()
+    }
+
+    private fun dealWithFocusRequests() {
+        if (componentRequestingFocus == null) {
+            unfocus()
+        } else if (componentRequestingFocus != focusedComponent) {
+            if (focusedComponent != null)
+                focusedComponent?.loseFocus()
+
+            focusedComponent = componentRequestingFocus
+            focusedComponent?.focus()
+        }
+
+        componentRequestingFocus = null
     }
 
     override fun mouseRelease() {
@@ -87,15 +101,6 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
                 scaledResolution.scaledHeight - UniversalMouse.getScaledY(),
                 currentMouseButton
             )
-        }
-
-        if (componentRequestingFocus != null) {
-            if (focusedComponent != null)
-                focusedComponent?.loseFocus()
-
-            focusedComponent = componentRequestingFocus
-            focusedComponent?.focus()
-            componentRequestingFocus = null
         }
 
         super.animationFrame()
