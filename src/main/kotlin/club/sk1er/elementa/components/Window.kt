@@ -103,7 +103,14 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
             )
         }
 
-        dealWithFocusRequests()
+        if (componentRequestingFocus != null && componentRequestingFocus != focusedComponent) {
+            if (focusedComponent != null)
+                focusedComponent?.loseFocus()
+
+            focusedComponent = componentRequestingFocus
+            focusedComponent?.focus()
+        }
+        componentRequestingFocus = null
 
         super.animationFrame()
     }
