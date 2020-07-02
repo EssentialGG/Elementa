@@ -20,6 +20,9 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
 
     private var floatingComponents = mutableListOf<UIComponent>()
 
+    private var focusedComponent: UIComponent? = null
+    private var componentRequestingFocus: UIComponent? = null
+
     var scaledResolution: UniversalResolutionUtil = UniversalResolutionUtil.getInstance()
 
     init {
@@ -49,7 +52,6 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
     }
 
     override fun mouseClick(mouseX: Int, mouseY: Int, button: Int) {
-        unfocus()
         currentMouseButton = button
 
         for (floatingComponent in floatingComponents) {
@@ -57,6 +59,9 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
                 return floatingComponent.mouseClick(mouseX, mouseY, button)
             }
         }
+
+        if (componentRequestingFocus == focusedComponent)
+            componentRequestingFocus = null
 
         super.mouseClick(mouseX, mouseY, button)
     }
@@ -67,9 +72,30 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
         currentMouseButton = -1
     }
 
+    override fun keyType(typedChar: Char, keyCode: Int) {
+        if (focusedComponent != null) {
+            focusedComponent?.keyType(typedChar, keyCode)
+        } else {
+            super.keyType(typedChar, keyCode)
+        }
+    }
+
     override fun animationFrame() {
         if (currentMouseButton != -1) {
-            dragMouse(UniversalMouse.getScaledX(), scaledResolution.scaledHeight - UniversalMouse.getScaledY(), currentMouseButton)
+            dragMouse(
+                UniversalMouse.getScaledX(),
+                scaledResolution.scaledHeight - UniversalMouse.getScaledY(),
+                currentMouseButton
+            )
+        }
+
+        if (componentRequestingFocus != null) {
+            if (focusedComponent != null)
+                focusedComponent?.loseFocus()
+
+            focusedComponent = componentRequestingFocus
+            focusedComponent?.focus()
+            componentRequestingFocus = null
         }
 
         super.animationFrame()
@@ -116,6 +142,10 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
                 top <= bottomY
     }
 
+    /*
+     * Floating API
+     */
+
     fun addFloatingComponent(component: UIComponent) {
         if (floatingComponents.contains(component)) return
 
@@ -124,6 +154,28 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
 
     fun removeFloatingComponent(component: UIComponent) {
         floatingComponents.remove(component)
+    }
+
+    /*
+     * Focus API
+     */
+
+    /**
+     * Focus a component. Focusing means that this component will only propagate keyboard
+     * events to the currently focused component. The component to be focused does
+     * NOT have to be a direct child of this component.
+     */
+    fun focus(component: UIComponent) {
+        componentRequestingFocus = component
+    }
+
+    /**
+     * Remove the currently focused component. This means only the window will receive
+     * keyboard events until another component is focused.
+     */
+    fun unfocus() {
+        focusedComponent?.loseFocus()
+        focusedComponent = null
     }
 
     companion object {

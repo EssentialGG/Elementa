@@ -45,7 +45,6 @@ abstract class UIComponent {
     private var currentlyHovered = false
     private var beforeHideAnimation: AnimatingConstraints.() -> Unit = { }
     private var afterUnhideAnimation: AnimatingConstraints.() -> Unit = { }
-    protected var focusedComponent: UIComponent? = null
     private var onFocus: (UIComponent.() -> Unit)? = null
     private var onFocusLost: (UIComponent.() -> Unit)? = null
 
@@ -389,12 +388,7 @@ abstract class UIComponent {
     }
 
     open fun keyType(typedChar: Char, keyCode: Int) {
-        if (focusedComponent != null) {
-            focusedComponent?.keyType(typedChar, keyCode)
-        } else {
-            keyTypeAction(typedChar, keyCode)
-            children.forEach { it.keyType(typedChar, keyCode) }
-        }
+        keyTypeAction(typedChar, keyCode)
     }
 
     open fun animationFrame() {
@@ -589,21 +583,6 @@ abstract class UIComponent {
      * Focus API
      */
 
-    /**
-     * Focus a component. Focusing means that this component will only propagate keyboard
-     * events to the currently focused component. The component to be focused does
-     * NOT have to be a direct child of this component, in fact, it is not even necessary
-     * that the component passed is a descendent at all.
-     */
-    fun focus(component: UIComponent) {
-        focusedComponent = component
-        component.onFocus?.invoke(component)
-    }
-
-    fun grabParentFocus() {
-        parent.focus(this)
-    }
-
     fun grabWindowFocus() {
         Window.of(this).focus(this)
     }
@@ -612,18 +591,8 @@ abstract class UIComponent {
         onFocus = listener
     }
 
-    /**
-     * Remove the currently focused component. This means all of this component's children
-     * will receive all events normally again.
-     */
-    fun unfocus() {
-        focusedComponent?.let { it.onFocusLost?.invoke(it) }
-
-        focusedComponent = null
-    }
-
-    fun releaseParentFocus() {
-        parent.unfocus()
+    fun focus() {
+        onFocus?.invoke(this)
     }
 
     fun releaseWindowFocus() {
@@ -632,6 +601,10 @@ abstract class UIComponent {
 
     fun onFocusLost(listener: UIComponent.() -> Unit) = apply {
         onFocusLost = listener
+    }
+
+    fun loseFocus() {
+        onFocusLost?.invoke(this)
     }
 
     /**
