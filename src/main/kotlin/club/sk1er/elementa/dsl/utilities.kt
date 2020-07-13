@@ -6,6 +6,8 @@ import club.sk1er.mods.core.universal.UniversalGraphicsHandler
 import net.minecraft.client.Minecraft
 import java.awt.Color
 
+fun Char.width() = UniversalGraphicsHandler.getCharWidth(this)
+
 fun String.width() = UniversalGraphicsHandler.getStringWidth(this)
 
 @JvmOverloads

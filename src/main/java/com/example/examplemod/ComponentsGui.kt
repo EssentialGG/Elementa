@@ -216,7 +216,7 @@ class ComponentsGui : WindowScreen() {
                 height = 12.pixels()
             } childOf this effect ScissorEffect()
 
-            val textInput2 = UITextInput("My placeholder text", wrapped = false).constrain {
+            val textInput2 = UITextInput("My placeholder text").constrain {
                 x = 2.pixels()
                 y = 2.pixels()
 
@@ -224,13 +224,13 @@ class ComponentsGui : WindowScreen() {
             } childOf box2
 
             box1.onMouseClick {
-                textInput1.active = true
-                textInput2.active = false
+                textInput1.setActive(true)
+                textInput2.setActive(false)
             }
 
             box2.onMouseClick {
-                textInput1.active = false
-                textInput2.active = true
+                textInput1.setActive(false)
+                textInput2.setActive(true)
             }
         } childOf window
 

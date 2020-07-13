@@ -409,11 +409,11 @@ class ExampleGui : WindowScreen() {
             }.onFocus {
                 // When we gain the Window's focus, we want to mark ourselves as active.
                 // We know that the [this] value is an instance of [UITextInput] so we can simply cast.
-                (this as UITextInput).active = true
+                (this as UITextInput).setActive(true)
             }.onFocusLost {
                 // Conversely, when we lose the Window's focus, we want to make ourselves inactive.
                 // Again, we know that the [this] value is an instance of [UITextInput] so we can simply cast.
-                (this as UITextInput).active = false
+                (this as UITextInput).setActive(false)
             }.onMouseClick {
                 // When we click inside of this text area, we want to activate it. To do so, we need to make sure
                 // that this text input has the Window's focus. This means that the Window will route keyboard
@@ -421,11 +421,6 @@ class ExampleGui : WindowScreen() {
                 // we will automatically lose focus, and our [onFocusLost] listener will be called.
                 grabWindowFocus()
             } childOf textHolder) as UITextInput
-
-            // Text areas can have variable widths, but in our case we want it to always be the entire
-            // width of the containing box (minus a small bit of padding)
-            textArea.minWidth = FillConstraint() - 2.pixels()
-            textArea.maxWidth = FillConstraint() - 2.pixels()
         }
     }
 }
