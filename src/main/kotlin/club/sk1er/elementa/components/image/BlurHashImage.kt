@@ -5,8 +5,8 @@ import club.sk1er.elementa.components.UIImage
 import club.sk1er.elementa.utils.decodeBlurHash
 import club.sk1er.elementa.utils.drawTexture
 import club.sk1er.mods.core.universal.UniversalGraphicsHandler
-import net.minecraft.client.renderer.texture.AbstractTexture
 import net.minecraft.client.renderer.texture.DynamicTexture
+import java.awt.Color
 import java.io.File
 import java.net.URL
 import java.util.concurrent.CompletableFuture
@@ -17,32 +17,31 @@ open class BlurHashImage(private val hash: String) : UIComponent(), ImageProvide
     private lateinit var texture: DynamicTexture
     private var dimensions = BASE_WIDTH to BASE_HEIGHT
 
-    override fun getTexture(preferredWidth: Int, preferredHeight: Int): AbstractTexture {
-        if (::texture.isInitialized) {
-            if (preferredWidth > 0 && preferredHeight > 0) {
-                val sizeDifference = abs(dimensions.first * dimensions.second - preferredWidth * preferredHeight)
-
-                if (sizeDifference > SIZE_THRESHOLD) {
-                    dimensions = preferredWidth to preferredHeight
-                    texture = generateTexture()
-                }
-            }
-
-            return texture
-        }
-
-        texture = generateTexture()
-
-        return texture
-    }
-
     private fun generateTexture(): DynamicTexture {
-        return decodeBlurHash(hash, dimensions.first, dimensions.second)?.let {
+        return decodeBlurHash(hash, dimensions.first.toInt(), dimensions.second.toInt())?.let {
             UniversalGraphicsHandler.getTexture(it)
         } ?: run {
             // We encountered an issue decoding the blur hash, it's probably invalid.
             UniversalGraphicsHandler.getEmptyTexture()
         }
+    }
+
+    override fun drawImage(x: Double, y: Double, width: Double, height: Double, color: Color) {
+        if (::texture.isInitialized) {
+            if (width > 0 && height > 0) {
+                val sizeDifference = abs(dimensions.first * dimensions.second - width * height)
+
+                if (sizeDifference > SIZE_THRESHOLD) {
+                    dimensions = width to height
+                    texture = generateTexture()
+                }
+            }
+        } else {
+            texture = generateTexture()
+        }
+
+
+        drawTexture(texture, color, x, y, width, height)
     }
 
     override fun draw() {
@@ -58,7 +57,7 @@ open class BlurHashImage(private val hash: String) : UIComponent(), ImageProvide
             return super.draw()
         }
 
-        drawTexture(getTexture(width.toInt(), height.toInt()), color, x, y, width, height)
+        drawImage(x, y, width, height, color)
 
         super.draw()
     }
@@ -72,8 +71,8 @@ open class BlurHashImage(private val hash: String) : UIComponent(), ImageProvide
     }
 
     companion object {
-        const val BASE_WIDTH = 50
-        const val BASE_HEIGHT = 50
+        const val BASE_WIDTH = 50.0
+        const val BASE_HEIGHT = 50.0
         const val SIZE_THRESHOLD = 2000
 
         /**

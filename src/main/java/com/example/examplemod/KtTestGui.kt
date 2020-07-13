@@ -152,12 +152,39 @@ class KtTestGui : WindowScreen() {
         input.minWidth = 50.pixels()
         input.maxWidth = 80.pixels()
 
-        BlurHashImage.ofURL("L4ESU,OD1e#:=GwwJSAr1M,r|]Ar", URL("https://i.imgur.com/Pc6iMw3.png")).constrain {
+        val img = UIImage.ofURL(URL("https://i.imgur.com/Pc6iMw3e.png")).constrain {
             x = CenterConstraint()
             y = CenterConstraint()
             width = RelativeConstraint(0.25f)
             height = RelativeConstraint(0.25f)
         } childOf window
+        animImgSmall(img)
+//        BlurHashImage.ofURL("L4ESU,OD1e#:=GwwJSAr1M,r|]Ar", URL("https://i.imgur.com/Pc6iMw3.png")).constrain {
+//            x = CenterConstraint()
+//            y = CenterConstraint()
+//            width = RelativeConstraint(0.25f)
+//            height = RelativeConstraint(0.25f)
+//        } childOf window
+    }
+
+    private fun animImgSmall(img: UIImage) {
+        img.animate {
+            setWidthAnimation(Animations.LINEAR, 7f, RelativeConstraint(0.05f), 0.5f)
+            setHeightAnimation(Animations.LINEAR, 7f, RelativeConstraint(0.05f), 0.5f)
+            onComplete {
+                animImgBig(img)
+            }
+        }
+    }
+
+    private fun animImgBig(img: UIImage) {
+        img.animate {
+            setWidthAnimation(Animations.LINEAR, 7f, RelativeConstraint(0.25f), 0.5f)
+            setHeightAnimation(Animations.LINEAR, 7f, RelativeConstraint(0.25f), 0.5f)
+            onComplete {
+                animImgSmall(img)
+            }
+        }
     }
 
     private fun closeSettings() {

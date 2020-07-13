@@ -7,6 +7,7 @@ import club.sk1er.elementa.utils.drawTexture
 import club.sk1er.mods.core.universal.UniversalGraphicsHandler
 import net.minecraft.client.renderer.texture.AbstractTexture
 import net.minecraft.client.renderer.texture.DynamicTexture
+import java.awt.Color
 import java.awt.image.BufferedImage
 import java.io.File
 import java.net.URL
@@ -15,7 +16,8 @@ import javax.imageio.ImageIO
 
 open class UIImage @JvmOverloads constructor(
     private val imageFuture: CompletableFuture<BufferedImage>,
-    private val loadingImage: ImageProvider = DefaultLoadingImage
+    private val loadingImage: ImageProvider = DefaultLoadingImage,
+    private val failureImage: ImageProvider = SVGComponent.ofResource("/failure.svg")
 ) : UIComponent(), ImageProvider {
     private lateinit var texture: DynamicTexture
 
@@ -28,6 +30,26 @@ open class UIImage @JvmOverloads constructor(
         level = DeprecationLevel.ERROR
     )
     constructor(imageFunction: () -> BufferedImage) : this(CompletableFuture.supplyAsync(imageFunction))
+
+    override fun drawImage(x: Double, y: Double, width: Double, height: Double, color: Color) {
+        if (::texture.isInitialized) {
+            drawTexture(texture, color, x, y, width, height)
+        } else if (imageFuture.isDone) {
+            if (imageFuture.isCompletedExceptionally) {
+                failureImage.drawImage(x, y, width, height, color)
+            } else {
+                val image = imageFuture.get()
+
+                imageWidth = image.width.toFloat()
+                imageHeight = image.height.toFloat()
+                texture = UniversalGraphicsHandler.getTexture(image)
+
+                imageFuture.obtrudeValue(null)
+            }
+        } else {
+            loadingImage.drawImage(x, y, width, height, color)
+        }
+    }
 
     override fun draw() {
         beforeDraw()
@@ -42,27 +64,9 @@ open class UIImage @JvmOverloads constructor(
             return super.draw()
         }
 
-        drawTexture(this.getTexture(width.toInt(), height.toInt()), color, x, y, width, height)
+        drawImage(x, y, width, height, color)
 
         super.draw()
-    }
-
-    override fun getTexture(preferredWidth: Int, preferredHeight: Int): AbstractTexture {
-        if (::texture.isInitialized) {
-            return texture
-        }
-
-        if (imageFuture.isDone) {
-            val image = imageFuture.get()
-
-            imageWidth = image.width.toFloat()
-            imageHeight = image.height.toFloat()
-            texture = UniversalGraphicsHandler.getTexture(image)
-
-            imageFuture.obtrudeValue(null)
-        }
-
-        return loadingImage.getTexture(preferredWidth, preferredHeight)
     }
 
     @Throws(Throwable::class)

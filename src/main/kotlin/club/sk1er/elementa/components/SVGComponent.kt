@@ -1,6 +1,7 @@
 package club.sk1er.elementa.components
 
 import club.sk1er.elementa.UIComponent
+import club.sk1er.elementa.components.image.ImageProvider
 import club.sk1er.elementa.svg.SVGParser
 import club.sk1er.elementa.svg.data.SVG
 import club.sk1er.mods.core.universal.UniversalGraphicsHandler
@@ -8,8 +9,9 @@ import net.minecraft.client.renderer.GlStateManager
 import org.lwjgl.BufferUtils
 import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL15
+import java.awt.Color
 
-class SVGComponent(private var svg: SVG) : UIComponent() {
+class SVGComponent(private var svg: SVG) : UIComponent(), ImageProvider {
     private var vboID = -1
     private lateinit var vboData: List<VBOData>
     private var needsReload = false
@@ -19,19 +21,7 @@ class SVGComponent(private var svg: SVG) : UIComponent() {
         needsReload = true
     }
 
-    override fun draw() {
-        beforeDraw()
-
-        val x = this.getLeft().toDouble()
-        val y = this.getTop().toDouble()
-        val width = this.getWidth().toDouble()
-        val height = this.getHeight().toDouble()
-        val color = this.getColor()
-
-        if (color.alpha == 0) {
-            return super.draw()
-        }
-
+    override fun drawImage(x: Double, y: Double, width: Double, height: Double, color: Color) {
         if (!::vboData.isInitialized || needsReload) {
             generateVBOData()
             needsReload = false
@@ -75,6 +65,22 @@ class SVGComponent(private var svg: SVG) : UIComponent() {
         UniversalGraphicsHandler.enableTexture2D()
 
         UniversalGraphicsHandler.popMatrix()
+    }
+
+    override fun draw() {
+        beforeDraw()
+
+        val x = this.getLeft().toDouble()
+        val y = this.getTop().toDouble()
+        val width = this.getWidth().toDouble()
+        val height = this.getHeight().toDouble()
+        val color = this.getColor()
+
+        if (color.alpha == 0) {
+            return super.draw()
+        }
+
+        drawImage(x, y, width, height, color)
 
         super.draw()
     }

@@ -1,13 +1,12 @@
 package club.sk1er.elementa.components.image
 
-import net.minecraft.client.renderer.texture.AbstractTexture
+import java.awt.Color
 
 interface ImageProvider {
     /**
-     * Gets the MC texture of this image provider.
+     * Render the image provided by this component with the provided attributes.
      *
-     * This method is guaranteed to be called from the main thread,
-     * so you can upload the texture from here.
+     * This method is guaranteed to be called from the main thread.
      */
-    fun getTexture(preferredWidth: Int, preferredHeight: Int): AbstractTexture
+    fun drawImage(x: Double, y: Double, width: Double, height: Double, color: Color)
 }
