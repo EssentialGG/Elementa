@@ -2,19 +2,17 @@ package com.example.examplemod
 
 import club.sk1er.elementa.WindowScreen
 import club.sk1er.elementa.components.*
-import club.sk1er.elementa.components.image.BlurHashImage
 import club.sk1er.elementa.constraints.*
 import club.sk1er.elementa.constraints.animation.Animations
 import club.sk1er.elementa.dsl.*
 import club.sk1er.elementa.effects.ScissorEffect
-import club.sk1er.mods.core.universal.UniversalScreen
-
 import java.awt.Color
 import java.net.URL
 
 class KtTestGui : WindowScreen() {
     private val myTextBox = UIBlock(Color(0, 0, 0, 255))
-//    private val myText = UITextInput(placeholder = "Text Input", wrapped = false)
+
+    //    private val myText = UITextInput(placeholder = "Text Input", wrapped = false)
     private val scroll = ScrollComponent().constrain {
         width = RelativeConstraint(.3f)
         height = RelativeConstraint(1f)
@@ -131,26 +129,23 @@ class KtTestGui : WindowScreen() {
         val parent = UIBlock(Color.GRAY).constrain {
             x = CenterConstraint()
             y = 5.pixels()
-            width = 100.pixels()
-            height = ChildSizeRangeConstraint() + 5.pixels()
+            width = ChildBasedSizeConstraint()
+            height = ChildBasedSizeConstraint()
         } childOf window
 
         val input = UITextInput("empty").constrain {
             x = 0.pixels()
-        } childOf parent
+        }.setMinWidth(50.pixels()).setMaxWidth(80.pixels()) childOf parent
 
         input.onFocus {
-            input.active = true
+            input.setActive(true)
         }.onFocusLost {
-            input.active = false
+            input.setActive(false)
         }
 
         parent.onMouseClick {
             input.grabWindowFocus()
         }
-
-        input.minWidth = 50.pixels()
-        input.maxWidth = 80.pixels()
 
         val img = UIImage.ofURL(URL("https://i.imgur.com/Pc6iMw3e.png")).constrain {
             x = CenterConstraint()
@@ -237,7 +232,8 @@ class KtTestGui : WindowScreen() {
         }
     }
 
-    private class Notify(textString: String, titleString: String? = null, var delay: Float = 3f) : UIBlock(Color(0, 0, 0, 200)) {
+    private class Notify(textString: String, titleString: String? = null, var delay: Float = 3f) :
+        UIBlock(Color(0, 0, 0, 200)) {
         private val timer = UIBlock(Color(0, 170, 255, 255)).constrain {
             y = 0.pixels(true)
             height = 7.pixels()
