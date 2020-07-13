@@ -139,6 +139,14 @@ class ScrollComponent @JvmOverloads constructor(
         needsUpdate = true
     }
 
+    fun <T : Comparable<T>> sortChildren(comparator: (UIComponent) -> T, descending: Boolean = false) {
+        if (descending) {
+            actualHolder.children.sortByDescending(comparator)
+        } else {
+            actualHolder.children.sortBy(comparator)
+        }
+    }
+
     private fun updateGrip(component: UIComponent, mouseY: Float) {
         val minY = component.parent.getTop()
         val maxY = component.parent.getBottom()
