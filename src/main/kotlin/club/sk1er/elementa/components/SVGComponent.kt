@@ -10,6 +10,7 @@ import org.lwjgl.BufferUtils
 import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL15
 import java.awt.Color
+import kotlin.math.sqrt
 
 class SVGComponent(private var svg: SVG) : UIComponent(), ImageProvider {
     private var vboID = -1
@@ -40,7 +41,7 @@ class SVGComponent(private var svg: SVG) : UIComponent(), ImageProvider {
         UniversalGraphicsHandler.translate(x, y, 0.0)
         UniversalGraphicsHandler.scale(xScale, yScale, 0.0)
 
-        GL11.glPointSize(strokeWidth.toFloat())
+        GL11.glPointSize(sqrt(strokeWidth.toFloat() * 4))
         GL11.glLineWidth(strokeWidth.toFloat())
         GL11.glEnable(GL11.GL_LINE_SMOOTH)
         GL11.glEnable(GL11.GL_POINT_SMOOTH)
