@@ -90,6 +90,13 @@ class ScrollComponent @JvmOverloads constructor(
         super.draw()
     }
 
+    /**
+     * Sets the text that appears when no items are shown
+     */
+    fun setEmptyText(text: String) {
+        emptyText.setText(text)
+    }
+
     fun addScrollAdjustEvent(event: (scrollPercentage: Float, percentageOfParent: Float) -> Unit) {
         scrollAdjustEvents.add(event)
     }
@@ -193,11 +200,11 @@ class ScrollComponent @JvmOverloads constructor(
         comp.animate {
             setYAnimation(
                 Animations.IN_SIN, 0.1f, basicYConstraint { component ->
-                    val offset = (component.parent.getHeight() - component.getHeight()) * scrollPercentage
+                val offset = (component.parent.getHeight() - component.getHeight()) * scrollPercentage
 
-                    if (scrollOpposite) component.parent.getBottom() - component.getHeight() - offset
-                    else component.parent.getTop() + offset
-                }
+                if (scrollOpposite) component.parent.getBottom() - component.getHeight() - offset
+                else component.parent.getTop() + offset
+            }
             )
         }
     }
