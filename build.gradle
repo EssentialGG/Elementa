@@ -159,26 +159,21 @@ minecraft {
 
 }
 
-configurations {
-    embed
-    compile.extendsFrom(embed)
-}
-
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
     if (mcVersion == 11502) {
         minecraft 'net.minecraftforge:forge:1.15.2-31.1.18'
     }
-    embed "club.sk1er:UniversalCraft:1.1.4-${mcVersion}"
-    embed "org.dom4j:dom4j:2.1.1"
+    implementation "club.sk1er:UniversalCraft:1.1.4-${mcVersion}"
+    implementation "org.dom4j:dom4j:2.1.1"
 }
 
 processResources {
-
     from(sourceSets.main.resources.srcDirs) {
         include "mcmod.info"
     }
+
     from(sourceSets.main.resources.srcDirs) {
         exclude "mcmod.info"
         exclude "mods.toml"
@@ -187,10 +182,32 @@ processResources {
     }
 }
 
+reobf {
+    shadowJar {
+        if (mcVersion < 11502) {
+            mappingType = 'SEARGE'
+        }
+    }
+}
+
+tasks.build.dependsOn reobfShadowJar
+
+shadowJar {
+    exclude('com/example/examplemod/**')
+    exclude("META-INF/mods.toml")
+    exclude("mods.toml")
+    exclude("kotlin/**")
+
+    if (this.properties.getOrDefault("IS_CTJS", false)) {
+        relocate 'club.sk1er', 'club.sk1er.ctjs'
+    }
+}
+
 dokka {
     outputFormat = 'html'
     outputDirectory = "$buildDir/dokka"
 }
+
 task sourcesJar(type: Jar, dependsOn: classes) {
     classifier = 'sources'
     from sourceSets.main.allSource
@@ -201,9 +218,6 @@ artifacts {
 }
 
 jar {
-    exclude('com/example/examplemod/**')
-    exclude("META-INF/mods.toml")
-    exclude("mods.toml")
     manifest {
         attributes(
                 'FMLModType': 'LIBRARY'
