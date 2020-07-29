@@ -10,7 +10,9 @@ import java.awt.Color
 
 open class UITextInput @JvmOverloads constructor(
     private val placeholder: String = "",
-    var shadow: Boolean = true
+    var shadow: Boolean = true,
+    private val selectionBackgroundColor: Color = Color.WHITE,
+    private val selectionForegroundColor: Color = Color(64, 139, 229)
 ) : UIComponent() {
     private var minWidth: WidthConstraint? = null
     private var maxWidth: WidthConstraint? = null
@@ -34,6 +36,10 @@ open class UITextInput @JvmOverloads constructor(
     } childOf this
     private var cursorLocation = 0
 
+    private var isSelecting = false
+    private var selectionEndLocation = 0
+    private var hasMovedSelection = false
+
     init {
         setHeight(9.pixels())
 
@@ -52,12 +58,16 @@ open class UITextInput @JvmOverloads constructor(
                 // TODO: shift + ctrl checks
                 if (cursorLocation < text.length) setCursorLocation(cursorLocation + 1)
             } else if (keyCode == 14) {
-                if (cursorLocation > 0) {
+                if (hasSelection()) {
+                    removeSelection()
+                } else if (cursorLocation > 0) {
                     removeText(cursorLocation - 1, cursorLocation)
                     setCursorLocation(cursorLocation - 1)
                 }
             } else if (keyCode == 211) {
-                if (cursorLocation < text.length) {
+                if (hasSelection()) {
+                    removeSelection()
+                } else if (cursorLocation < text.length) {
                     removeText(cursorLocation, cursorLocation + 1)
                 }
             } else if (keyCode == 199) {
@@ -70,10 +80,38 @@ open class UITextInput @JvmOverloads constructor(
         }
 
         onMouseClick { event ->
-            if (!active) return@onMouseClick
+            if (!active || event.mouseButton != 0)
+                return@onMouseClick
 
-            // TODO: optimize?
             setCursorLocation(textPositionAt(event.relativeX))
+            isSelecting = true
+            hasMovedSelection = false
+        }
+
+        onMouseDrag { mouseX, _, mouseButton ->
+            if (mouseButton != 0 || !isSelecting)
+                return@onMouseDrag
+
+            selectionEndLocation = textPositionAt(mouseX.coerceIn(0f, getWidth()))
+            scrollTextPositionIntoView(selectionEndLocation)
+        }
+
+        onMouseRelease {
+            isSelecting = false
+            hasMovedSelection = false
+        }
+
+        cursor.animateAfterUnhide {
+            setColorAnimation(Animations.OUT_CIRCULAR, 0.5f, Color.WHITE.asConstraint())
+            onComplete {
+                if (!active) return@onComplete
+                cursor.animate {
+                    setColorAnimation(Animations.IN_CIRCULAR, 0.5f, Color(255, 255, 255, 0).asConstraint())
+                    onComplete {
+                        if (active) animateCursor()
+                    }
+                }
+            }
         }
     }
 
@@ -136,21 +174,39 @@ open class UITextInput @JvmOverloads constructor(
             currentWidthBeforeCursor = text.width().toFloat()
             currentTextOffset = textWidth - getWidth()
             cursorLocation = newPosition
+            selectionEndLocation = cursorLocation
             return
         }
 
         currentTextBeforeCursor = text.substring(0, newPosition)
         currentWidthBeforeCursor = currentTextBeforeCursor.width().toFloat()
 
-        if (textWidth < getWidth()) {
-            currentTextOffset = 0f
-        } else if (newPosition < cursorLocation && currentTextOffset > currentWidthBeforeCursor) {
-            currentTextOffset = currentWidthBeforeCursor
-        } else if (newPosition > cursorLocation && currentWidthBeforeCursor - currentTextOffset > getWidth()) {
-            currentTextOffset = currentWidthBeforeCursor - getWidth()
-        }
+        scrollTextPositionIntoView(newPosition)
 
         cursorLocation = newPosition
+        selectionEndLocation = cursorLocation
+    }
+
+    private fun scrollTextPositionIntoView(textPosition: Int) {
+        val widthBeforePosition = text.substring(0, textPosition).width().toFloat()
+
+        if (textWidth < getWidth()) {
+            currentTextOffset = 0f
+        } else if (textPosition < cursorLocation && currentTextOffset > widthBeforePosition) {
+            currentTextOffset = widthBeforePosition
+        } else if (textPosition > cursorLocation && widthBeforePosition - currentTextOffset > getWidth()) {
+            currentTextOffset = widthBeforePosition - getWidth()
+        }
+    }
+
+    private fun hasSelection() = selectionEndLocation != cursorLocation
+    private fun selectionStart() = if (cursorLocation < selectionEndLocation) cursorLocation else selectionEndLocation
+    private fun selectionEnd() = if (cursorLocation > selectionEndLocation) cursorLocation else selectionEndLocation
+
+    private fun removeSelection() {
+        removeText(selectionStart(), selectionEnd())
+        // TODO: fix where cursor ends up?
+        selectionEndLocation = cursorLocation
     }
 
     private fun textPositionAt(relativeXPosition: Float): Int {
@@ -196,14 +252,56 @@ open class UITextInput @JvmOverloads constructor(
             return super.draw()
         }
 
-        if (cursorLocation >= text.length) { // Only draw one string
-            cursor.setX((currentWidthBeforeCursor + 1).coerceAtMost(getWidth()).pixels())
+        if (hasSelection()) {
+            hasMovedSelection = true
+
+            var currentXPos = getLeft() - currentTextOffset
+
+            if (selectionStart() > 0) {
+                val preSelectionText = text.substring(0, selectionStart())
+
+                UniversalGraphicsHandler.drawString(preSelectionText, currentXPos, getTop(), getColor().rgb, shadow)
+                currentXPos += preSelectionText.width()
+            }
+
+            val selectedText = text.substring(selectionStart(), selectionEnd())
+            val selectedTextWidth = selectedText.width()
+
+            UIBlock.drawBlock(
+                selectionBackgroundColor,
+                currentXPos.toDouble(),
+                getTop().toDouble(),
+                currentXPos.toDouble() + selectedTextWidth,
+                getBottom().toDouble()
+            )
+            UniversalGraphicsHandler.drawString(selectedText, currentXPos, getTop(), selectionForegroundColor.rgb, false)
+
+            currentXPos += selectedTextWidth
+
+            if (selectionEnd() < text.length) {
+                val postSelectionText = text.substring(selectionEnd())
+                UniversalGraphicsHandler.drawString(postSelectionText, currentXPos, getTop(), getColor().rgb, shadow)
+            }
+
+            return super.draw()
+        }
+
+        if (cursorLocation >= text.length || (isSelecting && hasMovedSelection)) { // Only draw one string
+            if (!isSelecting) {
+                cursor.unhide()
+                cursor.setX((currentWidthBeforeCursor + 1).coerceAtMost(getWidth()).pixels())
+            }
 
             UniversalGraphicsHandler.drawString(text, getLeft() - currentTextOffset, getTop(), getColor().rgb, shadow)
             return super.draw()
         }
 
-        cursor.setX((currentWidthBeforeCursor - currentTextOffset + 1).pixels())
+        if (isSelecting) {
+            cursor.hide(instantly = true)
+        } else {
+            cursor.unhide()
+            cursor.setX((currentWidthBeforeCursor - currentTextOffset + 1).pixels())
+        }
 
         UniversalGraphicsHandler.drawString(
             currentTextBeforeCursor,
