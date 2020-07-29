@@ -129,9 +129,9 @@ class KtTestGui : WindowScreen() {
         val parent = UIBlock(Color.GRAY).constrain {
             x = CenterConstraint()
             y = 5.pixels()
-            width = ChildBasedSizeConstraint()
+            width = ChildBasedSizeConstraint() + 3.pixels()
             height = ChildBasedSizeConstraint()
-        } childOf window
+        } childOf window effect ScissorEffect()
 
         val input = UITextInput("empty").constrain {
             x = 0.pixels()
