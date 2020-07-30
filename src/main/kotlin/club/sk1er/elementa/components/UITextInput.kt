@@ -12,7 +12,9 @@ open class UITextInput @JvmOverloads constructor(
     private val placeholder: String = "",
     var shadow: Boolean = true,
     private val selectionBackgroundColor: Color = Color.WHITE,
-    private val selectionForegroundColor: Color = Color(64, 139, 229)
+    private val selectionForegroundColor: Color = Color(64, 139, 229),
+    private val inactiveSelectionBackgroundColor: Color = Color(176, 176, 176),
+    private val inactiveSelectionForegroundColor: Color = Color.WHITE
 ) : UIComponent() {
     private var minWidth: WidthConstraint? = null
     private var maxWidth: WidthConstraint? = null
@@ -130,8 +132,9 @@ open class UITextInput @JvmOverloads constructor(
             animateCursor()
         } else {
             cursor.setColor(Color(255, 255, 255, 0).asConstraint())
-            if (text.isNotEmpty())
-                cursorLocation = text.length
+            if (text.isNotEmpty() && !hasSelection()) {
+                setCursorLocation(text.length)
+            }
         }
     }
 
@@ -262,7 +265,13 @@ open class UITextInput @JvmOverloads constructor(
             if (selectionStart() > 0) {
                 val preSelectionText = text.substring(0, selectionStart())
 
-                UniversalGraphicsHandler.drawString(preSelectionText, currentXPos, textPositionY(), getColor().rgb, shadow)
+                UniversalGraphicsHandler.drawString(
+                    preSelectionText,
+                    currentXPos,
+                    textPositionY(),
+                    getColor().rgb,
+                    shadow
+                )
                 currentXPos += preSelectionText.width()
             }
 
@@ -270,19 +279,31 @@ open class UITextInput @JvmOverloads constructor(
             val selectedTextWidth = selectedText.width()
 
             UIBlock.drawBlock(
-                selectionBackgroundColor,
+                if (active) selectionBackgroundColor else inactiveSelectionBackgroundColor,
                 currentXPos.toDouble(),
                 getTop().toDouble(),
                 currentXPos.toDouble() + selectedTextWidth,
                 getBottom().toDouble()
             )
-            UniversalGraphicsHandler.drawString(selectedText, currentXPos, textPositionY(), selectionForegroundColor.rgb, false)
+            UniversalGraphicsHandler.drawString(
+                selectedText,
+                currentXPos,
+                textPositionY(),
+                if (active) selectionForegroundColor.rgb else inactiveSelectionForegroundColor.rgb,
+                false
+            )
 
             currentXPos += selectedTextWidth
 
             if (selectionEnd() < text.length) {
                 val postSelectionText = text.substring(selectionEnd())
-                UniversalGraphicsHandler.drawString(postSelectionText, currentXPos, textPositionY(), getColor().rgb, shadow)
+                UniversalGraphicsHandler.drawString(
+                    postSelectionText,
+                    currentXPos,
+                    textPositionY(),
+                    getColor().rgb,
+                    shadow
+                )
             }
 
             return super.draw()
@@ -294,7 +315,13 @@ open class UITextInput @JvmOverloads constructor(
                 cursor.setX((currentWidthBeforeCursor).coerceAtMost(getWidth()).pixels())
             }
 
-            UniversalGraphicsHandler.drawString(text, getLeft() - currentTextOffset, textPositionY(), getColor().rgb, shadow)
+            UniversalGraphicsHandler.drawString(
+                text,
+                getLeft() - currentTextOffset,
+                textPositionY(),
+                getColor().rgb,
+                shadow
+            )
             return super.draw()
         }
 
