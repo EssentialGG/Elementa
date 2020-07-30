@@ -7,12 +7,14 @@ import club.sk1er.elementa.constraints.animation.Animations
 import club.sk1er.elementa.dsl.*
 import club.sk1er.mods.core.universal.UniversalGraphicsHandler
 import java.awt.Color
+import kotlin.math.abs
 
 open class UITextInput @JvmOverloads constructor(
     private val placeholder: String = "",
     var shadow: Boolean = true,
     private val selectionBackgroundColor: Color = Color.WHITE,
     private val selectionForegroundColor: Color = Color(64, 139, 229),
+    private val allowInactiveSelection: Boolean = false,
     private val inactiveSelectionBackgroundColor: Color = Color(176, 176, 176),
     private val inactiveSelectionForegroundColor: Color = Color.WHITE
 ) : UIComponent() {
@@ -41,6 +43,7 @@ open class UITextInput @JvmOverloads constructor(
     private var isSelecting = false
     private var selectionEndLocation = 0
     private var hasMovedSelection = false
+    private var lastSelectionMoveTimestamp = System.currentTimeMillis()
 
     init {
         setHeight(11.pixels())
@@ -95,7 +98,17 @@ open class UITextInput @JvmOverloads constructor(
                 return@onMouseDrag
 
             selectionEndLocation = textPositionAt(mouseX.coerceIn(0f, getWidth()))
-            scrollTextPositionIntoView(selectionEndLocation)
+
+            val currentTime = System.currentTimeMillis()
+            if (currentTime - lastSelectionMoveTimestamp > 50) {
+                if (mouseX >= getWidth()) {
+                    scrollTextPositionIntoView(selectionEnd() + 1)
+                    lastSelectionMoveTimestamp = currentTime
+                } else if (mouseX <= 0) {
+                    scrollTextPositionIntoView(selectionStart() - 1)
+                    lastSelectionMoveTimestamp = currentTime
+                }
+            }
         }
 
         onMouseRelease {
@@ -132,7 +145,7 @@ open class UITextInput @JvmOverloads constructor(
             animateCursor()
         } else {
             cursor.setColor(Color(255, 255, 255, 0).asConstraint())
-            if (text.isNotEmpty() && !hasSelection()) {
+            if (text.isNotEmpty() && (!allowInactiveSelection || !hasSelection())) {
                 setCursorLocation(text.length)
             }
         }
@@ -149,10 +162,17 @@ open class UITextInput @JvmOverloads constructor(
     }
 
     private fun addText(newText: String) {
-        if (cursorLocation >= text.length) {
-            text += newText
-        } else {
-            text = text.substring(0, cursorLocation) + newText + text.substring(cursorLocation)
+        when {
+            hasSelection() -> {
+                cursorLocation = selectionStart()
+                text = text.substring(0, selectionStart()) + newText + text.substring(selectionEnd())
+            }
+            cursorLocation >= text.length -> {
+                text += newText
+            }
+            else -> {
+                text = text.substring(0, cursorLocation) + newText + text.substring(cursorLocation)
+            }
         }
 
         textWidth = text.width().toFloat()
@@ -163,13 +183,23 @@ open class UITextInput @JvmOverloads constructor(
     private fun removeText(startPos: Int, endPos: Int) {
         text = text.substring(0, startPos) + text.substring(endPos)
         textWidth = text.width().toFloat()
+
+        if (abs(startPos - endPos) > 1)
+            setCursorLocation(startPos)
+
+        if (cursorLocation < text.length) {
+            val visibleWidthBeforeCursor = currentWidthBeforeCursor - currentTextOffset
+            val widthAfterCursor = text.substring(cursorLocation).width()
+
+            if (visibleWidthBeforeCursor + widthAfterCursor < getWidth()) {
+                currentTextOffset = (textWidth - getWidth()).coerceAtLeast(0f)
+            }
+        }
+
         updateAction(text)
     }
 
     private fun setCursorLocation(newPosition: Int) {
-        if (newPosition == cursorLocation)
-            return
-
         recalculateWidth()
 
         if (newPosition >= text.length && textWidth >= getWidth()) {
@@ -191,6 +221,9 @@ open class UITextInput @JvmOverloads constructor(
     }
 
     private fun scrollTextPositionIntoView(textPosition: Int) {
+        if (textPosition < 0 || textPosition > text.length)
+            return
+
         val widthBeforePosition = text.substring(0, textPosition).width().toFloat()
 
         if (textWidth < getWidth()) {
