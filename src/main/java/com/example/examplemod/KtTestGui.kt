@@ -126,7 +126,7 @@ class KtTestGui : WindowScreen() {
             textScale = 2.pixels()
         }
 
-        val parent = UIBlock(Color.GRAY).constrain {
+        val parent = UIBlock(Color.BLACK).constrain {
             x = CenterConstraint()
             y = 5.pixels()
             width = ChildBasedSizeConstraint() + 3.pixels()
