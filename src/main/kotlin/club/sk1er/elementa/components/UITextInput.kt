@@ -30,9 +30,9 @@ open class UITextInput @JvmOverloads constructor(
     private var active = false
 
     private var cursor: UIComponent = UIBlock(Color(255, 255, 255, 0)).constrain {
-        y = CenterConstraint()
+        y = CenterConstraint() - 0.5f.pixels()
         width = 1.pixels()
-        height = 7.pixels()
+        height = 9f.pixels()
     } childOf this
     private var cursorLocation = 0
 
@@ -41,7 +41,7 @@ open class UITextInput @JvmOverloads constructor(
     private var hasMovedSelection = false
 
     init {
-        setHeight(9.pixels())
+        setHeight(11.pixels())
 
         onKeyType { typedChar, keyCode ->
             if (!active) return@onKeyType
@@ -230,6 +230,8 @@ open class UITextInput @JvmOverloads constructor(
         }
     }
 
+    private fun textPositionY() = getTop() + 1f
+
     private fun animateCursor() {
         if (!active) return
         cursor.animate {
@@ -260,7 +262,7 @@ open class UITextInput @JvmOverloads constructor(
             if (selectionStart() > 0) {
                 val preSelectionText = text.substring(0, selectionStart())
 
-                UniversalGraphicsHandler.drawString(preSelectionText, currentXPos, getTop(), getColor().rgb, shadow)
+                UniversalGraphicsHandler.drawString(preSelectionText, currentXPos, textPositionY(), getColor().rgb, shadow)
                 currentXPos += preSelectionText.width()
             }
 
@@ -274,13 +276,13 @@ open class UITextInput @JvmOverloads constructor(
                 currentXPos.toDouble() + selectedTextWidth,
                 getBottom().toDouble()
             )
-            UniversalGraphicsHandler.drawString(selectedText, currentXPos, getTop(), selectionForegroundColor.rgb, false)
+            UniversalGraphicsHandler.drawString(selectedText, currentXPos, textPositionY(), selectionForegroundColor.rgb, false)
 
             currentXPos += selectedTextWidth
 
             if (selectionEnd() < text.length) {
                 val postSelectionText = text.substring(selectionEnd())
-                UniversalGraphicsHandler.drawString(postSelectionText, currentXPos, getTop(), getColor().rgb, shadow)
+                UniversalGraphicsHandler.drawString(postSelectionText, currentXPos, textPositionY(), getColor().rgb, shadow)
             }
 
             return super.draw()
@@ -289,10 +291,10 @@ open class UITextInput @JvmOverloads constructor(
         if (cursorLocation >= text.length || (isSelecting && hasMovedSelection)) { // Only draw one string
             if (!isSelecting) {
                 cursor.unhide()
-                cursor.setX((currentWidthBeforeCursor + 1).coerceAtMost(getWidth()).pixels())
+                cursor.setX((currentWidthBeforeCursor).coerceAtMost(getWidth()).pixels())
             }
 
-            UniversalGraphicsHandler.drawString(text, getLeft() - currentTextOffset, getTop(), getColor().rgb, shadow)
+            UniversalGraphicsHandler.drawString(text, getLeft() - currentTextOffset, textPositionY(), getColor().rgb, shadow)
             return super.draw()
         }
 
@@ -300,21 +302,21 @@ open class UITextInput @JvmOverloads constructor(
             cursor.hide(instantly = true)
         } else {
             cursor.unhide()
-            cursor.setX((currentWidthBeforeCursor - currentTextOffset + 1).pixels())
+            cursor.setX((currentWidthBeforeCursor - currentTextOffset).pixels())
         }
 
         UniversalGraphicsHandler.drawString(
             currentTextBeforeCursor,
             getLeft() - currentTextOffset,
-            getTop(),
+            textPositionY(),
             getColor().rgb,
             shadow
         )
 
         UniversalGraphicsHandler.drawString(
             text.substring(cursorLocation),
-            getLeft() - currentTextOffset + currentWidthBeforeCursor + 3,
-            getTop(),
+            getLeft() - currentTextOffset + currentWidthBeforeCursor,
+            textPositionY(),
             getColor().rgb,
             shadow
         )
