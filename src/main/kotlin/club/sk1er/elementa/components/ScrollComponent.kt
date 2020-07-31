@@ -357,15 +357,7 @@ class ScrollComponent @JvmOverloads constructor(
     }
 
     override fun mouseClick(mouseX: Int, mouseY: Int, button: Int) {
-        for (i in actualHolder.children.lastIndex downTo 0) {
-            val child = actualHolder.children[i]
-
-            if (child.isPointInside(mouseX.toFloat(), mouseY.toFloat())) {
-                return child.mouseClick(mouseX, mouseY, button)
-            }
-        }
-
-        fireMouseEvent(UIClickEvent(mouseX.toFloat(), mouseY.toFloat(), button, this, this))
+        actualHolder.mouseClick(mouseX, mouseY, button)
     }
 
     fun searchAndInsert(components: List<UIComponent>, comparison: (UIComponent) -> Int) {

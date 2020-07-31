@@ -7,7 +7,8 @@ data class UIClickEvent(
     val absoluteY: Float,
     val mouseButton: Int,
     val target: UIComponent,
-    val currentTarget: UIComponent
+    val currentTarget: UIComponent,
+    val clickCount: Int
 ) : UIEvent() {
     val relativeX = absoluteX - currentTarget.getLeft()
     val relativeY = absoluteY - currentTarget.getTop()

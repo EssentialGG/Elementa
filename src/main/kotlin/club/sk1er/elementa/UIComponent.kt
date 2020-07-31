@@ -33,6 +33,8 @@ abstract class UIComponent {
 
     /* Bubbling Events */
     val mouseClickListeners = mutableListOf<UIComponent.(UIClickEvent) -> Unit>()
+    private var lastClickTime = System.currentTimeMillis()
+    private var lastClickCount = 0
 
     /* Non-Bubbling Events */
     var mouseReleaseAction: UIComponent.() -> Unit = {}
@@ -396,7 +398,10 @@ abstract class UIComponent {
             }
         }
 
-        fireMouseEvent(UIClickEvent(mouseX.toFloat(), mouseY.toFloat(), button, this, this))
+        lastClickCount = if (System.currentTimeMillis() - lastClickTime < 500) lastClickCount + 1 else 1
+        lastClickTime = System.currentTimeMillis()
+
+        fireMouseEvent(UIClickEvent(mouseX.toFloat(), mouseY.toFloat(), button, this, this, lastClickCount))
     }
 
     protected fun fireMouseEvent(event: UIClickEvent) {
