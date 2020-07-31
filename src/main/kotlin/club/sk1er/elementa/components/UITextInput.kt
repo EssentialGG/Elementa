@@ -6,7 +6,11 @@ import club.sk1er.elementa.constraints.WidthConstraint
 import club.sk1er.elementa.constraints.animation.Animations
 import club.sk1er.elementa.dsl.*
 import club.sk1er.mods.core.universal.UniversalGraphicsHandler
+import club.sk1er.mods.core.universal.UniversalKeyboard
 import java.awt.Color
+import java.awt.Toolkit
+import java.awt.datatransfer.DataFlavor
+import java.awt.datatransfer.StringSelection
 import kotlin.math.abs
 
 open class UITextInput @JvmOverloads constructor(
@@ -53,15 +57,72 @@ open class UITextInput @JvmOverloads constructor(
 
             if (keyCode == 1) {
                 releaseWindowFocus()
+            } else if (UniversalKeyboard.isKeyComboCtrlA(keyCode)) {
+                setCursorLocation(text.length)
+                selectionEndLocation = 0
+            } else if (UniversalKeyboard.isKeyComboCtrlC(keyCode) && hasSelection()) {
+                copySelection()
+            } else if (UniversalKeyboard.isKeyComboCtrlX(keyCode) && hasSelection()) {
+                copySelection()
+                removeSelection()
+            } else if (UniversalKeyboard.isKeyComboCtrlV(keyCode)) {
+                addText(Toolkit.getDefaultToolkit().systemClipboard.getData(DataFlavor.stringFlavor) as String)
             } else if (typedChar in ' '..'~') { // Most of the ASCII characters
-                // TODO: ctrl checks (ctrl+c, ctrl+v)
                 addText(typedChar.toString())
             } else if (keyCode == 203) { // Left Arrow
-                // TODO: shift + ctrl checks
-                if (cursorLocation != 0) setCursorLocation(cursorLocation - 1)
+                val newCursorLocation = when {
+                    cursorLocation == 0 -> 0
+                    UniversalKeyboard.isCtrlKeyDown() && (!hasSelection() || UniversalKeyboard.isShiftKeyDown()) -> {
+                        firstWordBreakBefore(cursorLocation)
+                    }
+                    hasSelection() -> selectionStart()
+                    else -> cursorLocation - 1
+                }
+
+                if (UniversalKeyboard.isShiftKeyDown()) {
+                    if (!isSelecting) {
+                        isSelecting = true
+                        hasMovedSelection = true
+                        selectionEndLocation = cursorLocation
+                    }
+
+                    scrollTextPositionIntoView(newCursorLocation)
+                    cursorLocation = newCursorLocation
+                } else {
+                    setCursorLocation(newCursorLocation)
+                }
+
+                if (!hasSelection()) {
+                    isSelecting = false
+                    hasMovedSelection = false
+                }
             } else if (keyCode == 205) { // Right Arrow
-                // TODO: shift + ctrl checks
-                if (cursorLocation < text.length) setCursorLocation(cursorLocation + 1)
+                val newCursorLocation = when {
+                    cursorLocation >= text.length -> text.length
+                    UniversalKeyboard.isCtrlKeyDown() && (!hasSelection() || UniversalKeyboard.isShiftKeyDown()) -> {
+                        firstWordBreakAfter(cursorLocation)
+                    }
+                    hasSelection() -> selectionEnd()
+                    else -> cursorLocation + 1
+                }
+
+                if (UniversalKeyboard.isShiftKeyDown()) {
+                    if (!isSelecting) {
+                        isSelecting = true
+                        hasMovedSelection = true
+                        selectionEndLocation = cursorLocation
+                    }
+
+                    scrollTextPositionIntoView(newCursorLocation)
+                    cursorLocation = newCursorLocation
+                } else {
+                    setCursorLocation(newCursorLocation)
+                }
+
+                if (!hasSelection()) {
+                    isSelecting = false
+                    hasMovedSelection = false
+                }
             } else if (keyCode == 14) {
                 if (hasSelection()) {
                     removeSelection()
@@ -241,8 +302,14 @@ open class UITextInput @JvmOverloads constructor(
 
     private fun removeSelection() {
         removeText(selectionStart(), selectionEnd())
-        // TODO: fix where cursor ends up?
         selectionEndLocation = cursorLocation
+        isSelecting = false
+        hasMovedSelection = false
+    }
+
+    private fun copySelection() {
+        val string = StringSelection(text.substring(selectionStart(), selectionEnd()))
+        Toolkit.getDefaultToolkit().systemClipboard.setContents(string, string)
     }
 
     private fun textPositionAt(relativeXPosition: Float): Int {
@@ -257,6 +324,34 @@ open class UITextInput @JvmOverloads constructor(
         }
 
         return text.length
+    }
+
+    private fun firstWordBreakAfter(location: Int): Int {
+        if (location >= text.length)
+            return text.length
+
+        val startedAtWhiteSpace = text[location].isWhitespace()
+
+        for (i in (location + 1) until text.length) {
+            if ((startedAtWhiteSpace && !text[i].isWhitespace()) || (!startedAtWhiteSpace && text[i].isWhitespace()))
+                return i
+        }
+
+        return text.length
+    }
+
+    private fun firstWordBreakBefore(location: Int): Int {
+        if (location <= 0)
+            return 0
+
+        val startedAtWhiteSpace = text[location - 1].isWhitespace()
+
+        for (i in (location - 1) downTo 1) {
+            if ((startedAtWhiteSpace && !text[i - 1].isWhitespace()) || (!startedAtWhiteSpace && text[i - 1].isWhitespace()))
+                return i
+        }
+
+        return 0
     }
 
     private fun recalculateWidth() {
@@ -292,6 +387,7 @@ open class UITextInput @JvmOverloads constructor(
 
         if (hasSelection()) {
             hasMovedSelection = true
+            cursor.hide(instantly = true)
 
             var currentXPos = getLeft() - currentTextOffset
 
