@@ -45,6 +45,7 @@ open class UITextInput @JvmOverloads constructor(
     private var cursorLocation = 0
 
     private var isSelecting = false
+    private var isWordSelecting = false
     private var selectionEndLocation = 0
     private var hasMovedSelection = false
     private var lastSelectionMoveTimestamp = System.currentTimeMillis()
@@ -58,8 +59,7 @@ open class UITextInput @JvmOverloads constructor(
             if (keyCode == 1) {
                 releaseWindowFocus()
             } else if (UniversalKeyboard.isKeyComboCtrlA(keyCode)) {
-                setCursorLocation(text.length)
-                selectionEndLocation = 0
+                selectAll()
             } else if (UniversalKeyboard.isKeyComboCtrlC(keyCode) && hasSelection()) {
                 copySelection()
             } else if (UniversalKeyboard.isKeyComboCtrlX(keyCode) && hasSelection()) {
@@ -149,16 +149,44 @@ open class UITextInput @JvmOverloads constructor(
             if (!active || event.mouseButton != 0)
                 return@onMouseClick
 
-            setCursorLocation(textPositionAt(event.relativeX))
-            isSelecting = true
-            hasMovedSelection = false
+            when (event.clickCount % 3) {
+                0 -> selectAll()
+                1 -> {
+                    setCursorLocation(textPositionAt(event.relativeX))
+                    isSelecting = true
+                    hasMovedSelection = false
+                }
+                2 -> {
+                    val clickPosition = textPositionAt(event.relativeX)
+                    setCursorLocation(firstWordEndAfter(clickPosition))
+                    selectionEndLocation = firstWordStartBefore(clickPosition)
+                    isWordSelecting = true
+                    isSelecting = true
+                    hasMovedSelection = true
+                    scrollTextPositionIntoView(selectionStart())
+                    scrollTextPositionIntoView(selectionEnd())
+                }
+            }
         }
 
         onMouseDrag { mouseX, _, mouseButton ->
             if (mouseButton != 0 || !isSelecting)
                 return@onMouseDrag
 
-            selectionEndLocation = textPositionAt(mouseX.coerceIn(0f, getWidth()))
+            val textPosition = textPositionAt(mouseX.coerceIn(0f, getWidth()))
+
+            selectionEndLocation = if (isWordSelecting) {
+                if (textPosition < cursorLocation) {
+                    firstWordStartBefore(textPosition)
+                } else {
+                    firstWordEndAfter(textPosition)
+                }
+            } else {
+                textPositionAt(mouseX.coerceIn(0f, getWidth()))
+            }
+
+            if (isWordSelecting)
+                scrollTextPositionIntoView(selectionEndLocation)
 
             val currentTime = System.currentTimeMillis()
             if (currentTime - lastSelectionMoveTimestamp > 50) {
@@ -175,6 +203,7 @@ open class UITextInput @JvmOverloads constructor(
         onMouseRelease {
             isSelecting = false
             hasMovedSelection = false
+            isWordSelecting = false
         }
 
         cursor.animateAfterUnhide {
@@ -225,8 +254,8 @@ open class UITextInput @JvmOverloads constructor(
     private fun addText(newText: String) {
         when {
             hasSelection() -> {
-                cursorLocation = selectionStart()
                 text = text.substring(0, selectionStart()) + newText + text.substring(selectionEnd())
+                cursorLocation = selectionStart()
             }
             cursorLocation >= text.length -> {
                 text += newText
@@ -296,6 +325,11 @@ open class UITextInput @JvmOverloads constructor(
         }
     }
 
+    private fun selectAll() {
+        setCursorLocation(text.length)
+        selectionEndLocation = 0
+    }
+
     private fun hasSelection() = selectionEndLocation != cursorLocation
     private fun selectionStart() = if (cursorLocation < selectionEndLocation) cursorLocation else selectionEndLocation
     private fun selectionEnd() = if (cursorLocation > selectionEndLocation) cursorLocation else selectionEndLocation
@@ -321,6 +355,42 @@ open class UITextInput @JvmOverloads constructor(
             val charWidth = text[i].width()
             if (currentX + (charWidth / 2) >= targetXPos) return i
             currentX += charWidth
+        }
+
+        return text.length
+    }
+
+    private fun firstWordStartBefore(location: Int): Int {
+        if (location <= 0)
+            return 0
+
+        var hasEncounteredText = false
+        for (i in location downTo 0) {
+            if (!text[i].isWhitespace()) {
+                hasEncounteredText = true
+                continue
+            }
+
+            if (hasEncounteredText)
+                return i + 1
+        }
+
+        return 0
+    }
+
+    private fun firstWordEndAfter(location: Int): Int {
+        if (location >= text.length)
+            return text.length
+
+        var hasEncounteredText = false
+        for (i in location until text.length) {
+            if (!text[i].isWhitespace()) {
+                hasEncounteredText = true
+                continue
+            }
+
+            if (hasEncounteredText)
+                return i
         }
 
         return text.length
