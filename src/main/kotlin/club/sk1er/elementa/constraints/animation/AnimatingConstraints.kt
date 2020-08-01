@@ -11,6 +11,7 @@ class AnimatingConstraints(
 ) : UIConstraints(component) {
 
     var completeAction: () -> Unit = {}
+    private var extraDelayFrames = 0
 
     init {
         this.x = oldConstraints.x
@@ -124,6 +125,15 @@ class AnimatingConstraints(
         )
     }
 
+    /**
+     * Sets the "extra delay" of this animation. This delay does not affect any of the actual changes in the animation,
+     * such as color shift or position change, rather, it simply delays the completion of the animation. This is mostly
+     * relevant for [UIComponent.animateBeforeHide] which hides the element when the animation is completed.
+     */
+    fun setExtraDelay(delay: Float) {
+        extraDelayFrames = (delay * Window.of(component).animationFPS).toInt()
+    }
+
     fun onComplete(method: () -> Unit) = apply {
         completeAction = method
     }
@@ -177,6 +187,11 @@ class AnimatingConstraints(
         if (color is ColorAnimationComponent) {
             if (color.complete()) this.color = color.newConstraint
             else anyLeftAnimating = true
+        }
+
+        if (extraDelayFrames > 0) {
+            anyLeftAnimating = true
+            extraDelayFrames--
         }
 
         if (!anyLeftAnimating) {
