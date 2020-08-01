@@ -75,7 +75,7 @@ open class UITextInput @JvmOverloads constructor(
                     UniversalKeyboard.isCtrlKeyDown() && (!hasSelection() || UniversalKeyboard.isShiftKeyDown()) -> {
                         firstWordBreakBefore(cursorLocation)
                     }
-                    hasSelection() -> selectionStart()
+                    hasSelection() && !UniversalKeyboard.isShiftKeyDown() -> selectionStart()
                     else -> cursorLocation - 1
                 }
 
@@ -102,7 +102,7 @@ open class UITextInput @JvmOverloads constructor(
                     UniversalKeyboard.isCtrlKeyDown() && (!hasSelection() || UniversalKeyboard.isShiftKeyDown()) -> {
                         firstWordBreakAfter(cursorLocation)
                     }
-                    hasSelection() -> selectionEnd()
+                    hasSelection() && !UniversalKeyboard.isShiftKeyDown() -> selectionEnd()
                     else -> cursorLocation + 1
                 }
 
