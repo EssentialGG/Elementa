@@ -12,6 +12,8 @@ import java.awt.Toolkit
 import java.awt.datatransfer.DataFlavor
 import java.awt.datatransfer.StringSelection
 import kotlin.math.abs
+import kotlin.math.max
+import kotlin.math.min
 
 open class UITextInput @JvmOverloads constructor(
     private val placeholder: String = "",
@@ -49,6 +51,7 @@ open class UITextInput @JvmOverloads constructor(
     private var selectionEndLocation = 0
     private var hasMovedSelection = false
     private var lastSelectionMoveTimestamp = System.currentTimeMillis()
+    private var originalWordSelection = 0 to 0
 
     init {
         setHeight(11.pixels())
@@ -70,24 +73,24 @@ open class UITextInput @JvmOverloads constructor(
             } else if (typedChar in ' '..'~') { // Most of the ASCII characters
                 addText(typedChar.toString())
             } else if (keyCode == 203) { // Left Arrow
-                val newCursorLocation = when {
+                val newCursorLocation = max(when {
                     cursorLocation == 0 -> 0
                     UniversalKeyboard.isCtrlKeyDown() && (!hasSelection() || UniversalKeyboard.isShiftKeyDown()) -> {
-                        firstWordBreakBefore(cursorLocation)
+                        firstWordBreakBefore(selectionEndLocation)
                     }
                     hasSelection() && !UniversalKeyboard.isShiftKeyDown() -> selectionStart()
+                    hasSelection() -> selectionEndLocation - 1
                     else -> cursorLocation - 1
-                }
+                }, 0)
 
                 if (UniversalKeyboard.isShiftKeyDown()) {
                     if (!isSelecting) {
                         isSelecting = true
                         hasMovedSelection = true
-                        selectionEndLocation = cursorLocation
                     }
 
                     scrollTextPositionIntoView(newCursorLocation)
-                    cursorLocation = newCursorLocation
+                    selectionEndLocation = newCursorLocation
                 } else {
                     setCursorLocation(newCursorLocation)
                 }
@@ -97,24 +100,24 @@ open class UITextInput @JvmOverloads constructor(
                     hasMovedSelection = false
                 }
             } else if (keyCode == 205) { // Right Arrow
-                val newCursorLocation = when {
+                val newCursorLocation = min(when {
                     cursorLocation >= text.length -> text.length
                     UniversalKeyboard.isCtrlKeyDown() && (!hasSelection() || UniversalKeyboard.isShiftKeyDown()) -> {
-                        firstWordBreakAfter(cursorLocation)
+                        firstWordBreakAfter(selectionEndLocation)
                     }
                     hasSelection() && !UniversalKeyboard.isShiftKeyDown() -> selectionEnd()
+                    hasSelection() -> selectionEndLocation + 1
                     else -> cursorLocation + 1
-                }
+                }, text.length)
 
                 if (UniversalKeyboard.isShiftKeyDown()) {
                     if (!isSelecting) {
                         isSelecting = true
                         hasMovedSelection = true
-                        selectionEndLocation = cursorLocation
                     }
 
                     scrollTextPositionIntoView(newCursorLocation)
-                    cursorLocation = newCursorLocation
+                    selectionEndLocation = newCursorLocation
                 } else {
                     setCursorLocation(newCursorLocation)
                 }
@@ -136,10 +139,44 @@ open class UITextInput @JvmOverloads constructor(
                 } else if (cursorLocation < text.length) {
                     removeText(cursorLocation, cursorLocation + 1)
                 }
-            } else if (keyCode == 199) {
-                setCursorLocation(0)
-            } else if (keyCode == 207) {
-                setCursorLocation(text.length)
+            } else if (keyCode == 199) { // Home
+                if (UniversalKeyboard.isShiftKeyDown()) {
+                    if (!isSelecting) {
+                        isSelecting = true
+                        hasMovedSelection = true
+                    }
+
+                    selectionEndLocation = 0
+                    scrollTextPositionIntoView(0)
+                } else {
+                    setCursorLocation(0)
+                    isSelecting = false
+                    hasMovedSelection = false
+                }
+
+                if (!hasSelection()) {
+                    isSelecting = false
+                    hasMovedSelection = false
+                }
+            } else if (keyCode == 207) { // End
+                if (UniversalKeyboard.isShiftKeyDown()) {
+                    if (!isSelecting) {
+                        isSelecting = true
+                        hasMovedSelection = true
+                    }
+
+                    selectionEndLocation = text.length
+                    scrollTextPositionIntoView(text.length)
+                } else {
+                    setCursorLocation(text.length)
+                    isSelecting = false
+                    hasMovedSelection = false
+                }
+
+                if (!hasSelection()) {
+                    isSelecting = false
+                    hasMovedSelection = false
+                }
             } else if (keyCode == 28) {
                 activateAction(text)
             }
@@ -158,13 +195,12 @@ open class UITextInput @JvmOverloads constructor(
                 }
                 2 -> {
                     val clickPosition = textPositionAt(event.relativeX)
-                    setCursorLocation(firstWordEndAfter(clickPosition))
+                    cursorLocation = firstWordEndAfter(clickPosition)
                     selectionEndLocation = firstWordStartBefore(clickPosition)
+                    originalWordSelection = selectionEndLocation to cursorLocation
                     isWordSelecting = true
                     isSelecting = true
                     hasMovedSelection = true
-                    scrollTextPositionIntoView(selectionStart())
-                    scrollTextPositionIntoView(selectionEnd())
                 }
             }
         }
@@ -176,25 +212,24 @@ open class UITextInput @JvmOverloads constructor(
             val textPosition = textPositionAt(mouseX.coerceIn(0f, getWidth()))
 
             selectionEndLocation = if (isWordSelecting) {
-                if (textPosition < cursorLocation) {
+                if (textPosition < originalWordSelection.first) {
+                    cursorLocation = originalWordSelection.second
                     firstWordStartBefore(textPosition)
                 } else {
+                    cursorLocation = originalWordSelection.first
                     firstWordEndAfter(textPosition)
                 }
             } else {
                 textPositionAt(mouseX.coerceIn(0f, getWidth()))
             }
 
-            if (isWordSelecting)
-                scrollTextPositionIntoView(selectionEndLocation)
-
             val currentTime = System.currentTimeMillis()
             if (currentTime - lastSelectionMoveTimestamp > 50) {
                 if (mouseX >= getWidth()) {
-                    scrollTextPositionIntoView(selectionEnd() + 1)
+                    scrollTextPositionIntoView(textPosition + 1)
                     lastSelectionMoveTimestamp = currentTime
                 } else if (mouseX <= 0) {
-                    scrollTextPositionIntoView(selectionStart() - 1)
+                    scrollTextPositionIntoView(textPosition - 1)
                     lastSelectionMoveTimestamp = currentTime
                 }
             }
@@ -316,23 +351,27 @@ open class UITextInput @JvmOverloads constructor(
 
         val widthBeforePosition = text.substring(0, textPosition).width().toFloat()
 
-        if (textWidth < getWidth()) {
-            currentTextOffset = 0f
-        } else if (textPosition < cursorLocation && currentTextOffset > widthBeforePosition) {
-            currentTextOffset = widthBeforePosition
-        } else if (textPosition > cursorLocation && widthBeforePosition - currentTextOffset > getWidth()) {
-            currentTextOffset = widthBeforePosition - getWidth()
+        when {
+            textWidth < getWidth() -> {
+                currentTextOffset = 0f
+            }
+            currentTextOffset > widthBeforePosition -> {
+                currentTextOffset = widthBeforePosition
+            }
+            widthBeforePosition - currentTextOffset > getWidth() -> {
+                currentTextOffset = widthBeforePosition - getWidth()
+            }
         }
     }
 
     private fun selectAll() {
-        setCursorLocation(text.length)
+        cursorLocation = text.length
         selectionEndLocation = 0
     }
 
     private fun hasSelection() = selectionEndLocation != cursorLocation
-    private fun selectionStart() = if (cursorLocation < selectionEndLocation) cursorLocation else selectionEndLocation
-    private fun selectionEnd() = if (cursorLocation > selectionEndLocation) cursorLocation else selectionEndLocation
+    private fun selectionStart() = min(cursorLocation, selectionEndLocation)
+    private fun selectionEnd() = max(cursorLocation, selectionEndLocation)
 
     private fun removeSelection() {
         removeText(selectionStart(), selectionEnd())
