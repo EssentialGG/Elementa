@@ -181,22 +181,6 @@ class ExampleGui : WindowScreen() {
             // constructing an instance of [ConstantColorConstraint].
             color = Color.GREEN.darker().asConstraint()
         } childOf createNoteButton
-
-        window.onMouseClick {
-            // When the window is clicked, we want to set all sticky notes to be inactive.
-            // To do so, we need to find all children of window that are instances of [StickyNote].
-            // For that, we can use the handy [childrenOfType] helper, and from there
-            // set each text area to be inactive.
-            // In Elementa, click events follow the "bubbling" system that the browser's DOM does.
-            // The most specific, deeply nested component will receive the click event first,
-            // and then as long as that component's listeners do not stop propagation, it will
-            // bubble up to the top of the component hierarchy, eventually reaching the window component.
-            // In our case, if this particular click happens on a sticky note, it will be stopped
-            // from propagating up to the window, so we're safe to set all sticky notes to be inactive here.
-            window.childrenOfType<StickyNote>().forEach {
-                it.textArea.active = false
-            }
-        }
     }
 
     // Now, since we want to create a bunch of sticky notes, it makes sense
@@ -422,14 +406,20 @@ class ExampleGui : WindowScreen() {
                 // As we've seen before, we could have used a [RelativeConstraint] here
                 // and subtracted by 4 pixels, but this way, using a [FillConstraint] is a little easier to grasp.
                 height = FillConstraint() - 2.pixels()
-            }.onMouseClick { event ->
-                // When we click inside of this text area, we want to activate it.
+            }.onFocus {
+                // When we gain the Window's focus, we want to mark ourselves as active.
                 // We know that the [this] value is an instance of [UITextInput] so we can simply cast.
                 (this as UITextInput).active = true
-
-                // We don't want the Window to receive this event because it would then set our input
-                // back to inactive.
-                event.stopPropagation()
+            }.onFocusLost {
+                // Conversely, when we lose the Window's focus, we want to make ourselves inactive.
+                // Again, we know that the [this] value is an instance of [UITextInput] so we can simply cast.
+                (this as UITextInput).active = false
+            }.onMouseClick {
+                // When we click inside of this text area, we want to activate it. To do so, we need to make sure
+                // that this text input has the Window's focus. This means that the Window will route keyboard
+                // events to our component while it is focused. Later, when we click away from this text input area,
+                // we will automatically lose focus, and our [onFocusLost] listener will be called.
+                grabWindowFocus()
             } childOf textHolder) as UITextInput
 
             // Text areas can have variable widths, but in our case we want it to always be the entire
