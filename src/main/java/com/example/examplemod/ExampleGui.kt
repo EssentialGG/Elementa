@@ -2,6 +2,7 @@ package com.example.examplemod
 
 import club.sk1er.elementa.WindowScreen
 import club.sk1er.elementa.components.*
+import club.sk1er.elementa.components.input.UITextInput
 import club.sk1er.elementa.constraints.*
 import club.sk1er.elementa.constraints.animation.Animations
 import club.sk1er.elementa.dsl.*

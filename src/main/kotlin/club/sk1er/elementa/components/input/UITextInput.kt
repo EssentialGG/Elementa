@@ -1,6 +1,7 @@
-package club.sk1er.elementa.components
+package club.sk1er.elementa.components.input
 
 import club.sk1er.elementa.UIComponent
+import club.sk1er.elementa.components.UIBlock
 import club.sk1er.elementa.constraints.CenterConstraint
 import club.sk1er.elementa.constraints.WidthConstraint
 import club.sk1er.elementa.constraints.animation.Animations
@@ -39,7 +40,8 @@ open class UITextInput @JvmOverloads constructor(
     private var text = ""
     private var active = false
 
-    private var cursor: UIComponent = UIBlock(Color(255, 255, 255, 0)).constrain {
+    private var cursor: UIComponent = UIBlock(Color(255, 255, 255, 0))
+        .constrain {
         y = CenterConstraint() - 0.5f.pixels()
         width = 1.pixels()
         height = 9f.pixels()

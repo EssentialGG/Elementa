@@ -2,6 +2,8 @@ package com.example.examplemod
 
 import club.sk1er.elementa.WindowScreen
 import club.sk1er.elementa.components.*
+import club.sk1er.elementa.components.input.UIMultilineTextInput
+import club.sk1er.elementa.components.input.UITextInput
 import club.sk1er.elementa.constraints.*
 import club.sk1er.elementa.constraints.animation.Animations
 import club.sk1er.elementa.dsl.*
@@ -145,6 +147,28 @@ class KtTestGui : WindowScreen() {
 
         parent.onMouseClick {
             input.grabWindowFocus()
+        }
+
+        val parent2 = UIBlock(Color.BLACK).constrain {
+            x = CenterConstraint()
+            y = 50.pixels()
+            width = ChildBasedSizeConstraint()
+            height = ChildBasedSizeConstraint()
+        } childOf window effect ScissorEffect()
+
+        val input2 = UIMultilineTextInput("empty").constrain {
+            x = 0.pixels()
+            width = 50.pixels()
+        }.setMaxLines(7) childOf parent2
+
+        input2.onFocus {
+            input2.setActive(true)
+        }.onFocusLost {
+            input2.setActive(false)
+        }
+
+        parent2.onMouseClick {
+            input2.grabWindowFocus()
         }
 
         val img = UIImage.ofURL(URL("https://i.imgur.com/Pc6iMw3e.png")).constrain {
