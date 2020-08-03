@@ -1,6 +1,7 @@
-package club.sk1er.elementa.components
+package club.sk1er.elementa.components.input
 
 import club.sk1er.elementa.UIComponent
+import club.sk1er.elementa.components.UIBlock
 import club.sk1er.elementa.constraints.CenterConstraint
 import club.sk1er.elementa.constraints.HeightConstraint
 import club.sk1er.elementa.constraints.animation.Animations
@@ -32,7 +33,14 @@ class UIMultilineTextInput @JvmOverloads constructor(
     private val visualLines = mutableListOf(VisualLine("", 0))
     private var active = false
 
-    private var cursorComponent: UIComponent = UIBlock(Color(255, 255, 255, 0)).constrain {
+    private var cursorComponent: UIComponent = UIBlock(
+        Color(
+            255,
+            255,
+            255,
+            0
+        )
+    ).constrain {
         y = CenterConstraint() - 0.5f.pixels()
         width = 1.pixels()
         height = 9f.pixels()
@@ -55,6 +63,7 @@ class UIMultilineTextInput @JvmOverloads constructor(
     private var scrollingOffset = 0f
     private var targetScrollingOffset = 0f
     private var cursorNeedsRefocus = false
+    private var lastSelectionMoveTimestamp = System.currentTimeMillis()
 
     private val spaceWidth = ' '.width()
 
@@ -89,7 +98,9 @@ class UIMultilineTextInput @JvmOverloads constructor(
                 val holdingCtrl = UniversalKeyboard.isCtrlKeyDown()
 
                 val newCursorPosition = when {
-                    holdingCtrl -> getNearestWordBoundary(cursor, Direction.Left)
+                    holdingCtrl -> getNearestWordBoundary(cursor,
+                        Direction.Left
+                    )
                     hasSelection() -> if (holdingShift) cursor.offsetColumn(-1) else selectionStart()
                     else -> cursor.offsetColumn(-1)
                 }
@@ -106,7 +117,9 @@ class UIMultilineTextInput @JvmOverloads constructor(
                 val holdingCtrl = UniversalKeyboard.isCtrlKeyDown()
 
                 val newCursorPosition = when {
-                    holdingCtrl -> getNearestWordBoundary(cursor, Direction.Right)
+                    holdingCtrl -> getNearestWordBoundary(cursor,
+                        Direction.Right
+                    )
                     hasSelection() -> if (holdingShift) cursor.offsetColumn(1) else selectionEnd()
                     else -> cursor.offsetColumn(1)
                 }
@@ -223,9 +236,13 @@ class UIMultilineTextInput @JvmOverloads constructor(
                 }
                 2 -> {
                     selectionMode = SelectionMode.Word
-                    cursor = getNearestWordBoundary(clickedVisualPos, Direction.Left)
+                    cursor = getNearestWordBoundary(clickedVisualPos,
+                        Direction.Left
+                    )
                     cursorNeedsRefocus = true
-                    otherSelectionEnd = getNearestWordBoundary(clickedVisualPos, Direction.Right)
+                    otherSelectionEnd = getNearestWordBoundary(clickedVisualPos,
+                        Direction.Right
+                    )
                     initiallySelectedWord = cursor to otherSelectionEnd
                 }
             }
@@ -236,8 +253,6 @@ class UIMultilineTextInput @JvmOverloads constructor(
                 return@onMouseDrag
 
             val draggedVisualPos = screenPosToVisualPos(mouseX, mouseY)
-
-            cursorNeedsRefocus = true
 
             when (selectionMode) {
                 SelectionMode.Character -> otherSelectionEnd = draggedVisualPos
@@ -250,12 +265,16 @@ class UIMultilineTextInput @JvmOverloads constructor(
                 }
                 SelectionMode.Word -> when {
                     draggedVisualPos < initiallySelectedWord.first -> {
-                        cursor = getNearestWordBoundary(draggedVisualPos, Direction.Left)
+                        cursor = getNearestWordBoundary(draggedVisualPos,
+                            Direction.Left
+                        )
                         otherSelectionEnd = initiallySelectedWord.second
                     }
                     draggedVisualPos > initiallySelectedWord.second -> {
                         cursor = initiallySelectedWord.first
-                        otherSelectionEnd = getNearestWordBoundary(draggedVisualPos, Direction.Right)
+                        otherSelectionEnd = getNearestWordBoundary(draggedVisualPos,
+                            Direction.Right
+                        )
                     }
                     else -> {
                         cursor = initiallySelectedWord.first
@@ -263,6 +282,18 @@ class UIMultilineTextInput @JvmOverloads constructor(
                     }
                 }
                 SelectionMode.None -> {}
+            }
+
+            val currentTime = System.currentTimeMillis()
+            if (currentTime - lastSelectionMoveTimestamp > 50) {
+                if (mouseY < 0) {
+                    targetScrollingOffset = (targetScrollingOffset + 9).coerceAtMost(0f)
+                    lastSelectionMoveTimestamp = currentTime
+                } else if (mouseY > getHeight()) {
+                    val heightDifference = getHeight() - visualLines.size * 9f
+                    targetScrollingOffset = (targetScrollingOffset - 9).coerceIn(heightDifference, 0f)
+                    lastSelectionMoveTimestamp = currentTime
+                }
             }
         }
 
@@ -304,6 +335,9 @@ class UIMultilineTextInput @JvmOverloads constructor(
             animateCursor()
         } else {
             cursorComponent.setColor(Color(255, 255, 255, 0).asConstraint())
+            if (hasText() && (!allowInactiveSelection || !hasSelection())) {
+                setCursorPosition(LinePosition(visualLines.lastIndex, visualLines.last().length, isVisual = true))
+            }
         }
     }
 
@@ -452,7 +486,6 @@ class UIMultilineTextInput @JvmOverloads constructor(
     private fun selectAll() {
         cursor = LinePosition(0, 0, isVisual = true)
         otherSelectionEnd = LinePosition(visualLines.size - 1, visualLines.last().length, isVisual = true)
-        cursorNeedsRefocus = true
     }
 
     private fun hasSelection() = cursor != otherSelectionEnd

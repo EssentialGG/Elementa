@@ -3,6 +3,7 @@ package com.example.examplemod
 import club.sk1er.elementa.WindowScreen
 import club.sk1er.elementa.components.*
 import club.sk1er.elementa.components.image.BlurHashImage
+import club.sk1er.elementa.components.input.UITextInput
 import club.sk1er.elementa.constraints.*
 import club.sk1er.elementa.dsl.*
 import club.sk1er.elementa.effects.OutlineEffect
