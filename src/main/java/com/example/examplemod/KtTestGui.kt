@@ -158,7 +158,7 @@ class KtTestGui : WindowScreen() {
 
         val input2 = UIMultilineTextInput("empty").constrain {
             x = 0.pixels()
-            width = 50.pixels()
+            width = 80.pixels()
         }.setMaxLines(7) childOf parent2
 
         input2.onFocus {
