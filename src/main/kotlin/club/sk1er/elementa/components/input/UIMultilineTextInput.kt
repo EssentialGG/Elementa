@@ -557,14 +557,23 @@ class UIMultilineTextInput @JvmOverloads constructor(
          * Algorithm:
          *   1. If at beginning, return pos
          *   2. First, ignore all breaking characters until a non-breaking character is found
-         *     or the beginning is reached
+         *      or the beginning is reached
          *   3. Consume until a breaking character is found or the beginning is reached
-         *   4. Return that position
+         *   4. If our direction is left and we are at the end of a visual line, and we are not
+         *      at the last line, return the position at the beginning of the next visual line
+         *   5. if our direction is right and we are at the beginning of a visual
+         *      line, and we are not the first line, return the position at the end of the
+         *      last visual line
+         *   6. Return the position
          *
          * Other conditions:
          *   - If a newline is encountered, one of the following actions happens:
          *     - If this is the first character, return the position past that newline
          *     - Otherwise, return the position before that newline
+         *   - If our direction is left and we are at the end of a visual line, and we are not
+         *     at the last line, return the position at the beginning of the next visual line
+         *   - If our direction is right and we are at the beginning of a visual line, and we
+         *     are not the first line, return the position at the end of the last visual line
          */
 
         // Step 1
@@ -595,7 +604,23 @@ class UIMultilineTextInput @JvmOverloads constructor(
                 return textualPos
         }
 
-        // Step 4
+        // Note that if we go into either of the if cases below, we will end up returning
+        // a visual position rather than a textual position. This is intentional, as a
+        // textual position cannot distinguish a visual end of line from a visual start
+        // of line (in other words, if you call `.toTextualPos()` on a visual EOL on line 5
+        // and on a visual start of line on line 6, they will give you the same position)
+        //
+        // In order to distinguish this, if either of these are true, we have to return a
+        // visual position. Fortunately, because of the way we handle visual vs textual
+        // lines, this does not cause a problem
+        val visualPos = textualPos.toVisualPos()
+        if (direction == Direction.Left && visualPos.isAtLineEnd && !visualPos.isInLastLine) { // Step 4
+            textualPos = LinePosition(visualPos.line + 1, 0, isVisual = true)
+        } else if (direction == Direction.Right && visualPos.isAtLineStart && !visualPos.isInFirstLine) { // Step 5
+            textualPos = LinePosition(visualPos.line - 1, visualLines[visualPos.line - 1].text.length, isVisual = true)
+        }
+
+        // Step 6
         return textualPos
     }
 
