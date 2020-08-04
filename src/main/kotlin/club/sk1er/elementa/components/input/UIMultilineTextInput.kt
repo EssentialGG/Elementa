@@ -391,6 +391,7 @@ class UIMultilineTextInput @JvmOverloads constructor(
 
     // TODO: Look into optimization of this algorithm
     private fun splitTextForWrapping(text: String, maxLineWidth: Float): List<String> {
+        val maxLineWidthSpace = maxLineWidth - spaceWidth
         val lineList = mutableListOf<String>()
         val currLine = StringBuilder()
         var currLineWidth = 0f
@@ -413,15 +414,15 @@ class UIMultilineTextInput @JvmOverloads constructor(
             val word = builder.toString()
             val wordWidth = word.width().toFloat()
 
-            if (currLineWidth + wordWidth > maxLineWidth) {
-                if (wordWidth > maxLineWidth) {
+            if (currLineWidth + wordWidth > maxLineWidthSpace) {
+                if (wordWidth > maxLineWidthSpace) {
                     // Split up the word into it's own lines
                     if (currLineWidth > 0)
                         pushLine()
 
                     for (char in word.toCharArray()) {
                         currLineWidth += char.width()
-                        if (currLineWidth > maxLineWidth)
+                        if (currLineWidth > maxLineWidthSpace)
                             pushLine(char.width())
                         currLine.append(char)
                     }
@@ -432,7 +433,7 @@ class UIMultilineTextInput @JvmOverloads constructor(
 
                 // Check if we have a space, and if so, append it to the new line
                 if (textPos < text.length) {
-                    if (currLineWidth + spaceWidth > maxLineWidth)
+                    if (currLineWidth + spaceWidth > maxLineWidthSpace)
                         pushLine()
                     currLine.append(' ')
                     currLineWidth += spaceWidth
@@ -706,7 +707,7 @@ class UIMultilineTextInput @JvmOverloads constructor(
         } else {
             cursorComponent.unhide()
             val (cursorPosX, cursorPosY) = cursor.toScreenPos()
-            cursorComponent.setX(cursorPosX.coerceAtMost(getWidth() + 1).pixels())
+            cursorComponent.setX(cursorPosX.pixels())
             cursorComponent.setY(cursorPosY.pixels())
         }
 
