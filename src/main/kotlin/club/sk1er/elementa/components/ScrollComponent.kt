@@ -276,6 +276,41 @@ class ScrollComponent @JvmOverloads constructor(
         needsUpdate = true
     }
 
+    override fun insertChildAt(component: UIComponent, index: Int) = apply {
+        if (index < 0 || index >= children.size) {
+            println("Bad index given to insertChildAt (index: $index, children size: ${children.size}")
+            return@apply
+        }
+
+        actualHolder.removeChild(emptyText)
+
+        actualHolder.children.add(index, component)
+        component.parent = actualHolder
+        allChildren.add(component)
+
+        needsUpdate = true
+    }
+
+    override fun insertChildBefore(newComponent: UIComponent, targetComponent: UIComponent) = apply {
+        val indexOfExisting = children.indexOf(targetComponent)
+        if (indexOfExisting == -1) {
+            println("targetComponent given to insertChildBefore is not a child of this component")
+            return@apply
+        }
+
+        insertChildAt(newComponent, indexOfExisting)
+    }
+
+    override fun insertChildAfter(newComponent: UIComponent, targetComponent: UIComponent) = apply {
+        val indexOfExisting = children.indexOf(targetComponent)
+        if (indexOfExisting == -1) {
+            println("targetComponent given to insertChildAfter is not a child of this component")
+            return@apply
+        }
+
+        insertChildAt(newComponent, indexOfExisting + 1)
+    }
+
     override fun alwaysDrawChildren(): Boolean {
         return true
     }
@@ -294,16 +329,6 @@ class ScrollComponent @JvmOverloads constructor(
         }
 
         fireMouseEvent(UIClickEvent(mouseX.toFloat(), mouseY.toFloat(), button, this, this))
-    }
-
-    fun insertChild(component: UIComponent, pos: Int = 0) = apply {
-        actualHolder.removeChild(emptyText)
-
-        actualHolder.children.add(pos, component)
-        component.parent = actualHolder
-        allChildren.add(component)
-
-        needsUpdate = true
     }
 
     fun searchAndInsert(components: List<UIComponent>, comparison: (UIComponent) -> Int) {

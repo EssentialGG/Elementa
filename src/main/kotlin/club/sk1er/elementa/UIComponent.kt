@@ -64,6 +64,50 @@ abstract class UIComponent {
     }
 
     /**
+     * Helper for inserting a child at a specific index in the
+     * children list. If a bad index is given to the method,
+     * it logs an error message and returns.
+     */
+    open fun insertChildAt(component: UIComponent, index: Int) = apply {
+        if (index < 0 || index >= children.size) {
+            println("Bad index given to insertChildAt (index: $index, children size: ${children.size}")
+            return@apply
+        }
+
+        children.add(index, component)
+    }
+
+    /**
+     * Helper for inserting a child before an existing child.
+     * If the targetComponent does not exist as a child, the
+     * method logs an error and returns.
+     */
+    open fun insertChildBefore(newComponent: UIComponent, targetComponent: UIComponent) = apply {
+        val indexOfExisting = children.indexOf(targetComponent)
+        if (indexOfExisting == -1) {
+            println("targetComponent given to insertChildBefore is not a child of this component")
+            return@apply
+        }
+
+        children.add(indexOfExisting, newComponent)
+    }
+
+    /**
+     * Helper for inserting a child after an existing child.
+     * If the targetComponent does not exist as a child, the
+     * method logs an error and returns.
+     */
+    open fun insertChildAfter(newComponent: UIComponent, targetComponent: UIComponent) = apply {
+        val indexOfExisting = children.indexOf(targetComponent)
+        if (indexOfExisting == -1) {
+            println("targetComponent given to insertChildAfter is not a child of this component")
+            return@apply
+        }
+
+        children.add(indexOfExisting + 1, newComponent)
+    }
+
+    /**
      * Wrapper for [addChild].
      */
     fun addChildren(vararg components: UIComponent) = apply {
