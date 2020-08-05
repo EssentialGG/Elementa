@@ -74,6 +74,7 @@ abstract class UIComponent {
             return@apply
         }
 
+        component.parent = this
         children.add(index, component)
     }
 
@@ -89,6 +90,7 @@ abstract class UIComponent {
             return@apply
         }
 
+        newComponent.parent = this
         children.add(indexOfExisting, newComponent)
     }
 
@@ -104,6 +106,7 @@ abstract class UIComponent {
             return@apply
         }
 
+        newComponent.parent = this
         children.add(indexOfExisting + 1, newComponent)
     }
 
