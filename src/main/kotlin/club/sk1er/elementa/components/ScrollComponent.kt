@@ -284,9 +284,9 @@ class ScrollComponent @JvmOverloads constructor(
 
         actualHolder.removeChild(emptyText)
 
-        actualHolder.children.add(index, component)
         component.parent = actualHolder
-        allChildren.add(component)
+        actualHolder.children.add(index, component)
+        allChildren.add(index, component)
 
         needsUpdate = true
     }
@@ -309,6 +309,23 @@ class ScrollComponent @JvmOverloads constructor(
         }
 
         insertChildAt(newComponent, indexOfExisting + 1)
+    }
+
+    override fun replaceChild(newComponent: UIComponent, componentToReplace: UIComponent) = apply {
+        val indexOfExisting = children.indexOf(componentToReplace)
+        if (indexOfExisting == -1) {
+            println("componentToReplace given to replaceChild is not a child of this component")
+            return@apply
+        }
+
+        actualHolder.removeChild(emptyText)
+
+        actualHolder.children.removeAt(indexOfExisting)
+        allChildren.removeAt(indexOfExisting)
+
+        newComponent.parent = actualHolder
+        actualHolder.children.add(indexOfExisting, newComponent)
+        allChildren.add(indexOfExisting, newComponent)
     }
 
     override fun alwaysDrawChildren(): Boolean {

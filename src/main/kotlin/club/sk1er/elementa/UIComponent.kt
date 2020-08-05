@@ -66,7 +66,8 @@ abstract class UIComponent {
     /**
      * Helper for inserting a child at a specific index in the
      * children list. If a bad index is given to the method,
-     * it logs an error message and returns.
+     * it logs an error message and returns without modifying
+     * this component.
      */
     open fun insertChildAt(component: UIComponent, index: Int) = apply {
         if (index < 0 || index >= children.size) {
@@ -80,8 +81,9 @@ abstract class UIComponent {
 
     /**
      * Helper for inserting a child before an existing child.
-     * If the targetComponent does not exist as a child, the
-     * method logs an error and returns.
+     * If the targetComponent is not a child of this component,
+     * the method logs an error and returns without modifying
+     * this component.
      */
     open fun insertChildBefore(newComponent: UIComponent, targetComponent: UIComponent) = apply {
         val indexOfExisting = children.indexOf(targetComponent)
@@ -96,8 +98,9 @@ abstract class UIComponent {
 
     /**
      * Helper for inserting a child after an existing child.
-     * If the targetComponent does not exist as a child, the
-     * method logs an error and returns.
+     * If the targetComponent is not a child of this component,
+     * the method logs an error and returns without modifying
+     * this component.
      */
     open fun insertChildAfter(newComponent: UIComponent, targetComponent: UIComponent) = apply {
         val indexOfExisting = children.indexOf(targetComponent)
@@ -108,6 +111,24 @@ abstract class UIComponent {
 
         newComponent.parent = this
         children.add(indexOfExisting + 1, newComponent)
+    }
+
+    /**
+     * Helper for replacing a child with another child. If
+     * the componentToReplace is not a child of this component,
+     * the method logs an error and returns without modifying
+     * this component.
+     */
+    open fun replaceChild(newComponent: UIComponent, componentToReplace: UIComponent) = apply {
+        val indexOfExisting = children.indexOf(componentToReplace)
+        if (indexOfExisting == -1) {
+            println("componentToReplace given to replaceChild is not a child of this component")
+            return@apply
+        }
+
+        newComponent.parent = this
+        children.removeAt(indexOfExisting)
+        children.add(indexOfExisting, newComponent)
     }
 
     /**
