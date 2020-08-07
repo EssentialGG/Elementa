@@ -151,7 +151,7 @@ abstract class UIComponent {
     /**
      * Removes all children, according to the same rules as [removeChild]
      */
-    fun clearChildren() = apply {
+    open fun clearChildren() = apply {
         children.clear()
     }
 

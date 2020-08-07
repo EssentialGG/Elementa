@@ -326,6 +326,16 @@ class ScrollComponent @JvmOverloads constructor(
         newComponent.parent = actualHolder
         actualHolder.children.add(indexOfExisting, newComponent)
         allChildren.add(indexOfExisting, newComponent)
+
+        needsUpdate = true
+    }
+
+    override fun clearChildren() = apply {
+        allChildren.clear()
+        actualHolder.clearChildren()
+        actualHolder.addChild(emptyText)
+
+        needsUpdate = true
     }
 
     override fun alwaysDrawChildren(): Boolean {
