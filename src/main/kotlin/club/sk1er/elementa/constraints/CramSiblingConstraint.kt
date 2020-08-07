@@ -25,7 +25,7 @@ class CramSiblingConstraint(private val padding: Float = 0f) : SiblingConstraint
 
         val sibling = component.parent.children[index - 1]
 
-        if (sibling.getRight() + component.getWidth() + padding < component.parent.getRight()) {
+        if (sibling.getRight() + component.getWidth() + padding <= component.parent.getRight()) {
             return sibling.getRight() + padding
         }
 
@@ -41,7 +41,7 @@ class CramSiblingConstraint(private val padding: Float = 0f) : SiblingConstraint
 
         val sibling = component.parent.children[index - 1]
 
-        if (sibling.getRight() + component.getWidth() + padding < component.parent.getRight()) {
+        if (sibling.getRight() + component.getWidth() + padding <= component.parent.getRight()) {
             return sibling.getTop()
         }
 
