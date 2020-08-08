@@ -65,7 +65,7 @@ class ScrollComponent @JvmOverloads constructor(
 
         color = scrollIconColor.asConstraint()
     }).also {
-        super.addChild(it)
+        addChild(it)
         it.hide(instantly = true)
     }
 
@@ -326,6 +326,16 @@ class ScrollComponent @JvmOverloads constructor(
         newComponent.parent = actualHolder
         actualHolder.children.add(indexOfExisting, newComponent)
         allChildren.add(indexOfExisting, newComponent)
+
+        needsUpdate = true
+    }
+
+    override fun removeChild(component: UIComponent) = apply {
+        actualHolder.removeChild(component)
+        allChildren.remove(component)
+
+        if (allChildren.isEmpty())
+            actualHolder.addChild(emptyText)
 
         needsUpdate = true
     }
