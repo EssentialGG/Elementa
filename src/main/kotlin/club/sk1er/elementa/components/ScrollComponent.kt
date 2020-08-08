@@ -330,16 +330,6 @@ class ScrollComponent @JvmOverloads constructor(
         needsUpdate = true
     }
 
-    override fun removeChild(component: UIComponent) = apply {
-        allChildren.remove(component)
-        actualHolder.removeChild(component)
-
-        if (allChildren.isEmpty())
-            actualHolder.addChild(emptyText)
-
-        needsUpdate = true
-    }
-
     override fun clearChildren() = apply {
         allChildren.clear()
         actualHolder.clearChildren()

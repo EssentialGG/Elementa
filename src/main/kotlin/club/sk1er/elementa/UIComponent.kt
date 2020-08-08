@@ -134,7 +134,7 @@ abstract class UIComponent {
     /**
      * Wrapper for [addChild].
      */
-    open fun addChildren(vararg components: UIComponent) = apply {
+    fun addChildren(vararg components: UIComponent) = apply {
         components.forEach { addChild(it) }
     }
 
@@ -144,7 +144,7 @@ abstract class UIComponent {
      *
      * However, [component]'s parent still references this.
      */
-    open fun removeChild(component: UIComponent) = apply {
+    fun removeChild(component: UIComponent) = apply {
         children.remove(component)
     }
 
