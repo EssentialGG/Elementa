@@ -277,7 +277,7 @@ class ScrollComponent @JvmOverloads constructor(
     }
 
     override fun insertChildAt(component: UIComponent, index: Int) = apply {
-        if (index < 0 || index >= children.size) {
+        if (index < 0 || index > children.size) {
             println("Bad index given to insertChildAt (index: $index, children size: ${children.size}")
             return@apply
         }
