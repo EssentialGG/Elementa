@@ -169,8 +169,8 @@ class KtTestGui : WindowScreen() {
 
     private fun animImgSmall(img: UIImage) {
         img.animate {
-            setWidthAnimation(Animations.LINEAR, 7f, RelativeConstraint(0.05f), 0.5f)
-            setHeightAnimation(Animations.LINEAR, 7f, RelativeConstraint(0.05f), 0.5f)
+            setWidthAnimation(Animations.LINEAR, 7f, 5.pixels(), 0.5f)
+            setHeightAnimation(Animations.LINEAR, 7f, 5.pixels(), 0.5f)
             onComplete {
                 animImgBig(img)
             }

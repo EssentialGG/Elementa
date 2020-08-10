@@ -30,7 +30,7 @@ class SVGComponent(private var svg: SVG) : UIComponent(), ImageProvider {
 
         val xScale = width / svg.width
         val yScale = height / svg.height
-        val strokeWidth = xScale * svg.strokeWidth
+        val strokeWidth = (xScale * svg.strokeWidth).toFloat().coerceAtMost(10f)
 
         UniversalGraphicsHandler.pushMatrix()
 
@@ -41,8 +41,8 @@ class SVGComponent(private var svg: SVG) : UIComponent(), ImageProvider {
         UniversalGraphicsHandler.translate(x, y, 0.0)
         UniversalGraphicsHandler.scale(xScale, yScale, 0.0)
 
-        GL11.glPointSize(sqrt(strokeWidth.toFloat() * 4))
-        GL11.glLineWidth(strokeWidth.toFloat())
+        GL11.glPointSize(strokeWidth)
+        GL11.glLineWidth(strokeWidth)
         GL11.glEnable(GL11.GL_LINE_SMOOTH)
         GL11.glEnable(GL11.GL_POINT_SMOOTH)
 
