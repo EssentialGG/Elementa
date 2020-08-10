@@ -55,7 +55,6 @@ abstract class TreeNode {
         cachedDisplayComponent = object : UIComponent() {
             private val arrowComponent = this@TreeNode.arrowComponent()
             private var opened = false
-            private val childContainer: UIContainer
             private val mappedChildren = this@TreeNode.children.map { it.toDisplayComponent() }
 
             init {
@@ -68,22 +67,26 @@ abstract class TreeNode {
                 arrowComponent childOf this
                 toComponent() childOf this
 
-                childContainer = UIContainer().constrain {
-                    x = indentationOffset
-                    y = SiblingConstraint()
-                    width = ChildSizeRangeConstraint()
-                    height = ChildSizeRangeConstraint()
-                } childOf this
+                if (mappedChildren.isNotEmpty()) {
+                    val childContainer = UIContainer().constrain {
+                        x = indentationOffset
+                        y = SiblingConstraint()
+                        width = ChildSizeRangeConstraint()
+                        height = ChildSizeRangeConstraint()
+                    } childOf this
 
-                mappedChildren.forEach {
-                    it childOf childContainer
-                }
+                    mappedChildren.forEach {
+                        it childOf childContainer
+                    }
 
-                mappedChildren.reversed().forEach {
-                    it.hide(instantly = true)
+                    mappedChildren.reversed().forEach {
+                        it.hide(instantly = true)
+                    }
                 }
 
                 onMouseClick { event ->
+                    event.stopImmediatePropagation()
+
                     if (opened) {
                         arrowComponent.close()
                         mappedChildren.reversed().forEach {
@@ -96,12 +99,7 @@ abstract class TreeNode {
                         }
                     }
                     opened = !opened
-                    event.stopImmediatePropagation()
                 }
-            }
-
-            override fun draw() {
-                super.draw()
             }
         }
 

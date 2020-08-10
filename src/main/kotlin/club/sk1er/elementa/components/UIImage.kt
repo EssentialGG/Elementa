@@ -5,7 +5,6 @@ import club.sk1er.elementa.components.image.DefaultLoadingImage
 import club.sk1er.elementa.components.image.ImageProvider
 import club.sk1er.elementa.utils.drawTexture
 import club.sk1er.mods.core.universal.UniversalGraphicsHandler
-import net.minecraft.client.renderer.texture.AbstractTexture
 import net.minecraft.client.renderer.texture.DynamicTexture
 import java.awt.Color
 import java.awt.image.BufferedImage
@@ -17,7 +16,7 @@ import javax.imageio.ImageIO
 open class UIImage @JvmOverloads constructor(
     private val imageFuture: CompletableFuture<BufferedImage>,
     private val loadingImage: ImageProvider = DefaultLoadingImage,
-    private val failureImage: ImageProvider = SVGComponent.ofResource("/failure.svg")
+    private val failureImage: ImageProvider = SVGComponent.ofResource("/svg/failure.svg")
 ) : UIComponent(), ImageProvider {
     private lateinit var texture: DynamicTexture
 
