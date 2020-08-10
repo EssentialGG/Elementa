@@ -395,6 +395,6 @@ class ScrollComponent @JvmOverloads constructor(
     private fun ClosedFloatingPointRange<Float>.width() = abs(this.start - this.endInclusive)
 
     companion object {
-        private val scrollSVG = SVGParser.parseFromResource("/scroll.svg")
+        private val scrollSVG = SVGParser.parseFromResource("/svg/scroll.svg")
     }
 }

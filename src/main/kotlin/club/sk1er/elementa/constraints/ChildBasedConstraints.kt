@@ -58,9 +58,8 @@ class ChildSizeRangeConstraint : WidthConstraint, HeightConstraint {
     override var constrainTo: UIComponent? = null
 
     override fun getWidthImpl(component: UIComponent): Float {
-        val window = Window.of(component)
-        var leftMostPoint = window.getRight()
-        var rightMostPoint = window.getLeft()
+        var leftMostPoint = Float.MAX_VALUE
+        var rightMostPoint = Float.MIN_VALUE
 
         component.children.forEach {
             if (it.getLeft() < leftMostPoint) {
@@ -76,9 +75,8 @@ class ChildSizeRangeConstraint : WidthConstraint, HeightConstraint {
     }
 
     override fun getHeightImpl(component: UIComponent): Float {
-        val window = Window.of(component)
-        var topMostPoint = window.getBottom()
-        var bottomMostPoint = window.getTop()
+        var topMostPoint = Float.MAX_VALUE
+        var bottomMostPoint = Float.MIN_VALUE
 
         component.children.forEach {
             if (it.getTop() < topMostPoint) {
