@@ -292,6 +292,30 @@ abstract class UIComponent {
                 && y < getBottom()
     }
 
+    open fun hitTest(x: Float, y: Float): UIComponent {
+        for (i in children.lastIndex downTo 0) {
+            val child = children[i]
+
+            if (child.isPointInside(x, y)) {
+                return child.hitTest(x, y)
+            }
+        }
+
+        return this
+    }
+
+    open fun isChildOf(component: UIComponent): Boolean {
+        var currentParent = parent
+
+        do {
+            if (currentParent == component)
+                return true
+            currentParent = currentParent.parent
+        } while (currentParent.parent != currentParent)
+
+        return false
+    }
+
     /**
      * Does the actual drawing for this component, meant to be overridden by specific components.
      * Also does some housekeeping dealing with hovering and effects.
@@ -391,18 +415,12 @@ abstract class UIComponent {
      * Most common use is on the [Window] object.
      */
     open fun mouseClick(mouseX: Int, mouseY: Int, button: Int) {
-        for (i in children.lastIndex downTo 0) {
-            val child = children[i]
-
-            if (child.isPointInside(mouseX.toFloat(), mouseY.toFloat())) {
-                return child.mouseClick(mouseX, mouseY, button)
-            }
-        }
+        val clicked = hitTest(mouseX.toFloat(), mouseY.toFloat())
 
         lastClickCount = if (System.currentTimeMillis() - lastClickTime < 500) lastClickCount + 1 else 1
         lastClickTime = System.currentTimeMillis()
 
-        fireClickEvent(UIClickEvent(mouseX.toFloat(), mouseY.toFloat(), button, this, this, lastClickCount))
+        clicked.fireClickEvent(UIClickEvent(mouseX.toFloat(), mouseY.toFloat(), button, this, this, lastClickCount))
     }
 
     protected fun fireClickEvent(event: UIClickEvent) {
