@@ -1,9 +1,7 @@
 package club.sk1er.elementa.components
 
 import club.sk1er.elementa.UIComponent
-import club.sk1er.elementa.constraints.ChildSizeRangeConstraint
-import club.sk1er.elementa.constraints.SiblingConstraint
-import club.sk1er.elementa.constraints.XConstraint
+import club.sk1er.elementa.constraints.*
 import club.sk1er.elementa.dsl.childOf
 import club.sk1er.elementa.dsl.constrain
 import club.sk1er.elementa.dsl.pixels
@@ -16,8 +14,8 @@ abstract class TreeArrowComponent : UIComponent() {
 class TreeView(var root: TreeNode? = null) : UIContainer() {
     init {
         constrain {
-            width = ChildSizeRangeConstraint()
-            height = ChildSizeRangeConstraint()
+            width = ChildBasedSizeConstraint()
+            height = ChildBasedSizeConstraint()
         }
 
         if (root != null)
@@ -60,19 +58,24 @@ abstract class TreeNode {
             init {
                 constrain {
                     y = SiblingConstraint()
-                    width = ChildSizeRangeConstraint()
-                    height = ChildSizeRangeConstraint()
+                    width = ChildBasedMaxSizeConstraint()
+                    height = ChildBasedSizeConstraint()
                 }
 
-                arrowComponent childOf this
-                toComponent() childOf this
+                val ownContent = UIContainer().constrain {
+                    width = ChildBasedSizeConstraint()
+                    height = ChildBasedMaxSizeConstraint()
+                } childOf this
+
+                arrowComponent childOf ownContent
+                toComponent() childOf ownContent
 
                 if (mappedChildren.isNotEmpty()) {
                     val childContainer = UIContainer().constrain {
                         x = indentationOffset
                         y = SiblingConstraint()
-                        width = ChildSizeRangeConstraint()
-                        height = ChildSizeRangeConstraint()
+                        width = ChildBasedMaxSizeConstraint()
+                        height = ChildBasedSizeConstraint()
                     } childOf this
 
                     mappedChildren.forEach {

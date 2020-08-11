@@ -2,6 +2,7 @@ package club.sk1er.elementa.components
 
 import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.constraints.*
+import club.sk1er.elementa.constraints.animation.Animations
 import club.sk1er.elementa.dsl.*
 import club.sk1er.elementa.effects.OutlineEffect
 import club.sk1er.mods.core.universal.UniversalMouse
@@ -16,27 +17,34 @@ class Inspector(
 ) : UIContainer() {
     private val rootNode = componentToNode(rootComponent)
     private val treeView: TreeView
+    private val container: UIComponent
     private var selectedComponent: UIComponent? = null
-    private var clickPos: Pair<Float, Float>? = null
 
-    private val outlineEffect = OutlineEffect(outlineColor, outlineWidth)
+    private var clickPos: Pair<Float, Float>? = null
+    private val outlineEffect = OutlineEffect(outlineColor, outlineWidth, drawAfterChildren = true)
 
     private var isClickSelecting = false
 
     init {
         constrain {
             width = ChildBasedSizeConstraint()
-            height = ChildSizeRangeConstraint()
+            height = ChildBasedSizeConstraint()
         }
 
-        val container = UIBlock(backgroundColor).constrain {
+        container = UIBlock(backgroundColor).constrain {
             width = ChildBasedMaxSizeConstraint()
-            height = ChildSizeRangeConstraint()
+            height = ChildBasedSizeConstraint() + 5.pixels()
         } effect outlineEffect childOf this
+
+        val treeBlock = UIContainer().constrain {
+            y = SiblingConstraint()
+            width = ChildBasedSizeConstraint() + 10.pixels()
+            height = ChildBasedSizeConstraint() + 10.pixels()
+        }
 
         val titleBlock = UIContainer().constrain {
             x = CenterConstraint()
-            width = ChildBasedSizeConstraint() + 20.pixels()
+            width = (ChildBasedSizeConstraint() min RelativeConstraint().to(treeBlock)) + 30.pixels()
             height = ChildBasedMaxSizeConstraint() + 20.pixels()
         }.onMouseClick {
             clickPos = if (it.relativeX < 0 || it.relativeY < 0 || it.relativeX > getWidth() || it.relativeY > getHeight()) {
@@ -56,10 +64,10 @@ class Inspector(
                     y = (this@Inspector.getTop() + mouseY - clickPos!!.second).pixels()
                 }
             }
-        } childOf container
+        } effect outlineEffect childOf container
 
         val title = UIText("Inspector").constrain {
-            x = CenterConstraint()
+            x = 10.pixels()
             y = CenterConstraint()
             width = TextAspectConstraint()
             height = 14.pixels()
@@ -72,21 +80,16 @@ class Inspector(
             height = RelativeConstraint(1f).to(title) as HeightConstraint
         }.onMouseClick { event ->
             event.stopPropagation()
-
             isClickSelecting = true
         } childOf titleBlock
 
-        val treeBlock = UIBlock(backgroundColor).constrain {
-            y = SiblingConstraint()
-            width = 150.pixels()
-            height = 200.pixels()
-        } effect outlineEffect childOf container
+        treeBlock childOf container
 
         treeView = TreeView(rootNode).constrain {
             x = 5.pixels()
             y = SiblingConstraint() + 5.pixels()
-            width = ChildSizeRangeConstraint()
-            height = 200.pixels()
+            width = ChildBasedSizeConstraint()
+            height = ChildBasedSizeConstraint()
         } childOf treeBlock
     }
 
@@ -96,6 +99,10 @@ class Inspector(
                 add(componentToNode(it))
             }
         } as InspectorNode
+    }
+
+    private fun setSelectedComponent(component: UIComponent?) {
+        selectedComponent = component
     }
 
     override fun draw() {
@@ -163,7 +170,12 @@ class Inspector(
             val componentName = targetComponent.javaClass.simpleName
             var wasHidden = false
 
-            return object : UIText(componentName) {
+            return object : UIContainer() {
+                private val text = UIText(componentName).constrain {
+                    x = 5.pixels()
+                    width = TextAspectConstraint()
+                } childOf this
+
                 override fun animationFrame() {
                     super.animationFrame()
 
@@ -172,22 +184,23 @@ class Inspector(
                     )
                     if (isCurrentlyHidden && !wasHidden) {
                         wasHidden = true
-                        setText("§r$componentName §7§o(Hidden)")
+                        text.setText("§r$componentName §7§o(Hidden)")
                     } else if (!isCurrentlyHidden && wasHidden) {
                         wasHidden = false
-                        setText(componentName)
+                        text.setText(componentName)
                     }
                 }
-
             }.constrain {
-                x = SiblingConstraint() + 5.pixels()
-                width = TextAspectConstraint()
+                x = SiblingConstraint()
+                y = 2.pixels()
+                width = ChildBasedSizeConstraint() + 5.pixels()
+                height = ChildBasedSizeConstraint()
             }.onMouseClick { event ->
                 event.stopImmediatePropagation()
 
-                selectedComponent = if (selectedComponent == targetComponent) {
+                setSelectedComponent(if (selectedComponent == targetComponent) {
                     null
-                } else targetComponent
+                } else targetComponent)
             }
         }
     }

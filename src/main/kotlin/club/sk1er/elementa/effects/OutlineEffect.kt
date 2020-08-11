@@ -25,7 +25,7 @@ class OutlineEffect @JvmOverloads constructor(
         if (drawAfterChildren)
             drawOutline(component)
     }
-    
+
     private fun drawOutline(component: UIComponent) {
         val left = component.getLeft().toDouble()
         val right = component.getRight().toDouble()

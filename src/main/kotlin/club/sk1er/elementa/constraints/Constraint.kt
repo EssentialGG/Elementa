@@ -10,7 +10,7 @@ import java.awt.Color
  * [T] is what this constraint deals with, for example Float for WidthConstraint
  * or Color for ColorConstraint
  */
-interface SuperConstraint <T> {
+interface SuperConstraint<T> {
     var cachedValue: T
     var recalculate: Boolean
     var constrainTo: UIComponent?
