@@ -9,10 +9,24 @@ import java.awt.Color
  * this component. The outline will be drawn before this component's children are drawn,
  * so all children will render above the outline.
  */
-class OutlineEffect(private val color: Color, private val width: Float) : Effect {
+class OutlineEffect @JvmOverloads constructor(
+    private val color: Color,
+    private val width: Float,
+    private val drawAfterChildren: Boolean = false
+) : Effect {
     override fun beforeDraw(component: UIComponent) { }
 
     override fun beforeChildrenDraw(component: UIComponent) {
+        if (!drawAfterChildren)
+            drawOutline(component)
+    }
+
+    override fun afterDraw(component: UIComponent) {
+        if (drawAfterChildren)
+            drawOutline(component)
+    }
+    
+    private fun drawOutline(component: UIComponent) {
         val left = component.getLeft().toDouble()
         val right = component.getRight().toDouble()
         val top = component.getTop().toDouble()
@@ -30,6 +44,4 @@ class OutlineEffect(private val color: Color, private val width: Float) : Effect
         // Left outline block
         UIBlock.drawBlock(color, left - width, top, left, bottom)
     }
-
-    override fun afterDraw(component: UIComponent) { }
 }
