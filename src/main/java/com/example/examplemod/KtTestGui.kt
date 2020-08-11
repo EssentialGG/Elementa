@@ -85,7 +85,6 @@ class KtTestGui : WindowScreen() {
     ) childOf scroll
 
     init {
-
         myTextBox.constrain {
             y = SiblingConstraint()
             width = ChildBasedSizeConstraint() + 4.pixels()
@@ -184,6 +183,11 @@ class KtTestGui : WindowScreen() {
 //            width = RelativeConstraint(0.25f)
 //            height = RelativeConstraint(0.25f)
 //        } childOf window
+
+        Inspector(window).constrain {
+            x = 20.pixels(alignOpposite = true)
+            y = 20.pixels()
+        } childOf window
     }
 
     private fun animImgSmall(img: UIImage) {
