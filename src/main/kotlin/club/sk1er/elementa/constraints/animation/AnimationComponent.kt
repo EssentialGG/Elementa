@@ -8,17 +8,17 @@ import kotlin.math.max
 import kotlin.math.roundToInt
 
 sealed class AnimationComponent<T>(
-    private val strategy: AnimationStrategy,
-    private val totalFrames: Int,
-    private val delayFrames: Int
+    val strategy: AnimationStrategy,
+    val totalFrames: Int,
+    val delayFrames: Int
 ) : SuperConstraint<T> {
-    private var elapsedFrames = 0
-    private var animationPaused = false
+    var elapsedFrames = 0
+    var animationPaused = false
 
     override fun animationFrame() {
         super.animationFrame()
 
-        if (complete() || animationPaused) return
+        if (isComplete() || animationPaused) return
 
         elapsedFrames++
     }
@@ -35,7 +35,7 @@ sealed class AnimationComponent<T>(
         animationPaused = false
     }
 
-    fun complete() = elapsedFrames - delayFrames >= totalFrames
+    fun isComplete() = elapsedFrames - delayFrames >= totalFrames
 
     fun getPercentComplete() = strategy.getValue(max(elapsedFrames - delayFrames, 0).toFloat() / totalFrames.toFloat())
 }
@@ -43,7 +43,7 @@ sealed class AnimationComponent<T>(
 class XAnimationComponent(
     strategy: AnimationStrategy,
     totalFrames: Int,
-    private val oldConstraint: XConstraint,
+    val oldConstraint: XConstraint,
     val newConstraint: XConstraint,
     delay: Int
 ) : AnimationComponent<Float>(strategy, totalFrames, delay), XConstraint {
@@ -74,7 +74,7 @@ class XAnimationComponent(
 class YAnimationComponent(
     strategy: AnimationStrategy,
     totalFrames: Int,
-    private val oldConstraint: YConstraint,
+    val oldConstraint: YConstraint,
     val newConstraint: YConstraint,
     delay: Int
 ) : AnimationComponent<Float>(strategy, totalFrames, delay), YConstraint {
@@ -103,7 +103,7 @@ class YAnimationComponent(
 class RadiusAnimationComponent(
     strategy: AnimationStrategy,
     totalFrames: Int,
-    private val oldConstraint: RadiusConstraint,
+    val oldConstraint: RadiusConstraint,
     val newConstraint: RadiusConstraint,
     delay: Int
 ) : AnimationComponent<Float>(strategy, totalFrames, delay), RadiusConstraint {
@@ -133,7 +133,7 @@ class RadiusAnimationComponent(
 class WidthAnimationComponent(
     strategy: AnimationStrategy,
     totalFrames: Int,
-    private val oldConstraint: WidthConstraint,
+    val oldConstraint: WidthConstraint,
     val newConstraint: WidthConstraint,
     delay: Int
 ) : AnimationComponent<Float>(strategy, totalFrames, delay), WidthConstraint {
@@ -163,7 +163,7 @@ class WidthAnimationComponent(
 class HeightAnimationComponent(
     strategy: AnimationStrategy,
     totalFrames: Int,
-    private val oldConstraint: HeightConstraint,
+    val oldConstraint: HeightConstraint,
     val newConstraint: HeightConstraint,
     delay: Int
 ) : AnimationComponent<Float>(strategy, totalFrames, delay), HeightConstraint {
@@ -193,7 +193,7 @@ class HeightAnimationComponent(
 class ColorAnimationComponent(
     strategy: AnimationStrategy,
     totalFrames: Int,
-    private val oldConstraint: ColorConstraint,
+    val oldConstraint: ColorConstraint,
     val newConstraint: ColorConstraint,
     delay: Int
 ) : AnimationComponent<Color>(strategy, totalFrames, delay), ColorConstraint {
