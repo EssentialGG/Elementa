@@ -100,7 +100,7 @@ abstract class TreeNode {
                     }
                 }
 
-                onMouseClick { event ->
+                arrowComponent.onMouseClick { event ->
                     event.stopImmediatePropagation()
 
                     if (opened) {
