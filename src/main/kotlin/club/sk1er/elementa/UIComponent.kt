@@ -10,10 +10,12 @@ import club.sk1er.elementa.effects.ScissorEffect
 import club.sk1er.elementa.events.UIClickEvent
 import club.sk1er.elementa.events.UIScrollEvent
 import club.sk1er.elementa.utils.TriConsumer
+import club.sk1er.elementa.utils.observable
 import club.sk1er.mods.core.universal.UniversalMouse
 import club.sk1er.mods.core.universal.UniversalResolutionUtil
 import org.lwjgl.opengl.GL11
 import java.awt.Color
+import java.util.*
 import java.util.concurrent.CopyOnWriteArrayList
 import java.util.function.BiConsumer
 import java.util.function.Consumer
@@ -24,13 +26,17 @@ import kotlin.math.sin
  * UIComponent is the base of all drawing, meaning
  * everything visible on the screen is a UIComponent.
  */
-abstract class UIComponent {
+abstract class UIComponent : Observable() {
     open lateinit var parent: UIComponent
-    open var children = CopyOnWriteArrayList<UIComponent>()
-        internal set
+    open val children = CopyOnWriteArrayList<UIComponent>().observable()
     val effects = mutableListOf<Effect>()
 
-    private var constraints = UIConstraints(this)
+    var constraints = UIConstraints(this)
+        set(value) {
+            field = value
+            setChanged()
+            notifyObservers(constraints)
+        }
 
     /* Bubbling Events */
     val mouseClickListeners = mutableListOf<UIComponent.(UIClickEvent) -> Unit>()
@@ -181,13 +187,6 @@ abstract class UIComponent {
      * This is handled internally by the [club.sk1er.elementa.dsl.animate] dsl if used.
      */
     fun animateTo(constraints: AnimatingConstraints) {
-        this.setConstraints(constraints)
-    }
-
-    /**
-     * Begin using a new set of constraints.
-     */
-    fun setConstraints(constraints: UIConstraints) {
         this.constraints = constraints
     }
 
@@ -244,8 +243,6 @@ abstract class UIComponent {
     fun setColor(constraint: ColorConstraint) = apply {
         this.constraints.withColor(constraint)
     }
-
-    open fun getConstraints() = constraints
 
     open fun getLeft() = constraints.getX()
 
@@ -502,8 +499,6 @@ abstract class UIComponent {
     }
 
     open fun animationFrame() {
-        val constraints = getConstraints()
-
         constraints.animationFrame()
 
         this.children.forEach(UIComponent::animationFrame)

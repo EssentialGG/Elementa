@@ -195,7 +195,7 @@ class AnimatingConstraints(
         }
 
         if (!anyLeftAnimating) {
-            component.setConstraints(UIConstraints(component).apply {
+            component.constraints = UIConstraints(component).apply {
                 this.x = this@AnimatingConstraints.x
                 this.y = this@AnimatingConstraints.y
                 this.width = this@AnimatingConstraints.width
@@ -203,7 +203,7 @@ class AnimatingConstraints(
                 this.radius = this@AnimatingConstraints.radius
                 this.textScale = this@AnimatingConstraints.textScale
                 this.color = this@AnimatingConstraints.color
-            })
+            }
             completeAction()
         }
     }

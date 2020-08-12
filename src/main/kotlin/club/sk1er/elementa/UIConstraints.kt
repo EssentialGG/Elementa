@@ -1,16 +1,48 @@
 package club.sk1er.elementa
 
 import club.sk1er.elementa.constraints.*
+import club.sk1er.elementa.dsl.asConstraint
+import club.sk1er.elementa.dsl.pixels
 import java.awt.Color
+import java.util.*
+import kotlin.properties.Delegates
 
-open class UIConstraints(protected val component: UIComponent) {
-    var x: XConstraint = PixelConstraint(0f)
-    var y: YConstraint = PixelConstraint(0f)
-    var width: WidthConstraint = PixelConstraint(0f)
-    var height: HeightConstraint = PixelConstraint(0f)
-    var radius: RadiusConstraint = PixelConstraint(0f)
-    var textScale: HeightConstraint = PixelConstraint(1f)
-    var color: ColorConstraint = ConstantColorConstraint(Color.WHITE)
+open class UIConstraints(protected val component: UIComponent) : Observable() {
+    var x: XConstraint = 0.pixels()
+        set(value) {
+            field = value
+            update()
+        }
+    var y: YConstraint = 0.pixels()
+        set(value) {
+            field = value
+            update()
+        }
+    var width: WidthConstraint = 0.pixels()
+        set(value) {
+            field = value
+            update()
+        }
+    var height: HeightConstraint = 0.pixels()
+        set(value) {
+            field = value
+            update()
+        }
+    var radius: RadiusConstraint = 0.pixels()
+        set(value) {
+            field = value
+            update()
+        }
+    var textScale: HeightConstraint = 1.pixels()
+        set(value) {
+            field = value
+            update()
+        }
+    var color: ColorConstraint = Color.WHITE.asConstraint()
+        set(value) {
+            field = value
+            update()
+        }
 
     open fun getX(): Float {
         return x.getXPosition(component)
@@ -81,5 +113,10 @@ open class UIConstraints(protected val component: UIComponent) {
         this.height = this@UIConstraints.height
         this.radius = this@UIConstraints.radius
         this.color = this@UIConstraints.color
+    }
+
+    private fun update() {
+        setChanged()
+        notifyObservers()
     }
 }
