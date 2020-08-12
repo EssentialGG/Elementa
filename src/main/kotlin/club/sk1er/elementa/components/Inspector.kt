@@ -1,27 +1,25 @@
 package club.sk1er.elementa.components
 
 import club.sk1er.elementa.UIComponent
-import club.sk1er.elementa.UIConstraints
 import club.sk1er.elementa.constraints.*
 import club.sk1er.elementa.dsl.*
 import club.sk1er.elementa.effects.OutlineEffect
 import club.sk1er.mods.core.universal.UniversalMouse
 import club.sk1er.mods.core.universal.UniversalResolutionUtil
 import java.awt.Color
-import java.lang.IllegalStateException
 
 class Inspector(
     rootComponent: UIComponent,
-    backgroundColor: Color = Color(40, 40, 40, 255),
-    outlineColor: Color = Color(20, 20, 20, 255),
+    backgroundColor: Color = Color(40, 40, 40),
+    outlineColor: Color = Color(20, 20, 20),
     outlineWidth: Float = 2f
 ) : UIContainer() {
     private val rootNode = componentToNode(rootComponent)
     private val treeBlock: UIContainer
     private val treeView: TreeView
     private val container: UIComponent
-    private var selectedComponent: UIComponent? = null
-    private val infoBlock: InfoBlock
+    private var selectedNode: InspectorNode? = null
+    private val infoBlockScroller: ScrollComponent
     private val separator1: UIBlock
     private val separator2: UIBlock
 
@@ -88,10 +86,19 @@ class Inspector(
         } childOf container
 
         treeBlock = UIContainer().constrain {
-            y = SiblingConstraint()
             width = ChildBasedSizeConstraint() + 10.pixels()
             height = ChildBasedSizeConstraint() + 10.pixels()
+        }
+
+        val rootWindow = Window.of(rootComponent)
+
+        val treeBlockScroller = ScrollComponent().constrain {
+            y = SiblingConstraint()
+            width = RelativeConstraint(1f).to(treeBlock) as WidthConstraint
+            height = RelativeConstraint(1f).to(treeBlock) max RelativeConstraint(1 / 3f).to(rootWindow)
         } childOf container
+
+        treeBlock childOf treeBlockScroller
 
         treeView = TreeView(rootNode).constrain {
             x = 5.pixels()
@@ -103,11 +110,19 @@ class Inspector(
             height = 2.pixels()
         }
 
-        infoBlock = InfoBlock().constrain {
+        val infoBlock = InfoBlock().constrain {
             y = SiblingConstraint()
             width = ChildBasedSizeConstraint() + 10.pixels()
             height = ChildBasedSizeConstraint() + 10.pixels()
         }
+
+        infoBlockScroller = ScrollComponent().constrain {
+            y = SiblingConstraint()
+            width = RelativeConstraint(1f).to(infoBlock) as WidthConstraint
+            height = RelativeConstraint(1f).to(infoBlock) max RelativeConstraint(1 / 3f).to(rootWindow)
+        }
+
+        infoBlock childOf infoBlockScroller
     }
 
     private fun componentToNode(component: UIComponent): InspectorNode {
@@ -118,15 +133,15 @@ class Inspector(
         } as InspectorNode
     }
 
-    private fun setSelectedComponent(component: UIComponent?) {
-        if (component == null) {
+    private fun setSelectedNode(node: InspectorNode?) {
+        if (node == null) {
             container.removeChild(separator2)
-            container.removeChild(infoBlock)
-        } else if (selectedComponent == null) {
+            container.removeChild(infoBlockScroller)
+        } else if (selectedNode == null) {
             separator2 childOf container
-            infoBlock childOf container
+            infoBlockScroller childOf container
         }
-        selectedComponent = component
+        selectedNode = node
     }
 
     override fun draw() {
@@ -145,7 +160,7 @@ class Inspector(
             if (hitComponent == this || hitComponent.isChildOf(this)) null
             else hitComponent
         } else {
-            selectedComponent
+            selectedNode?.targetComponent
         }?.also {
             UIBlock.drawBlock(
                 Color(129, 212, 250, 100),
@@ -193,13 +208,14 @@ class Inspector(
     inner class InspectorNode(val targetComponent: UIComponent) : TreeNode() {
         override var arrowComponent: () -> TreeArrowComponent = { InspectorArrow(targetComponent.children.isEmpty()) }
 
-        override fun toComponent(): UIComponent {
-            val componentName = targetComponent.javaClass.simpleName
+        private val displayComponent: UIComponent
+
+        init {
+            val componentName = targetComponent.javaClass.simpleName.ifEmpty { "<unnamed>" }
             var wasHidden = false
 
-            return object : UIContainer() {
+            displayComponent = object : UIBlock(Color(0, 0, 0, 0)) {
                 private val text = UIText(componentName).constrain {
-                    x = 5.pixels()
                     width = TextAspectConstraint()
                 } childOf this
 
@@ -220,15 +236,24 @@ class Inspector(
             }.constrain {
                 x = SiblingConstraint()
                 y = 2.pixels()
-                width = ChildBasedSizeConstraint() + 5.pixels()
+                width = ChildBasedSizeConstraint()
                 height = ChildBasedSizeConstraint()
             }.onMouseClick { event ->
                 event.stopImmediatePropagation()
 
-                setSelectedComponent(if (selectedComponent == targetComponent) {
-                    null
-                } else targetComponent)
+                selectedNode?.displayComponent?.setColor(Color(0, 0, 0, 0).asConstraint())
+
+                if (selectedNode == this@InspectorNode) {
+                    setSelectedNode(null)
+                } else {
+                    setSelectedNode(this@InspectorNode)
+                    setColor(Color(32, 78, 138).asConstraint())
+                }
             }
+        }
+
+        override fun toComponent(): UIComponent {
+            return displayComponent
         }
     }
 
@@ -295,8 +320,8 @@ class Inspector(
         override fun draw() {
             super.draw()
 
-            if (cachedComponent != selectedComponent) {
-                cachedComponent = selectedComponent
+            if (cachedComponent != selectedNode?.targetComponent) {
+                cachedComponent = selectedNode?.targetComponent
                 if (cachedComponent != null)
                     constraintsTree.setRoots(getConstraintNodes(cachedComponent!!))
             }
@@ -306,11 +331,12 @@ class Inspector(
             is AdditiveConstraint,
             is MaxConstraint,
             is MinConstraint,
-            is SubtractiveConstraint-> true
+            is SubtractiveConstraint -> true
             else -> false
         }
 
-        inner class InfoNode<T>(private val constraint: SuperConstraint<T>, private val name: String? = null) : TreeNode() {
+        inner class InfoNode<T>(private val constraint: SuperConstraint<T>, private val name: String? = null) :
+            TreeNode() {
             override var arrowComponent: () -> TreeArrowComponent = {
                 InspectorArrow(!constraintHasChildren(constraint))
             }
@@ -321,7 +347,7 @@ class Inspector(
                         if (name == null) it else "$name: $it"
                     }
                     UIText(name).constrain {
-                        x = 5.pixels()
+                        x = SiblingConstraint()
                     } childOf this
 
                     val strings = when (constraint) {
@@ -330,7 +356,11 @@ class Inspector(
                         is ChildBasedSizeConstraint -> listOf(constraint::padding)
                         is ConstantColorConstraint -> listOf(constraint::color)
                         is CramSiblingConstraint -> listOf(constraint::padding)
-                        is PixelConstraint -> listOf(constraint::value, constraint::alignOpposite, constraint::alignOutside)
+                        is PixelConstraint -> listOf(
+                            constraint::value,
+                            constraint::alignOpposite,
+                            constraint::alignOutside
+                        )
                         is RainbowColorConstraint -> listOf(constraint::alpha, constraint::speed)
                         is RelativeConstraint -> listOf(constraint::value)
                         is ScaledTextConstraint -> listOf(constraint::scale)
@@ -338,7 +368,8 @@ class Inspector(
                         else -> listOf()
                     }
 
-                    fun toString(o: Any) = if (o is Color) "Color(${o.red}, ${o.green}, ${o.blue}, ${o.alpha})" else o.toString()
+                    fun toString(o: Any) =
+                        if (o is Color) "Color(${o.red}, ${o.green}, ${o.blue}, ${o.alpha})" else o.toString()
 
                     strings.forEach {
                         UIText("§7${it.name}: ${toString(it.get())}§r").constrain {
