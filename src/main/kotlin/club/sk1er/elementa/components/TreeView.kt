@@ -11,22 +11,23 @@ abstract class TreeArrowComponent : UIComponent() {
     abstract fun close()
 }
 
-class TreeView(var root: TreeNode? = null) : UIContainer() {
+open class TreeView(roots: List<TreeNode>) : UIContainer() {
+    constructor(root: TreeNode) : this(listOf(root))
+
+    constructor() : this(emptyList())
+
     init {
         constrain {
-            width = ChildBasedSizeConstraint()
+            width = ChildBasedMaxSizeConstraint()
             height = ChildBasedSizeConstraint()
         }
 
-        if (root != null)
-            root!!.toDisplayComponent() childOf this
+        setRoots(roots)
     }
 
-    fun setRoot(root: TreeNode?) = apply {
+    fun setRoots(roots: List<TreeNode>) = apply {
         clearChildren()
-        this.root = root
-        if (root != null)
-            root.toDisplayComponent() childOf this
+        roots.forEach { it.toDisplayComponent() childOf this }
     }
 }
 
