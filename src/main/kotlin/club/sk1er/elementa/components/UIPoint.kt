@@ -9,6 +9,6 @@ class UIPoint(x: PositionConstraint, y: PositionConstraint) : UIComponent() {
         setY(y)
     }
 
-    fun getX() = getConstraints().getX()
-    fun getY() = getConstraints().getY()
+    fun getX() = constraints.getX()
+    fun getY() = constraints.getY()
 }

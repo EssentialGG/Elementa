@@ -9,6 +9,7 @@ import club.sk1er.elementa.dsl.*
 import club.sk1er.elementa.effects.ScissorEffect
 import club.sk1er.elementa.events.UIClickEvent
 import club.sk1er.elementa.svg.SVGParser
+import club.sk1er.elementa.utils.observable
 import club.sk1er.mods.core.universal.UniversalMouse
 import java.awt.Color
 import java.util.concurrent.CopyOnWriteArrayList
@@ -146,7 +147,8 @@ class ScrollComponent @JvmOverloads constructor(
     }
 
     fun filterChildren(filter: (component: UIComponent) -> Boolean) {
-        actualHolder.children = CopyOnWriteArrayList(allChildren.filter(filter).ifEmpty { listOf(emptyText) })
+        actualHolder.children.clear()
+        actualHolder.children.addAll(allChildren.filter(filter).ifEmpty { listOf(emptyText) })
         actualHolder.children.forEach { it.parent = actualHolder }
 
         needsUpdate = true
@@ -383,7 +385,8 @@ class ScrollComponent @JvmOverloads constructor(
     }
 
     fun setChildren(components: List<UIComponent>) = apply {
-        actualHolder.children = CopyOnWriteArrayList(components.ifEmpty { listOf(emptyText) })
+        actualHolder.children.clear()
+        actualHolder.children.addAll(components.ifEmpty { listOf(emptyText) })
         actualHolder.children.forEach { it.parent = actualHolder }
 
         allChildren.clear()

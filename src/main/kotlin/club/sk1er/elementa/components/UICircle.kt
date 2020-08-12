@@ -20,11 +20,11 @@ class UICircle @JvmOverloads constructor(radius: Float = 0f, color: Color = Colo
     }
 
     override fun getLeft(): Float {
-        return getConstraints().getX() - getRadius()
+        return constraints.getX() - getRadius()
     }
 
     override fun getTop(): Float {
-        return getConstraints().getY() - getRadius()
+        return constraints.getY() - getRadius()
     }
 
     override fun getWidth(): Float {
@@ -42,8 +42,8 @@ class UICircle @JvmOverloads constructor(radius: Float = 0f, color: Color = Colo
     override fun draw() {
         beforeDraw()
 
-        val x = getConstraints().getX().toDouble()
-        val y = getConstraints().getY().toDouble()
+        val x = constraints.getX().toDouble()
+        val y = constraints.getY().toDouble()
         val r = getRadius().toDouble()
 
         val color = getColor()

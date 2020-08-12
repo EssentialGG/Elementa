@@ -5,7 +5,7 @@ import club.sk1er.elementa.UIConstraints
 import club.sk1er.elementa.effects.Effect
 
 fun <T : UIComponent> T.constrain(config: UIConstraints.() -> Unit) = apply {
-    getConstraints().config()
+    constraints.config()
 }
 
 infix fun <T : UIComponent> T.childOf(parent: UIComponent) = apply {
