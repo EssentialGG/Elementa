@@ -2,6 +2,7 @@ package club.sk1er.elementa.components
 
 import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.constraints.*
+import club.sk1er.elementa.constraints.animation.*
 import club.sk1er.elementa.dsl.*
 import club.sk1er.elementa.effects.OutlineEffect
 import club.sk1er.mods.core.universal.UniversalMouse
@@ -293,27 +294,50 @@ class Inspector(
         }
 
         private fun getNodeFromConstraint(constraint: SuperConstraint<*>, name: String? = null): TreeNode {
-            if (!constraintHasChildren(constraint))
-                return InfoNode(constraint, name)
+            val baseInfoNode = InfoNode(constraint, name)
 
             return when (constraint) {
-                is AdditiveConstraint -> InfoNode(constraint, name).withChildren {
+                is AdditiveConstraint -> baseInfoNode.withChildren {
                     add(getNodeFromConstraint(constraint.constraint1))
                     add(getNodeFromConstraint(constraint.constraint2))
                 }
-                is MaxConstraint -> InfoNode(constraint, name).withChildren {
+                is MaxConstraint -> baseInfoNode.withChildren {
                     add(getNodeFromConstraint(constraint.constraint))
                     add(getNodeFromConstraint(constraint.maxConstraint))
                 }
-                is MinConstraint -> InfoNode(constraint, name).withChildren {
+                is MinConstraint -> baseInfoNode.withChildren {
                     add(getNodeFromConstraint(constraint.constraint))
                     add(getNodeFromConstraint(constraint.minConstraint))
                 }
-                is SubtractiveConstraint -> InfoNode(constraint, name).withChildren {
+                is SubtractiveConstraint -> baseInfoNode.withChildren {
                     add(getNodeFromConstraint(constraint.constraint1))
                     add(getNodeFromConstraint(constraint.constraint2))
                 }
-                else -> throw IllegalStateException()
+                is XAnimationComponent -> baseInfoNode.withChildren {
+                    add(getNodeFromConstraint(constraint.oldConstraint, name = "From"))
+                    add(getNodeFromConstraint(constraint.newConstraint, name = "To"))
+                }
+                is YAnimationComponent -> baseInfoNode.withChildren {
+                    add(getNodeFromConstraint(constraint.oldConstraint, name = "From"))
+                    add(getNodeFromConstraint(constraint.newConstraint, name = "To"))
+                }
+                is WidthAnimationComponent -> baseInfoNode.withChildren {
+                    add(getNodeFromConstraint(constraint.oldConstraint, name = "From"))
+                    add(getNodeFromConstraint(constraint.newConstraint, name = "To"))
+                }
+                is HeightAnimationComponent -> baseInfoNode.withChildren {
+                    add(getNodeFromConstraint(constraint.oldConstraint, name = "From"))
+                    add(getNodeFromConstraint(constraint.newConstraint, name = "To"))
+                }
+                is RadiusAnimationComponent -> baseInfoNode.withChildren {
+                    add(getNodeFromConstraint(constraint.oldConstraint, name = "From"))
+                    add(getNodeFromConstraint(constraint.newConstraint, name = "To"))
+                }
+                is ColorAnimationComponent -> baseInfoNode.withChildren {
+                    add(getNodeFromConstraint(constraint.oldConstraint, name = "From"))
+                    add(getNodeFromConstraint(constraint.newConstraint, name = "To"))
+                }
+                else -> baseInfoNode
             }
         }
 
@@ -332,6 +356,7 @@ class Inspector(
             is MaxConstraint,
             is MinConstraint,
             is SubtractiveConstraint -> true
+            is AnimationComponent<*> -> true
             else -> false
         }
 
@@ -365,6 +390,14 @@ class Inspector(
                         is RelativeConstraint -> listOf(constraint::value)
                         is ScaledTextConstraint -> listOf(constraint::scale)
                         is SiblingConstraint -> listOf(constraint::padding, constraint::alignOpposite)
+                        is AnimationComponent<*> -> listOf(
+                            constraint::strategy
+                            // TODO: These are useless until they get periodically updated :)
+                            /*constraint::elapsedFrames,
+                            constraint::totalFrames,
+                            constraint::delayFrames,
+                            constraint::animationPaused*/
+                        )
                         else -> listOf()
                     }
 
