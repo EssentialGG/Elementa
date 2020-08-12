@@ -1,6 +1,7 @@
 package club.sk1er.elementa.components
 
 import club.sk1er.elementa.UIComponent
+import club.sk1er.elementa.UIConstraints
 import club.sk1er.elementa.constraints.*
 import club.sk1er.elementa.constraints.animation.*
 import club.sk1er.elementa.dsl.*
@@ -266,8 +267,15 @@ class Inspector(
             y = 5.pixels()
         } childOf this
 
-        private fun getConstraintNodes(component: UIComponent): List<TreeNode> {
-            val constraints = component.getConstraints()
+        private fun setNewConstraints(constraints: UIConstraints) {
+            setConstraintNodes(constraints)
+
+            constraints.addObserver { _, _ ->
+                setConstraintNodes(constraints)
+            }
+        }
+
+        private fun setConstraintNodes(constraints: UIConstraints) {
             val nodes = mutableListOf<TreeNode>()
 
             listOf(
@@ -291,7 +299,7 @@ class Inspector(
                     nodes.add(getNodeFromConstraint(it, "Color"))
             }
 
-            return nodes
+            constraintsTree.setRoots(nodes)
         }
 
         private fun getNodeFromConstraint(constraint: SuperConstraint<*>, name: String? = null): TreeNode {
@@ -347,8 +355,14 @@ class Inspector(
 
             if (cachedComponent != selectedNode?.targetComponent) {
                 cachedComponent = selectedNode?.targetComponent
-                if (cachedComponent != null)
-                    constraintsTree.setRoots(getConstraintNodes(cachedComponent!!))
+                cachedComponent?.let {
+                    setNewConstraints(it.constraints)
+                    it.addObserver { _, arg ->
+                        if (arg is UIConstraints) {
+                            setNewConstraints(arg)
+                        }
+                    }
+                }
             }
         }
 
