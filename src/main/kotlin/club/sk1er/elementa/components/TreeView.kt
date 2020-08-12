@@ -2,9 +2,11 @@ package club.sk1er.elementa.components
 
 import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.constraints.*
+import club.sk1er.elementa.dsl.basicWidthConstraint
 import club.sk1er.elementa.dsl.childOf
 import club.sk1er.elementa.dsl.constrain
 import club.sk1er.elementa.dsl.pixels
+import kotlin.math.max
 
 abstract class TreeArrowComponent : UIComponent() {
     abstract fun open()
@@ -34,7 +36,7 @@ open class TreeView(roots: List<TreeNode>) : UIContainer() {
 abstract class TreeNode {
     var parent: TreeNode? = null
         private set
-    var indentationOffset: XConstraint = 10.pixels()
+    var indentationOffset: Float = 10f
     abstract var arrowComponent: () -> TreeArrowComponent
     val children = mutableListOf<TreeNode>()
 
@@ -69,11 +71,15 @@ abstract class TreeNode {
                 } childOf this
 
                 arrowComponent childOf ownContent
+                UIContainer().constrain {
+                    x = SiblingConstraint()
+                    width = 5.pixels()
+                } childOf ownContent
                 toComponent() childOf ownContent
 
                 if (mappedChildren.isNotEmpty()) {
                     val childContainer = UIContainer().constrain {
-                        x = indentationOffset
+                        x = indentationOffset.pixels()
                         y = SiblingConstraint()
                         width = ChildBasedMaxSizeConstraint()
                         height = ChildBasedSizeConstraint()
@@ -85,6 +91,12 @@ abstract class TreeNode {
 
                     mappedChildren.reversed().forEach {
                         it.hide(instantly = true)
+                    }
+
+                    constrain {
+                        width = basicWidthConstraint {
+                            max(ownContent.getWidth(), childContainer.getWidth() + indentationOffset)
+                        }
                     }
                 }
 
