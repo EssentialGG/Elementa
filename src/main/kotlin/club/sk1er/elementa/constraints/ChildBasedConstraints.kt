@@ -6,7 +6,7 @@ import club.sk1er.elementa.components.Window
 /**
  * Sets this component's width or height to be the sum of its children's width or height
  */
-class ChildBasedSizeConstraint(private val padding: Float = 0f) : SizeConstraint {
+class ChildBasedSizeConstraint(val padding: Float = 0f) : SizeConstraint {
     override var cachedValue = 0f
     override var recalculate = true
     override var constrainTo: UIComponent? = null

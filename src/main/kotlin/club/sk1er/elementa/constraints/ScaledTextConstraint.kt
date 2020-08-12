@@ -9,7 +9,7 @@ import java.lang.UnsupportedOperationException
 /**
  * Sets the width/height to be a scale of the default text width and height
  */
-class ScaledTextConstraint(private var scale: Float) : SizeConstraint {
+class ScaledTextConstraint(var scale: Float) : SizeConstraint {
     override var cachedValue = 0f
     override var recalculate = true
     override var constrainTo: UIComponent? = null

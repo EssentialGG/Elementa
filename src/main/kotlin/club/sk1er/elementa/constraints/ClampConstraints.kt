@@ -6,8 +6,8 @@ import club.sk1er.elementa.UIComponent
  * Clamps [constraint] to be AT MOST [maxConstraint]
  */
 class MaxConstraint(
-    private val constraint: SuperConstraint<Float>,
-    private val maxConstraint: SuperConstraint<Float>
+    val constraint: SuperConstraint<Float>,
+    val maxConstraint: SuperConstraint<Float>
 ) : MasterConstraint {
     override var cachedValue = 0f
     override var recalculate = true
@@ -53,8 +53,8 @@ class MaxConstraint(
  * Clamps [constraint] to be AT LEAST [minConstraint]
  */
 class MinConstraint(
-    private val constraint: SuperConstraint<Float>,
-    private val minConstraint: SuperConstraint<Float>
+    val constraint: SuperConstraint<Float>,
+    val minConstraint: SuperConstraint<Float>
 ) : MasterConstraint {
     override var cachedValue = 0f
     override var recalculate = true

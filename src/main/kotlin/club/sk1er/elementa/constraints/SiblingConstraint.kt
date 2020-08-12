@@ -9,8 +9,8 @@ import club.sk1er.elementa.UIComponent
  * If you would like for components to try and fit inline, use [CramSiblingConstraint]
  */
 open class SiblingConstraint @JvmOverloads constructor(
-    private val padding: Float = 0f,
-    private val alignOpposite: Boolean = false
+    val padding: Float = 0f,
+    val alignOpposite: Boolean = false
 ) : PositionConstraint {
     override var cachedValue = 0f
     override var recalculate = true
