@@ -184,8 +184,13 @@ class KtTestGui : WindowScreen() {
 //            height = RelativeConstraint(0.25f)
 //        } childOf window
 
-        Inspector(window).constrain {
+        val inspector = Inspector(window).constrain {
             x = 20.pixels(alignOpposite = true)
+            y = 20.pixels()
+        } childOf window
+
+        Inspector(inspector).constrain {
+            x = 20.pixels()
             y = 20.pixels()
         } childOf window
     }
