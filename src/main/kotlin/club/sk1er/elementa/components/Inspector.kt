@@ -8,6 +8,7 @@ import club.sk1er.elementa.effects.OutlineEffect
 import club.sk1er.mods.core.universal.UniversalMouse
 import club.sk1er.mods.core.universal.UniversalResolutionUtil
 import java.awt.Color
+import java.text.NumberFormat
 
 class Inspector(
     rootComponent: UIComponent,
@@ -367,6 +368,8 @@ class Inspector(
             }
 
             override fun toComponent() = object : UIContainer() {
+                val stringHolder: UIComponent
+
                 init {
                     val name = constraint.javaClass.simpleName.let {
                         if (name == null) it else "$name: $it"
@@ -390,25 +393,45 @@ class Inspector(
                         is RelativeConstraint -> listOf(constraint::value)
                         is ScaledTextConstraint -> listOf(constraint::scale)
                         is SiblingConstraint -> listOf(constraint::padding, constraint::alignOpposite)
-                        is AnimationComponent<*> -> listOf(
-                            constraint::strategy
-                            // TODO: These are useless until they get periodically updated :)
-                            /*constraint::elapsedFrames,
-                            constraint::totalFrames,
-                            constraint::delayFrames,
-                            constraint::animationPaused*/
-                        )
                         else -> listOf()
                     }
 
                     fun toString(o: Any) =
                         if (o is Color) "Color(${o.red}, ${o.green}, ${o.blue}, ${o.alpha})" else o.toString()
 
+                    stringHolder = UIContainer().constrain {
+                        x = 13.pixels()
+                        y = SiblingConstraint()
+                        width = ChildBasedMaxSizeConstraint()
+                        height = ChildBasedSizeConstraint()
+                    } childOf this
+
+                    if (constraint is AnimationComponent<*>) {
+                        createStringComponent("§7Strategy: ${constraint.strategy}§r")
+                        val percentComplete = constraint.elapsedFrames.toFloat() / (constraint.totalFrames + constraint.delayFrames)
+                        createStringComponent("§7Completion Percentage: ${percentFormat.format(percentComplete)}§r")
+                        createStringComponent("§7Paused: ${constraint.animationPaused}§r")
+                    }
+
                     strings.forEach {
-                        UIText("§7${it.name}: ${toString(it.get())}§r").constrain {
-                            x = 13.pixels()
-                            y = SiblingConstraint()
-                        } childOf this
+                        createStringComponent("§7${it.name}: ${toString(it.get())}§r")
+                    }
+                }
+
+                fun createStringComponent(text: String) {
+                    UIText(text).constrain {
+                        y = SiblingConstraint()
+                    } childOf stringHolder
+                }
+
+                override fun animationFrame() {
+                    super.animationFrame()
+
+                    if (constraint is AnimationComponent<*>) {
+                        val strings = stringHolder.childrenOfType<UIText>()
+                        val percentComplete = constraint.elapsedFrames.toFloat() / (constraint.totalFrames + constraint.delayFrames)
+                        strings[1].setText("§7Completion Percentage: ${percentFormat.format(percentComplete)}§r")
+                        strings[2].setText("§7Paused: ${constraint.animationPaused}§r")
                     }
                 }
             }.constrain {
@@ -418,5 +441,9 @@ class Inspector(
                 height = ChildBasedSizeConstraint() + 5.pixels()
             }
         }
+    }
+
+    companion object {
+        private val percentFormat: NumberFormat = NumberFormat.getPercentInstance()
     }
 }
