@@ -149,43 +149,43 @@ class AnimatingConstraints(
 
         val x = x
         if (x is XAnimationComponent) {
-            if (x.complete()) this.x = x.newConstraint
+            if (x.isComplete()) this.x = x.newConstraint
             else anyLeftAnimating = true
         }
 
         val y = y
         if (y is YAnimationComponent) {
-            if (y.complete()) this.y = y.newConstraint
+            if (y.isComplete()) this.y = y.newConstraint
             else anyLeftAnimating = true
         }
 
         val width = width
         if (width is WidthAnimationComponent) {
-            if (width.complete()) this.width = width.newConstraint
+            if (width.isComplete()) this.width = width.newConstraint
             else anyLeftAnimating = true
         }
 
         val height = height
         if (height is HeightAnimationComponent) {
-            if (height.complete()) this.height = height.newConstraint
+            if (height.isComplete()) this.height = height.newConstraint
             else anyLeftAnimating = true
         }
 
         val radius = radius
         if (radius is RadiusAnimationComponent) {
-            if (radius.complete()) this.radius = radius.newConstraint
+            if (radius.isComplete()) this.radius = radius.newConstraint
             else anyLeftAnimating = true
         }
 
         val textScale = textScale
         if (textScale is HeightAnimationComponent) {
-            if (textScale.complete())  this.textScale = textScale.newConstraint
+            if (textScale.isComplete())  this.textScale = textScale.newConstraint
             else anyLeftAnimating = true
         }
 
         val color = color
         if (color is ColorAnimationComponent) {
-            if (color.complete()) this.color = color.newConstraint
+            if (color.isComplete()) this.color = color.newConstraint
             else anyLeftAnimating = true
         }
 
