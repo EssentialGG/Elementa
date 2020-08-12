@@ -9,7 +9,7 @@ import club.sk1er.elementa.UIComponent
  * For position:
  * Sets the x/y position to be [value] multiple of its own y/x position respectively.
  */
-class AspectConstraint @JvmOverloads constructor(private val value: Float = 1f) : PositionConstraint, SizeConstraint {
+class AspectConstraint @JvmOverloads constructor(val value: Float = 1f) : PositionConstraint, SizeConstraint {
     override var cachedValue = 0f
     override var recalculate = true
     override var constrainTo: UIComponent? = null

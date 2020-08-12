@@ -7,10 +7,10 @@ import club.sk1er.elementa.UIComponent
  * number of pixels.
  */
 class PixelConstraint @JvmOverloads constructor(
-    private var value: Float,
-    private var alignOpposite: Boolean = false,
-    private var alignOutside:  Boolean = false
-) : PositionConstraint, SizeConstraint {
+    var value: Float,
+    var alignOpposite: Boolean = false,
+    var alignOutside:  Boolean = false
+) : MasterConstraint {
     override var cachedValue = 0f
     override var recalculate = true
     override var constrainTo: UIComponent? = null

@@ -9,7 +9,7 @@ import kotlin.random.Random
 /**
  * Sets the color to be a constant, determined color.
  */
-class ConstantColorConstraint(private val color: Color) : ColorConstraint {
+class ConstantColorConstraint(val color: Color) : ColorConstraint {
     override var cachedValue = Color.WHITE
     override var recalculate = true
     override var constrainTo: UIComponent? = null
@@ -26,7 +26,7 @@ class ConstantColorConstraint(private val color: Color) : ColorConstraint {
 /**
  * Sets the color to be constant but with an alpha based off of its parent.
  */
-class AlphaAspectColorConstraint(private val color: Color, private val value: Float = 1f) : ColorConstraint {
+class AlphaAspectColorConstraint(val color: Color, val value: Float = 1f) : ColorConstraint {
     override var cachedValue = Color.WHITE
     override var recalculate = true
     override var constrainTo: UIComponent? = null
@@ -41,7 +41,7 @@ class AlphaAspectColorConstraint(private val color: Color, private val value: Fl
  * Changes this component's color every frame, using a sin wave to create
  * a chroma effect.
  */
-class RainbowColorConstraint(private val alpha: Int = 255, private val speed: Float = 50f) : ColorConstraint {
+class RainbowColorConstraint(val alpha: Int = 255, val speed: Float = 50f) : ColorConstraint {
     override var cachedValue = Color.WHITE
     override var recalculate = true
     override var constrainTo: UIComponent? = null

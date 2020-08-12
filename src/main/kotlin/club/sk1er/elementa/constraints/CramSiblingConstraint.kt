@@ -11,7 +11,7 @@ import java.lang.UnsupportedOperationException
  * On the X axis this means it will apply when crammed,
  * on the Y axis this means it will apply when NOT crammed.
  */
-class CramSiblingConstraint(private val padding: Float = 0f) : SiblingConstraint() {
+class CramSiblingConstraint(padding: Float = 0f) : SiblingConstraint(padding) {
     override var cachedValue = 0f
     override var recalculate = true
     override var constrainTo: UIComponent? = null

@@ -3,8 +3,8 @@ package club.sk1er.elementa.constraints
 import club.sk1er.elementa.UIComponent
 
 class AdditiveConstraint(
-    private val constraint1: SuperConstraint<Float>,
-    private val constraint2: SuperConstraint<Float>
+    val constraint1: SuperConstraint<Float>,
+    val constraint2: SuperConstraint<Float>
 ) : MasterConstraint {
     override var cachedValue = 0f
     override var recalculate = true
