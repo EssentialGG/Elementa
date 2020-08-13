@@ -105,13 +105,13 @@ abstract class TreeNode {
 
                     if (opened) {
                         arrowComponent.close()
-                        mappedChildren.reversed().forEach {
+                        mappedChildren.forEach {
                             it.hide()
                         }
                     } else {
                         arrowComponent.open()
                         mappedChildren.forEach {
-                            it.unhide()
+                            it.unhide(useLastPosition = false)
                         }
                     }
                     opened = !opened
