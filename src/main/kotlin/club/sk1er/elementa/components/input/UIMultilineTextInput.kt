@@ -14,6 +14,7 @@ import java.awt.Toolkit
 import java.awt.datatransfer.DataFlavor
 import java.awt.datatransfer.StringSelection
 import kotlin.math.abs
+import kotlin.math.max
 
 class UIMultilineTextInput @JvmOverloads constructor(
     private val placeholder: String = "",
@@ -601,9 +602,14 @@ class UIMultilineTextInput @JvmOverloads constructor(
         val columnOffset = if (direction == Direction.Left) -1 else 1
         val nextChar = if (direction == Direction.Left) ::charBefore else ::charAfter
 
+        if (direction == Direction.Left && textualPos.isAtLineStart) {
+            val previousLine = textualLines[textualPos.line - 1]
+            return LinePosition(textualPos.line - 1, previousLine.length, isVisual = false)
+        } else if (direction == Direction.Right && textualPos.isAtLineEnd) {
+            return LinePosition(textualPos.line + 1, 0, isVisual = false)
+        }
+
         var ch = nextChar(textualPos)
-        if (ch == '\n')
-            return textualPos.offsetColumn(columnOffset)
 
         // Step 2
         while (!atEndOfDirection() && ch?.let(::isBreakingCharacter) == true) {
@@ -856,37 +862,63 @@ class UIMultilineTextInput @JvmOverloads constructor(
             if (amount == 0 || pos.isAtAbsoluteStart)
                 return pos
 
-            val nextPosition = if (pos.column == 0) {
-                LinePosition(pos.line - 1, pos.lines[pos.line - 1].length - 1, pos.isVisual)
-            } else {
-                pos.withColumn(pos.column - 1)
-            }
+            return offsetColumnNegative(amount - 1, complexOffsetColumnNegative(pos))
+        }
 
-            return offsetColumnNegative(amount - 1, nextPosition)
+        private fun complexOffsetColumnNegative(pos: LinePosition): LinePosition {
+            if (!pos.isVisual)
+                return simpleOffsetColumnNegative(pos)
+            if (!pos.isAtLineStart)
+                return simpleOffsetColumnNegative(pos)
+
+            val currentLine = visualLines[pos.line]
+            val previousLine = visualLines[pos.line - 1]
+            if (currentLine.textIndex != previousLine.textIndex)
+                return simpleOffsetColumnNegative(pos)
+            if (previousLine.text.last() != ' ')
+                return simpleOffsetColumnNegative(pos)
+            return LinePosition(pos.line - 1, previousLine.length - 1, isVisual = true)
+        }
+
+        private fun simpleOffsetColumnNegative(pos: LinePosition) = if (pos.column == 0) {
+            LinePosition(pos.line - 1, pos.lines[pos.line - 1].length, pos.isVisual)
+        } else {
+            pos.withColumn(pos.column - 1)
         }
 
         private tailrec fun offsetColumnPositive(amount: Int, pos: LinePosition): LinePosition {
             if (amount == 0 || pos.isAtAbsoluteEnd)
                 return pos
 
-            // There are two states we want to handle here:
-            //   - The more common case where the user is one position before the end of the
-            //     line and pressed the right arrow key. In this case, we want to skip the
-            //     ending character by going to the next line
-            //   - The less common case where the user is at the absolute end of the line and
-            //     pressed the right arrow key. This is only achievable by pressing the end key.
-            //     We would want to return the position on the next line with a column of 1
-            val nextPosition = if (pos.column >= pos.lines[pos.line].length - 1) {
-                if (pos.line == pos.lines.lastIndex) {
-                    return LinePosition(pos.lines.lastIndex, pos.lines.last().length, pos.isVisual)
-                } else {
-                    LinePosition(pos.line + 1, if (pos.column == pos.lines[pos.line].length) 1 else 0, pos.isVisual)
-                }
-            } else {
-                pos.withColumn(pos.column + 1)
-            }
+            return offsetColumnPositive(amount - 1, complexOffsetColumnPositive(pos))
+        }
 
-            return offsetColumnPositive(amount - 1, nextPosition)
+        private fun complexOffsetColumnPositive(pos: LinePosition): LinePosition {
+            if (!pos.isVisual)
+                return simpleOffsetColumnPositive(pos)
+
+            val currentLine = visualLines[pos.line]
+            if (pos.column < currentLine.length - 1)
+                return simpleOffsetColumnPositive(pos)
+            if (pos.line == visualLines.lastIndex)
+                return LinePosition(pos.line, currentLine.length, isVisual = true)
+            if (pos.column == currentLine.length - 1 && currentLine.text.last() != ' ')
+                return simpleOffsetColumnPositive(pos)
+
+            val nextLine = visualLines[pos.line + 1]
+            if (currentLine.textIndex == nextLine.textIndex)
+                return LinePosition(pos.line + 1, 0, isVisual = true)
+            return simpleOffsetColumnPositive(pos)
+        }
+
+        private fun simpleOffsetColumnPositive(pos: LinePosition) = if (pos.column >= pos.lines[pos.line].length) {
+            if (pos.line == pos.lines.lastIndex) {
+                LinePosition(pos.lines.lastIndex, pos.lines.last().length, pos.isVisual)
+            } else {
+                LinePosition(pos.line + 1, 0, pos.isVisual)
+            }
+        } else {
+            pos.withColumn(pos.column + 1)
         }
 
         fun withColumn(newColumn: Int) = LinePosition(line, newColumn, isVisual)
