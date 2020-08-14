@@ -480,6 +480,10 @@ class UIMultilineTextInput @JvmOverloads constructor(
 
         recalculateAllVisualLines()
 
+        val heightDifference = getHeight() - visualLines.size * 9f
+        if (scrollingOffset < heightDifference)
+            targetScrollingOffset = heightDifference.coerceAtMost(0f)
+
         updateAction(getText())
     }
 
