@@ -33,14 +33,7 @@ class UIMultilineTextInput @JvmOverloads constructor(
     private val visualLines = mutableListOf(VisualLine("", 0))
     private var active = false
 
-    private var cursorComponent: UIComponent = UIBlock(
-        Color(
-            255,
-            255,
-            255,
-            0
-        )
-    ).constrain {
+    private var cursorComponent: UIComponent = UIBlock(Color(255, 255, 255, 0)).constrain {
         y = CenterConstraint() - 0.5f.pixels()
         width = 1.pixels()
         height = 9f.pixels()
@@ -98,9 +91,7 @@ class UIMultilineTextInput @JvmOverloads constructor(
                 val holdingCtrl = UniversalKeyboard.isCtrlKeyDown()
 
                 val newCursorPosition = when {
-                    holdingCtrl -> getNearestWordBoundary(cursor,
-                        Direction.Left
-                    )
+                    holdingCtrl -> getNearestWordBoundary(cursor, Direction.Left)
                     hasSelection() -> if (holdingShift) cursor.offsetColumn(-1) else selectionStart()
                     else -> cursor.offsetColumn(-1)
                 }
@@ -117,9 +108,7 @@ class UIMultilineTextInput @JvmOverloads constructor(
                 val holdingCtrl = UniversalKeyboard.isCtrlKeyDown()
 
                 val newCursorPosition = when {
-                    holdingCtrl -> getNearestWordBoundary(cursor,
-                        Direction.Right
-                    )
+                    holdingCtrl -> getNearestWordBoundary(cursor, Direction.Right)
                     hasSelection() -> if (holdingShift) cursor.offsetColumn(1) else selectionEnd()
                     else -> cursor.offsetColumn(1)
                 }
@@ -236,11 +225,13 @@ class UIMultilineTextInput @JvmOverloads constructor(
                 }
                 2 -> {
                     selectionMode = SelectionMode.Word
-                    cursor = getNearestWordBoundary(clickedVisualPos,
+                    cursor = getNearestWordBoundary(
+                        clickedVisualPos,
                         Direction.Left
                     )
                     cursorNeedsRefocus = true
-                    otherSelectionEnd = getNearestWordBoundary(clickedVisualPos,
+                    otherSelectionEnd = getNearestWordBoundary(
+                        clickedVisualPos,
                         Direction.Right
                     )
                     initiallySelectedWord = cursor to otherSelectionEnd
@@ -261,18 +252,24 @@ class UIMultilineTextInput @JvmOverloads constructor(
                     otherSelectionEnd = draggedVisualPos.withColumn(visualLines[draggedVisualPos.line].length)
                 } else {
                     cursor = draggedVisualPos.withColumn(0)
-                    otherSelectionEnd = LinePosition(initiallySelectedLine, visualLines[initiallySelectedLine].length, isVisual = true)
+                    otherSelectionEnd = LinePosition(
+                        initiallySelectedLine,
+                        visualLines[initiallySelectedLine].length,
+                        isVisual = true
+                    )
                 }
                 SelectionMode.Word -> when {
                     draggedVisualPos < initiallySelectedWord.first -> {
-                        cursor = getNearestWordBoundary(draggedVisualPos,
+                        cursor = getNearestWordBoundary(
+                            draggedVisualPos,
                             Direction.Left
                         )
                         otherSelectionEnd = initiallySelectedWord.second
                     }
                     draggedVisualPos > initiallySelectedWord.second -> {
                         cursor = initiallySelectedWord.first
-                        otherSelectionEnd = getNearestWordBoundary(draggedVisualPos,
+                        otherSelectionEnd = getNearestWordBoundary(
+                            draggedVisualPos,
                             Direction.Right
                         )
                     }
@@ -281,7 +278,8 @@ class UIMultilineTextInput @JvmOverloads constructor(
                         otherSelectionEnd = initiallySelectedWord.second
                     }
                 }
-                SelectionMode.None -> {}
+                SelectionMode.None -> {
+                }
             }
 
             val currentTime = System.currentTimeMillis()
@@ -464,7 +462,10 @@ class UIMultilineTextInput @JvmOverloads constructor(
         val startTextualLine = textualLines[textualStartPos.line]
         val endTextualLine = textualLines[textualEndPos.line]
 
-        startTextualLine.text = startTextualLine.text.substring(0, textualStartPos.column) + endTextualLine.text.substring(textualEndPos.column)
+        startTextualLine.text = startTextualLine.text.substring(
+            0,
+            textualStartPos.column
+        ) + endTextualLine.text.substring(textualEndPos.column)
 
         val firstItemToDelete = textualStartPos.line + 1
         repeat(textualEndPos.line - firstItemToDelete + 1) {
@@ -556,7 +557,7 @@ class UIMultilineTextInput @JvmOverloads constructor(
     private fun getNearestWordBoundary(pos: LinePosition, direction: Direction): LinePosition {
         /*
          * Algorithm:
-         *   1. If at beginning, return pos
+         *   1. If we can't go further in the specified direction, return pos
          *   2. First, ignore all breaking characters until a non-breaking character is found
          *      or the beginning is reached
          *   3. Consume until a breaking character is found or the beginning is reached
@@ -578,7 +579,8 @@ class UIMultilineTextInput @JvmOverloads constructor(
          */
 
         // Step 1
-        if (pos.isAtAbsoluteStart)
+        val atEndOfDirection = if (direction == Direction.Left) pos::isAtAbsoluteStart else pos::isAtAbsoluteEnd
+        if (atEndOfDirection())
             return pos
 
         var textualPos = pos.toTextualPos()
@@ -590,7 +592,7 @@ class UIMultilineTextInput @JvmOverloads constructor(
             return textualPos.offsetColumn(columnOffset)
 
         // Step 2
-        while (!textualPos.isAtAbsoluteStart && ch?.let(::isBreakingCharacter) == true) {
+        while (!atEndOfDirection() && ch?.let(::isBreakingCharacter) == true) {
             textualPos = textualPos.offsetColumn(columnOffset)
             ch = nextChar(textualPos)
             if (ch == '\n')
@@ -598,7 +600,7 @@ class UIMultilineTextInput @JvmOverloads constructor(
         }
 
         // Step 3
-        while (!textualPos.isAtAbsoluteStart && ch?.let(::isBreakingCharacter) == false) {
+        while (!atEndOfDirection() && ch?.let(::isBreakingCharacter) == false) {
             textualPos = textualPos.offsetColumn(columnOffset)
             ch = nextChar(textualPos)
             if (ch == '\n')
@@ -729,7 +731,10 @@ class UIMultilineTextInput @JvmOverloads constructor(
                 }
 
                 val selectedText = when {
-                    selectionStart.line == selectionEnd.line -> visualLine.text.substring(selectionStart.column, selectionEnd.column)
+                    selectionStart.line == selectionEnd.line -> visualLine.text.substring(
+                        selectionStart.column,
+                        selectionEnd.column
+                    )
                     i > selectionStart.line && i < selectionEnd.line -> visualLine.text
                     i == selectionStart.line -> visualLine.text.substring(selectionStart.column)
                     i == selectionEnd.line -> visualLine.text.substring(0, selectionEnd.column)
@@ -925,7 +930,8 @@ class UIMultilineTextInput @JvmOverloads constructor(
             }
         }
 
-        override fun equals(other: Any?) = other is LinePosition && line == other.line && column == other.column && isVisual == other.isVisual
+        override fun equals(other: Any?) =
+            other is LinePosition && line == other.line && column == other.column && isVisual == other.isVisual
 
         override fun hashCode(): Int {
             var result = line
