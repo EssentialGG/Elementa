@@ -515,19 +515,23 @@ class UIMultilineTextInput @JvmOverloads constructor(
     }
 
     private fun copySelection() {
-        val (selectionStart, selectionEnd) = getSelection()
+        val (visualSelectionStart, visualSelectionEnd) = getSelection()
+        if (visualSelectionStart == visualSelectionEnd)
+            return
 
-        val text = if (selectionStart == selectionEnd) {
-            visualLines[selectionStart.line].text.substring(selectionStart.column, selectionEnd.column)
+        val selectionStart = visualSelectionStart.toTextualPos()
+        val selectionEnd = visualSelectionEnd.toTextualPos()
+
+        val text = if (selectionStart.line == selectionEnd.line) {
+            textualLines[selectionStart.line].text.substring(selectionStart.column, selectionEnd.column)
         } else {
             val lines = mutableListOf<String>()
-
-            lines.add(visualLines[selectionStart.line].text.substring(selectionStart.column))
+            lines.add(textualLines[selectionStart.line].text.substring(selectionStart.column))
 
             for (i in selectionStart.line + 1 until selectionEnd.line)
-                lines.add(visualLines[i].text)
+                lines.add(textualLines[i].text)
 
-            lines.add(visualLines[selectionEnd.line].text.substring(0, selectionEnd.column))
+            lines.add(textualLines[selectionEnd.line].text.substring(0, selectionEnd.column))
             lines.joinToString("\n")
         }
 
