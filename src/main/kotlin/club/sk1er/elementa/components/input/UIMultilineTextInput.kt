@@ -213,7 +213,13 @@ class UIMultilineTextInput @JvmOverloads constructor(
 
             val clickedVisualPos = screenPosToVisualPos(event.relativeX, event.relativeY)
 
-            when (event.clickCount % 3) {
+            var clickCount = event.clickCount % 3
+            if (clickCount == 0 && clickedVisualPos.line != cursor.line)
+                clickCount = 1
+            else if (clickCount == 2 && cursor != clickedVisualPos)
+                clickCount = 1
+
+            when (clickCount) {
                 0 -> {
                     selectionMode = SelectionMode.Line
                     otherSelectionEnd = clickedVisualPos.withColumn(visualLines[cursor.line].length)
