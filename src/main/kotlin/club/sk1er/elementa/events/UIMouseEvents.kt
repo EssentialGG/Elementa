@@ -13,3 +13,9 @@ data class UIClickEvent(
     val relativeX = absoluteX - currentTarget.getLeft()
     val relativeY = absoluteY - currentTarget.getTop()
 }
+
+data class UIScrollEvent(
+    val delta: Int,
+    val target: UIComponent,
+    val currentTarget: UIComponent
+) : UIEvent()

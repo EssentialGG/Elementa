@@ -8,6 +8,7 @@ import club.sk1er.elementa.dsl.animate
 import club.sk1er.elementa.effects.Effect
 import club.sk1er.elementa.effects.ScissorEffect
 import club.sk1er.elementa.events.UIClickEvent
+import club.sk1er.elementa.events.UIScrollEvent
 import club.sk1er.elementa.utils.TriConsumer
 import club.sk1er.mods.core.universal.UniversalMouse
 import club.sk1er.mods.core.universal.UniversalResolutionUtil
@@ -35,12 +36,12 @@ abstract class UIComponent {
     val mouseClickListeners = mutableListOf<UIComponent.(UIClickEvent) -> Unit>()
     private var lastClickTime = System.currentTimeMillis()
     private var lastClickCount = 0
+    var mouseScrollListeners = mutableListOf<UIComponent.(UIScrollEvent) -> Unit>()
 
     /* Non-Bubbling Events */
     var mouseReleaseAction: UIComponent.() -> Unit = {}
     var mouseEnterAction: UIComponent.() -> Unit = {}
     var mouseLeaveAction: UIComponent.() -> Unit = {}
-    var mouseScrollAction: UIComponent.(delta: Int) -> Unit = {}
     var mouseDragAction: UIComponent.(mouseX: Float, mouseY: Float, button: Int) -> Unit = { _, _, _ -> }
     var keyTypeAction: UIComponent.(typedChar: Char, keyCode: Int) -> Unit = { _, _ -> }
 
@@ -401,10 +402,10 @@ abstract class UIComponent {
         lastClickCount = if (System.currentTimeMillis() - lastClickTime < 500) lastClickCount + 1 else 1
         lastClickTime = System.currentTimeMillis()
 
-        fireMouseEvent(UIClickEvent(mouseX.toFloat(), mouseY.toFloat(), button, this, this, lastClickCount))
+        fireClickEvent(UIClickEvent(mouseX.toFloat(), mouseY.toFloat(), button, this, this, lastClickCount))
     }
 
-    protected fun fireMouseEvent(event: UIClickEvent) {
+    protected fun fireClickEvent(event: UIClickEvent) {
         for (listener in mouseClickListeners) {
             this.listener(event)
 
@@ -412,7 +413,7 @@ abstract class UIComponent {
         }
 
         if (!event.propagationStopped && parent != this) {
-            parent.fireMouseEvent(event.copy(currentTarget = parent))
+            parent.fireClickEvent(event.copy(currentTarget = parent))
         }
     }
 
@@ -435,9 +436,27 @@ abstract class UIComponent {
     open fun mouseScroll(delta: Int) {
         if (delta == 0) return
 
-        if (isHovered()) mouseScrollAction(delta)
+        for (i in children.lastIndex downTo 0) {
+            val child = children[i]
 
-        this.children.forEach { it.mouseScroll(delta) }
+            if (child.isHovered()) {
+                return child.mouseScroll(delta)
+            }
+        }
+
+        fireScrollEvent(UIScrollEvent(delta, this, this))
+    }
+
+    protected fun fireScrollEvent(event: UIScrollEvent) {
+        for (listener in mouseScrollListeners) {
+            this.listener(event)
+
+            if (event.propagationStoppedImmediately) return
+        }
+
+        if (!event.propagationStopped && parent != this) {
+            parent.fireScrollEvent(event.copy(currentTarget = parent))
+        }
     }
 
 
@@ -567,15 +586,15 @@ abstract class UIComponent {
     /**
      * Adds a method to be run when mouse scrolls while in the component.
      */
-    fun onMouseScroll(method: UIComponent.(delta: Int) -> Unit) = apply {
-        mouseScrollAction = method
+    fun onMouseScroll(method: UIComponent.(UIScrollEvent) -> Unit) = apply {
+        mouseScrollListeners.add(method)
     }
 
     /**
      * Adds a method to be run when mouse scrolls while in the component.
      */
-    fun onMouseScrollConsumer(method: Consumer<Int>) = apply {
-        mouseScrollAction = { method.accept(it) }
+    fun onMouseScrollConsumer(method: Consumer<UIScrollEvent>) = apply {
+        mouseScrollListeners.add { method.accept(it) }
     }
 
     fun onKeyType(method: UIComponent.(typedChar: Char, keyCode: Int) -> Unit) = apply {

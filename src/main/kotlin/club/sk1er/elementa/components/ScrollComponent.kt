@@ -55,7 +55,7 @@ class ScrollComponent @JvmOverloads constructor(
         actualHolder.addChild(emptyText)
         this.enableEffects(ScissorEffect())
 
-        onMouseScroll { onScroll(it) }
+        onMouseScroll { onScroll(it.delta) }
         onMouseClick { event -> onClick(event.relativeX, event.relativeY, event.mouseButton) }
     }
 
@@ -120,7 +120,7 @@ class ScrollComponent @JvmOverloads constructor(
         scrollBarGrip = component
         hideScrollWhenUseless = hideWhenUseless
 
-        component.parent.onMouseScroll { onScroll(it) }
+        component.parent.onMouseScroll { onScroll(it.delta) }
 
         component.onMouseClick { event ->
             dragBeginPos = event.relativeY

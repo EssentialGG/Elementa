@@ -198,11 +198,12 @@ abstract class AbstractTextInput(
             }
         }
 
-        onMouseScroll { delta ->
+        onMouseScroll {
             val heightDifference = getHeight() - visualLines.size * 9f
             if (heightDifference > 0)
                 return@onMouseScroll
-            targetVerticalScrollingOffset = (targetVerticalScrollingOffset + delta * 9f).coerceIn(heightDifference, 0f)
+            targetVerticalScrollingOffset = (targetVerticalScrollingOffset + it.delta * 9f).coerceIn(heightDifference, 0f)
+            it.stopPropagation()
         }
 
         onMouseClick { event ->
