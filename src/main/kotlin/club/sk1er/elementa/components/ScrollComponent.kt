@@ -55,7 +55,10 @@ class ScrollComponent @JvmOverloads constructor(
         actualHolder.addChild(emptyText)
         this.enableEffects(ScissorEffect())
 
-        onMouseScroll { onScroll(it.delta) }
+        onMouseScroll {
+            onScroll(it.delta)
+            it.stopPropagation()
+        }
         onMouseClick { event -> onClick(event.relativeX, event.relativeY, event.mouseButton) }
     }
 
@@ -110,7 +113,7 @@ class ScrollComponent @JvmOverloads constructor(
      * The hierarchy for this scrollbar grip component must be as follows:
      *  - Have a containing parent being the full height range of this scroll bar.
      *
-     *  [component]'s parent's mouse events will all be overridden by this action.
+     *  [component]'s mouse events will all be overridden by this action.
      *
      *  If [hideWhenUseless] is enabled, [component] will have [hide] called on it when the scrollbar is full height
      *  and dragging it would do nothing.
@@ -120,7 +123,10 @@ class ScrollComponent @JvmOverloads constructor(
         scrollBarGrip = component
         hideScrollWhenUseless = hideWhenUseless
 
-        component.parent.onMouseScroll { onScroll(it.delta) }
+        component.onMouseScroll {
+            onScroll(it.delta)
+            it.stopPropagation()
+        }
 
         component.onMouseClick { event ->
             dragBeginPos = event.relativeY
