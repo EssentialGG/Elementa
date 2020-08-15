@@ -1,284 +1,33 @@
 package club.sk1er.elementa.components.input
 
-import club.sk1er.elementa.UIComponent
-import club.sk1er.elementa.components.UIBlock
-import club.sk1er.elementa.constraints.CenterConstraint
 import club.sk1er.elementa.constraints.WidthConstraint
-import club.sk1er.elementa.constraints.animation.Animations
-import club.sk1er.elementa.dsl.*
+import club.sk1er.elementa.dsl.minMax
+import club.sk1er.elementa.dsl.pixels
+import club.sk1er.elementa.dsl.width
 import club.sk1er.mods.core.universal.UniversalGraphicsHandler
-import club.sk1er.mods.core.universal.UniversalKeyboard
 import java.awt.Color
-import java.awt.Toolkit
-import java.awt.datatransfer.DataFlavor
-import java.awt.datatransfer.StringSelection
-import kotlin.math.abs
-import kotlin.math.max
-import kotlin.math.min
 
 open class UITextInput @JvmOverloads constructor(
-    private val placeholder: String = "",
-    var shadow: Boolean = true,
-    private val selectionBackgroundColor: Color = Color.WHITE,
-    private val selectionForegroundColor: Color = Color(64, 139, 229),
-    private val allowInactiveSelection: Boolean = false,
-    private val inactiveSelectionBackgroundColor: Color = Color(176, 176, 176),
-    private val inactiveSelectionForegroundColor: Color = Color.WHITE
-) : UIComponent() {
+    placeholder: String = "",
+    shadow: Boolean = true,
+    selectionBackgroundColor: Color = Color.WHITE,
+    selectionForegroundColor: Color = Color(64, 139, 229),
+    allowInactiveSelection: Boolean = false,
+    inactiveSelectionBackgroundColor: Color = Color(176, 176, 176),
+    inactiveSelectionForegroundColor: Color = Color.WHITE
+) : AbstractTextInput(
+    placeholder,
+    shadow,
+    selectionBackgroundColor,
+    selectionForegroundColor,
+    allowInactiveSelection,
+    inactiveSelectionBackgroundColor,
+    inactiveSelectionForegroundColor
+) {
     private var minWidth: WidthConstraint? = null
     private var maxWidth: WidthConstraint? = null
-    private var updateAction: (text: String) -> Unit = {}
-    private var activateAction: (text: String) -> Unit = {}
 
     private val placeholderWidth = placeholder.width().toFloat()
-    private var textWidth = 0f
-
-    private var currentTextBeforeCursor = ""
-    private var currentWidthBeforeCursor = 0f
-    private var currentTextOffset = 0f
-
-    private var text = ""
-    private var active = false
-
-    private var cursor: UIComponent = UIBlock(Color(255, 255, 255, 0))
-        .constrain {
-        y = CenterConstraint() - 0.5f.pixels()
-        width = 1.pixels()
-        height = 9f.pixels()
-    } childOf this
-    private var cursorLocation = 0
-
-    private var isSelecting = false
-    private var isWordSelecting = false
-    private var selectionEndLocation = 0
-    private var hasMovedSelection = false
-    private var lastSelectionMoveTimestamp = System.currentTimeMillis()
-    private var originalWordSelection = 0 to 0
-
-    init {
-        setHeight(11.pixels())
-
-        onKeyType { typedChar, keyCode ->
-            if (!active) return@onKeyType
-
-            if (keyCode == 1) {
-                releaseWindowFocus()
-            } else if (UniversalKeyboard.isKeyComboCtrlA(keyCode)) {
-                selectAll()
-            } else if (UniversalKeyboard.isKeyComboCtrlC(keyCode) && hasSelection()) {
-                copySelection()
-            } else if (UniversalKeyboard.isKeyComboCtrlX(keyCode) && hasSelection()) {
-                copySelection()
-                removeSelection()
-            } else if (UniversalKeyboard.isKeyComboCtrlV(keyCode)) {
-                addText(Toolkit.getDefaultToolkit().systemClipboard.getData(DataFlavor.stringFlavor) as String)
-            } else if (typedChar in ' '..'~') { // Most of the ASCII characters
-                addText(typedChar.toString())
-            } else if (keyCode == 203) { // Left Arrow
-                val newCursorLocation = max(when {
-                    cursorLocation == 0 -> 0
-                    UniversalKeyboard.isCtrlKeyDown() && (!hasSelection() || UniversalKeyboard.isShiftKeyDown()) -> {
-                        firstWordBreakBefore(selectionEndLocation)
-                    }
-                    hasSelection() && !UniversalKeyboard.isShiftKeyDown() -> selectionStart()
-                    hasSelection() -> selectionEndLocation - 1
-                    else -> cursorLocation - 1
-                }, 0)
-
-                if (UniversalKeyboard.isShiftKeyDown()) {
-                    if (!isSelecting) {
-                        isSelecting = true
-                        hasMovedSelection = true
-                    }
-
-                    scrollTextPositionIntoView(newCursorLocation)
-                    selectionEndLocation = newCursorLocation
-                } else {
-                    setCursorLocation(newCursorLocation)
-                }
-
-                if (!hasSelection()) {
-                    isSelecting = false
-                    hasMovedSelection = false
-                }
-            } else if (keyCode == 205) { // Right Arrow
-                val newCursorLocation = min(when {
-                    cursorLocation >= text.length -> text.length
-                    UniversalKeyboard.isCtrlKeyDown() && (!hasSelection() || UniversalKeyboard.isShiftKeyDown()) -> {
-                        firstWordBreakAfter(selectionEndLocation)
-                    }
-                    hasSelection() && !UniversalKeyboard.isShiftKeyDown() -> selectionEnd()
-                    hasSelection() -> selectionEndLocation + 1
-                    else -> cursorLocation + 1
-                }, text.length)
-
-                if (UniversalKeyboard.isShiftKeyDown()) {
-                    if (!isSelecting) {
-                        isSelecting = true
-                        hasMovedSelection = true
-                    }
-
-                    scrollTextPositionIntoView(newCursorLocation)
-                    selectionEndLocation = newCursorLocation
-                } else {
-                    setCursorLocation(newCursorLocation)
-                }
-
-                if (!hasSelection()) {
-                    isSelecting = false
-                    hasMovedSelection = false
-                }
-            } else if (keyCode == 14) {
-                if (hasSelection()) {
-                    removeSelection()
-                } else if (cursorLocation > 0) {
-                    removeText(cursorLocation - 1, cursorLocation)
-                    setCursorLocation(cursorLocation - 1)
-                }
-            } else if (keyCode == 211) {
-                if (hasSelection()) {
-                    removeSelection()
-                } else if (cursorLocation < text.length) {
-                    removeText(cursorLocation, cursorLocation + 1)
-                }
-            } else if (keyCode == 199) { // Home
-                if (UniversalKeyboard.isShiftKeyDown()) {
-                    if (!isSelecting) {
-                        isSelecting = true
-                        hasMovedSelection = true
-                    }
-
-                    selectionEndLocation = 0
-                    scrollTextPositionIntoView(0)
-                } else {
-                    setCursorLocation(0)
-                    isSelecting = false
-                    hasMovedSelection = false
-                }
-
-                if (!hasSelection()) {
-                    isSelecting = false
-                    hasMovedSelection = false
-                }
-            } else if (keyCode == 207) { // End
-                if (UniversalKeyboard.isShiftKeyDown()) {
-                    if (!isSelecting) {
-                        isSelecting = true
-                        hasMovedSelection = true
-                    }
-
-                    selectionEndLocation = text.length
-                    scrollTextPositionIntoView(text.length)
-                } else {
-                    setCursorLocation(text.length)
-                    isSelecting = false
-                    hasMovedSelection = false
-                }
-
-                if (!hasSelection()) {
-                    isSelecting = false
-                    hasMovedSelection = false
-                }
-            } else if (keyCode == 28) {
-                activateAction(text)
-            }
-        }
-
-        onMouseClick { event ->
-            if (!active || event.mouseButton != 0)
-                return@onMouseClick
-
-            when (event.clickCount % 3) {
-                0 -> selectAll()
-                1 -> {
-                    setCursorLocation(textPositionAt(event.relativeX))
-                    isSelecting = true
-                    hasMovedSelection = false
-                }
-                2 -> {
-                    val clickPosition = textPositionAt(event.relativeX)
-                    cursorLocation = firstWordEndAfter(clickPosition)
-                    selectionEndLocation = firstWordStartBefore(clickPosition)
-                    originalWordSelection = selectionEndLocation to cursorLocation
-                    isWordSelecting = true
-                    isSelecting = true
-                    hasMovedSelection = true
-                }
-            }
-        }
-
-        onMouseDrag { mouseX, _, mouseButton ->
-            if (mouseButton != 0 || !isSelecting)
-                return@onMouseDrag
-
-            val textPosition = textPositionAt(mouseX.coerceIn(0f, getWidth()))
-
-            selectionEndLocation = if (isWordSelecting) {
-                if (textPosition < originalWordSelection.first) {
-                    cursorLocation = originalWordSelection.second
-                    firstWordStartBefore(textPosition)
-                } else {
-                    cursorLocation = originalWordSelection.first
-                    firstWordEndAfter(textPosition)
-                }
-            } else {
-                textPositionAt(mouseX.coerceIn(0f, getWidth()))
-            }
-
-            val currentTime = System.currentTimeMillis()
-            if (currentTime - lastSelectionMoveTimestamp > 50) {
-                if (mouseX >= getWidth()) {
-                    scrollTextPositionIntoView(textPosition + 1)
-                    lastSelectionMoveTimestamp = currentTime
-                } else if (mouseX <= 0) {
-                    scrollTextPositionIntoView(textPosition - 1)
-                    lastSelectionMoveTimestamp = currentTime
-                }
-            }
-        }
-
-        onMouseRelease {
-            isSelecting = false
-            hasMovedSelection = false
-            isWordSelecting = false
-        }
-
-        cursor.animateAfterUnhide {
-            setColorAnimation(Animations.OUT_CIRCULAR, 0.5f, Color.WHITE.asConstraint())
-            onComplete {
-                if (!active) return@onComplete
-                cursor.animate {
-                    setColorAnimation(Animations.IN_CIRCULAR, 0.5f, Color(255, 255, 255, 0).asConstraint())
-                    onComplete {
-                        if (active) animateCursor()
-                    }
-                }
-            }
-        }
-    }
-
-    fun setText(newText: String) = apply {
-        text = newText
-        textWidth = newText.width().toFloat()
-        updateAction(newText)
-    }
-
-    fun getText() = text
-
-    fun setActive(isActive: Boolean) = apply {
-        active = isActive
-
-        if (isActive) {
-            animateCursor()
-        } else {
-            cursor.setColor(Color(255, 255, 255, 0).asConstraint())
-            if (text.isNotEmpty() && (!allowInactiveSelection || !hasSelection())) {
-                setCursorLocation(text.length)
-            }
-        }
-    }
-
-    fun isActive() = active
 
     fun setMinWidth(constraint: WidthConstraint) = apply {
         minWidth = constraint
@@ -288,312 +37,97 @@ open class UITextInput @JvmOverloads constructor(
         maxWidth = constraint
     }
 
-    private fun addText(newText: String) {
-        when {
-            hasSelection() -> {
-                text = text.substring(0, selectionStart()) + newText + text.substring(selectionEnd())
-                cursorLocation = selectionStart()
-            }
-            cursorLocation >= text.length -> {
-                text += newText
-            }
-            else -> {
-                text = text.substring(0, cursorLocation) + newText + text.substring(cursorLocation)
-            }
-        }
+    override fun getText() = textualLines.first().text
 
-        textWidth = text.width().toFloat()
-        setCursorLocation(cursorLocation + newText.length)
-        updateAction(text)
+    override fun textToLines(text: String): List<String> {
+        return listOf(text.replace('\n', ' '))
     }
 
-    private fun removeText(startPos: Int, endPos: Int) {
-        text = text.substring(0, startPos) + text.substring(endPos)
-        textWidth = text.width().toFloat()
-
-        if (abs(startPos - endPos) > 1)
-            setCursorLocation(startPos)
-
-        if (cursorLocation < text.length) {
-            val visibleWidthBeforeCursor = currentWidthBeforeCursor - currentTextOffset
-            val widthAfterCursor = text.substring(cursorLocation).width()
-
-            if (visibleWidthBeforeCursor + widthAfterCursor < getWidth()) {
-                currentTextOffset = (textWidth - getWidth()).coerceAtLeast(0f)
-            }
-        }
-
-        updateAction(text)
-    }
-
-    private fun setCursorLocation(newPosition: Int) {
-        recalculateWidth()
-
-        if (newPosition >= text.length && textWidth >= getWidth()) {
-            currentTextBeforeCursor = text
-            currentWidthBeforeCursor = text.width().toFloat()
-            currentTextOffset = textWidth - getWidth()
-            cursorLocation = newPosition
-            selectionEndLocation = cursorLocation
-            return
-        }
-
-        currentTextBeforeCursor = text.substring(0, newPosition)
-        currentWidthBeforeCursor = currentTextBeforeCursor.width().toFloat()
-
-        scrollTextPositionIntoView(newPosition)
-
-        cursorLocation = newPosition
-        selectionEndLocation = cursorLocation
-    }
-
-    private fun scrollTextPositionIntoView(textPosition: Int) {
-        if (textPosition < 0 || textPosition > text.length)
+    override fun scrollIntoView(pos: LinePosition) {
+        val column = pos.column
+        val lineText = getText()
+        if (column < 0 || column > lineText.length)
             return
 
-        val widthBeforePosition = text.substring(0, textPosition).width().toFloat()
+        val widthBeforePosition = lineText.substring(0, column).width().toFloat()
 
         when {
-            textWidth < getWidth() -> {
-                currentTextOffset = 0f
+            getText().width() < getWidth() -> {
+                horizontalScrollingOffset = 0f
             }
-            currentTextOffset > widthBeforePosition -> {
-                currentTextOffset = widthBeforePosition
+            horizontalScrollingOffset > widthBeforePosition -> {
+                horizontalScrollingOffset = widthBeforePosition
             }
-            widthBeforePosition - currentTextOffset > getWidth() -> {
-                currentTextOffset = widthBeforePosition - getWidth()
+            widthBeforePosition - horizontalScrollingOffset > getWidth() -> {
+                horizontalScrollingOffset = widthBeforePosition - getWidth()
             }
         }
     }
 
-    private fun selectAll() {
-        cursorLocation = text.length
-        selectionEndLocation = 0
-    }
-
-    private fun hasSelection() = selectionEndLocation != cursorLocation
-    private fun selectionStart() = min(cursorLocation, selectionEndLocation)
-    private fun selectionEnd() = max(cursorLocation, selectionEndLocation)
-
-    private fun removeSelection() {
-        removeText(selectionStart(), selectionEnd())
-        selectionEndLocation = cursorLocation
-        isSelecting = false
-        hasMovedSelection = false
-    }
-
-    private fun copySelection() {
-        val string = StringSelection(text.substring(selectionStart(), selectionEnd()))
-        Toolkit.getDefaultToolkit().systemClipboard.setContents(string, string)
-    }
-
-    private fun textPositionAt(relativeXPosition: Float): Int {
-        // TODO: Perhaps optimize this by only searching up until/only after the cursor depending on the click pos
-        val targetXPos = relativeXPosition + currentTextOffset
+    override fun screenPosToVisualPos(x: Float, y: Float): LinePosition {
+        val targetXPos = x + horizontalScrollingOffset
         var currentX = 0f
 
-        for (i in text.indices) {
-            val charWidth = text[i].width()
-            if (currentX + (charWidth / 2) >= targetXPos) return i
+        val line = getText()
+
+        for (i in line.indices) {
+            val charWidth = line[i].width()
+            if (currentX + (charWidth / 2) >= targetXPos) return LinePosition(0, i, isVisual = true)
             currentX += charWidth
         }
 
-        return text.length
+        return LinePosition(0, line.length, isVisual = true)
     }
 
-    private fun firstWordStartBefore(location: Int): Int {
-        if (location <= 0)
-            return 0
-
-        var hasEncounteredText = false
-        for (i in location downTo 0) {
-            if (!text[i].isWhitespace()) {
-                hasEncounteredText = true
-                continue
-            }
-
-            if (hasEncounteredText)
-                return i + 1
-        }
-
-        return 0
-    }
-
-    private fun firstWordEndAfter(location: Int): Int {
-        if (location >= text.length)
-            return text.length
-
-        var hasEncounteredText = false
-        for (i in location until text.length) {
-            if (!text[i].isWhitespace()) {
-                hasEncounteredText = true
-                continue
-            }
-
-            if (hasEncounteredText)
-                return i
-        }
-
-        return text.length
-    }
-
-    private fun firstWordBreakAfter(location: Int): Int {
-        if (location >= text.length)
-            return text.length
-
-        val startedAtWhiteSpace = text[location].isWhitespace()
-
-        for (i in (location + 1) until text.length) {
-            if ((startedAtWhiteSpace && !text[i].isWhitespace()) || (!startedAtWhiteSpace && text[i].isWhitespace()))
-                return i
-        }
-
-        return text.length
-    }
-
-    private fun firstWordBreakBefore(location: Int): Int {
-        if (location <= 0)
-            return 0
-
-        val startedAtWhiteSpace = text[location - 1].isWhitespace()
-
-        for (i in (location - 1) downTo 1) {
-            if ((startedAtWhiteSpace && !text[i - 1].isWhitespace()) || (!startedAtWhiteSpace && text[i - 1].isWhitespace()))
-                return i
-        }
-
-        return 0
-    }
-
-    private fun recalculateWidth() {
+    override fun recalculateDimensions() {
         if (minWidth != null && maxWidth != null) {
-            val width = if (text.isEmpty() && !this.active) placeholderWidth else textWidth
+            val width = if (!hasText() && !this.active) placeholderWidth else getText().width().toFloat()
             setWidth(width.pixels().minMax(minWidth!!, maxWidth!!))
         }
     }
 
-    private fun textPositionY() = getTop() + 1f
+    override fun splitTextForWrapping(text: String, maxLineWidth: Float): List<String> {
+        return listOf(text)
+    }
 
-    private fun animateCursor() {
-        if (!active) return
-        cursor.animate {
-            setColorAnimation(Animations.OUT_CIRCULAR, 0.5f, Color.WHITE.asConstraint())
-            onComplete {
-                if (!active) return@onComplete
-                cursor.animate {
-                    setColorAnimation(Animations.IN_CIRCULAR, 0.5f, Color(255, 255, 255, 0).asConstraint())
-                    onComplete {
-                        if (active) animateCursor()
-                    }
-                }
-            }
-        }
+    override fun onEnterPressed() {
+        activateAction(getText())
     }
 
     override fun draw() {
-        if (!active && text.isEmpty()) {
+        if (!active && !hasText()) {
             UniversalGraphicsHandler.drawString(placeholder, getLeft(), getTop(), getColor().rgb, shadow)
             return super.draw()
         }
 
+        val lineText = getText()
+
         if (hasSelection()) {
-            hasMovedSelection = true
-            cursor.hide(instantly = true)
+            var currentX = getLeft()
+            cursorComponent.hide(instantly = true)
 
-            var currentXPos = getLeft() - currentTextOffset
-
-            if (selectionStart() > 0) {
-                val preSelectionText = text.substring(0, selectionStart())
-
-                UniversalGraphicsHandler.drawString(
-                    preSelectionText,
-                    currentXPos,
-                    textPositionY(),
-                    getColor().rgb,
-                    shadow
-                )
-                currentXPos += preSelectionText.width()
+            if (!selectionStart().isAtLineStart) {
+                val preSelectionText = lineText.substring(0, selectionStart().column)
+                drawUnselectedText(preSelectionText, currentX, row = 0)
+                currentX += preSelectionText.width()
             }
 
-            val selectedText = text.substring(selectionStart(), selectionEnd())
+            val selectedText = lineText.substring(selectionStart().column, selectionEnd().column)
             val selectedTextWidth = selectedText.width()
+            drawSelectedText(selectedText, currentX, currentX + selectedTextWidth, row = 0)
+            currentX += selectedTextWidth
 
-            UIBlock.drawBlock(
-                if (active) selectionBackgroundColor else inactiveSelectionBackgroundColor,
-                currentXPos.toDouble(),
-                getTop().toDouble(),
-                currentXPos.toDouble() + selectedTextWidth,
-                getBottom().toDouble()
-            )
-            UniversalGraphicsHandler.drawString(
-                selectedText,
-                currentXPos,
-                textPositionY(),
-                if (active) selectionForegroundColor.rgb else inactiveSelectionForegroundColor.rgb,
-                false
-            )
-
-            currentXPos += selectedTextWidth
-
-            if (selectionEnd() < text.length) {
-                val postSelectionText = text.substring(selectionEnd())
-                UniversalGraphicsHandler.drawString(
-                    postSelectionText,
-                    currentXPos,
-                    textPositionY(),
-                    getColor().rgb,
-                    shadow
-                )
+            if (!selectionEnd().isAtLineEnd) {
+                drawUnselectedText(lineText.substring(selectionEnd().column), currentX, row = 0)
             }
-
-            return super.draw()
-        }
-
-        if (cursorLocation >= text.length || (isSelecting && hasMovedSelection)) { // Only draw one string
-            if (!isSelecting) {
-                cursor.unhide()
-                cursor.setX((currentWidthBeforeCursor).coerceAtMost(getWidth()).pixels())
-            }
-
-            UniversalGraphicsHandler.drawString(
-                text,
-                getLeft() - currentTextOffset,
-                textPositionY(),
-                getColor().rgb,
-                shadow
-            )
-            return super.draw()
-        }
-
-        if (isSelecting) {
-            cursor.hide(instantly = true)
         } else {
-            cursor.unhide()
-            cursor.setX((currentWidthBeforeCursor - currentTextOffset).pixels())
+            cursorComponent.unhide()
+            val (cursorPosX, _) = cursor.toScreenPos()
+            cursorComponent.setX(cursorPosX.pixels())
+
+            drawUnselectedText(lineText, getLeft(), 0)
         }
-
-        UniversalGraphicsHandler.drawString(
-            currentTextBeforeCursor,
-            getLeft() - currentTextOffset,
-            textPositionY(),
-            getColor().rgb,
-            shadow
-        )
-
-        UniversalGraphicsHandler.drawString(
-            text.substring(cursorLocation),
-            getLeft() - currentTextOffset + currentWidthBeforeCursor,
-            textPositionY(),
-            getColor().rgb,
-            shadow
-        )
 
         super.draw()
-    }
-
-    override fun animationFrame() {
-        super.animationFrame()
-
-        recalculateWidth()
     }
 }
