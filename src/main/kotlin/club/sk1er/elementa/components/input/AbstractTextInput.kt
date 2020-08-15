@@ -12,6 +12,7 @@ import java.awt.Color
 import java.awt.Toolkit
 import java.awt.datatransfer.DataFlavor
 import java.awt.datatransfer.StringSelection
+import java.util.*
 import kotlin.math.abs
 
 abstract class AbstractTextInput(
@@ -40,6 +41,9 @@ abstract class AbstractTextInput(
     protected var selectionMode = SelectionMode.None
     protected var initiallySelectedLine = -1
     protected var initiallySelectedWord = LinePosition(0, 0, true) to LinePosition(0, 0, true)
+
+    protected val undoStack = ArrayDeque<TextOperation>()
+    protected val redoStack = ArrayDeque<TextOperation>()
 
     protected val spaceWidth = ' '.width()
 
@@ -82,9 +86,21 @@ abstract class AbstractTextInput(
                 copySelection()
                 deleteSelection()
             } else if (UniversalKeyboard.isKeyComboCtrlV(keyCode)) {
-                addText(Toolkit.getDefaultToolkit().systemClipboard.getData(DataFlavor.stringFlavor) as String)
+                commitTextAddition(Toolkit.getDefaultToolkit().systemClipboard.getData(DataFlavor.stringFlavor) as String)
+            } else if (UniversalKeyboard.isKeyComboCtrlZ(keyCode)) {
+                if (undoStack.isEmpty())
+                    return@onKeyType
+                val operationToUndo = undoStack.pop()
+                operationToUndo.undo()
+                redoStack.push(operationToUndo)
+            } else if (UniversalKeyboard.isKeyComboCtrlShiftZ(keyCode) || UniversalKeyboard.isKeyComboCtrlY(keyCode)) {
+                if (redoStack.isEmpty())
+                    return@onKeyType
+                val operationToRedo = redoStack.pop()
+                operationToRedo.redo()
+                undoStack.push(operationToRedo)
             } else if (typedChar in ' '..'~') { // Most of the ASCII characters
-                addText(typedChar.toString())
+                commitTextAddition(typedChar.toString())
             } else if (keyCode == 203) { // Left Arrow
                 val holdingShift = UniversalKeyboard.isShiftKeyDown()
                 val holdingCtrl = UniversalKeyboard.isCtrlKeyDown()
@@ -153,14 +169,13 @@ abstract class AbstractTextInput(
                 } else if (!cursor.isAtAbsoluteStart) {
                     val startPos = cursor.offsetColumn(-1).toTextualPos()
                     val endPos = cursor.toTextualPos()
-                    removeText(startPos, endPos)
-                    setCursorPosition(startPos.toVisualPos())
+                    commitTextRemoval(startPos, endPos, selectAfterUndo = false)
                 }
             } else if (keyCode == 211) { // Delete
                 if (hasSelection()) {
                     deleteSelection()
                 } else if (!cursor.isAtAbsoluteEnd) {
-                    removeText(cursor, cursor.offsetColumn(1))
+                    commitTextRemoval(cursor, cursor.offsetColumn(1), selectAfterUndo = false)
                 }
             } else if (keyCode == 199) { // Home
                 if (UniversalKeyboard.isShiftKeyDown()) {
@@ -312,11 +327,16 @@ abstract class AbstractTextInput(
 
     abstract fun getText(): String
     fun setText(text: String) {
-        removeText(
-            LinePosition(0, 0, isVisual = true),
-            LinePosition(visualLines.lastIndex, visualLines.last().length, isVisual = true)
+        val absoluteStart = LinePosition(0, 0, isVisual = true)
+        val replaceTextOperation = ReplaceTextOperation(
+            AddTextOperation(text, absoluteStart),
+            RemoveTextOperation(
+                absoluteStart,
+                LinePosition(visualLines.lastIndex, visualLines.last().length, isVisual = true),
+                selectAfterUndo = true
+            )
         )
-        addText(text)
+        commitTextOperation(replaceTextOperation)
     }
 
     protected abstract fun scrollIntoView(pos: LinePosition)
@@ -349,14 +369,27 @@ abstract class AbstractTextInput(
         activateAction = listener
     }
 
-    protected fun addText(newText: String) {
+    protected fun commitTextOperation(operation: TextOperation) {
+        operation.redo()
+        undoStack.push(operation)
+        redoStack.clear()
+    }
+
+    protected fun commitTextAddition(newText: String) {
+        val addTextOperation = AddTextOperation(newText, cursor)
+
         if (hasSelection()) {
-            deleteSelection()
-            addText(newText)
+            val removeTextOperation = RemoveTextOperation(selectionStart(), selectionEnd(), selectAfterUndo = true)
+            val replaceTextOperation = ReplaceTextOperation(addTextOperation, removeTextOperation)
+            commitTextOperation(replaceTextOperation)
             return
         }
 
-        val textPos = cursor.toTextualPos()
+        commitTextOperation(addTextOperation)
+    }
+
+    protected fun addText(newText: String, position: LinePosition) {
+        val textPos = position.toTextualPos()
         val textualLine = textualLines[textPos.line]
 
         val lines = textToLines(newText)
@@ -480,6 +513,11 @@ abstract class AbstractTextInput(
         return lineList
     }
 
+    protected fun commitTextRemoval(startPos: LinePosition, endPos: LinePosition, selectAfterUndo: Boolean) {
+        val removeTextOperation = RemoveTextOperation(startPos, endPos, selectAfterUndo)
+        commitTextOperation(removeTextOperation)
+    }
+
     private fun removeText(startPos: LinePosition, endPos: LinePosition) {
         val textualStartPos = startPos.toTextualPos()
         val textualEndPos = endPos.toTextualPos()
@@ -514,6 +552,24 @@ abstract class AbstractTextInput(
         }
     }
 
+    protected open fun getTextBetween(startPos: LinePosition, endPos: LinePosition): String {
+        val textStart = startPos.toTextualPos()
+        val textEnd = endPos.toTextualPos()
+
+        return if (textStart.line == textEnd.line) {
+            textualLines[textStart.line].text.substring(textStart.column, textEnd.column)
+        } else {
+            val lines = mutableListOf<String>()
+            lines.add(textualLines[textStart.line].text.substring(textStart.column))
+
+            for (i in textStart.line + 1 until textEnd.line)
+                lines.add(textualLines[i].text)
+
+            lines.add(textualLines[textEnd.line].text.substring(0, textEnd.column))
+            lines.joinToString("\n")
+        }
+    }
+
     protected open fun selectAll() {
         cursor = LinePosition(0, 0, isVisual = true)
         otherSelectionEnd = LinePosition(visualLines.size - 1, visualLines.last().length, isVisual = true)
@@ -528,13 +584,7 @@ abstract class AbstractTextInput(
         if (!hasSelection())
             return
 
-        var startPos = selectionStart()
-        removeText(startPos, selectionEnd())
-        if (startPos.line > visualLines.lastIndex)
-            startPos = LinePosition(startPos.line - 1, visualLines[startPos.line - 1].length, isVisual = true)
-        cursor = startPos
-        otherSelectionEnd = startPos
-        cursorNeedsRefocus = true
+        commitTextRemoval(selectionStart(), selectionEnd(), selectAfterUndo = true)
     }
 
     protected open fun copySelection() {
@@ -542,23 +592,7 @@ abstract class AbstractTextInput(
         if (visualSelectionStart == visualSelectionEnd)
             return
 
-        val selectionStart = visualSelectionStart.toTextualPos()
-        val selectionEnd = visualSelectionEnd.toTextualPos()
-
-        val text = if (selectionStart.line == selectionEnd.line) {
-            textualLines[selectionStart.line].text.substring(selectionStart.column, selectionEnd.column)
-        } else {
-            val lines = mutableListOf<String>()
-            lines.add(textualLines[selectionStart.line].text.substring(selectionStart.column))
-
-            for (i in selectionStart.line + 1 until selectionEnd.line)
-                lines.add(textualLines[i].text)
-
-            lines.add(textualLines[selectionEnd.line].text.substring(0, selectionEnd.column))
-            lines.joinToString("\n")
-        }
-
-        val string = StringSelection(text)
+        val string = StringSelection(getTextBetween(visualSelectionStart, visualSelectionEnd))
         Toolkit.getDefaultToolkit().systemClipboard.setContents(string, string)
     }
 
@@ -898,5 +932,58 @@ abstract class AbstractTextInput(
 
     protected inner class VisualLine(text: String, val textIndex: Int) : Line(text) {
         override fun toString() = "VisualLine(text=$text, textIndex=$textIndex)"
+    }
+
+    protected abstract inner class TextOperation {
+        abstract fun redo()
+        abstract fun undo()
+    }
+
+    protected inner class AddTextOperation(private val newText: String, private val startPos: LinePosition) :
+        TextOperation() {
+        override fun redo() {
+            addText(newText, startPos)
+        }
+
+        override fun undo() {
+            removeText(startPos, startPos.offsetColumn(newText.length))
+            setCursorPosition(startPos.toVisualPos())
+        }
+    }
+
+    protected inner class RemoveTextOperation(
+        private val startPos: LinePosition, private val endPos: LinePosition, private val selectAfterUndo: Boolean
+    ) : TextOperation() {
+        val text = getTextBetween(startPos, endPos)
+
+        override fun redo() {
+            val textualStartPos = startPos.toTextualPos()
+            removeText(textualStartPos, endPos)
+            setCursorPosition(textualStartPos)
+        }
+
+        override fun undo() {
+            addText(text, startPos)
+            if (selectAfterUndo) {
+                cursor = startPos
+                otherSelectionEnd = endPos
+                cursorNeedsRefocus = true
+            }
+        }
+    }
+
+    protected inner class ReplaceTextOperation(
+        private val addTextOperation: AddTextOperation,
+        private val removeTextOperation: RemoveTextOperation
+    ) : TextOperation() {
+        override fun redo() {
+            removeTextOperation.redo()
+            addTextOperation.redo()
+        }
+
+        override fun undo() {
+            addTextOperation.undo()
+            removeTextOperation.undo()
+        }
     }
 }

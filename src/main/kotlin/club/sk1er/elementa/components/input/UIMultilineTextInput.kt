@@ -61,7 +61,7 @@ class UIMultilineTextInput @JvmOverloads constructor(
 
     override fun onEnterPressed() {
         if (UniversalKeyboard.isShiftKeyDown()) {
-            addText("\n")
+            commitTextAddition("\n")
             updateAction(getText())
         } else {
             activateAction(getText())
