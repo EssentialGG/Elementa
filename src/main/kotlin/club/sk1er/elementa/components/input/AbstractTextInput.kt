@@ -361,11 +361,11 @@ abstract class AbstractTextInput(
 
     fun isActive() = active
 
-    fun onUpdate(listener: (text: String) -> Unit) {
+    fun onUpdate(listener: (text: String) -> Unit) = apply {
         updateAction = listener
     }
 
-    fun onActivate(listener: (text: String) -> Unit) {
+    fun onActivate(listener: (text: String) -> Unit) = apply {
         activateAction = listener
     }
 
