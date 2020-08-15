@@ -6,6 +6,7 @@ import club.sk1er.elementa.constraints.CenterConstraint
 import club.sk1er.elementa.constraints.animation.Animations
 import club.sk1er.elementa.dsl.*
 import club.sk1er.elementa.effects.ScissorEffect
+import club.sk1er.elementa.utils.getStringSplitToWidth
 import club.sk1er.mods.core.universal.UniversalGraphicsHandler
 import club.sk1er.mods.core.universal.UniversalKeyboard
 import java.awt.Color
@@ -44,8 +45,6 @@ abstract class AbstractTextInput(
 
     protected val undoStack = ArrayDeque<TextOperation>()
     protected val redoStack = ArrayDeque<TextOperation>()
-
-    protected val spaceWidth = ' '.width()
 
     protected var cursorComponent: UIComponent = UIBlock(Color(255, 255, 255, 0)).constrain {
         y = CenterConstraint() - 0.5f.pixels()
@@ -448,70 +447,7 @@ abstract class AbstractTextInput(
 
     // TODO: Look into optimization of this algorithm
     protected open fun splitTextForWrapping(text: String, maxLineWidth: Float): List<String> {
-        val maxLineWidthSpace = maxLineWidth - spaceWidth
-        val lineList = mutableListOf<String>()
-        val currLine = StringBuilder()
-        var currLineWidth = 0f
-        var textPos = 0
-
-        fun pushLine(newLineWidth: Float = 0f) {
-            lineList.add(currLine.toString())
-            currLine.clear()
-            currLineWidth = newLineWidth
-        }
-
-        while (textPos < text.length) {
-            val builder = StringBuilder()
-
-            while (textPos < text.length && text[textPos] != ' ') {
-                builder.append(text[textPos])
-                textPos++
-            }
-
-            val word = builder.toString()
-            val wordWidth = word.width().toFloat()
-
-            if (currLineWidth + wordWidth > maxLineWidthSpace) {
-                if (wordWidth > maxLineWidthSpace) {
-                    // Split up the word into it's own lines
-                    if (currLineWidth > 0)
-                        pushLine()
-
-                    for (char in word.toCharArray()) {
-                        currLineWidth += char.width()
-                        if (currLineWidth > maxLineWidthSpace)
-                            pushLine(char.width())
-                        currLine.append(char)
-                    }
-                } else {
-                    pushLine(wordWidth)
-                    currLine.append(word)
-                }
-
-                // Check if we have a space, and if so, append it to the new line
-                if (textPos < text.length) {
-                    if (currLineWidth + spaceWidth > maxLineWidthSpace)
-                        pushLine()
-                    currLine.append(' ')
-                    currLineWidth += spaceWidth
-                    textPos++
-                }
-            } else {
-                currLine.append(word)
-                currLineWidth += wordWidth
-
-                // Check if we have a space, and if so, append it to a line
-                if (textPos < text.length) {
-                    textPos++
-                    currLine.append(' ')
-                    currLineWidth += spaceWidth
-                }
-            }
-        }
-
-        lineList.add(currLine.toString())
-
-        return lineList
+        return getStringSplitToWidth(text, maxLineWidth)
     }
 
     protected fun commitTextRemoval(startPos: LinePosition, endPos: LinePosition, selectAfterUndo: Boolean) {

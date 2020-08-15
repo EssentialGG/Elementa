@@ -4,6 +4,7 @@ import club.sk1er.elementa.constraints.HeightConstraint
 import club.sk1er.elementa.dsl.max
 import club.sk1er.elementa.dsl.pixels
 import club.sk1er.elementa.dsl.width
+import club.sk1er.elementa.utils.spaceWidth
 import club.sk1er.mods.core.universal.UniversalKeyboard
 import java.awt.Color
 

@@ -1,32 +1,74 @@
 package club.sk1er.elementa.utils
 
+import club.sk1er.elementa.dsl.width
 import club.sk1er.mods.core.universal.UniversalGraphicsHandler
 
-fun getStringSplitToWidth(string: String, width: Float): List<String> {
-    if (string.isEmpty()) return listOf(string)
+val spaceWidth = ' '.width()
+fun getStringSplitToWidth(text: String, maxLineWidth: Float): List<String> {
+    val maxLineWidthSpace = maxLineWidth - spaceWidth
+    val lineList = mutableListOf<String>()
+    val currLine = StringBuilder()
+    var currLineWidth = 0f
+    var textPos = 0
 
-    var currentString = string
-    val lines = mutableListOf<String>()
+    fun pushLine(newLineWidth: Float = 0f) {
+        lineList.add(currLine.toString())
+        currLine.clear()
+        currLineWidth = newLineWidth
+    }
 
-    while (currentString.isNotEmpty()) {
-        val i = sizeStringToWidth(string, width)
+    while (textPos < text.length) {
+        val builder = StringBuilder()
 
-        if (currentString.length <= i) {
-            lines.add(currentString)
-            break
+        while (textPos < text.length && text[textPos] != ' ') {
+            builder.append(text[textPos])
+            textPos++
         }
 
-        val chunk = currentString.substring(0, i)
-        lines.add(chunk)
-        val tmp = currentString
-        currentString = currentString.substring(i)
+        val word = builder.toString()
+        val wordWidth = word.width().toFloat()
 
-        if (tmp == currentString) {
-            break
+        if (currLineWidth + wordWidth > maxLineWidthSpace) {
+            if (wordWidth > maxLineWidthSpace) {
+                // Split up the word into it's own lines
+                if (currLineWidth > 0)
+                    pushLine()
+
+                for (char in word.toCharArray()) {
+                    currLineWidth += char.width()
+                    if (currLineWidth > maxLineWidthSpace)
+                        pushLine(char.width())
+                    currLine.append(char)
+                }
+            } else {
+                pushLine(wordWidth)
+                currLine.append(word)
+            }
+
+            // Check if we have a space, and if so, append it to the new line
+            if (textPos < text.length) {
+                if (currLineWidth + spaceWidth > maxLineWidthSpace)
+                    pushLine()
+                currLine.append(' ')
+                currLineWidth += spaceWidth
+                textPos++
+            }
+        } else {
+            currLine.append(word)
+            currLineWidth += wordWidth
+
+            // Check if we have a space, and if so, append it to a line
+            if (textPos < text.length) {
+                textPos++
+                currLine.append(' ')
+                currLineWidth += spaceWidth
+            }
         }
     }
 
-    return lines
+    lineList.add(currLine.toString())
+
+    return lineList
 }
 
 fun sizeStringToWidth(string: String, width: Float): Int {
