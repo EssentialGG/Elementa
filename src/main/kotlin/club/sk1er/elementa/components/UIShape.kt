@@ -16,9 +16,14 @@ open class UIShape @JvmOverloads constructor(color: Color = Color.WHITE) : UICom
         setColor(color.asConstraint())
     }
 
-    fun addVertex(point: UIPoint) {
+    fun addVertex(point: UIPoint) = apply {
         this.parent.addChild(point)
         vertices.add(point)
+    }
+
+    fun addVertices(vararg points: UIPoint) = apply {
+        parent.addChildren(*points)
+        vertices.addAll(points)
     }
 
     fun getVertices() = vertices
