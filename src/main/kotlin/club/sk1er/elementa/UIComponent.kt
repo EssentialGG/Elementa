@@ -417,7 +417,7 @@ abstract class UIComponent : Observable() {
         lastClickCount = if (System.currentTimeMillis() - lastClickTime < 500) lastClickCount + 1 else 1
         lastClickTime = System.currentTimeMillis()
 
-        clicked.fireClickEvent(UIClickEvent(mouseX.toFloat(), mouseY.toFloat(), button, this, this, lastClickCount))
+        clicked.fireClickEvent(UIClickEvent(mouseX.toFloat(), mouseY.toFloat(), button, clicked, clicked, lastClickCount))
     }
 
     protected fun fireClickEvent(event: UIClickEvent) {
