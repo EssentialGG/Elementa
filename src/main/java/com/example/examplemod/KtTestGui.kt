@@ -1,5 +1,6 @@
 package com.example.examplemod
 
+import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.WindowScreen
 import club.sk1er.elementa.components.*
 import club.sk1er.elementa.components.input.UIMultilineTextInput
