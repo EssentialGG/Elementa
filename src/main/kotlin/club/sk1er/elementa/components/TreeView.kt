@@ -29,114 +29,104 @@ open class TreeView(roots: List<TreeNode>) : UIContainer() {
 
     fun setRoots(roots: List<TreeNode>) = apply {
         clearChildren()
-        roots.forEach { it.toDisplayComponent() childOf this }
+        roots.forEach { it.displayComponent childOf this }
     }
 }
 
 abstract class TreeNode {
-    var parent: TreeNode? = null
-        private set
-    var indentationOffset: Float = 10f
-    abstract var arrowComponent: () -> TreeArrowComponent
-    val children = mutableListOf<TreeNode>()
+    open var indentationOffset: Float = 10f
 
-    private var cachedDisplayComponent: UIComponent? = null
-    private var refreshCache = true
+    private var displayComponentBacker: TreeNodeComponent? = null
 
-    abstract fun toComponent(): UIComponent
-
-    /**
-     * Wraps the component returned from toComponent in a component that handles
-     * having children. Only override this function if you really need to.
-     */
-    open fun toDisplayComponent(): UIComponent {
-        if (!refreshCache)
-            return cachedDisplayComponent!!
-
-        cachedDisplayComponent = object : UIComponent() {
-            private val arrowComponent = this@TreeNode.arrowComponent()
-            private var opened = false
-            private val mappedChildren = this@TreeNode.children.map { it.toDisplayComponent() }
-
-            init {
-                constrain {
-                    y = SiblingConstraint()
-                    width = ChildBasedMaxSizeConstraint()
-                    height = ChildBasedSizeConstraint()
-                }
-
-                val ownContent = UIContainer().constrain {
-                    width = ChildBasedSizeConstraint()
-                    height = ChildBasedMaxSizeConstraint()
-                } childOf this
-
-                arrowComponent childOf ownContent
-                UIContainer().constrain {
-                    x = SiblingConstraint()
-                    width = 5.pixels()
-                } childOf ownContent
-                toComponent() childOf ownContent
-
-                if (mappedChildren.isNotEmpty()) {
-                    val childContainer = UIContainer().constrain {
-                        x = indentationOffset.pixels()
-                        y = SiblingConstraint()
-                        width = ChildBasedMaxSizeConstraint()
-                        height = ChildBasedSizeConstraint()
-                    } childOf this
-
-                    mappedChildren.forEach {
-                        it childOf childContainer
-                    }
-
-                    mappedChildren.reversed().forEach {
-                        it.hide(instantly = true)
-                    }
-
-                    constrain {
-                        width = basicWidthConstraint {
-                            max(ownContent.getWidth(), childContainer.getWidth() + indentationOffset)
-                        }
-                    }
-                }
-
-                arrowComponent.onMouseClick { event ->
-                    event.stopImmediatePropagation()
-
-                    if (opened) {
-                        arrowComponent.close()
-                        mappedChildren.forEach {
-                            it.hide()
-                        }
-                    } else {
-                        arrowComponent.open()
-                        mappedChildren.forEach {
-                            it.unhide(useLastPosition = false)
-                        }
-                    }
-                    opened = !opened
-                }
-            }
+    val displayComponent: TreeNodeComponent
+        get() {
+            if (displayComponentBacker == null)
+                displayComponentBacker = TreeNodeComponent()
+            return displayComponentBacker!!
         }
 
-        return cachedDisplayComponent!!
+    abstract fun getArrowComponent(): TreeArrowComponent
+
+    abstract fun getPrimaryComponent(): UIComponent
+
+    fun addChild(node: TreeNode) = apply {
+        displayComponent.addNodeChild(node.displayComponent)
     }
 
-    fun addChild(child: TreeNode) {
-        child.parent = this
-        children.add(child)
-        refreshCache = true
+    fun removeChildAt(index: Int) = apply {
+        displayComponent.removeNodeChildAt(index)
     }
 
-    fun removeChild(child: TreeNode) {
-        children.remove(child)
-        refreshCache = true
+    fun clearChildren() = apply {
+        displayComponent.clearNodeChildren()
     }
 
     fun withChildren(childBuilder: TreeNodeBuilder.() -> Unit): TreeNode {
         val builder = TreeNodeBuilder(this)
         builder.apply(childBuilder)
         return builder.root
+    }
+
+    inner class TreeNodeComponent : UIContainer() {
+        private val arrowComponent = getArrowComponent()
+        private var opened = false
+        private val childContainer = UIContainer().constrain {
+            x = indentationOffset.pixels()
+            y = SiblingConstraint()
+            width = ChildBasedMaxSizeConstraint()
+            height = ChildBasedSizeConstraint()
+        }
+        private val ownContent = UIContainer().constrain {
+            width = ChildBasedSizeConstraint()
+            height = ChildBasedMaxSizeConstraint()
+        }
+
+        init {
+            constrain {
+                y = SiblingConstraint()
+                width = basicWidthConstraint {
+                    max(ownContent.getWidth(), childContainer.getWidth() + indentationOffset)
+                }
+                height = ChildBasedSizeConstraint()
+            }
+
+            ownContent childOf this
+            arrowComponent childOf ownContent
+
+            UIContainer().constrain {
+                x = SiblingConstraint()
+                width = 5.pixels()
+            } childOf ownContent
+
+            getPrimaryComponent() childOf ownContent
+            childContainer childOf this
+            childContainer.hide(instantly = true)
+
+            arrowComponent.onMouseClick { event ->
+                event.stopImmediatePropagation()
+
+                if (opened) {
+                    arrowComponent.close()
+                    childContainer.hide()
+                } else {
+                    arrowComponent.open()
+                    childContainer.unhide()
+                }
+                opened = !opened
+            }
+        }
+
+        fun addNodeChild(component: UIComponent) = apply {
+            childContainer.addChild(component)
+        }
+
+        fun removeNodeChildAt(index: Int) = apply {
+            childContainer.children.removeAt(index)
+        }
+
+        fun clearNodeChildren() = apply {
+            childContainer.clearChildren()
+        }
     }
 }
 

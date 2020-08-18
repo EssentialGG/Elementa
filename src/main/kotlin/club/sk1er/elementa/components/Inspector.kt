@@ -19,7 +19,7 @@ class Inspector(
 ) : UIContainer() {
     private val rootNode = componentToNode(rootComponent)
     private val treeBlock: UIContainer
-    private lateinit var treeView: TreeView
+    private var treeView: TreeView
     private val container: UIComponent
     private var selectedNode: InspectorNode? = null
     private val infoBlockScroller: ScrollComponent
@@ -209,55 +209,49 @@ class Inspector(
     }
 
     inner class InspectorNode(val targetComponent: UIComponent) : TreeNode() {
-        override var arrowComponent: () -> TreeArrowComponent = { InspectorArrow(targetComponent.children.isEmpty()) }
+        private val componentName = targetComponent.javaClass.simpleName.ifEmpty { "<unnamed>" }
+        private var wasHidden = false
 
-        private val displayComponent: UIComponent
+        private val component: UIComponent = object : UIBlock(Color(0, 0, 0, 0)) {
+            private val text = UIText(componentName).constrain {
+                width = TextAspectConstraint()
+            } childOf this
 
-        init {
-            val componentName = targetComponent.javaClass.simpleName.ifEmpty { "<unnamed>" }
-            var wasHidden = false
+            override fun animationFrame() {
+                super.animationFrame()
 
-            displayComponent = object : UIBlock(Color(0, 0, 0, 0)) {
-                private val text = UIText(componentName).constrain {
-                    width = TextAspectConstraint()
-                } childOf this
-
-                override fun animationFrame() {
-                    super.animationFrame()
-
-                    val isCurrentlyHidden = targetComponent.parent != targetComponent && !targetComponent.parent.children.contains(
-                        targetComponent
-                    )
-                    if (isCurrentlyHidden && !wasHidden) {
-                        wasHidden = true
-                        text.setText("§r$componentName §7§o(Hidden)")
-                    } else if (!isCurrentlyHidden && wasHidden) {
-                        wasHidden = false
-                        text.setText(componentName)
-                    }
+                val isCurrentlyHidden = targetComponent.parent != targetComponent && !targetComponent.parent.children.contains(
+                    targetComponent
+                )
+                if (isCurrentlyHidden && !wasHidden) {
+                    wasHidden = true
+                    text.setText("§r$componentName §7§o(Hidden)")
+                } else if (!isCurrentlyHidden && wasHidden) {
+                    wasHidden = false
+                    text.setText(componentName)
                 }
-            }.constrain {
-                x = SiblingConstraint()
-                y = 2.pixels()
-                width = ChildBasedSizeConstraint()
-                height = ChildBasedSizeConstraint()
-            }.onMouseClick { event ->
-                event.stopImmediatePropagation()
+            }
+        }.constrain {
+            x = SiblingConstraint()
+            y = 2.pixels()
+            width = ChildBasedSizeConstraint()
+            height = ChildBasedSizeConstraint()
+        }.onMouseClick { event ->
+            event.stopImmediatePropagation()
 
-                selectedNode?.displayComponent?.setColor(Color(0, 0, 0, 0).asConstraint())
+            selectedNode?.component?.setColor(Color(0, 0, 0, 0).asConstraint())
 
-                if (selectedNode == this@InspectorNode) {
-                    setSelectedNode(null)
-                } else {
-                    setSelectedNode(this@InspectorNode)
-                    setColor(Color(32, 78, 138).asConstraint())
-                }
+            if (selectedNode == this@InspectorNode) {
+                setSelectedNode(null)
+            } else {
+                setSelectedNode(this@InspectorNode)
+                setColor(Color(32, 78, 138).asConstraint())
             }
         }
 
-        override fun toComponent(): UIComponent {
-            return displayComponent
-        }
+        override fun getArrowComponent() = InspectorArrow(targetComponent.children.isEmpty())
+
+        override fun getPrimaryComponent() = component
     }
 
     inner class InfoBlock : UIContainer() {
@@ -500,13 +494,10 @@ class Inspector(
             else -> false
         }
 
-        inner class InfoNode<T>(private val constraint: SuperConstraint<T>, private val name: String? = null) :
-            TreeNode() {
-            override var arrowComponent: () -> TreeArrowComponent = {
-                InspectorArrow(!constraintHasChildren(constraint))
-            }
+        inner class InfoNode<T>(private val constraint: SuperConstraint<T>, private val name: String? = null) : TreeNode() {
+            override fun getArrowComponent() = InspectorArrow(!constraintHasChildren(constraint))
 
-            override fun toComponent() = object : UIContainer() {
+            override fun getPrimaryComponent() = object : UIContainer() {
                 val stringHolder: UIComponent
 
                 init {
