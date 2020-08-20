@@ -12,6 +12,7 @@ import club.sk1er.elementa.dsl.*
 import club.sk1er.elementa.effects.ScissorEffect
 import java.awt.Color
 import java.net.URL
+import kotlin.concurrent.thread
 
 class KtTestGui : WindowScreen() {
     private val myTextBox = UIBlock(Color(0, 0, 0, 255))
@@ -195,6 +196,16 @@ class KtTestGui : WindowScreen() {
             x = 20.pixels()
             y = 20.pixels()
         } childOf window
+
+        thread {
+            Thread.sleep(5000)
+            UIBlock(Color.RED).constrain {
+                x = 50.pixels()
+                y = 50.pixels()
+                width = 50.pixels()
+                height = 50.pixels()
+            } childOf window
+        }
     }
 
     private fun animImgSmall(img: UIImage) {

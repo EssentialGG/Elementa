@@ -1,12 +1,13 @@
 package club.sk1er.elementa.components.inspector
 
 import club.sk1er.elementa.UIComponent
-import club.sk1er.elementa.UIConstraints
 import club.sk1er.elementa.components.*
 import club.sk1er.elementa.constraints.*
-import club.sk1er.elementa.constraints.animation.*
 import club.sk1er.elementa.dsl.*
 import club.sk1er.elementa.effects.OutlineEffect
+import club.sk1er.elementa.utils.ObservableAddEvent
+import club.sk1er.elementa.utils.ObservableClearEvent
+import club.sk1er.elementa.utils.ObservableRemoveEvent
 import club.sk1er.mods.core.universal.UniversalMouse
 import club.sk1er.mods.core.universal.UniversalResolutionUtil
 import java.awt.Color
@@ -131,11 +132,21 @@ class Inspector(
     }
 
     private fun componentToNode(component: UIComponent): InspectorNode {
-        return InspectorNode(this, component).withChildren {
+        val node = InspectorNode(this, component).withChildren {
             component.children.forEach {
                 add(componentToNode(it))
             }
         } as InspectorNode
+
+        component.children.addObserver { _, event ->
+            when (event) {
+                is ObservableAddEvent<*> -> node.addChild(InspectorNode(this, event.element.value as UIComponent))
+                is ObservableRemoveEvent<*> -> node.removeChildAt(event.element.index)
+                is ObservableClearEvent<*> -> node.clearChildren()
+            }
+        }
+
+        return node
     }
 
     internal fun setSelectedNode(node: InspectorNode?) {
