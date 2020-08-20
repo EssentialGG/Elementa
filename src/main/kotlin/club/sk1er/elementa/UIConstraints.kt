@@ -11,37 +11,37 @@ open class UIConstraints(protected val component: UIComponent) : Observable() {
     var x: XConstraint = 0.pixels()
         set(value) {
             field = value
-            update()
+            update(ConstraintType.X)
         }
     var y: YConstraint = 0.pixels()
         set(value) {
             field = value
-            update()
+            update(ConstraintType.Y)
         }
     var width: WidthConstraint = 0.pixels()
         set(value) {
             field = value
-            update()
+            update(ConstraintType.WIDTH)
         }
     var height: HeightConstraint = 0.pixels()
         set(value) {
             field = value
-            update()
+            update(ConstraintType.HEIGHT)
         }
     var radius: RadiusConstraint = 0.pixels()
         set(value) {
             field = value
-            update()
+            update(ConstraintType.RADIUS)
         }
     var textScale: HeightConstraint = 1.pixels()
         set(value) {
             field = value
-            update()
+            update(ConstraintType.TEXT_SCALE)
         }
     var color: ColorConstraint = Color.WHITE.asConstraint()
         set(value) {
             field = value
-            update()
+            update(ConstraintType.COLOR)
         }
 
     open fun getX(): Float {
@@ -115,8 +115,15 @@ open class UIConstraints(protected val component: UIComponent) : Observable() {
         this.color = this@UIConstraints.color
     }
 
-    private fun update() {
+    private fun update(type: ConstraintType) {
         setChanged()
-        notifyObservers()
+        notifyObservers(type)
+    }
+
+    enum class ConstraintType(val prettyName: String) {
+        X("X"), Y("Y"),
+        WIDTH("Width"), HEIGHT("Height"),
+        RADIUS("Radius"), COLOR("Color"),
+        TEXT_SCALE("TextScale")
     }
 }

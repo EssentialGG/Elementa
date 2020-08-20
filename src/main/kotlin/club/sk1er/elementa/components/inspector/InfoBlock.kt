@@ -48,6 +48,7 @@ class InfoBlock(private val inspector: Inspector) : UIContainer() {
     private val heightValueText: UIText
 
     private var constraintsSelected = true
+    private val currentRoots = mutableMapOf<UIConstraints.ConstraintType, TreeNode?>()
 
     init {
         constraintsText = UIText("Constraints").constrain {
@@ -131,7 +132,7 @@ class InfoBlock(private val inspector: Inspector) : UIContainer() {
         valueText.constrain {
             x = SiblingConstraint()
             width = TextAspectConstraint()
-        }  childOf container
+        } childOf container
 
         return container
     }
@@ -139,36 +140,78 @@ class InfoBlock(private val inspector: Inspector) : UIContainer() {
     private fun setNewConstraints(constraints: UIConstraints) {
         setConstraintNodes(constraints)
 
-        constraints.addObserver { _, _ ->
-            setConstraintNodes(constraints)
+        constraints.addObserver { _, arg ->
+            if (arg !is UIConstraints.ConstraintType)
+                return@addObserver
+            val constraint = when (arg) {
+                UIConstraints.ConstraintType.X -> constraints.x
+                UIConstraints.ConstraintType.Y -> constraints.y
+                UIConstraints.ConstraintType.WIDTH -> constraints.width
+                UIConstraints.ConstraintType.HEIGHT -> constraints.height
+                UIConstraints.ConstraintType.RADIUS -> constraints.radius
+                UIConstraints.ConstraintType.COLOR -> constraints.color
+                UIConstraints.ConstraintType.TEXT_SCALE -> constraints.textScale
+            }
+
+            when (arg) {
+                UIConstraints.ConstraintType.COLOR -> {
+                    currentRoots[arg] =
+                        if (constraint !is ConstantColorConstraint || constraint.color != Color.WHITE) getNodeFromConstraint(
+                            constraint,
+                            arg.prettyName
+                        ) else null
+                }
+                UIConstraints.ConstraintType.TEXT_SCALE -> {
+                    currentRoots[UIConstraints.ConstraintType.TEXT_SCALE] =
+                        if (constraint !is PixelConstraint || constraint.value != 1f) getNodeFromConstraint(
+                            constraint,
+                            arg.prettyName
+                        ) else null
+                }
+                else -> {
+                    currentRoots[arg] =
+                        if (constraint !is PixelConstraint || constraint.value != 0f) getNodeFromConstraint(
+                            constraint,
+                            arg.prettyName
+                        ) else null
+                }
+            }
+
+            constraintsContent.setRoots(currentRoots.values.filterNotNull())
         }
     }
 
     private fun setConstraintNodes(constraints: UIConstraints) {
-        val nodes = mutableListOf<TreeNode>()
+        currentRoots.clear()
 
         listOf(
-            "X" to constraints.x,
-            "Y" to constraints.y,
-            "Width" to constraints.width,
-            "Height" to constraints.height,
-            "Radius" to constraints.radius
-        ).forEach { (name, constraint) ->
-            if (constraint !is PixelConstraint || constraint.value != 0f)
-                nodes.add(getNodeFromConstraint(constraint, name))
+            constraints.x to UIConstraints.ConstraintType.X,
+            constraints.y to UIConstraints.ConstraintType.Y,
+            constraints.width to UIConstraints.ConstraintType.WIDTH,
+            constraints.height to UIConstraints.ConstraintType.HEIGHT,
+            constraints.radius to UIConstraints.ConstraintType.RADIUS
+        ).forEach { (constraint, type) ->
+            currentRoots[type] =
+                if (constraint !is PixelConstraint || constraint.value != 0f) getNodeFromConstraint(
+                    constraint,
+                    type.prettyName
+                ) else null
         }
 
         constraints.textScale.also {
-            if (it !is PixelConstraint || it.value != 1f)
-                nodes.add(getNodeFromConstraint(it, "TextScale"))
+            currentRoots[UIConstraints.ConstraintType.TEXT_SCALE] =
+                if (it !is PixelConstraint || it.value != 1f) getNodeFromConstraint(it, "TextScale") else null
         }
 
         constraints.color.also {
-            if (it !is ConstantColorConstraint || it.color != Color.WHITE)
-                nodes.add(getNodeFromConstraint(it, "Color"))
+            currentRoots[UIConstraints.ConstraintType.COLOR] =
+                if (it !is ConstantColorConstraint || it.color != Color.WHITE) getNodeFromConstraint(
+                    it,
+                    "Color"
+                ) else null
         }
 
-        constraintsContent.setRoots(nodes)
+        constraintsContent.setRoots(currentRoots.values.filterNotNull())
     }
 
     private fun getNodeFromConstraint(constraint: SuperConstraint<*>, name: String? = null): TreeNode {
