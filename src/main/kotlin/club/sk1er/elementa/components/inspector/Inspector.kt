@@ -134,13 +134,18 @@ class Inspector(
     private fun componentToNode(component: UIComponent): InspectorNode {
         val node = InspectorNode(this, component).withChildren {
             component.children.forEach {
-                add(componentToNode(it))
+                if (it != this@Inspector)
+                    add(componentToNode(it))
             }
         } as InspectorNode
 
         component.children.addObserver { _, event ->
             when (event) {
-                is ObservableAddEvent<*> -> node.addChild(InspectorNode(this, event.element.value as UIComponent))
+                is ObservableAddEvent<*> -> {
+                    val newComponent = event.element.value as UIComponent
+                    if (newComponent != this)
+                        node.addChild(InspectorNode(this, newComponent))
+                }
                 is ObservableRemoveEvent<*> -> node.removeChildAt(event.element.index)
                 is ObservableClearEvent<*> -> node.clearChildren()
             }
@@ -168,7 +173,7 @@ class Inspector(
             val res = Window.of(rootNode.targetComponent).scaledResolution
             val mouseX = UniversalMouse.getScaledX().toFloat()
             val mouseY = res.scaledHeight - UniversalMouse.getTrueY() * res.scaledHeight /
-                UniversalResolutionUtil.getInstance().windowHeight - 1f
+                    UniversalResolutionUtil.getInstance().windowHeight - 1f
             val hitComponent = rootNode.targetComponent.hitTest(mouseX, mouseY)
 
             // TODO: Implement some kind of way to hook into a UIComponent to intercept events,
