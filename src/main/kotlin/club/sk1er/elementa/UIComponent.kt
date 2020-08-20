@@ -27,6 +27,7 @@ import kotlin.math.sin
  * everything visible on the screen is a UIComponent.
  */
 abstract class UIComponent : Observable() {
+    var componentName: String? = null
     open lateinit var parent: UIComponent
     open val children = CopyOnWriteArrayList<UIComponent>().observable()
     val effects = mutableListOf<Effect>()
