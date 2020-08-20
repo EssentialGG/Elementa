@@ -14,11 +14,12 @@ import club.sk1er.elementa.dsl.pixels
 import java.awt.Color
 
 class InspectorNode(private val inspector: Inspector, val targetComponent: UIComponent) : TreeNode() {
-    private val componentName = targetComponent.javaClass.simpleName.ifEmpty { "<unnamed>" }
+    private val componentClassName = targetComponent.javaClass.simpleName.ifEmpty { "UnknownType" }
+    private val componentDisplayName = targetComponent.componentName?.let { "$it: $componentClassName" } ?: componentClassName
     private var wasHidden = false
 
     private val component: UIComponent = object : UIBlock(Color(0, 0, 0, 0)) {
-        private val text = UIText(componentName).constrain {
+        private val text = UIText(componentDisplayName).constrain {
             width = TextAspectConstraint()
         } childOf this
 
@@ -30,10 +31,10 @@ class InspectorNode(private val inspector: Inspector, val targetComponent: UICom
             )
             if (isCurrentlyHidden && !wasHidden) {
                 wasHidden = true
-                text.setText("§r$componentName §7§o(Hidden)")
+                text.setText("§r$componentDisplayName §7§o(Hidden)")
             } else if (!isCurrentlyHidden && wasHidden) {
                 wasHidden = false
-                text.setText(componentName)
+                text.setText(componentDisplayName)
             }
         }
     }.constrain {
