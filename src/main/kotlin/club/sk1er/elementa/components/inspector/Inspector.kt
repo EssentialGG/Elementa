@@ -24,7 +24,10 @@ class Inspector(
     private var treeView: TreeView
     private val container: UIComponent
     internal var selectedNode: InspectorNode? = null
-        private set
+        private set(value) {
+            field = value
+            updateDrawHighlight(shouldFloat = false)
+        }
     private val infoBlockScroller: ScrollComponent
     private val separator1: UIBlock
     private val separator2: UIBlock
@@ -32,12 +35,49 @@ class Inspector(
     private var clickPos: Pair<Float, Float>? = null
     private val outlineEffect = OutlineEffect(outlineColor, outlineWidth, drawAfterChildren = true)
 
+    private val componentHighlight = UIBlock(Color(129, 212, 250, 100)).constrain {
+        x = basicXConstraint {
+            hoveredComponent?.getLeft() ?: selectedNode?.targetComponent?.getLeft() ?: 0f
+        }
+        y = basicYConstraint {
+            hoveredComponent?.getTop() ?: selectedNode?.targetComponent?.getTop() ?: 0f
+        }
+        width = basicWidthConstraint {
+            hoveredComponent?.getWidth() ?: selectedNode?.targetComponent?.getWidth() ?: 0f
+        }
+        height = basicHeightConstraint {
+            hoveredComponent?.getHeight() ?: selectedNode?.targetComponent?.getHeight() ?: 0f
+        }
+    }.onMouseClick {
+        // TODO: set selected & expand tree
+        isClickSelecting = false
+        hoveredComponent = null
+    }
     private var isClickSelecting = false
+        set(value) {
+            field = value
+            if (value)
+                grabWindowFocus()
+            else
+                releaseWindowFocus()
+        }
+    private var hoveredComponent: UIComponent? = null
+        set(value) {
+            field = value
+            updateDrawHighlight(shouldFloat = true)
+        }
 
     init {
         constrain {
             width = ChildBasedSizeConstraint()
             height = ChildBasedSizeConstraint()
+        }
+
+        onKeyType { _, keyCode ->
+            if (keyCode == 1) {
+                isClickSelecting = false
+                hoveredComponent = null
+            }
         }
 
         container = UIBlock(backgroundColor).constrain {
@@ -165,11 +205,25 @@ class Inspector(
         selectedNode = node
     }
 
+    private fun updateDrawHighlight(shouldFloat: Boolean) {
+        val shouldDraw = hoveredComponent != null || selectedNode != null
+        val isChild = children.contains(componentHighlight)
+        if (shouldDraw && !isChild) {
+            addChild(componentHighlight)
+            if (shouldFloat)
+                componentHighlight.setFloating(true)
+        } else if (!shouldDraw && isChild) {
+            if (shouldFloat)
+                componentHighlight.setFloating(false)
+            removeChild(componentHighlight)
+        }
+    }
+
     override fun draw() {
         separator1.setWidth(container.getWidth().pixels())
         separator2.setWidth(container.getWidth().pixels())
 
-        if (isClickSelecting) {
+        hoveredComponent = if (isClickSelecting) {
             val res = Window.of(rootNode.targetComponent).scaledResolution
             val mouseX = UniversalMouse.getScaledX().toFloat()
             val mouseY = res.scaledHeight - UniversalMouse.getTrueY() * res.scaledHeight /
@@ -178,18 +232,12 @@ class Inspector(
 
             // TODO: Implement some kind of way to hook into a UIComponent to intercept events,
             //  allowing for us to stop clicks when in the selecting mode.
-            if (hitComponent == this || hitComponent.isChildOf(this)) null
-            else hitComponent
+            if (hitComponent != this && !hitComponent.isChildOf(this) && hitComponent.isChildOf(rootNode.targetComponent))
+                hitComponent
+            else
+                null
         } else {
-            selectedNode?.targetComponent
-        }?.also {
-            UIBlock.drawBlock(
-                Color(129, 212, 250, 100),
-                it.getLeft().toDouble(),
-                it.getTop().toDouble(),
-                it.getRight().toDouble(),
-                it.getBottom().toDouble()
-            )
+            null
         }
 
         super.draw()
