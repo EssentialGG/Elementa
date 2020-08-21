@@ -1,6 +1,7 @@
 package club.sk1er.elementa.components
 
 import club.sk1er.elementa.UIComponent
+import club.sk1er.elementa.constraints.ColorConstraint
 import club.sk1er.elementa.dsl.asConstraint
 import club.sk1er.mods.core.universal.UniversalGraphicsHandler
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats
@@ -10,9 +11,11 @@ import java.awt.Color
 /**
  * Extremely simple component that simply draws a colored rectangle.
  */
-open class UIBlock(color: Color = Color.WHITE) : UIComponent() {
+open class UIBlock(colorConstraint: ColorConstraint = Color.WHITE.asConstraint()) : UIComponent() {
+    constructor(color: Color) : this(color.asConstraint())
+
     init {
-        setColor(color.asConstraint())
+        setColor(colorConstraint)
     }
 
     override fun draw() {
