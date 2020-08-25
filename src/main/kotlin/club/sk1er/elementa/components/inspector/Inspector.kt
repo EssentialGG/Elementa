@@ -76,15 +76,16 @@ class Inspector(
             height = 14.pixels()
         } childOf titleBlock
 
-        SVGComponent.ofResource("/svg/click.svg").constrain {
-            x = SiblingConstraint(10f)
-            y = CenterConstraint()
-            width = AspectConstraint(1f)
-            height = RelativeConstraint(1f).to(title) as HeightConstraint
-        }.onMouseClick { event ->
-            event.stopPropagation()
-            isClickSelecting = true
-        } childOf titleBlock
+        // TODO: Fix click selecting
+//        SVGComponent.ofResource("/svg/click.svg").constrain {
+//            x = SiblingConstraint(10f)
+//            y = CenterConstraint()
+//            width = AspectConstraint(1f)
+//            height = RelativeConstraint(1f).to(title) as HeightConstraint
+//        }.onMouseClick { event ->
+//            event.stopPropagation()
+//            isClickSelecting = true
+//        } childOf titleBlock
 
         separator1 = UIBlock(outlineColor).constrain {
             y = SiblingConstraint()
