@@ -17,7 +17,8 @@ class Inspector(
     rootComponent: UIComponent,
     backgroundColor: Color = Color(40, 40, 40),
     outlineColor: Color = Color(20, 20, 20),
-    outlineWidth: Float = 2f
+    outlineWidth: Float = 2f,
+    maxSectionHeight: HeightConstraint? = null
 ) : UIContainer() {
     private val rootNode = componentToNode(rootComponent)
     private val treeBlock: UIContainer
@@ -102,7 +103,7 @@ class Inspector(
         val treeBlockScroller = ScrollComponent().constrain {
             y = SiblingConstraint()
             width = RelativeConstraint(1f).to(treeBlock) as WidthConstraint
-            height = RelativeConstraint(1f).to(treeBlock) max RelativeConstraint(1 / 3f).to(rootWindow)
+            height = RelativeConstraint(1f).to(treeBlock) max (maxSectionHeight ?: RelativeConstraint(1 / 3f).to(rootWindow))
         } childOf container
 
         treeBlock childOf treeBlockScroller
@@ -126,7 +127,7 @@ class Inspector(
         infoBlockScroller = ScrollComponent().constrain {
             y = SiblingConstraint()
             width = RelativeConstraint(1f).to(infoBlock) as WidthConstraint
-            height = RelativeConstraint(1f).to(infoBlock) max RelativeConstraint(1 / 3f).to(rootWindow)
+            height = RelativeConstraint(1f).to(infoBlock) max (maxSectionHeight ?: RelativeConstraint(1 / 3f).to(rootWindow))
         }
 
         infoBlock childOf infoBlockScroller
