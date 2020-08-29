@@ -5,7 +5,14 @@ import club.sk1er.elementa.markdown.elements.HeaderElement
 import club.sk1er.elementa.markdown.elements.ListElement
 import club.sk1er.elementa.markdown.elements.ParagraphElement
 
-class Document private constructor(private val elements: List<Element>) {
+class Document private constructor(private val elements: List<Element>) : Element() {
+    override fun draw(state: MarkdownState) {
+        elements.forEach {
+            it.draw(state)
+            state.previousElementType = it::class
+        }
+    }
+
     companion object {
         fun fromString(text: String): Document? {
             val elements = mutableListOf<Element>()

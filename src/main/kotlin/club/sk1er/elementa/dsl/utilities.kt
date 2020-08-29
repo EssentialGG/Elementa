@@ -6,9 +6,9 @@ import club.sk1er.mods.core.universal.UniversalGraphicsHandler
 import net.minecraft.client.Minecraft
 import java.awt.Color
 
-fun Char.width() = UniversalGraphicsHandler.getCharWidth(this)
+fun Char.width(textScale: Float = 1f) = UniversalGraphicsHandler.getCharWidth(this) * textScale
 
-fun String.width() = UniversalGraphicsHandler.getStringWidth(this)
+fun String.width(textScale: Float = 1f) = UniversalGraphicsHandler.getStringWidth(this) * textScale
 
 @JvmOverloads
 fun Int.pixels(alignOpposite: Boolean = false, alignOutside: Boolean = false): PixelConstraint {
