@@ -11,12 +11,12 @@ data class MarkdownConfig(
 
 data class HeaderConfig(
     val fontColor: Color = Color.WHITE,
-    val level1: HeaderLevelConfig = HeaderLevelConfig(fontColor, 3.0f, 12f, 18f, hasDivider = true),
-    val level2: HeaderLevelConfig = HeaderLevelConfig(fontColor, 2.6f, 10f, 15f, hasDivider = true),
-    val level3: HeaderLevelConfig = HeaderLevelConfig(fontColor, 2.2f, 8f, 12f),
-    val level4: HeaderLevelConfig = HeaderLevelConfig(fontColor, 1.8f, 6f, 9f),
-    val level5: HeaderLevelConfig = HeaderLevelConfig(fontColor, 1.4f, 4f, 6f),
-    val level6: HeaderLevelConfig = HeaderLevelConfig(fontColor, 1.0f, 2f, 3f)
+    val level1: HeaderLevelConfig = HeaderLevelConfig(fontColor, 2.0f, 12f, 12f, hasDivider = true),
+    val level2: HeaderLevelConfig = HeaderLevelConfig(fontColor, 1.66f, 10f, 10f, hasDivider = true),
+    val level3: HeaderLevelConfig = HeaderLevelConfig(fontColor, 1.33f, 8f, 8f),
+    val level4: HeaderLevelConfig = HeaderLevelConfig(fontColor, 1.0f, 6f, 6f),
+    val level5: HeaderLevelConfig = HeaderLevelConfig(fontColor, 0.7f, 4f, 4f),
+    val level6: HeaderLevelConfig = HeaderLevelConfig(Color(155, 155, 155), 0.7f, 1f, 1f)
 )
 
 data class HeaderLevelConfig(
@@ -51,6 +51,5 @@ data class BlockquoteConfig(
     val spaceAfterBlockquote: Float = 7f,
     val spaceBetweenLines: Float = 2f,
     val dividerColor: Color = Color(80, 80, 80),
-    val dividerWidth: Float = 2f,
-    val fontColor: Color = Color.WHITE
+    val dividerWidth: Float = 2f
 )

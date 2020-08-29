@@ -1,10 +1,11 @@
 package club.sk1er.elementa.markdown.elements
 
 import club.sk1er.elementa.components.UIBlock
+import club.sk1er.elementa.markdown.Document
 import club.sk1er.elementa.markdown.MarkdownState
 
 // TODO: This can contain pretty much any other element (code blocks, headers, etc), not just TextElements
-class BlockquoteElement private constructor(private val lines: List<TextElement>) : Element() {
+class BlockquoteElement private constructor(private val lines: List<Element>) : Element() {
     override fun draw(state: MarkdownState) {
         val config = state.blockquoteConfig
 
@@ -14,24 +15,29 @@ class BlockquoteElement private constructor(private val lines: List<TextElement>
         state.x = state.newlineX
         state.y += config.spaceBeforeBlockquote
 
-        UIBlock.drawBlock(
-            config.dividerColor,
-            state.left.toDouble() + config.spaceBeforeDivider,
-            state.top.toDouble() + state.y,
-            state.left.toDouble() + config.spaceBeforeDivider + config.dividerWidth,
-            state.top.toDouble() + state.y + lines.size * 9f + (lines.size - 1) * config.spaceBetweenLines
-        )
+        val dividerYStart = state.y
 
         lines.forEach {
-            it.draw(state, config.fontColor)
-            state.gotoNextLine()
+            it.draw(state)
+            if (state.x != state.newlineX)
+                state.gotoNextLine()
         }
 
-        state.y += config.spaceAfterBlockquote
+        UIBlock.drawBlock(
+            config.dividerColor,
+            state.left.toDouble() + prevNewlineX + config.spaceBeforeDivider,
+            state.top.toDouble() + dividerYStart,
+            state.left.toDouble() + prevNewlineX + config.spaceBeforeDivider + config.dividerWidth,
+            state.top.toDouble() + state.y - (if (lines.last() is BlockquoteElement) config.spaceAfterBlockquote else 0f)
+        )
+
         state.newlineX = prevNewlineX
+        state.x = state.newlineX
+        state.y += config.spaceAfterBlockquote
     }
 
     companion object {
+        // TODO: Headers must start with a '>' character to be included in the block quote
         fun parse(lines: MutableList<String>): BlockquoteElement? {
             if (lines.isEmpty())
                 return null
@@ -39,30 +45,31 @@ class BlockquoteElement private constructor(private val lines: List<TextElement>
             if (!matches(lines.first()))
                 return null
 
-            val textElements = mutableListOf<TextElement>()
+            val consumedLines = mutableListOf<String>()
 
             while (true) {
+                if (lines.isEmpty())
+                    break
+
                 val line = lines.first()
                 if (line.isBlank())
                     break
 
                 val index = line.indexOfFirst { it == '>' }
                 lines.removeAt(0)
-                val text = when {
+                when {
                     index == -1 -> line
                     index + 1 >= line.length -> ""
                     else -> line.substring(index + 1)
-                }
-                textElements.add(TextElement.parse(text.trimStart()))
+                }.let(consumedLines::add)
             }
 
-            if (textElements.isEmpty())
-                return null
+            assert(consumedLines.isNotEmpty())
 
-            return BlockquoteElement(textElements)
+            return BlockquoteElement(Document.fromLines(consumedLines)?.elements ?: return null)
         }
 
-        private fun matches(line: String): Boolean {
+        fun matches(line: String): Boolean {
             return line.startsWith(">") || line.startsWith(" >") || line.startsWith("  >") || line.startsWith("   >")
         }
     }
