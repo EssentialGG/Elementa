@@ -89,7 +89,7 @@ class ListElement private constructor(
         }
 
         // This does not consider a four-space indent to be a code block
-        private fun matches(line: String): Boolean {
+        fun matches(line: String): Boolean {
             if (line.isBlank())
                 return false
 

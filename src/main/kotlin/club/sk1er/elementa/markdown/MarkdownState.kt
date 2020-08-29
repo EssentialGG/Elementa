@@ -29,6 +29,6 @@ data class MarkdownState(
 
     fun gotoNextLine() {
         x = newlineX
-        y += 9f * textScaleModifier
+        y += 9f * textScaleModifier + textConfig.spaceBetweenLines
     }
 }

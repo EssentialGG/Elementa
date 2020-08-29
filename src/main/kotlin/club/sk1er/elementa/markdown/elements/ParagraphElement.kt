@@ -20,6 +20,15 @@ class ParagraphElement private constructor(private val textElement: TextElement)
                 if (line.isBlank())
                     break
 
+                if (BlockquoteElement.matches(line))
+                    break
+
+                if (HeaderElement.matches(line))
+                    break
+
+                if (ListElement.matches(line))
+                    break
+
                 if (line.length >= 3 && line.take(3).all { it == '`' })
                     throw IllegalArgumentException("Code blocks are not yet supported")
 

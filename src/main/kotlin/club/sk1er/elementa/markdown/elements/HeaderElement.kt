@@ -18,10 +18,8 @@ class HeaderElement private constructor(
     }
 
     override fun draw(state: MarkdownState) {
-        if (state.x != 0f) {
-            state.x = 0f
-            state.y += 9f * state.textScaleModifier + state.textConfig.spaceBetweenLines
-        }
+        if (state.x != state.newlineX)
+            state.gotoNextLine()
 
         if (state.previousElementType != HeaderElement::class)
             state.y += getSpace(state.headerConfig, true)
@@ -37,14 +35,14 @@ class HeaderElement private constructor(
 
             UIBlock.drawBlock(
                 dividerColor(state.headerConfig),
-                state.left.toDouble(),
+                state.left.toDouble() + state.newlineX,
                 state.top.toDouble() + state.y - width,
                 state.left.toDouble() + state.width,
                 state.top.toDouble() + state.y
             )
         }
 
-        state.x = 0f
+        state.gotoNextLine()
         state.y += getSpace(state.headerConfig, false)
     }
 
@@ -118,22 +116,31 @@ class HeaderElement private constructor(
                 return null
 
             val line = lines.first()
-            if (line.isEmpty())
-                return null
-
-            if (line.first() != '#')
+            if (!matches(line))
                 return null
 
             val level = line.takeWhile { it == '#' }.length
-            if (level > 6)
-                return null
-
-            if (level >= line.length || line[level] != ' ')
-                return null
 
             lines.removeAt(0)
             val text = if (level + 1 >= line.length) "" else line.substring(level + 1)
             return HeaderElement(TextElement.parse(text), level)
+        }
+
+        fun matches(line: String): Boolean {
+            if (line.isEmpty())
+                return false
+
+            if (line.first() != '#')
+                return false
+
+            val level = line.takeWhile { it == '#' }.length
+            if (level > 6)
+                return false
+
+            if (level >= line.length || line[level] != ' ')
+                return false
+
+            return true
         }
     }
 }
