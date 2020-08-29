@@ -22,4 +22,9 @@ data class MarkdownState(
 
     val textConfig: TextConfig
         get() = config.textConfig
+
+    fun gotoNextLine() {
+        x = 0f
+        y += 9f * textScaleModifier
+    }
 }
