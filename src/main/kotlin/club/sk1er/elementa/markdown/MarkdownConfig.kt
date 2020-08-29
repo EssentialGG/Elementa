@@ -29,10 +29,12 @@ data class HeaderLevelConfig(
 )
 
 data class ListConfig(
-    val indentation: Float = 2f,
-    val elementSpacing: Float = 2f,
-    val newLevelPreSpacing: Float = 0f,
-    val newLevelPostSpacing: Float = 0f
+    val fontColor: Color = Color.WHITE,
+    val indentation: Float = 10f,
+    val elementSpacing: Float = 5f,
+    val spaceBeforeText: Float = 4f,
+    val spaceBeforeList: Float = 5f,
+    val spaceAfterList: Float = 5f
 )
 
 data class TextConfig(
