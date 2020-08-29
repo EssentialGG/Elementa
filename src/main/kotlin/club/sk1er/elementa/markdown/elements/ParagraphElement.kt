@@ -1,6 +1,12 @@
 package club.sk1er.elementa.markdown.elements
 
+import club.sk1er.elementa.markdown.MarkdownState
+
 class ParagraphElement private constructor(private val textElement: TextElement) : Element() {
+    override fun draw(state: MarkdownState) {
+        textElement.draw(state)
+    }
+
     companion object {
         fun parse(lines: MutableList<String>): ParagraphElement? {
             var consumed = false

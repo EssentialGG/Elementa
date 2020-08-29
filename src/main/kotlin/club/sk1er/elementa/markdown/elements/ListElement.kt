@@ -1,9 +1,15 @@
 package club.sk1er.elementa.markdown.elements
 
+import club.sk1er.elementa.markdown.MarkdownState
+
 class ListElement private constructor(
     private val items: List<ListItem>,
     private val isOrdered: Boolean
 ) : Element() {
+    override fun draw(state: MarkdownState) {
+        TODO("Not yet implemented")
+    }
+
     companion object {
         fun parse(lines: MutableList<String>): ListElement? {
             var consumed = false
