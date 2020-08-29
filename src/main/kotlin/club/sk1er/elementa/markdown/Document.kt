@@ -1,9 +1,6 @@
 package club.sk1er.elementa.markdown
 
-import club.sk1er.elementa.markdown.elements.Element
-import club.sk1er.elementa.markdown.elements.HeaderElement
-import club.sk1er.elementa.markdown.elements.ListElement
-import club.sk1er.elementa.markdown.elements.ParagraphElement
+import club.sk1er.elementa.markdown.elements.*
 
 class Document private constructor(private val elements: List<Element>) : Element() {
     override fun draw(state: MarkdownState) {
@@ -28,6 +25,12 @@ class Document private constructor(private val elements: List<Element>) : Elemen
 
                 if (lines[0].isEmpty()) {
                     lines.removeAt(0)
+                    continue
+                }
+
+                val blockquote = BlockquoteElement.parse(lines)
+                if (blockquote != null) {
+                    elements.add(blockquote)
                     continue
                 }
 

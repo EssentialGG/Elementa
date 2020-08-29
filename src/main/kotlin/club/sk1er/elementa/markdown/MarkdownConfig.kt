@@ -5,7 +5,8 @@ import java.awt.Color
 data class MarkdownConfig(
     val headerConfig: HeaderConfig = HeaderConfig(),
     val listConfig: ListConfig = ListConfig(),
-    val textConfig: TextConfig = TextConfig()
+    val textConfig: TextConfig = TextConfig(),
+    val blockquoteConfig: BlockquoteConfig = BlockquoteConfig()
 )
 
 data class HeaderConfig(
@@ -41,4 +42,15 @@ data class TextConfig(
     val color: Color = Color.WHITE,
     val shadow: Boolean = true,
     val spaceBetweenLines: Float = 2f
+)
+
+data class BlockquoteConfig(
+    val spaceBeforeDivider: Float = 3f,
+    val spaceAfterDivider: Float = 6f,
+    val spaceBeforeBlockquote: Float = 7f,
+    val spaceAfterBlockquote: Float = 7f,
+    val spaceBetweenLines: Float = 2f,
+    val dividerColor: Color = Color(80, 80, 80),
+    val dividerWidth: Float = 2f,
+    val fontColor: Color = Color.WHITE
 )

@@ -118,31 +118,22 @@ class HeaderElement private constructor(
                 return null
 
             val line = lines.first()
-            if (!matches(line))
+            if (line.isEmpty())
+                return null
+
+            if (line.first() != '#')
                 return null
 
             val level = line.takeWhile { it == '#' }.length
+            if (level > 6)
+                return null
+
+            if (level >= line.length || line[level] != ' ')
+                return null
 
             lines.removeAt(0)
             val text = if (level + 1 >= line.length) "" else line.substring(level + 1)
             return HeaderElement(TextElement.parse(text), level)
-        }
-
-        fun matches(line: String): Boolean {
-            if (line.isEmpty())
-                return false
-
-            if (line.first() != '#')
-                return false
-
-            val level = line.takeWhile { it == '#' }.length
-            if (level > 6)
-                return false
-
-            if (level >= line.length || line[level] != ' ')
-                return false
-
-            return true
         }
     }
 }

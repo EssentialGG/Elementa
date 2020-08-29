@@ -12,12 +12,9 @@ class MarkdownComponent(
         document?.draw(MarkdownState(
             getLeft(),
             getTop(),
-            0f,
-            0f,
             getWidth(),
             getHeight(),
-            1f,
-            config
+            config = config
         ))
     }
 }

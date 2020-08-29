@@ -20,31 +20,12 @@ class ParagraphElement private constructor(private val textElement: TextElement)
                 if (line.isBlank())
                     break
 
-                if (HeaderElement.matches(line))
-                    break
-
-                if (ListElement.matches(line))
-                    break
-
                 if (line.length >= 3 && line.take(3).all { it == '`' })
                     throw IllegalArgumentException("Code blocks are not yet supported")
 
                 val first = line.take(4)
                 if (first.length == 4 && first.all { it == ' ' })
                     throw IllegalArgumentException("Code blocks are not yet supported")
-
-                var isBlockQuote = false
-                if (first.isNotEmpty())
-                    isBlockQuote = first.contentEquals(">")
-                if (!isBlockQuote && first.length > 1)
-                    isBlockQuote = first.contentEquals(" >")
-                if (!isBlockQuote && first.length > 2)
-                    isBlockQuote = first.contentEquals("  >")
-                if (!isBlockQuote && first.length > 3)
-                    isBlockQuote = first.contentEquals("   >")
-
-                if (isBlockQuote)
-                    throw IllegalArgumentException("Blockquotes are not yet supported")
 
                 if (consumed)
                     builder.append('\n')

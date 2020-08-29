@@ -6,11 +6,12 @@ import kotlin.reflect.KClass
 data class MarkdownState(
     val left: Float,
     val top: Float,
-    var x: Float,
-    var y: Float,
     val width: Float,
     val height: Float,
-    var textScaleModifier: Float,
+    var x: Float = 0f,
+    var y: Float = 0f,
+    var textScaleModifier: Float = 1f,
+    var newlineX: Float = 0f,
     val config: MarkdownConfig = MarkdownConfig(),
     var previousElementType: KClass<out Element>? = null
 ) {
@@ -23,8 +24,11 @@ data class MarkdownState(
     val textConfig: TextConfig
         get() = config.textConfig
 
+    val blockquoteConfig: BlockquoteConfig
+        get() = config.blockquoteConfig
+
     fun gotoNextLine() {
-        x = 0f
+        x = newlineX
         y += 9f * textScaleModifier
     }
 }
