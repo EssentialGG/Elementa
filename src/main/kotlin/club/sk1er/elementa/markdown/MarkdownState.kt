@@ -27,6 +27,9 @@ data class MarkdownState(
     val blockquoteConfig: BlockquoteConfig
         get() = config.blockquoteConfig
 
+    val inlineCodeConfig: InlineCodeConfig
+        get() = config.inlineCodeConfig
+
     fun gotoNextLine() {
         x = newlineX
         y += 9f * textScaleModifier + textConfig.spaceBetweenLines

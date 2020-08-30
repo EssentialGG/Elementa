@@ -6,7 +6,8 @@ data class MarkdownConfig(
     val headerConfig: HeaderConfig = HeaderConfig(),
     val listConfig: ListConfig = ListConfig(),
     val textConfig: TextConfig = TextConfig(),
-    val blockquoteConfig: BlockquoteConfig = BlockquoteConfig()
+    val blockquoteConfig: BlockquoteConfig = BlockquoteConfig(),
+    val inlineCodeConfig: InlineCodeConfig = InlineCodeConfig()
 )
 
 data class HeaderConfig(
@@ -42,6 +43,19 @@ data class TextConfig(
     val color: Color = Color.WHITE,
     val shadow: Boolean = true,
     val spaceBetweenLines: Float = 2f
+)
+
+data class InlineCodeConfig(
+    val fontColor: Color = Color.WHITE,
+    val backgroundColor: Color = Color(60, 60, 60, 255),
+    val outlineColor: Color = Color(140, 140, 140, 255),
+    val outlineWidth: Float = 0.5f,
+    val radius: Float = 3f,
+    val steps: Int = 10,
+    val leftPadding: Float = 1f,
+    val topPadding: Float = 1f,
+    val rightPadding: Float = 1f,
+    val bottomPadding: Float = 1f
 )
 
 data class BlockquoteConfig(
