@@ -4,8 +4,11 @@ import club.sk1er.elementa.components.UIBlock
 import club.sk1er.elementa.markdown.Document
 import club.sk1er.elementa.markdown.MarkdownState
 
-// TODO: This can contain pretty much any other element (code blocks, headers, etc), not just TextElements
 class BlockquoteElement private constructor(private val lines: List<Element>) : Element() {
+    override fun onClick(mouseX: Float, mouseY: Float) {
+        lines.forEach { it.onClick(mouseX, mouseY) }
+    }
+
     override fun draw(state: MarkdownState) {
         val config = state.blockquoteConfig
 

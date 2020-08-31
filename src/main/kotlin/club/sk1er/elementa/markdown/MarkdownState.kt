@@ -30,6 +30,9 @@ data class MarkdownState(
     val inlineCodeConfig: InlineCodeConfig
         get() = config.inlineCodeConfig
 
+    val urlConfig: URLConfig
+        get() = config.urlConfig
+
     fun gotoNextLine() {
         x = newlineX
         y += 9f * textScaleModifier + textConfig.spaceBetweenLines

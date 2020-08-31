@@ -59,6 +59,10 @@ class MarkdownComponent(
         } childOf scrollBarContainer
 
         scrollComponent.setScrollBarComponent(scrollBarGrip, hideWhenUseless = true)
+
+        onMouseClick { event ->
+            document?.onClick(event.absoluteX, event.absoluteY)
+        }
     }
 
     override fun draw() {
@@ -75,7 +79,6 @@ class MarkdownComponent(
         )
 
         document?.draw(state)
-
         scrollChild.setHeight(state.y.pixels())
 
         scissor.afterDraw(this)
