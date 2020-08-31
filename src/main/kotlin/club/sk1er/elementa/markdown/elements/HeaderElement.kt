@@ -17,6 +17,10 @@ class HeaderElement private constructor(
         textElement.spans.forEach { it.style.bold = true }
     }
 
+    override fun onClick(mouseX: Float, mouseY: Float) {
+        textElement.onClick(mouseX, mouseY)
+    }
+
     override fun draw(state: MarkdownState) {
         if (state.x != state.newlineX)
             state.gotoNextLine()

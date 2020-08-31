@@ -10,6 +10,10 @@ class Document private constructor(internal val elements: List<Element>) : Eleme
         }
     }
 
+    override fun onClick(mouseX: Float, mouseY: Float) {
+        elements.forEach { it.onClick(mouseX, mouseY) }
+    }
+
     companion object {
         fun elementFromLines(lines: MutableList<String>): Element? {
             val blockquote = BlockquoteElement.parse(lines)

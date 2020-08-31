@@ -8,6 +8,10 @@ class ListElement private constructor(
     private val items: List<ListItem>,
     private val isOrdered: Boolean
 ) : Element() {
+    override fun onClick(mouseX: Float, mouseY: Float) {
+        items.forEach { it.text.onClick(mouseX, mouseY) }
+    }
+
     override fun draw(state: MarkdownState) {
         state.gotoNextLine()
         state.y += state.listConfig.elementSpacing + state.listConfig.spaceBeforeList
