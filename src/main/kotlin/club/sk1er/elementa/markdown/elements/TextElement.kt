@@ -48,7 +48,8 @@ class TextElement internal constructor(internal val spans: List<Span>) : Element
     internal fun calculatePartialTexts(state: MarkdownState) {
         partialTexts = spans.map { span ->
             fun textWidth(text: String) = if (span.style.code) {
-                CodeblockElement.codeFontRenderer.getWidth(text) * state.textScaleModifier
+                CodeblockElement.codeFontRenderer.getWidth(text) * state.textScaleModifier +
+                    state.inlineCodeConfig.leftPadding + state.inlineCodeConfig.rightPadding
             } else text.width(state.textScaleModifier)
 
             fun textHeight(text: String) = if (span.style.code) {
@@ -56,9 +57,7 @@ class TextElement internal constructor(internal val spans: List<Span>) : Element
             } else 9f * state.textScaleModifier
 
             var text = span.styledText
-
             val scale = state.textScaleModifier
-
             val width = textWidth(text)
             val partialTexts = mutableListOf<PartialText>()
 
@@ -149,7 +148,13 @@ class TextElement internal constructor(internal val spans: List<Span>) : Element
                 } else color
 
                 if (span.style.code) {
-                    CodeblockElement.codeFontRenderer.drawString(text, x, y - 1.5f, actualColor.rgb, shadow)
+                    CodeblockElement.codeFontRenderer.drawString(
+                        text,
+                        x + state.inlineCodeConfig.leftPadding,
+                        y - 1.5f,
+                        actualColor.rgb,
+                        shadow
+                    )
                 } else {
                     UniversalGraphicsHandler.drawString(text, x, y, actualColor.rgb, shadow)
                 }
