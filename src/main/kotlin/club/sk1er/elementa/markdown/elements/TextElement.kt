@@ -3,7 +3,6 @@ package club.sk1er.elementa.markdown.elements
 import club.sk1er.elementa.components.UIBlock
 import club.sk1er.elementa.components.UIRoundedRectangle
 import club.sk1er.elementa.dsl.width
-import club.sk1er.elementa.font.FontRenderer
 import club.sk1er.elementa.markdown.MarkdownState
 import club.sk1er.mods.core.universal.UniversalDesktop
 import club.sk1er.mods.core.universal.UniversalGraphicsHandler
@@ -82,21 +81,19 @@ class TextElement internal constructor(internal val spans: List<Span>) : Element
                     state.x += width
                 }
             } else {
-                var textIndex = 0
+                var textIndex = text.length
                 var first = true
 
                 while (text.isNotEmpty()) {
-                    while (textIndex < text.length) {
-                        if (textWidth(text.substring(0, textIndex)) + state.x > state.width) {
-                            textIndex--
+                    while (textIndex > 0) {
+                        if (textWidth(text.substring(0, textIndex)) + state.x <= state.width)
                             break
-                        }
-                        textIndex++
+                        textIndex--
                     }
 
                     val textToDraw = text.substring(0, textIndex)
                     val textToDrawWidth = textWidth(textToDraw)
-                    text = text.substring(textIndex)
+                    text = text.substring(textIndex).trimStart()
 
                     partialTexts.add(PartialText(
                         textToDraw,
@@ -116,7 +113,7 @@ class TextElement internal constructor(internal val spans: List<Span>) : Element
                         state.x += textToDrawWidth
                     }
 
-                    textIndex = 0
+                    textIndex = text.length
 
                     first = false
                 }
@@ -254,28 +251,19 @@ class TextElement internal constructor(internal val spans: List<Span>) : Element
             val spans = mutableListOf<Span>()
             var inURL = false
             var inURLText = false
+            val replacedText = text.replace("\n", " ")
 
             fun addSpan(index: Int, hasNewline: Boolean = false) {
                 if (index == spanStart && !hasNewline)
                     return
-                spans.add(Span(text.substring(spanStart, index), style.copy(), hasNewline))
+                spans.add(Span(replacedText.substring(spanStart, index), style.copy(), hasNewline))
             }
 
             var index = 0
-            loop@ while (index < text.length) {
-                val ch = text[index]
+            loop@ while (index < replacedText.length) {
+                val ch = replacedText[index]
 
-                if (ch == '\\' && index != text.lastIndex) {
-                    index++
-                    continue
-                }
-
-                if (ch == '\n') {
-                    if (!style.code) {
-                        addSpan(index, true)
-                        spanStart = index + 1
-                    }
-
+                if (ch == '\\' && index != replacedText.lastIndex) {
                     index++
                     continue
                 }
@@ -288,7 +276,7 @@ class TextElement internal constructor(internal val spans: List<Span>) : Element
                 when (ch) {
                     '*', '_' -> {
                         addSpan(index)
-                        if (index + 1 <= text.lastIndex && ch == text[index + 1]) {
+                        if (index + 1 <= replacedText.lastIndex && ch == replacedText[index + 1]) {
                             index++
                             style.bold = !style.bold
                         } else {
@@ -299,8 +287,8 @@ class TextElement internal constructor(internal val spans: List<Span>) : Element
                         addSpan(index)
                         if (style.code) {
                             style.code = false
-                        } else if (index + 1 < text.length) {
-                            val remainingLines = text.substring(index + 1).split('\n')
+                        } else if (index + 1 < replacedText.length) {
+                            val remainingLines = replacedText.substring(index + 1).split('\n')
                             var lineIndex = 0
 
                             while (lineIndex < remainingLines.size) {
@@ -320,9 +308,9 @@ class TextElement internal constructor(internal val spans: List<Span>) : Element
                     ']' -> {
                         addSpan(index)
 
-                        if (inURLText && index + 2 < text.length && text[index + 1] == '(') {
+                        if (inURLText && index + 2 < replacedText.length && replacedText[index + 1] == '(') {
                             inURLText = false
-                            val remainingText = text.substring(index + 2)
+                            val remainingText = replacedText.substring(index + 2)
                             val closeParenIndex = remainingText.indexOf(')')
 
                             if (closeParenIndex != -1 && '\n' !in remainingText.substring(0, closeParenIndex)) {
@@ -336,7 +324,7 @@ class TextElement internal constructor(internal val spans: List<Span>) : Element
                     ')' -> {
                         if (inURL) {
                             inURL = false
-                            spans.last().style.url = text.substring(spanStart, index)
+                            spans.last().style.url = replacedText.substring(spanStart, index)
                         } else {
                             index++
                             continue@loop
@@ -349,7 +337,7 @@ class TextElement internal constructor(internal val spans: List<Span>) : Element
                 spanStart = index
             }
 
-            addSpan(text.length)
+            addSpan(replacedText.length)
 
             return TextElement(spans)
         }
