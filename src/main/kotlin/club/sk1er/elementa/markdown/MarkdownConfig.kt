@@ -54,10 +54,10 @@ data class InlineCodeConfig(
     val outlineWidth: Float = 0.5f,
     val cornerRadius: Float = 3f,
     val steps: Int = 10,
-    val leftPadding: Float = 1f,
-    val topPadding: Float = 1f,
-    val rightPadding: Float = 1f,
-    val bottomPadding: Float = 1f
+    val leftPadding: Float = 2f,
+    val topPadding: Float = 2f,
+    val rightPadding: Float = 2f,
+    val bottomPadding: Float = 2f
 )
 
 data class CodeblockConfig(
