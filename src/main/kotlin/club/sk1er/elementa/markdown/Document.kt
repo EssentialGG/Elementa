@@ -43,22 +43,36 @@ class Document private constructor(internal val elements: List<Element>) : Eleme
 
         fun fromLines(lines: MutableList<String>): Document? {
             val elements = mutableListOf<Element>()
+            var addBreak = false
 
             // Trim leading empty lines
             while (lines.isNotEmpty() && lines[0].isBlank())
                 lines.removeAt(0)
 
             while (true) {
-                if (lines.isEmpty())
+                if (lines.isEmpty()) {
+                    if (elements.last() is BreakElement)
+                        elements.removeAt(elements.lastIndex)
                     return Document(elements)
+                }
 
-                // TODO: Multiple blank lines should result in one visually blank line
                 if (lines[0].isEmpty()) {
-                    lines.removeAt(0)
+                    while (lines.isNotEmpty() && lines[0].isBlank())
+                        lines.removeAt(0)
+                    if (elements.lastOrNull() is ParagraphElement)
+                        addBreak = true
                     continue
                 }
 
-                elements.add(elementFromLines(lines) ?: return null)
+                val element = elementFromLines(lines) ?: return null
+
+                if (addBreak && element is ParagraphElement) {
+                    elements.add(BreakElement())
+                    addBreak = false
+                }
+
+                elements.add(element)
+
             }
         }
     }
