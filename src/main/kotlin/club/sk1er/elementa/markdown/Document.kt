@@ -66,10 +66,9 @@ class Document private constructor(internal val elements: List<Element>) : Eleme
 
                 val element = elementFromLines(lines) ?: return null
 
-                if (addBreak && element is ParagraphElement) {
+                if (addBreak && element is ParagraphElement)
                     elements.add(BreakElement())
-                    addBreak = false
-                }
+                addBreak = false
 
                 elements.add(element)
 

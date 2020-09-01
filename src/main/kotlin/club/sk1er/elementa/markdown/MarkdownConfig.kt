@@ -14,12 +14,12 @@ data class MarkdownConfig(
 
 data class HeaderConfig(
     val fontColor: Color = Color.WHITE,
-    val level1: HeaderLevelConfig = HeaderLevelConfig(fontColor, 2.0f, 12f, 12f, hasDivider = true),
-    val level2: HeaderLevelConfig = HeaderLevelConfig(fontColor, 1.66f, 10f, 10f, hasDivider = true),
-    val level3: HeaderLevelConfig = HeaderLevelConfig(fontColor, 1.33f, 8f, 8f),
-    val level4: HeaderLevelConfig = HeaderLevelConfig(fontColor, 1.0f, 6f, 6f),
-    val level5: HeaderLevelConfig = HeaderLevelConfig(fontColor, 0.7f, 4f, 4f),
-    val level6: HeaderLevelConfig = HeaderLevelConfig(Color(155, 155, 155), 0.7f, 1f, 1f)
+    val level1: HeaderLevelConfig = HeaderLevelConfig(fontColor, 2.0f, 12f, 6f, hasDivider = true),
+    val level2: HeaderLevelConfig = HeaderLevelConfig(fontColor, 1.66f, 10f, 5f, hasDivider = true),
+    val level3: HeaderLevelConfig = HeaderLevelConfig(fontColor, 1.33f, 8f, 4f),
+    val level4: HeaderLevelConfig = HeaderLevelConfig(fontColor, 1.0f, 6f, 3f),
+    val level5: HeaderLevelConfig = HeaderLevelConfig(fontColor, 0.7f, 4f, 2f),
+    val level6: HeaderLevelConfig = HeaderLevelConfig(Color(155, 155, 155), 0.7f, 4f, 2f)
 )
 
 data class HeaderLevelConfig(
