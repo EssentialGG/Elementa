@@ -6,7 +6,7 @@ import kotlin.reflect.KClass
 data class MarkdownState(
     val left: Float,
     val top: Float,
-    val width: Float,
+    var width: Float,
     val height: Float,
     var x: Float = 0f,
     var y: Float = 0f,
@@ -29,6 +29,9 @@ data class MarkdownState(
 
     val inlineCodeConfig: InlineCodeConfig
         get() = config.inlineCodeConfig
+
+    val codeblockConfig: CodeblockConfig
+        get() = config.codeblockConfig
 
     val urlConfig: URLConfig
         get() = config.urlConfig

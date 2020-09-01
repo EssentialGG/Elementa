@@ -33,12 +33,8 @@ class ParagraphElement private constructor(private val textElement: TextElement)
                 if (ListElement.matches(line))
                     break
 
-                if (line.length >= 3 && line.take(3).all { it == '`' })
-                    throw IllegalArgumentException("Code blocks are not yet supported")
-
-                val first = line.take(4)
-                if (first.length == 4 && first.all { it == ' ' })
-                    throw IllegalArgumentException("Code blocks are not yet supported")
+                if (CodeblockElement.matches(lines))
+                    break
 
                 if (consumed)
                     builder.append('\n')

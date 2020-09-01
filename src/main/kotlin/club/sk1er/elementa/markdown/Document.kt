@@ -32,6 +32,10 @@ class Document private constructor(internal val elements: List<Element>) : Eleme
             if (paragraph != null)
                 return paragraph
 
+            val codeblock = CodeblockElement.parse(lines)
+            if (codeblock != null)
+                return codeblock
+
             return null
         }
 

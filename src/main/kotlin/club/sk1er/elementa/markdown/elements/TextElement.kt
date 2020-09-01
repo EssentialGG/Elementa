@@ -12,21 +12,21 @@ import club.sk1er.mods.core.universal.UniversalResolutionUtil
 import java.awt.Color
 import java.net.URI
 
-class TextElement private constructor(internal val spans: List<Span>) : Element() {
-    private var partialTexts: List<Pair<Span, List<PartialText>>>? = null
+class TextElement internal constructor(internal val spans: List<Span>) : Element() {
+    internal var partialTexts: List<Pair<Span, List<PartialText>>>? = null
 
     override fun draw(state: MarkdownState) {
         draw(state, state.textConfig.color)
     }
 
-    private data class Rectangle(
+    internal data class Rectangle(
         val x1: Float,
         val y1: Float,
         val x2: Float,
         val y2: Float
     )
 
-    private data class PartialText(
+    internal data class PartialText(
         val text: String,
         val bounds: Rectangle,
         val cutOffBeginning: Boolean,
@@ -46,14 +46,14 @@ class TextElement private constructor(internal val spans: List<Span>) : Element(
             UniversalDesktop.browse(URI(clicked.first.style.url!!))
     }
 
-    private fun calculatePartialTexts(state: MarkdownState) {
+    internal fun calculatePartialTexts(state: MarkdownState) {
         partialTexts = spans.map { span ->
             fun textWidth(text: String) = if (span.style.code) {
-                codeFontRenderer.getWidth(text) * state.textScaleModifier
+                CodeblockElement.codeFontRenderer.getWidth(text) * state.textScaleModifier
             } else text.width(state.textScaleModifier)
 
             fun textHeight(text: String) = if (span.style.code) {
-                codeFontRenderer.getHeight(text) * state.textScaleModifier
+                CodeblockElement.codeFontRenderer.getHeight(text) * state.textScaleModifier
             } else 9f * state.textScaleModifier
 
             var text = span.styledText
@@ -129,8 +129,9 @@ class TextElement private constructor(internal val spans: List<Span>) : Element(
         }
     }
 
-    fun draw(state: MarkdownState, textColor: Color) {
-        calculatePartialTexts(state)
+    fun draw(state: MarkdownState, textColor: Color, isMultilineCode: Boolean = false) {
+        if (!isMultilineCode)
+            calculatePartialTexts(state)
 
         partialTexts!!.forEach { (span, partialTexts) ->
             fun drawString(text: String, x: Float, y: Float, color: Color, shadow: Boolean) {
@@ -139,14 +140,14 @@ class TextElement private constructor(internal val spans: List<Span>) : Element(
                 } else color
 
                 if (span.style.code) {
-                    codeFontRenderer.drawString(text, x, y - 1.5f, actualColor.rgb, shadow)
+                    CodeblockElement.codeFontRenderer.drawString(text, x, y - 1.5f, actualColor.rgb, shadow)
                 } else {
                     UniversalGraphicsHandler.drawString(text, x, y, actualColor.rgb, shadow)
                 }
             }
 
             fun drawBackground(x1: Float, y1: Float, x2: Float, y2: Float, cutOffBeginning: Boolean = false, cutOffEnd: Boolean = false) {
-                if (!span.style.code)
+                if (!span.style.code || isMultilineCode)
                     return
 
                 state.config.inlineCodeConfig.run {
@@ -155,7 +156,7 @@ class TextElement private constructor(internal val spans: List<Span>) : Element(
                         y1.toDouble() - topPadding,
                         if (cutOffEnd) state.left + state.width + 10.0 else x2.toDouble() + rightPadding,
                         y2.toDouble() + bottomPadding,
-                        radius,
+                        cornerRadius,
                         steps,
                         outlineColor
                     )
@@ -165,7 +166,7 @@ class TextElement private constructor(internal val spans: List<Span>) : Element(
                         y1.toDouble() - topPadding + outlineWidth,
                         if (cutOffEnd) state.left + state.width + 10.0 else x2.toDouble() + rightPadding - outlineWidth,
                         y2.toDouble() + bottomPadding - outlineWidth,
-                        radius,
+                        cornerRadius,
                         steps,
                         backgroundColor
                     )
@@ -245,8 +246,6 @@ class TextElement private constructor(internal val spans: List<Span>) : Element(
     }
 
     companion object {
-        private val codeFontRenderer = FontRenderer(FontRenderer.SupportedFont.Menlo, 18f)
-
         private val specialChars = listOf('*', '_', '`', '[', ']', ')')
 
         fun parse(text: String): TextElement {
@@ -281,7 +280,7 @@ class TextElement private constructor(internal val spans: List<Span>) : Element(
                     continue
                 }
 
-                if (!isSpecialChar(ch) || (style.code && ch != '`')) {
+                if (!isSpecialChar(ch) || (inURL && ch != ')') || (style.code && ch != '`')) {
                     index++
                     continue
                 }
