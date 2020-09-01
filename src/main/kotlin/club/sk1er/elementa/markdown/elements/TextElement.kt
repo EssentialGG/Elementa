@@ -84,11 +84,23 @@ class TextElement internal constructor(internal val spans: List<Span>) : Element
                 var textIndex = text.length
                 var first = true
 
-                while (text.isNotEmpty()) {
+                outer@ while (text.isNotEmpty()) {
                     while (textIndex > 0) {
                         if (textWidth(text.substring(0, textIndex)) + state.x <= state.width)
                             break
                         textIndex--
+                    }
+
+                    if (textIndex - 1 < text.lastIndex && text[textIndex] != ' ') {
+                        // Handle word wrapping
+                        while (text[textIndex - 1] != ' ') {
+                            if (textIndex - 1 == 0) {
+                                state.gotoNextLine()
+                                textIndex = text.length
+                                continue@outer
+                            }
+                            textIndex--
+                        }
                     }
 
                     val textToDraw = text.substring(0, textIndex)
