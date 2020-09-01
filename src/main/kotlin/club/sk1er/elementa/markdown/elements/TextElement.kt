@@ -262,7 +262,7 @@ class TextElement internal constructor(internal val spans: List<Span>) : Element
             }
 
             var index = 0
-            while (index < text.length) {
+            loop@ while (index < text.length) {
                 val ch = text[index]
 
                 if (ch == '\\' && index != text.lastIndex) {
@@ -337,6 +337,9 @@ class TextElement internal constructor(internal val spans: List<Span>) : Element
                         if (inURL) {
                             inURL = false
                             spans.last().style.url = text.substring(spanStart, index)
+                        } else {
+                            index++
+                            continue@loop
                         }
                     }
                     else -> throw IllegalStateException()
