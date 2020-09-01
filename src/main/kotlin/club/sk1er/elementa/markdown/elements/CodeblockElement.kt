@@ -47,9 +47,9 @@ class CodeblockElement private constructor(val text: TextElement) : Element() {
 
         text.draw(state, state.codeblockConfig.fontColor, isMultilineCode = true)
 
+        state.newlineX -= state.codeblockConfig.leftPadding
         state.x = state.newlineX
         state.y += state.codeblockConfig.bottomMargin
-        state.newlineX -= state.codeblockConfig.leftPadding
     }
 
     companion object {
