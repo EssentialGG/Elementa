@@ -8,6 +8,7 @@ data class MarkdownConfig(
     val textConfig: TextConfig = TextConfig(),
     val blockquoteConfig: BlockquoteConfig = BlockquoteConfig(),
     val inlineCodeConfig: InlineCodeConfig = InlineCodeConfig(),
+    val codeblockConfig: CodeblockConfig = CodeblockConfig(),
     val urlConfig: URLConfig = URLConfig()
 )
 
@@ -51,12 +52,27 @@ data class InlineCodeConfig(
     val backgroundColor: Color = Color(60, 60, 60, 255),
     val outlineColor: Color = Color(140, 140, 140, 255),
     val outlineWidth: Float = 0.5f,
-    val radius: Float = 3f,
+    val cornerRadius: Float = 3f,
     val steps: Int = 10,
     val leftPadding: Float = 1f,
     val topPadding: Float = 1f,
     val rightPadding: Float = 1f,
     val bottomPadding: Float = 1f
+)
+
+data class CodeblockConfig(
+    val fontColor: Color = Color.WHITE,
+    val backgroundColor: Color = Color(40, 40, 40, 255),
+    val outlineColor: Color = Color(120, 120, 120, 255),
+    val outlineWidth: Float = 0.5f,
+    val cornerRadius: Float = 3f,
+    val steps: Int = 10,
+    val leftPadding: Float = 5f,
+    val topPadding: Float = 5f,
+    val rightPadding: Float = 5f,
+    val bottomPadding: Float = 5f,
+    val topMargin: Float = 10f,
+    val bottomMargin: Float = 10f
 )
 
 data class URLConfig(
