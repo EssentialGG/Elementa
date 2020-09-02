@@ -15,13 +15,13 @@ class CodeblockElement private constructor(val text: TextElement) : Element() {
         state.x = state.newlineX
         state.width -= state.codeblockConfig.rightPadding
 
-        text.calculatePartialTexts(state)
+        text.calculateRenderables(state)
 
         state.y += state.codeblockConfig.bottomPadding
         state.width += state.codeblockConfig.rightPadding
 
-        val firstPartialText = text.partialTexts!!.first().second.first()
-        val lastPartialText = text.partialTexts!!.last().second.last()
+        val firstPartialText = text.renderables!!.first().second.first()
+        val lastPartialText = text.renderables!!.last().second.last()
 
         UIRoundedRectangle.drawRoundedRectangle(
             state.left.toDouble(),
@@ -45,7 +45,7 @@ class CodeblockElement private constructor(val text: TextElement) : Element() {
             state.codeblockConfig.backgroundColor
         )
 
-        text.draw(state, state.codeblockConfig.fontColor, isMultilineCode = true)
+        text.draw(state, state.codeblockConfig.fontColor, avoidRenderableCalculation = true)
 
         state.newlineX -= state.codeblockConfig.leftPadding
         state.x = state.newlineX
