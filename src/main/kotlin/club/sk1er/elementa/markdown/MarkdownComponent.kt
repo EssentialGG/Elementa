@@ -9,7 +9,9 @@ import club.sk1er.elementa.constraints.FillConstraint
 import club.sk1er.elementa.constraints.RelativeConstraint
 import club.sk1er.elementa.dsl.*
 import club.sk1er.elementa.effects.ScissorEffect
+import club.sk1er.elementa.font.FontRenderer
 import java.awt.Color
+import java.util.concurrent.CompletableFuture
 
 /**
  * Component that parses a string as Markdown and renders it.
@@ -23,7 +25,10 @@ class MarkdownComponent(
     text: String,
     private val config: MarkdownConfig = MarkdownConfig()
 ) : UIComponent() {
-    private val document = Document.fromString(text)
+    private val documentFuture = CompletableFuture.supplyAsync {
+        Document.fromString(text)
+    }
+    private var document: Document? = null
 
     private val scrollComponent = ScrollComponent().constrain {
         width = RelativeConstraint() - 15.pixels()
@@ -70,6 +75,9 @@ class MarkdownComponent(
 
         scissor.beforeDraw(this)
 
+        if (document == null && documentFuture.isDone && !documentFuture.isCompletedExceptionally)
+            document = documentFuture.get()
+
         val state = MarkdownState(
             getLeft(),
             scrollChild.getTop(),
@@ -82,5 +90,9 @@ class MarkdownComponent(
         scrollChild.setHeight(state.y.pixels())
 
         scissor.afterDraw(this)
+    }
+
+    companion object {
+        val codeFontRenderer = FontRenderer(FontRenderer.SupportedFont.Menlo, 18f)
     }
 }

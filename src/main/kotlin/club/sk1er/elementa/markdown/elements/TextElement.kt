@@ -3,6 +3,7 @@ package club.sk1er.elementa.markdown.elements
 import club.sk1er.elementa.components.UIBlock
 import club.sk1er.elementa.components.UIRoundedRectangle
 import club.sk1er.elementa.dsl.width
+import club.sk1er.elementa.markdown.MarkdownComponent
 import club.sk1er.elementa.markdown.MarkdownState
 import club.sk1er.elementa.utils.drawTexture
 import club.sk1er.mods.core.universal.UniversalDesktop
@@ -98,12 +99,12 @@ class TextElement internal constructor(internal val spans: List<Span>) : Element
             }
 
             fun textWidth(text: String) = if (span.style.code) {
-                CodeblockElement.codeFontRenderer.getWidth(text) * state.textScaleModifier +
+                MarkdownComponent.codeFontRenderer.getWidth(text) * state.textScaleModifier +
                     state.inlineCodeConfig.leftPadding + state.inlineCodeConfig.rightPadding
             } else text.width(state.textScaleModifier)
 
             fun textHeight(text: String) = if (span.style.code) {
-                CodeblockElement.codeFontRenderer.getHeight(text) * state.textScaleModifier
+                MarkdownComponent.codeFontRenderer.getHeight(text) * state.textScaleModifier
             } else 9f * state.textScaleModifier
 
             var text = span.styledText
@@ -198,7 +199,7 @@ class TextElement internal constructor(internal val spans: List<Span>) : Element
                 } else color
 
                 if (span.style.code) {
-                    CodeblockElement.codeFontRenderer.drawString(
+                    MarkdownComponent.codeFontRenderer.drawString(
                         text,
                         x + state.inlineCodeConfig.leftPadding,
                         y - 1.5f,

@@ -53,8 +53,6 @@ class CodeblockElement private constructor(val text: TextElement) : Element() {
     }
 
     companion object {
-        val codeFontRenderer = FontRenderer(FontRenderer.SupportedFont.Menlo, 18f)
-
         fun parse(lines: MutableList<String>): CodeblockElement? {
             if (!matches(lines))
                 return null
