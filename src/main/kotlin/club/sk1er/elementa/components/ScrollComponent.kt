@@ -63,14 +63,16 @@ class ScrollComponent @JvmOverloads constructor(
         onMouseClick { event -> onClick(event.relativeX, event.relativeY, event.mouseButton) }
     }
 
-    private val scrollSVGComponent = (SVGComponent(scrollSVG).constrain {
+    private val scrollSVGComponent = SVGComponent(scrollSVG).constrain {
         width = 24.pixels()
         height = 24.pixels()
 
         color = scrollIconColor.asConstraint()
-    }).also {
-        addChild(it)
-        it.hide(instantly = true)
+    }
+
+    init {
+        super.addChild(scrollSVGComponent)
+        scrollSVGComponent.hide(instantly = true)
     }
 
     override fun draw() {
@@ -339,6 +341,11 @@ class ScrollComponent @JvmOverloads constructor(
     }
 
     override fun removeChild(component: UIComponent) = apply {
+        if (component == scrollSVGComponent) {
+            super.removeChild(component)
+            return@apply
+        }
+
         actualHolder.removeChild(component)
         allChildren.remove(component)
 
