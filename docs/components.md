@@ -8,7 +8,7 @@ that can be played around with and modified to see how each component works.
 
 What the entire playground GUI looks like:
 
-![Playground GUI Photo](https://i.imgur.com/1WhLRya.png)
+![Playground GUI Photo](https://i.imgur.com/z9eJPik.png)
 
 - [UIContainer](#uicontainer)
 - [UIBlock](#uiblock)
@@ -19,8 +19,11 @@ What the entire playground GUI looks like:
 - [UIShape](#uishape)
 - [UIImage](#uiimage)
 - [BlurHashImage](#blurhashimage)
-- [UITextInput](#uitextinput)
+- [UITextInput](#textinput)
 - [ScrollComponent](#scrollcomponent)
+- [MarkdownComponent](#markdown)
+- [SVGComponent](#svg)
+- [Inspector](#inspector)
 
 ### UIContainer
 
@@ -349,16 +352,20 @@ top and bottom images looked identical. To see this dynamic loading in action, r
 
 ![BlurHashImage Example](https://i.imgur.com/Jb8phls.png)
 
-### UITextInput
+### TextInput
 
 Plenty of GUIs will require the user to provide keyboard input, often in the form of a text input.
-To fulfill this need, Elementa provides [UITextInput](../src/main/kotlin/club/sk1er/elementa/components/UITextInput.kt).
-Text inputs by default try to wrap their text when they reach their maximum width, providing a multi-line input area.
-When you wish to make a text input active, you simply need to set the `active` field to true. In addition,
-text inputs can have placeholder text in place before the user begins typing.
-These can be seen in the following example.
+To fulfill this need, Elementa provides [UITextInput](../src/main/kotlin/club/sk1er/elementa/components/input/UITextInput.kt)
+and [UIMultilineTextInput](../src/main/kotlin/club/sk1er/elementa/components/input/UIMultilineTextInput.kt). Both
+of these input components are extremely powerful: they support cursor movement, selection via both keyboard and mouse,
+copy/paste, undo/redo, and so much more! In order to activate these components, simply give them window focus,
+and they will handle the rest. Pressing `<esc>`, on these components or clicking off of them will automatically
+deactivate them as well. Enabling `ScissorEffect` on these components is unnecessary, as they already have it enabled
+by default.
 
-Note: Make sure you are passing mouse & keyboard events to your window if your inputs are not working.
+The first Text Input component is a single-line text input, similar to the type of text box you would find
+being used for your browser's search bar. With this type of input, overflowing text makes the box scroll
+sideways, and moves the earlier text off to the left.
 
 ```kotlin
 val box1 = UIBlock(Color(50, 50, 50)).constrain {
@@ -366,24 +373,21 @@ val box1 = UIBlock(Color(50, 50, 50)).constrain {
     y = SiblingConstraint() + 5.pixels()
 
     width = 100.pixels()
-    height = 50.pixels()
+    height = 12.pixels()
 } childOf this
 
-val textInput1 = UITextInput("My placeholder text").constrain {
+val textInput1 = UITextInput("My single line text input!").constrain {
     x = 2.pixels()
     y = 2.pixels()
 
-    width = RelativeConstraint(1f) - 2.pixels()
+    width = RelativeConstraint(1f) - 6.pixels()
 } childOf box1
 
-box1.onMouseClick { _, _, _ ->
-    textInput1.active = true
-}
+box1.onMouseClick { textInput1.grabWindowFocus() }
 ```
 
-`UITextInputs` can also be non-wrapping, making them single-line inputs. Non-wrapped text inputs
-intelligently reposition the text so that while typing, the end of the text is always visible.
-This means we need to enable the `ScissorEffect` on our box component to avoid seeing the overflowing text. 
+The other type of Text Input is a multi-line text input component. This is the type of text box used for
+Discord's message box. It supports text wrapping across lines, new-lines, scrolling vertically, and more.
 
 ```kotlin
 val box2 = UIBlock(Color(50, 50, 50)).constrain {
@@ -391,45 +395,31 @@ val box2 = UIBlock(Color(50, 50, 50)).constrain {
     y = SiblingConstraint() + 5.pixels()
 
     width = 100.pixels()
-    height = 12.pixels()
-} childOf this effect ScissorEffect()
+    height = ChildBasedSizeConstraint() + 4.pixels()
+} childOf this
 
-val textInput2 = UITextInput("My placeholder text", wrapped = false).constrain {
+val textInput2 = UIMultilineTextInput("My multiline text input!").constrain {
     x = 2.pixels()
     y = 2.pixels()
 
-    width = RelativeConstraint(1f) - 2.pixels()
-} childOf box2
+    width = RelativeConstraint(1f) - 6.pixels()
+}.setMaxLines(4) childOf box2
 
-box2.onMouseClick { _, _, _ ->
-    textInput2.active = true
-}
+box2.onMouseClick { textInput2.grabWindowFocus() }
 ```
 
-In this example, we would also like to deactivate text input 1 when text input 2 is activated, and vice versa.
-This is as simple as setting active to false on the opposite component.
-
-```kotlin
-box1.onMouseClick { _, _, _ ->
-    textInput1.active = true
-    textInput2.active = false
-}
-
-box2.onMouseClick { _, _, _ ->
-    textInput1.active = false
-    textInput2.active = true
-}
-```
+Note: Make sure you are passing mouse & keyboard events to your window if your inputs are not working. (Or just use 
+[WindowScreen](../src/main/kotlin/club/sk1er/elementa/WindowScreen.kt)!)
 
 The inputs before selecting or typing:
 
-![UITextInput Example before typing](https://i.imgur.com/g5bvkZu.png)
+![UITextInput Example before typing](https://i.imgur.com/PKvkoUT.png)
 
 The text inputs after typing:
 
-![UITextInput Example after typing](https://i.imgur.com/8jqEQvL.png)
+![UITextInput Example after typing](https://i.imgur.com/gBIH4bn.png)
 
-It's worth booting up the `ComponentsGui` playground to see how this inputs work and feel.
+It's worth booting up the `ComponentsGui` playground to see how these inputs work and feel.
 
 ### ScrollComponent
 
@@ -486,3 +476,102 @@ What the scroll components look like normally:
 What the scroll components look like with debug outlines enabled:
 
 ![ScrollComponent Outline Example](https://i.imgur.com/KiZGsa7.png)
+
+### Markdown
+
+A [MarkdownComponent](../src/main/kotlin/club/sk1er/elementa/markdown/MarkdownComponent.kt) is used to render
+any Markdown document natively. This is a great way to display rich text in your GUI, whether it be changelogs or
+whatever you require. Simply pass your markdown document to the `MarkdownComponent`'s constructor, where it is then
+parsed and ready to be rendered!
+
+```kotlin
+ MarkdownComponent(
+    """
+        # Markdown!
+        
+        This is pretty cool. We can now render arbitrary markdown beautifully.
+        
+        ```
+        We even have code :)
+        ```
+    """.trimIndent()
+).constrain {
+    x = 2.pixels()
+    y = SiblingConstraint(padding = 2f)
+    width = 200.pixels()
+    height = 100.pixels()
+} childOf this
+```
+
+`MarkdownComponent` in action:
+
+![MarkdownComponent Example](https://i.imgur.com/VATxhMk.png)
+
+### SVG
+
+An [SVGComponent](../src/main/kotlin/club/sk1er/elementa/components/SVGComponent.kt) is used to render
+(simple!) SVG documents natively. This is extremely useful for high resolution icons in your GUI, though keep in mind,
+the Elementa SVG parser/renderer are very simple, and support an extremely limited subset of the SVG standard. To ensure
+your icon will properly render, please use icons from [TablerIcons](https://github.com/tabler/tabler-icons).
+
+```kotlin
+SVGComponent.ofResource("/svg/test.svg").constrain {
+    x = 2.pixels()
+    y = SiblingConstraint(padding = 2f)
+    width = 50.pixels()
+    height = 50.pixels()
+} childOf this
+```
+
+The test.svg file is the following:
+
+```svg
+<svg width="24"
+     height="24"
+     viewBox="0 0 24 24"
+     stroke-width="2"
+     stroke="currentColor"
+     fill="none"
+     stroke-linecap="round"
+     stroke-linejoin="round">
+
+    <circle cx="12" cy="12" r="10" />
+    <circle cx="12" cy="12" r="4" />
+    <line x1="21.17" y1="8" x2="12" y2="8" />
+    <line x1="3.95" y1="6.06" x2="8.54" y2="14" />
+    <line x1="10.88" y1="21.94" x2="15.46" y2="14" />
+</svg>
+```
+
+When you select an icon from TablerIcons, it is best practice to simply copy the above file into your project's
+resources folder, replacing the inner `<circle>` and `<line>` elements with your chosen icon's inner svg elements.
+If you encounter an issue with the line-caps looking odd at certain scales, you may wish to remove the `stroke-linecap`
+and `stroke-linejoin` attributes from the topmost `<svg>` element in your SVG file.
+
+`SVGComponent` in action:
+
+![SVGComponent Example](https://i.imgur.com/Rp5khlc.png)
+
+
+### Inspector
+
+The [Inspector](../src/main/kotlin/club/sk1er/elementa/components/inspector/Inspector.kt) is a very handy tool used for
+debugging/inspecting your Elementa GUIs. It is meant to be similar to a browser's "Inspect Element" tool. It uses a
+[TreeView](../src/main/kotlin/club/sk1er/elementa/components/TreeView.kt) to display the component hierarchy starting
+from a specific root component. The `Inspector` can also be used to show the current position, size, color, etc.
+constraints of components, as well as their value as of the current frame.
+
+In order to create an Inspector, use the code below where the first parameter to `Inspector` is the root node to inspect,
+often the window. Though make sure to remove said code when deploying your GUI to production, as most users will not
+enjoy such a distraction :)
+
+```kotlin
+Inspector(window).constrain {
+    x = 10.pixels(true)
+    y = 10.pixels(true)
+} childOf window
+```
+
+The `Inspector` in action:
+
+![Inspector Example](https://i.imgur.com/l7eku4p.png)

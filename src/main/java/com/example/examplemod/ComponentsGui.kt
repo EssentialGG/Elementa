@@ -200,15 +200,15 @@ class ComponentsGui : WindowScreen() {
                 y = SiblingConstraint() + 5.pixels()
 
                 width = 100.pixels()
-                height = ChildBasedSizeConstraint() + 4.pixels()
+                height = 12.pixels()
             } childOf this
 
-            val textInput1 = UIMultilineTextInput("My multiline text input!").constrain {
+            val textInput1 = UITextInput("My single line text input!").constrain {
                 x = 2.pixels()
                 y = 2.pixels()
 
                 width = RelativeConstraint(1f) - 6.pixels()
-            }.setMaxLines(4) childOf box1
+            } childOf box1
 
             box1.onMouseClick { textInput1.grabWindowFocus() }
 
@@ -217,15 +217,15 @@ class ComponentsGui : WindowScreen() {
                 y = SiblingConstraint() + 5.pixels()
 
                 width = 100.pixels()
-                height = 12.pixels()
+                height = ChildBasedSizeConstraint() + 4.pixels()
             } childOf this
 
-            val textInput2 = UITextInput("My single line text input!").constrain {
+            val textInput2 = UIMultilineTextInput("My multiline text input!").constrain {
                 x = 2.pixels()
                 y = 2.pixels()
 
                 width = RelativeConstraint(1f) - 6.pixels()
-            } childOf box2
+            }.setMaxLines(4) childOf box2
 
             box2.onMouseClick { textInput2.grabWindowFocus() }
         } childOf window
