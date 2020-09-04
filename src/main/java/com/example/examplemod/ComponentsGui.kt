@@ -3,12 +3,13 @@ package com.example.examplemod
 import club.sk1er.elementa.WindowScreen
 import club.sk1er.elementa.components.*
 import club.sk1er.elementa.components.image.BlurHashImage
+import club.sk1er.elementa.components.input.UIMultilineTextInput
 import club.sk1er.elementa.components.input.UITextInput
+import club.sk1er.elementa.components.inspector.Inspector
 import club.sk1er.elementa.constraints.*
 import club.sk1er.elementa.dsl.*
 import club.sk1er.elementa.effects.OutlineEffect
-import club.sk1er.elementa.effects.ScissorEffect
-import club.sk1er.mods.core.universal.UniversalScreen
+import club.sk1er.elementa.markdown.MarkdownComponent
 import java.awt.Color
 import java.net.URL
 
@@ -193,21 +194,23 @@ class ComponentsGui : WindowScreen() {
             } childOf this
         } childOf window
 
-        ComponentType("UITextInput") {
+        ComponentType("Text Input") {
             val box1 = UIBlock(Color(50, 50, 50)).constrain {
                 x = 2.pixels()
                 y = SiblingConstraint() + 5.pixels()
 
                 width = 100.pixels()
-                height = 50.pixels()
+                height = ChildBasedSizeConstraint() + 4.pixels()
             } childOf this
 
-            val textInput1 = UITextInput("My placeholder text").constrain {
+            val textInput1 = UIMultilineTextInput("My multiline text input!").constrain {
                 x = 2.pixels()
                 y = 2.pixels()
 
-                width = RelativeConstraint(1f) - 2.pixels()
-            } childOf box1
+                width = RelativeConstraint(1f) - 6.pixels()
+            }.setMaxLines(4) childOf box1
+
+            box1.onMouseClick { textInput1.grabWindowFocus() }
 
             val box2 = UIBlock(Color(50, 50, 50)).constrain {
                 x = 2.pixels()
@@ -215,24 +218,16 @@ class ComponentsGui : WindowScreen() {
 
                 width = 100.pixels()
                 height = 12.pixels()
-            } childOf this effect ScissorEffect()
+            } childOf this
 
-            val textInput2 = UITextInput("My placeholder text").constrain {
+            val textInput2 = UITextInput("My single line text input!").constrain {
                 x = 2.pixels()
                 y = 2.pixels()
 
-                width = RelativeConstraint(1f) - 2.pixels()
+                width = RelativeConstraint(1f) - 6.pixels()
             } childOf box2
 
-            box1.onMouseClick {
-                textInput1.setActive(true)
-                textInput2.setActive(false)
-            }
-
-            box2.onMouseClick {
-                textInput1.setActive(false)
-                textInput2.setActive(true)
-            }
+            box2.onMouseClick { textInput2.grabWindowFocus() }
         } childOf window
 
         ComponentType("ScrollComponent") {
@@ -261,6 +256,39 @@ class ComponentsGui : WindowScreen() {
                 width = 150.pixels()
                 height = 75.pixels()
             } childOf this
+        } childOf window
+
+        ComponentType("Markdown") {
+            MarkdownComponent(
+                """
+                    # Markdown!
+                    
+                    This is pretty cool. We can now render arbitrary markdown beautifully.
+                    
+                    ```
+                    We even have code :)
+                    ```
+                """.trimIndent()
+            ).constrain {
+                x = 2.pixels()
+                y = SiblingConstraint(padding = 2f)
+                width = 200.pixels()
+                height = 100.pixels()
+            } childOf this
+        } childOf window
+
+        ComponentType("SVG") {
+            SVGComponent.ofResource("/svg/test.svg").constrain {
+                x = 2.pixels()
+                y = SiblingConstraint(padding = 2f)
+                width = 50.pixels()
+                height = 50.pixels()
+            } childOf this
+        } childOf window
+
+        Inspector(window).constrain {
+            x = 10.pixels(true)
+            y = 10.pixels(true)
         } childOf window
     }
 
