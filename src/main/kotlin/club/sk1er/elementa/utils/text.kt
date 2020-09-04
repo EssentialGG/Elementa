@@ -26,7 +26,7 @@ fun getStringSplitToWidth(text: String, maxLineWidth: Float): List<String> {
         }
 
         val word = builder.toString()
-        val wordWidth = word.width().toFloat()
+        val wordWidth = word.width()
 
         if (currLineWidth + wordWidth > maxLineWidthSpace) {
             if (wordWidth > maxLineWidthSpace) {

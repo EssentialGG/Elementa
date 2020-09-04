@@ -4,6 +4,7 @@ import club.sk1er.elementa.constraints.HeightConstraint
 import club.sk1er.elementa.dsl.max
 import club.sk1er.elementa.dsl.pixels
 import club.sk1er.elementa.dsl.width
+import club.sk1er.elementa.utils.getStringSplitToWidth
 import club.sk1er.elementa.utils.spaceWidth
 import club.sk1er.mods.core.universal.UniversalKeyboard
 import java.awt.Color
@@ -73,11 +74,12 @@ class UIMultilineTextInput @JvmOverloads constructor(
         beforeDraw()
 
         if (!active && !hasText()) {
-            // TODO: Avoid splitting the placeholder every draw frame
-            val placeholderLines = splitTextForWrapping(placeholder, getWidth())
-            for ((i, placeHolderLine) in placeholderLines.withIndex())
-                drawUnselectedText(placeHolderLine, getLeft(), i)
+            val textToDraw = if (placeholder.width() > getWidth()) {
+                val maxWidth = getWidth() - "...".width()
+                getStringSplitToWidth(placeholder, maxWidth)[0] + "..."
+            } else placeholder
 
+            drawUnselectedText(textToDraw, getLeft(), 0)
             return super.draw()
         }
 
