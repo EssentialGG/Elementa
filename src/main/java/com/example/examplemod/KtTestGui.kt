@@ -141,12 +141,6 @@ class KtTestGui : WindowScreen() {
             x = 0.pixels()
         }.setMinWidth(50.pixels()).setMaxWidth(80.pixels()) childOf parent
 
-        input.onFocus {
-            input.setActive(true)
-        }.onFocusLost {
-            input.setActive(false)
-        }
-
         parent.onMouseClick {
             input.grabWindowFocus()
         }

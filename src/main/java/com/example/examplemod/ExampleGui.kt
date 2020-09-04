@@ -407,19 +407,14 @@ class ExampleGui : WindowScreen() {
                 // As we've seen before, we could have used a [RelativeConstraint] here
                 // and subtracted by 4 pixels, but this way, using a [FillConstraint] is a little easier to grasp.
                 height = FillConstraint() - 2.pixels()
-            }.onFocus {
-                // When we gain the Window's focus, we want to mark ourselves as active.
-                // We know that the [this] value is an instance of [UITextInput] so we can simply cast.
-                (this as UITextInput).setActive(true)
-            }.onFocusLost {
-                // Conversely, when we lose the Window's focus, we want to make ourselves inactive.
-                // Again, we know that the [this] value is an instance of [UITextInput] so we can simply cast.
-                (this as UITextInput).setActive(false)
             }.onMouseClick {
                 // When we click inside of this text area, we want to activate it. To do so, we need to make sure
                 // that this text input has the Window's focus. This means that the Window will route keyboard
                 // events to our component while it is focused. Later, when we click away from this text input area,
-                // we will automatically lose focus, and our [onFocusLost] listener will be called.
+                // we will automatically lose focus.
+                // Both the [UITextInput] and [UIMultilineTextInput] classes automatically activate/deactivate
+                // themselves when they receive/lose focus respectively, so there is no need to manually add
+                // [onFocus] or [onFocusLost] listeners, unless you wish to override the default behavior.
                 grabWindowFocus()
             } childOf textHolder) as UITextInput
         }

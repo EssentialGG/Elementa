@@ -309,6 +309,14 @@ abstract class AbstractTextInput(
             selectionMode = SelectionMode.None
         }
 
+        onFocus {
+            setActive(true)
+        }
+
+        onFocusLost {
+            setActive(false)
+        }
+
         cursorComponent.animateAfterUnhide {
             setColorAnimation(Animations.OUT_CIRCULAR, 0.5f, Color.WHITE.asConstraint())
             onComplete {
