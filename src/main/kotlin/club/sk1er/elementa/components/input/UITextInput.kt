@@ -95,6 +95,8 @@ open class UITextInput @JvmOverloads constructor(
     }
 
     override fun draw() {
+        beforeDraw()
+
         if (!active && !hasText()) {
             UniversalGraphicsHandler.drawString(placeholder, getLeft(), getTop(), getColor().rgb, shadow)
             return super.draw()

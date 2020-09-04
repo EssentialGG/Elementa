@@ -70,6 +70,8 @@ class UIMultilineTextInput @JvmOverloads constructor(
     }
 
     override fun draw() {
+        beforeDraw()
+
         if (!active && !hasText()) {
             // TODO: Avoid splitting the placeholder every draw frame
             val placeholderLines = splitTextForWrapping(placeholder, getWidth())
