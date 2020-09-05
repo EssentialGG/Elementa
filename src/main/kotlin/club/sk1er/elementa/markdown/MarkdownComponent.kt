@@ -21,7 +21,7 @@ import java.util.concurrent.CompletableFuture
  * done with direct render calls instead of through the component
  * hierarchy.
  */
-class MarkdownComponent(
+class MarkdownComponent @JvmOverloads constructor(
     text: String,
     private val config: MarkdownConfig = MarkdownConfig()
 ) : UIComponent() {
@@ -93,6 +93,7 @@ class MarkdownComponent(
     }
 
     companion object {
+        @JvmStatic
         val codeFontRenderer = FontRenderer(FontRenderer.SupportedFont.Menlo, 18f)
     }
 }

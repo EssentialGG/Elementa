@@ -13,7 +13,7 @@ import club.sk1er.mods.core.universal.UniversalResolutionUtil
 import java.awt.Color
 import java.text.NumberFormat
 
-class Inspector(
+class Inspector @JvmOverloads constructor(
     rootComponent: UIComponent,
     backgroundColor: Color = Color(40, 40, 40),
     outlineColor: Color = Color(20, 20, 20),

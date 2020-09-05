@@ -55,6 +55,7 @@ class FontRenderer private constructor(private val fontSize: Float) {
         GlStateManager.popMatrix()
     }
 
+    @JvmOverloads
     fun drawString(text: String, xPos: Float, yPos: Float, color: Int, shadow: Boolean = true) {
         var x = xPos
         var y = yPos

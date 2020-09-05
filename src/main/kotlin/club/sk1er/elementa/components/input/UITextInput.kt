@@ -27,7 +27,7 @@ open class UITextInput @JvmOverloads constructor(
     private var minWidth: WidthConstraint? = null
     private var maxWidth: WidthConstraint? = null
 
-    private val placeholderWidth = placeholder.width().toFloat()
+    private val placeholderWidth = placeholder.width()
 
     fun setMinWidth(constraint: WidthConstraint) = apply {
         minWidth = constraint
@@ -49,7 +49,7 @@ open class UITextInput @JvmOverloads constructor(
         if (column < 0 || column > lineText.length)
             return
 
-        val widthBeforePosition = lineText.substring(0, column).width().toFloat()
+        val widthBeforePosition = lineText.substring(0, column).width()
 
         when {
             getText().width() < getWidth() -> {
@@ -81,7 +81,7 @@ open class UITextInput @JvmOverloads constructor(
 
     override fun recalculateDimensions() {
         if (minWidth != null && maxWidth != null) {
-            val width = if (!hasText() && !this.active) placeholderWidth else getText().width().toFloat()
+            val width = if (!hasText() && !this.active) placeholderWidth else getText().width()
             setWidth(width.pixels().minMax(minWidth!!, maxWidth!!))
         }
     }

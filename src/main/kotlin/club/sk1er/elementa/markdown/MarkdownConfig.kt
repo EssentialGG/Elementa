@@ -2,7 +2,7 @@ package club.sk1er.elementa.markdown
 
 import java.awt.Color
 
-data class MarkdownConfig(
+data class MarkdownConfig @JvmOverloads constructor(
     val headerConfig: HeaderConfig = HeaderConfig(),
     val listConfig: ListConfig = ListConfig(),
     val textConfig: TextConfig = TextConfig(),
@@ -12,7 +12,7 @@ data class MarkdownConfig(
     val urlConfig: URLConfig = URLConfig()
 )
 
-data class HeaderConfig(
+data class HeaderConfig @JvmOverloads constructor(
     val fontColor: Color = Color.WHITE,
     val level1: HeaderLevelConfig = HeaderLevelConfig(fontColor, 2.0f, 12f, 6f, hasDivider = true),
     val level2: HeaderLevelConfig = HeaderLevelConfig(fontColor, 1.66f, 10f, 5f, hasDivider = true),
@@ -22,7 +22,7 @@ data class HeaderConfig(
     val level6: HeaderLevelConfig = HeaderLevelConfig(Color(155, 155, 155), 0.7f, 4f, 2f)
 )
 
-data class HeaderLevelConfig(
+data class HeaderLevelConfig @JvmOverloads constructor(
     val fontColor: Color,
     val textScale: Float,
     val spaceBefore: Float,
@@ -32,7 +32,7 @@ data class HeaderLevelConfig(
     val dividerWidth: Float = 2f
 )
 
-data class ListConfig(
+data class ListConfig @JvmOverloads constructor(
     val fontColor: Color = Color.WHITE,
     val indentation: Float = 10f,
     val elementSpacing: Float = 5f,
@@ -41,13 +41,13 @@ data class ListConfig(
     val spaceAfterList: Float = 5f
 )
 
-data class TextConfig(
+data class TextConfig @JvmOverloads constructor(
     val color: Color = Color.WHITE,
     val shadow: Boolean = true,
     val spaceBetweenLines: Float = 4f
 )
 
-data class InlineCodeConfig(
+data class InlineCodeConfig @JvmOverloads constructor(
     val fontColor: Color = Color.WHITE,
     val backgroundColor: Color = Color(60, 60, 60, 255),
     val outlineColor: Color = Color(140, 140, 140, 255),
@@ -60,7 +60,7 @@ data class InlineCodeConfig(
     val bottomPadding: Float = 2f
 )
 
-data class CodeblockConfig(
+data class CodeblockConfig @JvmOverloads constructor(
     val fontColor: Color = Color.WHITE,
     val backgroundColor: Color = Color(40, 40, 40, 255),
     val outlineColor: Color = Color(120, 120, 120, 255),
@@ -75,7 +75,7 @@ data class CodeblockConfig(
     val bottomMargin: Float = 10f
 )
 
-data class URLConfig(
+data class URLConfig @JvmOverloads constructor(
     val fontColor: Color = Color(6, 217, 210),
     val showBarOnHover: Boolean = true,
     val barColor: Color = Color(6, 217, 210),
@@ -83,7 +83,7 @@ data class URLConfig(
     val spaceBeforeBar: Float = 1f
 )
 
-data class BlockquoteConfig(
+data class BlockquoteConfig @JvmOverloads constructor(
     val spaceBeforeDivider: Float = 3f,
     val spaceAfterDivider: Float = 6f,
     val spaceBeforeBlockquote: Float = 7f,

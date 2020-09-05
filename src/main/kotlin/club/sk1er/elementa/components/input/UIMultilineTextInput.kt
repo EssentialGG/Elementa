@@ -182,6 +182,4 @@ class UIMultilineTextInput @JvmOverloads constructor(
 
         return LinePosition(line, column, isVisual = true)
     }
-
-
 }
