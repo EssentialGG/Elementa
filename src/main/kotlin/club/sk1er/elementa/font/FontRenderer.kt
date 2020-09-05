@@ -1,7 +1,8 @@
 package club.sk1er.elementa.font
 
+import club.sk1er.mods.core.universal.UniversalGraphicsHandler
+import club.sk1er.mods.core.universal.UniversalResolutionUtil
 import net.minecraft.client.Minecraft
-import net.minecraft.client.gui.ScaledResolution
 import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.util.StringUtils
 import org.lwjgl.opengl.GL11
@@ -15,7 +16,7 @@ import java.util.regex.Pattern
 class FontRenderer private constructor(private val fontSize: Float) {
     private val cachedStringWidth: MutableMap<String, Float> = HashMap()
     private var unicodeFont: UnicodeFont? = null
-    private var prevScaleFactor = ScaledResolution(Minecraft.getMinecraft()).scaleFactor
+    private var prevScaleFactor = UniversalResolutionUtil.getInstance().scaleFactor
 
     constructor(font: Font, fontSize: Float) : this(fontSize) {
         setUnicodeFont(font)
@@ -48,11 +49,11 @@ class FontRenderer private constructor(private val fontSize: Float) {
     }
 
     fun drawStringScaled(text: String, givenX: Int, givenY: Int, color: Int, givenScale: Double) {
-        GlStateManager.pushMatrix()
-        GlStateManager.translate(givenX.toDouble(), givenY.toDouble(), 0.0)
-        GlStateManager.scale(givenScale, givenScale, givenScale)
+        UniversalGraphicsHandler.pushMatrix()
+        UniversalGraphicsHandler.translate(givenX.toDouble(), givenY.toDouble(), 0.0)
+        UniversalGraphicsHandler.scale(givenScale, givenScale, givenScale)
         drawString(text, 0f, 0f, color)
-        GlStateManager.popMatrix()
+        UniversalGraphicsHandler.popMatrix()
     }
 
     @JvmOverloads
@@ -63,10 +64,10 @@ class FontRenderer private constructor(private val fontSize: Float) {
         if (shadow)
             drawString(StringUtils.stripControlCodes(text), x + 0.5f, y + 0.5f, 0x000000, false)
 
-        val resolution = ScaledResolution(Minecraft.getMinecraft())
+        val scaleFactor = UniversalResolutionUtil.getInstance().scaleFactor
         try {
-            if (resolution.scaleFactor != prevScaleFactor) {
-                prevScaleFactor = resolution.scaleFactor
+            if (scaleFactor != prevScaleFactor) {
+                prevScaleFactor = scaleFactor
                 unicodeFont?.font?.deriveFont(fontSize * prevScaleFactor / 2)?.let(::setUnicodeFont)
             }
         } catch (e: Exception) {
@@ -75,8 +76,8 @@ class FontRenderer private constructor(private val fontSize: Float) {
         if (unicodeFont == null)
             return
 
-        GlStateManager.pushMatrix()
-        GlStateManager.scale(1f / prevScaleFactor, 1f / prevScaleFactor, 1f / prevScaleFactor)
+        UniversalGraphicsHandler.pushMatrix()
+        UniversalGraphicsHandler.scale(1f / prevScaleFactor, 1f / prevScaleFactor, 1f / prevScaleFactor)
 
         x *= prevScaleFactor
         y *= prevScaleFactor
@@ -86,11 +87,11 @@ class FontRenderer private constructor(private val fontSize: Float) {
         val green = (color shr 8 and 255).toFloat() / 255.0f
         val blue = (color and 255).toFloat() / 255.0f
         val alpha = (color shr 24 and 255).toFloat() / 255.0f
-        GlStateManager.color(red, green, blue, alpha)
+        GL11.glColor4f(red, green, blue, alpha)
 
-        GlStateManager.disableLighting()
-        GlStateManager.enableBlend()
-        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO)
+        UniversalGraphicsHandler.disableLighting()
+        UniversalGraphicsHandler.enableBlend()
+        UniversalGraphicsHandler.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO)
         GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA)
 
         val parts = COLOR_CODE_PATTERN.split(text)
@@ -130,9 +131,9 @@ class FontRenderer private constructor(private val fontSize: Float) {
             }
         }
 
-        GlStateManager.color(1f, 1f, 1f, 1f)
-        GlStateManager.bindTexture(0)
-        GlStateManager.popMatrix()
+        GL11.glColor4f(1f, 1f, 1f, 1f)
+        UniversalGraphicsHandler.bindTexture(0)
+        UniversalGraphicsHandler.popMatrix()
     }
 
     fun drawCenteredString(text: String, x: Float, y: Float, color: Int) {
@@ -140,11 +141,11 @@ class FontRenderer private constructor(private val fontSize: Float) {
     }
 
     fun drawCenteredTextScaled(text: String, givenX: Int, givenY: Int, color: Int, givenScale: Double) {
-        GlStateManager.pushMatrix()
-        GlStateManager.translate(givenX.toDouble(), givenY.toDouble(), 0.0)
-        GlStateManager.scale(givenScale, givenScale, givenScale)
+        UniversalGraphicsHandler.pushMatrix()
+        UniversalGraphicsHandler.translate(givenX.toDouble(), givenY.toDouble(), 0.0)
+        UniversalGraphicsHandler.scale(givenScale, givenScale, givenScale)
         drawCenteredString(text, 0f, 0f, color)
-        GlStateManager.popMatrix()
+        UniversalGraphicsHandler.popMatrix()
     }
 
     fun drawCenteredStringWithShadow(text: String, x: Float, y: Float, color: Int) {
@@ -168,7 +169,6 @@ class FontRenderer private constructor(private val fontSize: Float) {
     fun getHeight(s: String?): Float {
         return unicodeFont!!.getHeight(s) / 2.0f
     }
-
 
     enum class SupportedFont(val resourcePath: String) {
         Menlo("/fonts/Menlo-Regular.ttf")
