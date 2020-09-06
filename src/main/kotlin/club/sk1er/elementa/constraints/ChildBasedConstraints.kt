@@ -52,7 +52,7 @@ class ChildBasedMaxSizeConstraint : SizeConstraint {
 
 // TODO: Is there a good way to calculate this number for radii, or should this just be an invalid constraint
 //  for radius?
-class ChildSizeRangeConstraint : WidthConstraint, HeightConstraint {
+class ChildBasedRangeConstraint : WidthConstraint, HeightConstraint {
     override var cachedValue = 0f
     override var recalculate = true
     override var constrainTo: UIComponent? = null
