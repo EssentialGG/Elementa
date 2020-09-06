@@ -375,6 +375,10 @@ class ScrollComponent @JvmOverloads constructor(
         actualHolder.mouseClick(mouseX, mouseY, button)
     }
 
+    override fun hitTest(x: Float, y: Float): UIComponent {
+        return actualHolder.hitTest(x, y)
+    }
+
     fun searchAndInsert(components: List<UIComponent>, comparison: (UIComponent) -> Int) {
         if (components.isEmpty()) return
 
