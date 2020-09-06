@@ -24,6 +24,19 @@ In your dependencies block, add:
 implementation "club.sk1er:Elementa:1.7.1-$mcVersion"
 ```
 
+## 2.0.0 Snapshots
+
+To use the latest snapshot, use the following dependency:
+
+```groovy
+implementation "club.sk1er:Elementa:129-$mcVersion-SNAPSHOT"
+```
+
+If you were previously using v1.7.1 of Elementa and are now on the v2.0.0 snapshots, please refer to the
+[migration](docs/migration.md) document to know what has changed.
+
+To learn about all the new features in v2.0.0, please read the [what's new](docs/whatsnew.md) document.
+
 ## Components
 
 All the drawing in Elementa is done via UIComponents. There is a root component named `Window`
@@ -45,6 +58,12 @@ val window = Window()
 // a child of the Window. Now that it is in the hierarchy, it will be drawn when we render our Window.
 val box = UIBlock(Color.RED /* java.awt.Color */).childOf(window)
 ```
+
+A showcase of all the components provided by Elementa:
+
+![Playground GUI Photo](https://i.imgur.com/z9eJPik.png)
+
+Read more about all of these components [here](docs/components.md).
 
 ## Constraints
 
