@@ -6,18 +6,12 @@ import club.sk1er.elementa.dsl.pixels
 import club.sk1er.elementa.shaders.FloatUniform
 import club.sk1er.elementa.shaders.Shader
 import club.sk1er.elementa.shaders.Vec2Uniform
-import club.sk1er.elementa.shaders.Vec4Uniform
+import club.sk1er.elementa.utils.Vector2f
 import club.sk1er.mods.core.universal.UniversalGraphicsHandler
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats
-import org.lwjgl.opengl.GL11
-import org.lwjgl.util.vector.Vector2f
-import org.lwjgl.util.vector.Vector4f
 import java.awt.Color
-import kotlin.math.PI
-import kotlin.math.cos
-import kotlin.math.sin
 
-class UICircle @JvmOverloads constructor(radius: Float = 0f, color: Color = Color.WHITE, var steps: Int = 40) : UIComponent() {
+class UICircle @JvmOverloads constructor(radius: Float = 0f, color: Color = Color.WHITE, var steps: Int = 40) :
+    UIComponent() {
     init {
         setColor(color.asConstraint())
         setRadius(radius.pixels())

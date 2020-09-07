@@ -5,8 +5,8 @@ import club.sk1er.elementa.dsl.pixels
 import club.sk1er.elementa.shaders.FloatUniform
 import club.sk1er.elementa.shaders.Shader
 import club.sk1er.elementa.shaders.Vec4Uniform
+import club.sk1er.elementa.utils.Vector4f
 import club.sk1er.mods.core.universal.UniversalGraphicsHandler
-import org.lwjgl.util.vector.Vector4f
 import java.awt.Color
 
 /**

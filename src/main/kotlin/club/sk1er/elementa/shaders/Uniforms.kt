@@ -1,9 +1,9 @@
 package club.sk1er.elementa.shaders
 
+import club.sk1er.elementa.utils.Vector2f
+import club.sk1er.elementa.utils.Vector4f
 import org.lwjgl.opengl.ARBShaderObjects
 import org.lwjgl.opengl.GL20
-import org.lwjgl.util.vector.Vector2f
-import org.lwjgl.util.vector.Vector4f
 
 abstract class ShaderUniform<T>(val location: Int) {
     abstract fun setValue(value: T)
