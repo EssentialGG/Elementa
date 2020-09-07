@@ -326,6 +326,18 @@ class TextElement internal constructor(internal val spans: List<Span>) : Element
         }
     }
 
+    @Throws(Throwable::class)
+    protected fun finalize() {
+        spans.forEach {
+            it.style.texture?.let { texture ->
+                val glTextureId = texture.glTextureId
+                if (glTextureId != 0 && glTextureId != -1) {
+                    UniversalGraphicsHandler.deleteTexture(glTextureId);
+                }
+            }
+        }
+    }
+
     companion object {
         private val specialChars = listOf('*', '_', '`', '[', ']', ')', '!')
 
