@@ -217,22 +217,20 @@ class TextElement internal constructor(internal val spans: List<Span>) : Element
 
                 state.config.inlineCodeConfig.run {
                     UIRoundedRectangle.drawRoundedRectangle(
-                        if (cutOffBeginning) state.left - 10.0 else x1.toDouble() - leftPadding,
-                        y1.toDouble() - topPadding,
-                        if (cutOffEnd) state.left + state.width + 10.0 else x2.toDouble() + rightPadding,
-                        y2.toDouble() + bottomPadding,
+                        if (cutOffBeginning) state.left - 10 else x1 - leftPadding,
+                        y1 - topPadding,
+                        if (cutOffEnd) state.left + state.width + 10 else x2 + rightPadding,
+                        y2 + bottomPadding,
                         cornerRadius,
-                        steps,
                         outlineColor
                     )
 
                     UIRoundedRectangle.drawRoundedRectangle(
-                        if (cutOffBeginning) state.left - 10.0 else x1.toDouble() - leftPadding + outlineWidth,
-                        y1.toDouble() - topPadding + outlineWidth,
-                        if (cutOffEnd) state.left + state.width + 10.0 else x2.toDouble() + rightPadding - outlineWidth,
-                        y2.toDouble() + bottomPadding - outlineWidth,
+                        if (cutOffBeginning) state.left - 10 else x1 - leftPadding + outlineWidth,
+                        y1 - topPadding + outlineWidth,
+                        if (cutOffEnd) state.left + state.width + 10 else x2 + rightPadding - outlineWidth,
+                        y2 + bottomPadding - outlineWidth,
                         cornerRadius,
-                        steps,
                         backgroundColor
                     )
                 }

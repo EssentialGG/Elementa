@@ -1,7 +1,6 @@
 package club.sk1er.elementa.markdown.elements
 
 import club.sk1er.elementa.components.UIRoundedRectangle
-import club.sk1er.elementa.font.FontRenderer
 import club.sk1er.elementa.markdown.MarkdownState
 
 class CodeblockElement private constructor(val text: TextElement) : Element() {
@@ -24,24 +23,22 @@ class CodeblockElement private constructor(val text: TextElement) : Element() {
         val lastPartialText = text.renderables!!.last().second.last()
 
         UIRoundedRectangle.drawRoundedRectangle(
-            state.left.toDouble(),
-            firstPartialText.bounds.y1.toDouble() - state.codeblockConfig.topPadding,
-            state.left.toDouble() + state.width - 2,
-            lastPartialText.bounds.y2.toDouble() + state.codeblockConfig.bottomPadding,
+            state.left,
+            firstPartialText.bounds.y1 - state.codeblockConfig.topPadding,
+            state.left + state.width - 2,
+            lastPartialText.bounds.y2 + state.codeblockConfig.bottomPadding,
             state.codeblockConfig.cornerRadius,
-            state.codeblockConfig.steps,
             state.codeblockConfig.outlineColor
         )
 
         val outlineWidth = state.codeblockConfig.outlineWidth
 
         UIRoundedRectangle.drawRoundedRectangle(
-            state.left.toDouble() + outlineWidth,
-            firstPartialText.bounds.y1.toDouble() - state.codeblockConfig.topPadding + outlineWidth,
-            state.left.toDouble() + state.width  - outlineWidth - 2,
-            lastPartialText.bounds.y2.toDouble() + state.codeblockConfig.bottomPadding - outlineWidth,
+            state.left + outlineWidth,
+            firstPartialText.bounds.y1 - state.codeblockConfig.topPadding + outlineWidth,
+            state.left + state.width  - outlineWidth - 2,
+            lastPartialText.bounds.y2 + state.codeblockConfig.bottomPadding - outlineWidth,
             state.codeblockConfig.cornerRadius,
-            state.codeblockConfig.steps,
             state.codeblockConfig.backgroundColor
         )
 

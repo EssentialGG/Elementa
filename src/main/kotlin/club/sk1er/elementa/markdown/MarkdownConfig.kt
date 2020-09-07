@@ -66,7 +66,6 @@ data class CodeblockConfig @JvmOverloads constructor(
     val outlineColor: Color = Color(120, 120, 120, 255),
     val outlineWidth: Float = 0.5f,
     val cornerRadius: Float = 3f,
-    val steps: Int = 10,
     val leftPadding: Float = 5f,
     val topPadding: Float = 5f,
     val rightPadding: Float = 5f,
