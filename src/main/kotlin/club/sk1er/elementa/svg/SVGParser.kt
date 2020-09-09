@@ -22,22 +22,29 @@ object SVGParser {
         val svgRoundLineCaps = svg.attributeValue("stroke-linecap") != null
         val svgRoundLineJoins = svg.attributeValue("stroke-linejoin") != null
 
-        val elements = svg.elements().flatMap {
-            val els = when (it.name) {
-                "circle" -> listOf(SVGCircle.from(it))
-                "line" -> listOf(SVGLine.from(it))
-                "polyline" -> listOf(SVGPolyline.from(it))
-                "path" -> parsePath(it)
-                "rect" -> listOf(SVGRect.from(it))
-                else -> throw UnsupportedOperationException("Element type ${it.name} is not supported!")
+        val elements = mutableListOf<SVGElement>()
+
+        loop@ for (element in svg.elements()) {
+            val els = when (element.name) {
+                "circle" -> listOf(SVGCircle.from(element))
+                "line" -> listOf(SVGLine.from(element))
+                "polyline" -> listOf(SVGPolyline.from(element))
+                "path" -> try {
+                    parsePath(element)
+                } catch (e: PathParser.PathParseException) {
+                    e.printStackTrace()
+                    break@loop
+                }
+                "rect" -> listOf(SVGRect.from(element))
+                else -> throw UnsupportedOperationException("Element type ${element.name} is not supported!")
             }
 
-            it.attributeValue("transform")?.let { attribute ->
+            element.attributeValue("transform")?.let { attribute ->
                 val transform = parseTransform(attribute)
                 els.forEach { el -> el.attributes.transform = transform }
             }
 
-            els
+            elements.addAll(els)
         }
 
         return SVG(elements, svgWidth, svgHeight, svgStrokeWidth, svgRoundLineCaps, svgRoundLineJoins)
