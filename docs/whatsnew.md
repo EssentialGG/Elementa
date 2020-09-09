@@ -21,9 +21,10 @@ rich text. Read more about the features of the `MarkdownComponent` and how to us
 
 ### TreeView
 
-Added a new [TreeView](../src/main/kotlin/club/sk1er/elementa/components/TreeView.kt) component.
+Added a new [TreeView](../src/main/kotlin/club/sk1er/elementa/components/TreeView.kt) component. It is used to display 
+tree-like information in a hierarchy. This is the primary component used by the Inspector, and is highly customizable. 
 
-### Window
+### WindowScreen
 
 There is now a [WindowScreen](../src/main/kotlin/club/sk1er/elementa/WindowScreen.kt) class provided for an easy way to
 avoid the boilerplate of calling all of the `Window` events manually. Rather than extending `GuiScreen` (or `Screen` in
@@ -36,7 +37,7 @@ the GUI.
 
 #### Children Insertion Helpers
 
-The utility functions `insertChildAt`, `insertChildBefore`, and `insertChildAfter`, `replaceChild`, have been added to
+The utility functions `insertChildAt`, `insertChildBefore`, `insertChildAfter`, and `replaceChild`, have been added to
 easily place components inside a parent's child hierarchy at useful positions. 
 
 #### Hide API

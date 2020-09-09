@@ -23,6 +23,7 @@ What the entire playground GUI looks like:
 - [ScrollComponent](#scrollcomponent)
 - [MarkdownComponent](#markdown)
 - [SVGComponent](#svg)
+- [TreeView](#treeview)
 - [Inspector](#inspector)
 
 ### UIContainer
@@ -552,6 +553,66 @@ and `stroke-linejoin` attributes from the topmost `<svg>` element in your SVG fi
 
 ![SVGComponent Example](https://i.imgur.com/Rp5khlc.png)
 
+### TreeView
+
+The [TreeView](../src/main/kotlin/club/sk1er/elementa/components/TreeView.kt) is a component which allows the display of
+information in a tree. It allows the user to provide a tree-like UIComponent hierarchy, as well as a component to
+use as the "arrow" (the icon that is clicked to expand or contract a node), and takes care of the component layout. 
+
+To start, you will need a class that inherits from the abstract 
+[TreeNode](../src/main/kotlin/club/sk1er/elementa/components/TreeView.kt) class. A node that simply displays some text
+would look like the following:
+
+```kotlin
+class TextNode(private val text: String) : TreeNode() {
+    override fun getPrimaryComponent(): UIComponent {
+        return UIText(text).constrain {
+            x = SiblingConstraint()
+        }   
+    }
+    
+    override fun getArrowComponent(): TreeArrowComponent {
+        return SimpleArrowComponent()
+    }
+}
+```
+
+Note that we also have to provide a component to serve as the clickable open/close button of the tree -- which we call 
+the [TreeArrowComponent](../src/main/kotlin/club/sk1er/elementa/components/TreeView.kt) -- in the method 
+`getArrowComponent`. A `TreeArrowComponent` is simply a component with two abstract functions: `open` and `close`, which
+are called when the user changes the state of that particular `TreeNode`. This is important for showing the user which 
+nodes are expanded and which nodes are not. Note that no arrow component will be rendered if a node has no children
+
+Now that we have a node class, let's create a `TreeView`. We provide a Kotlin DSL for creating a Node structure easily:
+
+```kotlin
+val rootNode = TextNode("root node").withChildren {
+    add(TextNode("item 1"))
+    add(TextNode("item 2").withChildren {
+        add(TextNode("sub-item 1"))
+        add(TextNode("sub-item 2"))
+        add(TextNode("sub-item 3"))
+    })
+    add(TextNode("item 3"))
+}
+
+val treeView = TreeView(rootNode).constrain {
+    // ...
+}
+```
+
+Note that you can provide a list of `TreeNode`s to the `TreeView` constructor to have multiple roots. All nodes of the
+tree start in a closed position.
+
+The `TreeView` is convenient because the user only has to worry about the layout of each particular node. The user
+does not have to worry about aligning the children, or even aligning the arrow component.
+
+A few things to note:
+- You can provide a list of `TreeNode`s to the `TreeView` constructor to have multiple roots.
+- All nodes of the tree start in a closed position, and the `close` methods of the `TreeArrowComponent`s are _not_ 
+initially called.
+- Components returned from `getPrimaryComponent` must have constraints that do not depends on their parent. The 
+`TreeNode` makes heavy use of child-based constraints, and thus the children must be absolutely resolvable. 
 
 ### Inspector
 
