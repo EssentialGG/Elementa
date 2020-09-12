@@ -22,7 +22,14 @@ rich text. Read more about the features of the `MarkdownComponent` and how to us
 ### TreeView
 
 Added a new [TreeView](../src/main/kotlin/club/sk1er/elementa/components/TreeView.kt) component. It is used to display 
-tree-like information in a hierarchy. This is the primary component used by the Inspector, and is highly customizable. 
+tree-like information in a hierarchy. This is the primary component used by the Inspector, and is highly customizable.
+Read more [here](components.md#treeview)
+
+### GraphComponent
+
+The [GraphComponent](../src/main/kotlin/club/sk1er/elementa/components/graph/GraphComponent.kt) allows the user to 
+display an extremely customizable graph. Nearly every aspect of the way the graph is drawn is configurable. Read more
+[here](components.md#graphcomponent)
 
 ### WindowScreen
 

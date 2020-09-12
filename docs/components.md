@@ -23,6 +23,7 @@ What the entire playground GUI looks like:
 - [ScrollComponent](#scrollcomponent)
 - [MarkdownComponent](#markdown)
 - [SVGComponent](#svg)
+- [GraphComponent](#graphcomponent)
 - [TreeView](#treeview)
 - [Inspector](#inspector)
 
@@ -552,6 +553,58 @@ and `stroke-linejoin` attributes from the topmost `<svg>` element in your SVG fi
 `SVGComponent` in action:
 
 ![SVGComponent Example](https://i.imgur.com/Rp5khlc.png)
+
+### GraphComponent
+
+The [GraphComponent](../src/main/kotlin/club/sk1er/elementa/components/graph/GraphComponent.kt), as its name implies,
+allow the user to display a graph of information to the user. The great thing about this component is that it is
+extremely customizable. Everything can be changed, from the axis labels to the line widths. Lets look at a basic 
+example:
+
+```kotlin
+GraphComponent(listOf(
+    GraphPoint(0, 6),
+    GraphPoint(1, 1.3),
+    GraphPoint(2, 8.5),
+    GraphPoint(3, 3),
+    GraphPoint(4, 5),
+    GraphPoint(5, 10),
+    GraphPoint(6, 0)
+))
+```
+
+With no styling applied, using only the defaults provided by the component, we get a pretty good looking graph:
+
+![basic graph component](https://i.imgur.com/miJmnqz.png)
+
+However, let's apply some basic styling to improve the look:
+
+```kotlin
+GraphComponent(
+    listOf(
+        GraphPoint(0, 6),
+        GraphPoint(1, 1.3),
+        GraphPoint(2, 8.5),
+        GraphPoint(3, 3),
+        GraphPoint(4, 5),
+        GraphPoint(5, 10),
+        GraphPoint(6, 0)
+    ),
+    xBounds = Bounds(0, 6, 7, showLabels = true, labelColor = Color(101, 101, 101)),
+    yBounds = Bounds(0, 10, 4, showLabels = true, labelColor = Color(101, 101, 101)),
+    style = GraphStyle(
+        lineStyle = LineStyle(color = Color(1, 165, 82), width = 3f),
+        padding = Padding(10, 6, 10, 4)
+    )
+)
+```
+
+Now we can see the true power of this component -- with only six lines of styling, we now get this:
+
+![cool graph component](https://i.imgur.com/KqTlBZ1.png)
+
+The `GraphStyle` class has many more configuration options that aren't shown above. Check it out 
+[here](../src/main/kotlin/club/sk1er/elementa/components/graph/GraphStyle.kt)!
 
 ### TreeView
 
