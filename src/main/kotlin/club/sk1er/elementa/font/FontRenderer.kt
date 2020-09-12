@@ -171,7 +171,7 @@ class FontRenderer private constructor(private val fontSize: Float) {
     }
 
     enum class SupportedFont(val resourcePath: String) {
-        Menlo("/fonts/Menlo-Regular.ttf")
+        FiraCode("/fonts/FiraMono-Regular.ttf")
     }
 
     companion object {

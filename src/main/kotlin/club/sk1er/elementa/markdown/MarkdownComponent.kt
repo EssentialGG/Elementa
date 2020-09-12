@@ -23,7 +23,8 @@ import java.util.concurrent.CompletableFuture
  */
 class MarkdownComponent @JvmOverloads constructor(
     text: String,
-    private val config: MarkdownConfig = MarkdownConfig()
+    private val config: MarkdownConfig = MarkdownConfig(),
+    private val codeFontRenderer: FontRenderer = defaultCodeFontRenderer
 ) : UIComponent() {
     private val documentFuture = CompletableFuture.supplyAsync {
         Document.fromString(text)
@@ -79,6 +80,7 @@ class MarkdownComponent @JvmOverloads constructor(
             document = documentFuture.get()
 
         val state = MarkdownState(
+            codeFontRenderer,
             getLeft(),
             scrollChild.getTop(),
             scrollChild.getWidth(),
@@ -94,6 +96,6 @@ class MarkdownComponent @JvmOverloads constructor(
 
     companion object {
         @JvmStatic
-        val codeFontRenderer = FontRenderer(FontRenderer.SupportedFont.Menlo, 18f)
+        val defaultCodeFontRenderer = FontRenderer(FontRenderer.SupportedFont.FiraCode, 18f)
     }
 }

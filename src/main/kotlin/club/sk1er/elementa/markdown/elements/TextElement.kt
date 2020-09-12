@@ -99,12 +99,12 @@ class TextElement internal constructor(internal val spans: List<Span>) : Element
             }
 
             fun textWidth(text: String) = if (span.style.code) {
-                MarkdownComponent.codeFontRenderer.getWidth(text) * state.textScaleModifier +
+                state.codeFontRenderer.getWidth(text) * state.textScaleModifier +
                     state.inlineCodeConfig.leftPadding + state.inlineCodeConfig.rightPadding
             } else text.width(state.textScaleModifier)
 
             fun textHeight(text: String) = if (span.style.code) {
-                MarkdownComponent.codeFontRenderer.getHeight(text) * state.textScaleModifier
+                state.codeFontRenderer.getHeight(text) * state.textScaleModifier
             } else 9f * state.textScaleModifier
 
             var text = span.styledText
@@ -199,7 +199,7 @@ class TextElement internal constructor(internal val spans: List<Span>) : Element
                 } else color
 
                 if (span.style.code) {
-                    MarkdownComponent.codeFontRenderer.drawString(
+                    state.codeFontRenderer.drawString(
                         text,
                         x + state.inlineCodeConfig.leftPadding,
                         y - 1.5f,

@@ -1,9 +1,11 @@
 package club.sk1er.elementa.markdown
 
+import club.sk1er.elementa.font.FontRenderer
 import club.sk1er.elementa.markdown.elements.Element
 import kotlin.reflect.KClass
 
 data class MarkdownState(
+    val codeFontRenderer: FontRenderer,
     val left: Float,
     val top: Float,
     var width: Float,
