@@ -412,7 +412,7 @@ abstract class UIComponent : Observable() {
      * Use this in the proper mouse click event to cascade all component's mouse click events.
      * Most common use is on the [Window] object.
      */
-    open fun mouseClick(mouseX: Int, mouseY: Int, button: Int) {
+    open fun mouseClick(mouseX: Double, mouseY: Double, button: Int) {
         val clicked = hitTest(mouseX.toFloat(), mouseY.toFloat())
 
         lastClickCount = if (System.currentTimeMillis() - lastClickTime < 500) lastClickCount + 1 else 1
@@ -449,8 +449,8 @@ abstract class UIComponent : Observable() {
      * Use this in the proper mouse scroll event to cascade all component's mouse scroll events.
      * Most common use is on the [Window] object.
      */
-    open fun mouseScroll(delta: Int) {
-        if (delta == 0) return
+    open fun mouseScroll(delta: Double) {
+        if (delta == 0.0) return
 
         for (i in children.lastIndex downTo 0) {
             val child = children[i]

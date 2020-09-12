@@ -24,7 +24,7 @@ class ExampleCommand : CommandBase() {
     //$$ override fun getRequiredPermissionLevel() = 0
     //$$
     //$$ override fun execute(server: MinecraftServer, sender: ICommandSender, args: Array<String>) {
-    //$$     ExampleMod.gui = ExampleGui()
+    //$$     ExampleMod.gui = KtTestGui()
     //$$ }
     //#endif
 
@@ -34,12 +34,13 @@ class ExampleCommand : CommandBase() {
 //$$ import net.minecraft.command.CommandSource
 //$$ import net.minecraft.command.Commands
 //$$ import com.mojang.brigadier.context.CommandContext
-//$$ class ExampleCommand {
-//$$  fun register(dispatcher: CommandDispatcher<CommandSource?>) {
-//$$      dispatcher.register(Commands.literal("example").requires { usr: CommandSource -> usr.hasPermissionLevel(0) }.executes { usr: CommandContext<CommandSource> ->
-//$$          ExampleMod.gui = ExampleGui()
-//$$          1
-//$$      })
-//$$  }
+//$$
+//$$ object ExampleCommand {
+//$$     fun register(dispatcher: CommandDispatcher<CommandSource?>) {
+//$$         dispatcher.register(Commands.literal("example").requires { usr: CommandSource -> usr.hasPermissionLevel(0) }.executes { usr: CommandContext<CommandSource> ->
+//$$             ExampleMod.gui = KtTestGui()
+//$$             1
+//$$         })
+//$$     }
 //$$ }
 //#endif

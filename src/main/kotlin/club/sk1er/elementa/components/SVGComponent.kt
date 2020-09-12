@@ -5,12 +5,10 @@ import club.sk1er.elementa.components.image.ImageProvider
 import club.sk1er.elementa.svg.SVGParser
 import club.sk1er.elementa.svg.data.SVG
 import club.sk1er.mods.core.universal.UniversalGraphicsHandler
-import net.minecraft.client.renderer.GlStateManager
 import org.lwjgl.BufferUtils
 import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL15
 import java.awt.Color
-import kotlin.math.sqrt
 
 class SVGComponent(private var svg: SVG) : UIComponent(), ImageProvider {
     private var vboID = -1

@@ -1,7 +1,6 @@
 package club.sk1er.elementa.shaders
 
 import club.sk1er.mods.core.universal.UniversalGraphicsHandler
-import net.minecraft.client.renderer.GlStateManager
 import org.lwjgl.opengl.ARBShaderObjects
 import org.lwjgl.opengl.GL20
 
@@ -18,7 +17,7 @@ open class Shader(private val vertName: String, private val fragName: String) {
     fun bindIfUsable() {
         if (usable) {
             UniversalGraphicsHandler.glUseProgram(program)
-            GlStateManager.disableBlend()
+            UniversalGraphicsHandler.disableBlend()
         }
     }
 

@@ -3,7 +3,6 @@ package club.sk1er.elementa.font
 import club.sk1er.mods.core.universal.UniversalGraphicsHandler
 import club.sk1er.mods.core.universal.UniversalResolutionUtil
 import net.minecraft.client.Minecraft
-import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.util.StringUtils
 import org.lwjgl.opengl.GL11
 import org.newdawn.slick.UnicodeFont
@@ -92,7 +91,7 @@ class FontRenderer private constructor(private val fontSize: Float) {
         UniversalGraphicsHandler.disableLighting()
         UniversalGraphicsHandler.enableBlend()
         UniversalGraphicsHandler.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO)
-        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA)
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA)
 
         val parts = COLOR_CODE_PATTERN.split(text)
         var index = 0

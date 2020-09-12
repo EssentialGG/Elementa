@@ -53,9 +53,9 @@ class UICircle @JvmOverloads constructor(radius: Float = 0f, color: Color = Colo
     }
 
     companion object {
-        private val shader = Shader("rect", "circle")
-        private val shaderRadiusUniform = FloatUniform(shader.getUniformLocation("u_Radius"))
-        private val shaderCenterPositionUniform = Vec2Uniform(shader.getUniformLocation("u_CenterPos"))
+        private val shader by lazy { Shader("rect", "circle") }
+        private val shaderRadiusUniform by lazy { FloatUniform(shader.getUniformLocation("u_Radius")) }
+        private val shaderCenterPositionUniform by lazy { Vec2Uniform(shader.getUniformLocation("u_CenterPos")) }
 
         fun drawCircle(centerX: Float, centerY: Float, radius: Float, color: Color) {
             UniversalGraphicsHandler.pushMatrix()
