@@ -17,12 +17,11 @@ abstract class WindowScreen(
         }
     }
 
-    override fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
-        super.drawScreen(mouseX, mouseY, partialTicks)
+    override fun onDrawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
+        super.onDrawScreen(mouseX, mouseY, partialTicks)
 
-        if (drawDefaultBackground) {
-            drawDefaultBackground()
-        }
+        if (drawDefaultBackground)
+            super.onDrawBackground(0)
 
         // Now, we need to hook up Elementa to this GuiScreen. In practice, Elementa
         // is not constrained to being used solely inside of a GuiScreen, all the programmer
@@ -31,53 +30,51 @@ abstract class WindowScreen(
         window.draw()
     }
 
-    override fun mouseClicked(mouseX: Int, mouseY: Int, mouseButton: Int) {
-        super.mouseClicked(mouseX, mouseY, mouseButton)
+    override fun onMouseClicked(mouseX: Double, mouseY: Double, mouseButton: Int) {
+        super.onMouseClicked(mouseX, mouseY, mouseButton)
 
         // We also need to pass along clicks
         window.mouseClick(mouseX, mouseY, mouseButton)
     }
 
-    override fun mouseReleased(mouseX: Int, mouseY: Int, state: Int) {
-        super.mouseReleased(mouseX, mouseY, state)
+    override fun onMouseReleased(mouseX: Double, mouseY: Double, state: Int) {
+        super.onMouseReleased(mouseX, mouseY, state)
 
         // We also need to pass along mouse releases
         window.mouseRelease()
     }
 
-    override fun onMouseScroll(delta: Int) {
-        super.onMouseScroll(delta)
+    override fun onMouseScrolled(delta: Double) {
+        super.onMouseScrolled(delta)
 
         // We also need to pass along scrolling
-        window.mouseScroll(delta.coerceIn(-1, 1))
+        window.mouseScroll(delta.coerceIn(-1.0, 1.0))
     }
 
-    override fun keyTyped(typedChar: Char, keyCode: Int) {
+    override fun onKeyPressed(keyCode: Int, typedChar: Char, modifiers: UniversalKeyboard.Modifier?) {
         // We also need to pass along typed keys
         window.keyType(typedChar, keyCode)
     }
 
-    override fun initGui() {
-        super.initGui()
+    override fun initScreen(width: Int, height: Int) {
+        super.initScreen(width, height)
 
         // Since we want our users to be able to hold a key
         // to type. This is a wrapper around a base LWJGL function.
         // - Keyboard.enableRepeatEvents in <= 1.12.2
-        if (enableRepeatKeys) {
+        if (enableRepeatKeys)
             UniversalKeyboard.enableRepeatEvents(true)
-        }
     }
 
-    override fun onGuiClosed() {
-        super.onGuiClosed()
+    override fun onScreenClose() {
+        super.onScreenClose()
 
         // We need to disable repeat events when leaving the gui.
-        if (enableRepeatKeys) {
+        if (enableRepeatKeys)
             UniversalKeyboard.enableRepeatEvents(false)
-        }
     }
 
     fun defaultKeyBehavior(typedChar: Char, keyCode: Int) {
-        super.keyTyped(typedChar, keyCode)
+        super.onKeyPressed(keyCode, typedChar, UniversalKeyboard.getModifiers())
     }
 }

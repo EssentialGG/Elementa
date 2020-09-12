@@ -2,7 +2,6 @@ package club.sk1er.elementa.components.image
 
 import club.sk1er.elementa.utils.drawTexture
 import club.sk1er.mods.core.universal.UniversalGraphicsHandler
-import net.minecraft.client.renderer.texture.AbstractTexture
 import net.minecraft.client.renderer.texture.DynamicTexture
 import java.awt.Color
 import java.awt.image.BufferedImage

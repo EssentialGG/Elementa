@@ -24,7 +24,7 @@ import kotlin.math.abs
 class ScrollComponent @JvmOverloads constructor(
     emptyString: String = "",
     private val scrollOpposite: Boolean = false,
-    private val innerPadding: Float = 0f,
+    private val innerPadding: Double = 0.0,
     private val scrollIconColor: Color = Color.WHITE
 ) : UIContainer() {
     private val actualHolder = UIContainer().constrain {
@@ -90,7 +90,7 @@ class ScrollComponent @JvmOverloads constructor(
             // Run our scroll adjust event, normally updating [scrollBarGrip]
             val percent = abs(offset) / range.width()
             val percentageOfParent = this.getHeight() / calculateActualHeight()
-            scrollAdjustEvents.forEach { it(percent, percentageOfParent) }
+            scrollAdjustEvents.forEach { it(percent.toFloat(), percentageOfParent) }
         }
 
         super.draw()
@@ -175,19 +175,19 @@ class ScrollComponent @JvmOverloads constructor(
             val newPos = maxY - component.getBottom() - dragDelta
             val percentage = newPos / (maxY - minY)
 
-            percentage * calculateActualHeight()
+            percentage * calculateActualHeight().toDouble()
         } else {
             val newPos = component.getTop() + dragDelta - minY
             val percentage = newPos / (maxY - minY)
 
-            -(percentage * calculateActualHeight())
+            -(percentage * calculateActualHeight()).toDouble()
         }
 
         needsUpdate = true
     }
 
-    private fun onScroll(delta: Int) {
-        offset += (delta * 15)
+    private fun onScroll(delta: Double) {
+        offset += (delta * 15.0)
 
         needsUpdate = true
     }
@@ -230,7 +230,7 @@ class ScrollComponent @JvmOverloads constructor(
         }
     }
 
-    private fun calculateOffsetRange(): ClosedFloatingPointRange<Float> {
+    private fun calculateOffsetRange(): ClosedFloatingPointRange<Double> {
         val actualHeight = calculateActualHeight()
         val maxNegative = this.getHeight() - actualHeight - innerPadding
         return if (scrollOpposite) (-innerPadding)..-maxNegative else maxNegative..(innerPadding)
@@ -372,7 +372,7 @@ class ScrollComponent @JvmOverloads constructor(
         return actualHolder.childrenOfType(clazz)
     }
 
-    override fun mouseClick(mouseX: Int, mouseY: Int, button: Int) {
+    override fun mouseClick(mouseX: Double, mouseY: Double, button: Int) {
         actualHolder.mouseClick(mouseX, mouseY, button)
     }
 
@@ -407,7 +407,7 @@ class ScrollComponent @JvmOverloads constructor(
         needsUpdate = true
     }
 
-    private fun ClosedFloatingPointRange<Float>.width() = abs(this.start - this.endInclusive)
+    private fun ClosedFloatingPointRange<Double>.width() = abs(this.start - this.endInclusive)
 
     companion object {
         private val scrollSVG = SVGParser.parseFromResource("/svg/scroll.svg")

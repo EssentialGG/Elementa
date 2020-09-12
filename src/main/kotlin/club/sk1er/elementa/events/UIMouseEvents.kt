@@ -15,7 +15,7 @@ data class UIClickEvent(
 }
 
 data class UIScrollEvent(
-    val delta: Int,
+    val delta: Double,
     val target: UIComponent,
     val currentTarget: UIComponent
 ) : UIEvent()

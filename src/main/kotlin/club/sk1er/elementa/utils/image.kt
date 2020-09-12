@@ -1,7 +1,11 @@
 package club.sk1er.elementa.utils
 
-import club.sk1er.mods.core.universal.UniversalGraphicsHandler
+//#if MC<=11202
 import net.minecraft.client.renderer.texture.AbstractTexture
+//#else
+//$$ import net.minecraft.client.renderer.texture.Texture
+//#endif
+import club.sk1er.mods.core.universal.UniversalGraphicsHandler
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats
 import java.awt.Color
 import java.awt.image.BufferedImage
@@ -11,7 +15,11 @@ import kotlin.math.pow
 import kotlin.math.withSign
 
 internal fun drawTexture(
+    //#if MC<=11202
     texture: AbstractTexture,
+    //#else
+    //$$ texture: Texture,
+    //#endif
     color: Color,
     x: Double,
     y: Double,
@@ -23,7 +31,11 @@ internal fun drawTexture(
     UniversalGraphicsHandler.enableBlend()
     UniversalGraphicsHandler.enableAlpha()
     UniversalGraphicsHandler.scale(1f, 1f, 50f)
+    //#if MC<=11202
     UniversalGraphicsHandler.bindTexture(texture.glTextureId)
+    //#else
+    //$$ UniversalGraphicsHandler.bindTexture(texture.getGlTextureId())
+    //#endif
     UniversalGraphicsHandler.enableTexture2D()
     val red = color.red.toFloat() / 255f
     val green = color.green.toFloat() / 255f

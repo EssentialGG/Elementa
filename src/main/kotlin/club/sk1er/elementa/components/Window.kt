@@ -51,7 +51,7 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
         super.draw()
     }
 
-    override fun mouseClick(mouseX: Int, mouseY: Int, button: Int) {
+    override fun mouseClick(mouseX: Double, mouseY: Double, button: Int) {
         currentMouseButton = button
 
         for (floatingComponent in floatingComponents) {
