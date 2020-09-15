@@ -1,10 +1,6 @@
 package club.sk1er.elementa.svg
 
-import club.sk1er.elementa.svg.data.Point
-import club.sk1er.elementa.svg.data.SVGArc
-import club.sk1er.elementa.svg.data.SVGElement
-import club.sk1er.elementa.svg.data.SVGLine
-import kotlin.math.abs
+import club.sk1er.elementa.svg.data.*
 
 class PathParser(private var dataString: String) {
     private val currentPos = Point(0f, 0f)
@@ -18,164 +14,229 @@ class PathParser(private var dataString: String) {
         val elements = mutableListOf<SVGElement>()
 
         while (!isDone()) {
-            when (consume()) {
+            val command = consume()
+            val absolute = command.toUpperCase() == command
+            when (command.toUpperCase()) {
                 'M' -> {
                     parseWhitespace()
-                    parseCoordinatePairSequence().last().run {
-                        currentPos.x = get(0)
-                        currentPos.y = get(1)
+                    parseCoordinatePairSequence().forEach { (x, y) ->
+                        if (absolute) {
+                            currentPos.x = x
+                            currentPos.y = y
+                        } else {
+                            currentPos.x += x
+                            currentPos.y += y
+                        }
                     }
-                }
-                'm' -> {
                     parseWhitespace()
-                    parseCoordinatePairSequence().forEach {
-                        currentPos.x += it[0]
-                        currentPos.y += it[1]
-                    }
                 }
                 'L' -> {
                     parseWhitespace()
-                    parseCoordinatePairSequence().forEach {
+                    parseCoordinatePairSequence().forEach { (x, y) ->
                         val originalPoint = currentPos.copy()
 
                         if (firstPos == null)
                             firstPos = originalPoint
 
-                        currentPos.x = it[0]
-                        currentPos.y = it[1]
+                        if (absolute) {
+                            currentPos.x = x
+                            currentPos.y = y
+                        } else {
+                            currentPos.x += x
+                            currentPos.y += y
+                        }
 
                         elements.add(SVGLine(originalPoint, currentPos.copy()))
                     }
-                }
-                'l' -> {
                     parseWhitespace()
-                    parseCoordinatePairSequence().forEach {
-                        val originalPoint = currentPos.copy()
-
-                        if (firstPos == null)
-                            firstPos = originalPoint
-
-                        currentPos.x += it[0]
-                        currentPos.y += it[1]
-
-                        elements.add(SVGLine(originalPoint, currentPos.copy()))
-                    }
                 }
-                'h' -> {
+                'H', 'V' -> {
                     parseWhitespace()
+                    val field = if (command.toUpperCase() == 'H') currentPos::x else currentPos::y
+
                     parseCoordinateSequence().forEach {
                         val originalPoint = currentPos.copy()
 
                         if (firstPos == null)
                             firstPos = originalPoint
 
-                        currentPos.x += it
+                        if (absolute) {
+                            field.set(it)
+                        } else {
+                            field.set(field.get() + it)
+                        }
 
                         elements.add(SVGLine(originalPoint, currentPos.copy()))
                     }
-                }
-                'H' -> {
                     parseWhitespace()
-                    parseCoordinateSequence().forEach {
-                        val originalPoint = currentPos.copy()
-
-                        if (firstPos == null)
-                            firstPos = originalPoint
-
-                        currentPos.x = it
-
-                        elements.add(SVGLine(originalPoint, currentPos.copy()))
-                    }
                 }
-                'v' -> {
-                    parseWhitespace()
-                    parseCoordinateSequence().forEach {
-                        val originalPoint = currentPos.copy()
-
-                        if (firstPos == null)
-                            firstPos = originalPoint
-
-                        currentPos.y += it
-
-                        elements.add(SVGLine(originalPoint, currentPos.copy()))
-                    }
-                }
-                'V' -> {
-                    parseWhitespace()
-                    parseCoordinateSequence().forEach {
-                        val originalPoint = currentPos.copy()
-
-                        if (firstPos == null)
-                            firstPos = originalPoint
-
-                        currentPos.y = it
-
-                        elements.add(SVGLine(originalPoint, currentPos.copy()))
-                    }
-                }
-                'z', 'Z' -> {
+                'Z' -> {
                     if (firstPos == null)
-                        throw PathParseException("${dataString[cursor - 1]} instruction encountered with no previous position data")
+                        throw PathParseException("$command instruction encountered with no previous position data")
 
                     parseWhitespace()
                     elements.add(SVGLine(currentPos.copy(), firstPos!!))
                     firstPos = null
-                }
-                'a' -> {
                     parseWhitespace()
-
-                    while (true) {
-                        elements.add(parseArc(true))
-                        if (!matchCoordinate())
-                            break
-                    }
                 }
                 'A' -> {
                     parseWhitespace()
 
                     while (true) {
-                        elements.add(parseArc(false))
+                        elements.add(parseArc(absolute))
                         if (!matchCoordinate())
                             break
                     }
+                    parseWhitespace()
                 }
-                'C', 'c', 'S', 's', 'Q', 'q', 'T', 't' ->
-                    throw PathParseException("Unsupported instruction: $char")
-                else -> throw PathParseException("Invalid instruction: ${dataString[cursor - 1]}")
+                'C' -> {
+                    parseWhitespace()
+                    parseCurveto(::parseCoordinatePairTriple).forEach {
+                        val originalPoint = currentPos.copy()
+
+                        if (firstPos == null)
+                            firstPos = originalPoint
+
+                        val points = it.map { (x, y) ->
+                            if (absolute) {
+                                currentPos.x = x
+                                currentPos.y = y
+                            } else {
+                                currentPos.x += x
+                                currentPos.y += y
+                            }
+                            currentPos.copy()
+                        }
+
+                        elements.add(SVGCubicCurve(originalPoint, points[0], points[1], points[2]))
+                    }
+                    parseWhitespace()
+                }
+                'S' -> {
+                    parseWhitespace()
+                    parseCurveto(::parseCoordinatePairDouble).forEach {
+                        val originalPoint = currentPos.copy()
+
+                        if (firstPos == null)
+                            firstPos = originalPoint
+
+                        val points = it.map { (x, y) ->
+                            if (absolute) {
+                                currentPos.x = x
+                                currentPos.y = y
+                            } else {
+                                currentPos.x += x
+                                currentPos.y += y
+                            }
+                            currentPos.copy()
+                        }
+
+                        val firstControlPoint = elements.lastOrNull()?.let { element ->
+                            if (element !is SVGCubicCurve)
+                                return@let null
+
+                            element.lastControlPoint reflectedAround originalPoint
+                        } ?: originalPoint
+
+                        elements.add(SVGCubicCurve(originalPoint, firstControlPoint, points[0], points[1]))
+                    }
+                    parseWhitespace()
+                }
+                'Q' -> {
+                    parseWhitespace()
+                    parseCurveto(::parseCoordinatePairDouble).forEach {
+                        val originalPoint = currentPos.copy()
+
+                        if (firstPos == null)
+                            firstPos = originalPoint
+
+                        val points = it.map { (x, y) ->
+                            if (absolute) {
+                                currentPos.x = x
+                                currentPos.y = y
+                            } else {
+                                currentPos.x += x
+                                currentPos.y += y
+                            }
+                            currentPos.copy()
+                        }
+
+                        elements.add(SVGQuadraticCurve(originalPoint, points[0], points[1]))
+                    }
+                    parseWhitespace()
+                }
+                'T' -> {
+                    parseWhitespace()
+                    parseCurveto(::parseCoordinatePair).forEach {
+                        val originalPoint = currentPos.copy()
+
+                        if (firstPos == null)
+                            firstPos = originalPoint
+
+                        if (absolute) {
+                            currentPos.x = it.x
+                            currentPos.y = it.y
+                        } else {
+                            currentPos.x += it.x
+                            currentPos.y += it.y
+                        }
+
+                        val firstControlPoint = elements.lastOrNull()?.let { element ->
+                            if (element !is SVGQuadraticCurve)
+                                return@let null
+
+                            element.lastControlPoint reflectedAround originalPoint
+                        } ?: originalPoint
+
+                        elements.add(SVGQuadraticCurve(originalPoint, firstControlPoint, currentPos))
+                    }
+                    parseWhitespace()
+                }
+                else -> throw PathParseException("Invalid instruction: $command")
             }
         }
 
         return elements
     }
 
-    private fun parseArc(relative: Boolean): SVGElement {
+    private fun <T> parseCurveto(generator: () -> T): List<T> {
+        val list = mutableListOf<T>()
+        list.add(generator())
+        if (matchCommaWhitespace()) {
+            val prevCursor = cursor
+            parseCommaWhitespace()
+            if (matchCoordinate()) {
+                list.addAll(parseCurveto(generator))
+            } else {
+                cursor = prevCursor
+            }
+        }
+        return list
+    }
+
+    private fun parseArc(absolute: Boolean): SVGElement {
         val rX = parseNumber()
-        if (matchCommaWhitespace())
-            parseCommaWhitespace()
+        optionalParseCommaWhitespace()
         val rY = parseNumber()
-        if (matchCommaWhitespace())
-            parseCommaWhitespace()
+        optionalParseCommaWhitespace()
         val xAxisRotation = parseNumber()
         parseCommaWhitespace()
         val largeArc = parseFlag()
-        if (matchCommaWhitespace())
-            parseCommaWhitespace()
+        optionalParseCommaWhitespace()
         val sweep = parseFlag()
-        if (matchCommaWhitespace())
-            parseCommaWhitespace()
+        optionalParseCommaWhitespace()
         val x = parseCoordinate()
-        if (matchCommaWhitespace())
-            parseCommaWhitespace()
+        optionalParseCommaWhitespace()
         val y = parseCoordinate()
 
         val originalPos = currentPos.copy()
 
-        if (relative) {
-            currentPos.x += x
-            currentPos.y += y
-        } else {
+        if (absolute) {
             currentPos.x = x
             currentPos.y = y
+        } else {
+            currentPos.x += x
+            currentPos.y += y
         }
 
         if (currentPos == originalPos) {
@@ -201,28 +262,43 @@ class PathParser(private var dataString: String) {
         if (consume() == '-') -1 else 1
     } else 1) * parseNumber()
 
-    private fun parseCoordinatePair() = mutableListOf<Float>().also {
-        it.add(parseCoordinate())
-        if (matchCommaWhitespace())
-            parseCommaWhitespace()
-        it.add(parseCoordinate())
+    private fun parseCoordinatePairTriple(): List<Point> {
+        return mutableListOf<Point>().apply {
+            add(parseCoordinatePair())
+            optionalParseCommaWhitespace()
+            add(parseCoordinatePair())
+            optionalParseCommaWhitespace()
+            add(parseCoordinatePair())
+        }
+    }
+
+    private fun parseCoordinatePairDouble(): List<Point> {
+        return mutableListOf<Point>().apply {
+            add(parseCoordinatePair())
+            optionalParseCommaWhitespace()
+            add(parseCoordinatePair())
+        }
+    }
+
+    private fun parseCoordinatePair(): Point {
+        val x = parseCoordinate()
+        optionalParseCommaWhitespace()
+        return Point(x, parseCoordinate())
     }
 
     private fun parseCoordinateSequence() = mutableListOf<Float>().also {
         while (true) {
             it.add(parseCoordinate())
-            if (matchCommaWhitespace())
-                parseCommaWhitespace()
+            optionalParseCommaWhitespace()
             if (!matchCommaWhitespace() && !matchCoordinate())
                 break
         }
     }
 
-    private fun parseCoordinatePairSequence() = mutableListOf<List<Float>>().also {
+    private fun parseCoordinatePairSequence() = mutableListOf<Point>().also {
         while (true) {
             it.add(parseCoordinatePair())
-            if (matchCommaWhitespace())
-                parseCommaWhitespace()
+            optionalParseCommaWhitespace()
             if (!matchCommaWhitespace() && !matchCoordinate())
                 break
         }
@@ -237,6 +313,11 @@ class PathParser(private var dataString: String) {
 
         if (mustMatchOnce && !matched)
             throw PathParseException("Expected whitespace at position $cursor, got ${charForPrinting()}")
+    }
+
+    private fun optionalParseCommaWhitespace() {
+        if (matchCommaWhitespace())
+            parseCommaWhitespace()
     }
 
     private fun parseCommaWhitespace() {
