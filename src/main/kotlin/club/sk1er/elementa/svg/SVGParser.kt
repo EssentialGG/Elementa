@@ -7,6 +7,8 @@ import org.dom4j.io.SAXReader
 import java.lang.UnsupportedOperationException
 
 object SVGParser {
+    private val VIEWBOX_WHITESPACE = "[ ,]+".toRegex()
+
     fun parseFromResource(file: String): SVG {
         val reader = SAXReader()
         val document = reader.read(this::class.java.getResourceAsStream(file))
@@ -16,11 +18,10 @@ object SVGParser {
 
     private fun parseDocument(document: Document): SVG {
         val svg = document.rootElement
-        val svgWidth = svg.attributeValue("width", "24").toInt()
-        val svgHeight = svg.attributeValue("height", "24").toInt()
         val svgStrokeWidth = svg.attributeValue("stroke-width", "1").toFloat()
         val svgRoundLineCaps = svg.attributeValue("stroke-linecap") != null
         val svgRoundLineJoins = svg.attributeValue("stroke-linejoin") != null
+        val viewBox = parseViewbox(svg.attributeValue("viewBox"))
 
         val elements = mutableListOf<SVGElement>()
 
@@ -47,7 +48,7 @@ object SVGParser {
             elements.addAll(els)
         }
 
-        return SVG(elements, svgWidth, svgHeight, svgStrokeWidth, svgRoundLineCaps, svgRoundLineJoins)
+        return SVG(elements, viewBox?.width, viewBox?.height, svgStrokeWidth, svgRoundLineCaps, svgRoundLineJoins)
     }
 
     private fun parseTransform(attributeString: String): Transform {
@@ -77,7 +78,32 @@ object SVGParser {
         return transform
     }
 
+    private fun parseViewbox(attributeString: String?): Viewbox? {
+        if (attributeString == null)
+            return null
+
+        try {
+            val splits = attributeString.replace(VIEWBOX_WHITESPACE, " ").split(" ").map { it.toFloat() }
+            if (splits.size >= 3 && splits[2] <= 0f)
+                return null
+            if (splits.size >= 4 && splits[3] <= 0f)
+                return null
+            return Viewbox(splits[0], splits[1], splits[2], splits[3])
+        } catch (e: Exception) {
+            return null
+        }
+    }
+
     private fun parsePath(el: Element): List<SVGElement> {
         return PathParser(el.attributeValue("d").trim()).parse()
     }
+
+    // TODO: Should we do anything with the x and y? They're unused right now as they
+    // don't really make sense outside of the DOM
+    private data class Viewbox(
+        val x: Float,
+        val y: Float,
+        val width: Float,
+        val height: Float
+    )
 }

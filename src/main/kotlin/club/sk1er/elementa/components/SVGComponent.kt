@@ -28,8 +28,8 @@ class SVGComponent(private var svg: SVG) : UIComponent(), ImageProvider {
             needsReload = false
         }
 
-        val xScale = width / svg.width
-        val yScale = height / svg.height
+        val xScale = svg.width?.let { width / it } ?: 1.0
+        val yScale = svg.height?.let { height / it } ?: 1.0
         val strokeWidth = (xScale * svg.strokeWidth).toFloat().coerceAtMost(10f)
 
         UniversalGraphicsHandler.pushMatrix()
