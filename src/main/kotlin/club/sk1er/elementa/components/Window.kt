@@ -211,13 +211,8 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
         fun of(component: UIComponent): Window {
             var current = component
 
-            try {
-                while (current !is Window && current.parent != current) {
-                    current = current.parent
-                }
-            } catch (e: UninitializedPropertyAccessException) {
-                throw IllegalStateException("No window parent? It's possible you haven't called Window.addChild() at this point in time.")
-            }
+            while (current !is Window && current.hasParent && current.parent != current)
+                current = current.parent
 
             return current as? Window
                 ?: throw IllegalStateException("No window parent? It's possible you haven't called Window.addChild() at this point in time.")
