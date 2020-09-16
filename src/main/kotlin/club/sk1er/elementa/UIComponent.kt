@@ -30,9 +30,13 @@ import kotlin.reflect.KMutableProperty0
  */
 abstract class UIComponent : Observable() {
     var componentName: String? = null
-    open lateinit var parent: UIComponent
     open val children = CopyOnWriteArrayList<UIComponent>().observable()
     val effects = mutableListOf<Effect>()
+
+    open lateinit var parent: UIComponent
+
+    open val hasParent: Boolean
+        get() = ::parent.isInitialized
 
     var constraints = UIConstraints(this)
         set(value) {
@@ -535,14 +539,13 @@ abstract class UIComponent : Observable() {
         var current = this
         var depth = 0
 
-        try {
-            while (current !is Window && current.parent != current) {
-                current = current.parent
-                depth++
-            }
-        } catch (e: UninitializedPropertyAccessException) {
-            throw IllegalStateException("No window parent? It's possible you haven't called Window.addChild() at this point in time.")
+        while (current !is Window && current.hasParent && current.parent != current) {
+            current = current.parent
+            depth++
         }
+
+        if (current !is Window)
+            throw IllegalStateException("No window parent? It's possible you haven't called Window.addChild() at this point in time.")
 
         return depth
     }
