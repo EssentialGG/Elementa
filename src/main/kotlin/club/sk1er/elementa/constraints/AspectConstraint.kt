@@ -1,6 +1,7 @@
 package club.sk1er.elementa.constraints
 
 import club.sk1er.elementa.UIComponent
+import club.sk1er.elementa.constraints.resolution.ConstraintVisitor
 
 /**
  * For size:
@@ -32,5 +33,16 @@ class AspectConstraint @JvmOverloads constructor(val value: Float = 1f) : Positi
 
     override fun getRadiusImpl(component: UIComponent): Float {
         return (constrainTo ?: component).getRadius() * value
+    }
+
+    override fun visitImpl(visitor: ConstraintVisitor, type: ConstraintType) {
+        when (type) {
+            ConstraintType.X -> visitor.visitSelf(ConstraintType.Y)
+            ConstraintType.Y -> visitor.visitSelf(ConstraintType.X)
+            ConstraintType.WIDTH -> visitor.visitSelf(ConstraintType.HEIGHT)
+            ConstraintType.HEIGHT -> visitor.visitSelf(ConstraintType.WIDTH)
+            ConstraintType.RADIUS -> {} // TODO: ???
+            else -> throw IllegalArgumentException(type.prettyName)
+        }
     }
 }

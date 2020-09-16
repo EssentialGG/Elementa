@@ -1,6 +1,7 @@
 package club.sk1er.elementa.constraints
 
 import club.sk1er.elementa.UIComponent
+import club.sk1er.elementa.constraints.resolution.ConstraintVisitor
 
 /**
  * Sets this component's X/Y position or width/height to be a constant
@@ -73,5 +74,39 @@ class PixelConstraint @JvmOverloads constructor(
 
     override fun getRadiusImpl(component: UIComponent): Float {
         return value
+    }
+
+    override fun visitImpl(visitor: ConstraintVisitor, type: ConstraintType) {
+        when (type) {
+            ConstraintType.X -> {
+                if (alignOpposite) {
+                    visitor.visitParent(ConstraintType.X)
+                    visitor.visitParent(ConstraintType.WIDTH)
+                    if (alignOutside)
+                        visitor.visitSelf(ConstraintType.WIDTH)
+                } else {
+                    visitor.visitParent(ConstraintType.X)
+                    if (alignOutside)
+                        visitor.visitSelf(ConstraintType.WIDTH)
+                }
+            }
+            ConstraintType.Y -> {
+                if (alignOpposite) {
+                    visitor.visitParent(ConstraintType.Y)
+                    visitor.visitParent(ConstraintType.HEIGHT)
+                    if (alignOutside)
+                        visitor.visitSelf(ConstraintType.HEIGHT)
+                } else {
+                    visitor.visitParent(ConstraintType.Y)
+                    if (alignOutside)
+                        visitor.visitSelf(ConstraintType.HEIGHT)
+                }
+            }
+            ConstraintType.WIDTH,
+            ConstraintType.HEIGHT,
+            ConstraintType.RADIUS,
+            ConstraintType.TEXT_SCALE -> {}
+            else -> throw IllegalArgumentException(type.prettyName)
+        }
     }
 }

@@ -2,6 +2,7 @@ package club.sk1er.elementa.constraints.animation
 
 import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.constraints.*
+import club.sk1er.elementa.constraints.resolution.ConstraintVisitor
 import java.awt.Color
 import java.lang.UnsupportedOperationException
 import kotlin.math.max
@@ -70,6 +71,11 @@ class XAnimationComponent(
     override fun to(component: UIComponent) = apply {
         throw UnsupportedOperationException("Constraint.to(UIComponent) is not available in this context!")
     }
+
+    override fun visitImpl(visitor: ConstraintVisitor, type: ConstraintType) {
+        oldConstraint.visit(visitor, type)
+        newConstraint.visit(visitor, type)
+    }
 }
 
 class YAnimationComponent(
@@ -98,6 +104,11 @@ class YAnimationComponent(
 
     override fun to(component: UIComponent) = apply {
         throw UnsupportedOperationException("Constraint.to(UIComponent) is not available in this context!")
+    }
+
+    override fun visitImpl(visitor: ConstraintVisitor, type: ConstraintType) {
+        oldConstraint.visit(visitor, type)
+        newConstraint.visit(visitor, type)
     }
 }
 
@@ -129,6 +140,11 @@ class RadiusAnimationComponent(
     override fun to(component: UIComponent) = apply {
         throw UnsupportedOperationException("Constraint.to(UIComponent) is not available in this context!")
     }
+
+    override fun visitImpl(visitor: ConstraintVisitor, type: ConstraintType) {
+        oldConstraint.visit(visitor, type)
+        newConstraint.visit(visitor, type)
+    }
 }
 
 class WidthAnimationComponent(
@@ -159,6 +175,11 @@ class WidthAnimationComponent(
     override fun to(component: UIComponent) = apply {
         throw UnsupportedOperationException("Constraint.to(UIComponent) is not available in this context!")
     }
+
+    override fun visitImpl(visitor: ConstraintVisitor, type: ConstraintType) {
+        oldConstraint.visit(visitor, type)
+        newConstraint.visit(visitor, type)
+    }
 }
 
 class HeightAnimationComponent(
@@ -188,6 +209,11 @@ class HeightAnimationComponent(
 
     override fun to(component: UIComponent) = apply {
         throw UnsupportedOperationException("Constraint.to(UIComponent) is not available in this context!")
+    }
+
+    override fun visitImpl(visitor: ConstraintVisitor, type: ConstraintType) {
+        oldConstraint.visit(visitor, type)
+        newConstraint.visit(visitor, type)
     }
 }
 
@@ -225,6 +251,11 @@ class ColorAnimationComponent(
     override fun to(component: UIComponent) = apply {
         throw UnsupportedOperationException("Constraint.to(UIComponent) is not available in this context!")
     }
+
+    override fun visitImpl(visitor: ConstraintVisitor, type: ConstraintType) {
+        oldConstraint.visit(visitor, type)
+        newConstraint.visit(visitor, type)
+    }
 }
 
 sealed class FieldAnimationComponent<T>(
@@ -249,6 +280,8 @@ sealed class FieldAnimationComponent<T>(
     override fun to(component: UIComponent) = apply {
         throw UnsupportedOperationException("Constraint.to(UIComponent) is not available in this context!")
     }
+
+    override fun visitImpl(visitor: ConstraintVisitor, type: ConstraintType) { }
 }
 
 class FloatFieldAnimationComponent(

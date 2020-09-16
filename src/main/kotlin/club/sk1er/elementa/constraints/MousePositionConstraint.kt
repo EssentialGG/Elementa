@@ -1,6 +1,7 @@
 package club.sk1er.elementa.constraints
 
 import club.sk1er.elementa.UIComponent
+import club.sk1er.elementa.constraints.resolution.ConstraintVisitor
 import club.sk1er.mods.core.universal.UniversalMouse
 import club.sk1er.mods.core.universal.UniversalResolutionUtil
 
@@ -16,4 +17,6 @@ class MousePositionConstraint : PositionConstraint {
     override fun getYPositionImpl(component: UIComponent): Float {
         return UniversalResolutionUtil.getInstance().scaledHeight - UniversalMouse.getScaledY().toFloat()
     }
+
+    override fun visitImpl(visitor: ConstraintVisitor, type: ConstraintType) { }
 }

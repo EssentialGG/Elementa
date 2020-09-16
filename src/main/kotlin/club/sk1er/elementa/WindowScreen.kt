@@ -1,15 +1,16 @@
 package club.sk1er.elementa
 
+//#if MC>=11602
+//$$ import club.sk1er.mods.core.universal.UniversalGraphicsHandler
+//#endif
+
 import club.sk1er.elementa.components.Window
 import club.sk1er.elementa.constraints.animation.*
 import club.sk1er.mods.core.universal.UniversalKeyboard
 import club.sk1er.mods.core.universal.UniversalScreen
+
 import java.awt.Color
 import kotlin.reflect.KMutableProperty0
-
-//#if MC>=11602
-//$$ import club.sk1er.mods.core.universal.UniversalGraphicsHandler
-//#endif
 
 abstract class WindowScreen(
     private val enableRepeatKeys: Boolean = true,

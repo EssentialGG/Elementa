@@ -1,6 +1,7 @@
 package club.sk1er.elementa.constraints
 
 import club.sk1er.elementa.UIComponent
+import club.sk1er.elementa.constraints.resolution.ConstraintVisitor
 import club.sk1er.mods.core.universal.UniversalMathHelper
 import java.awt.Color
 import kotlin.math.sin
@@ -21,6 +22,10 @@ class ConstantColorConstraint(val color: Color) : ColorConstraint {
     override fun to(component: UIComponent) = apply {
         throw UnsupportedOperationException("Constraint.to(UIComponent) is not available in this context!")
     }
+
+    // Color constraints will only ever have parent dependencies, so there is no possibility
+    // of an invalid constraint here
+    override fun visitImpl(visitor: ConstraintVisitor, type: ConstraintType) { }
 }
 
 /**
@@ -35,6 +40,10 @@ class AlphaAspectColorConstraint(val color: Color, val value: Float = 1f) : Colo
         return Color(color.red, color.green, color.blue, ((constrainTo
                 ?: component.parent).getColor().alpha * value).toInt())
     }
+
+    // Color constraints will only ever have parent dependencies, so there is no possibility
+    // of an invalid constraint here
+    override fun visitImpl(visitor: ConstraintVisitor, type: ConstraintType) { }
 }
 
 /**
@@ -71,4 +80,8 @@ class RainbowColorConstraint(val alpha: Int = 255, val speed: Float = 50f) : Col
     override fun to(component: UIComponent) = apply {
         throw java.lang.UnsupportedOperationException("Constraint.to(UIComponent) is not available in this context!")
     }
+
+    // Color constraints will only ever have parent dependencies, so there is no possibility
+    // of an invalid constraint here
+    override fun visitImpl(visitor: ConstraintVisitor, type: ConstraintType) { }
 }

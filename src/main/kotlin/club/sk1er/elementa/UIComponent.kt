@@ -847,6 +847,7 @@ abstract class UIComponent : Observable() {
     }
 
     companion object {
+        val IS_DEV = System.getProperty("elementa.dev")?.toBoolean() ?: false
         val IS_DEBUG = System.getProperty("elementa.debug")?.toBoolean() ?: false
         val DEBUG_OUTLINE_WIDTH = System.getProperty("elementa.debug.width")?.toDoubleOrNull() ?: 2.0
 

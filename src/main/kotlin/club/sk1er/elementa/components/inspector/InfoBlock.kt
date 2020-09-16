@@ -48,7 +48,7 @@ class InfoBlock(private val inspector: Inspector) : UIContainer() {
     private val heightValueText: UIText
 
     private var constraintsSelected = true
-    private val currentRoots = mutableMapOf<UIConstraints.ConstraintType, TreeNode?>()
+    private val currentRoots = mutableMapOf<ConstraintType, TreeNode?>()
 
     init {
         constraintsText = UIText("Constraints").constrain {
@@ -141,28 +141,28 @@ class InfoBlock(private val inspector: Inspector) : UIContainer() {
         setConstraintNodes(constraints)
 
         constraints.addObserver { _, arg ->
-            if (arg !is UIConstraints.ConstraintType)
+            if (arg !is ConstraintType)
                 return@addObserver
             val constraint = when (arg) {
-                UIConstraints.ConstraintType.X -> constraints.x
-                UIConstraints.ConstraintType.Y -> constraints.y
-                UIConstraints.ConstraintType.WIDTH -> constraints.width
-                UIConstraints.ConstraintType.HEIGHT -> constraints.height
-                UIConstraints.ConstraintType.RADIUS -> constraints.radius
-                UIConstraints.ConstraintType.COLOR -> constraints.color
-                UIConstraints.ConstraintType.TEXT_SCALE -> constraints.textScale
+                ConstraintType.X -> constraints.x
+                ConstraintType.Y -> constraints.y
+                ConstraintType.WIDTH -> constraints.width
+                ConstraintType.HEIGHT -> constraints.height
+                ConstraintType.RADIUS -> constraints.radius
+                ConstraintType.COLOR -> constraints.color
+                ConstraintType.TEXT_SCALE -> constraints.textScale
             }
 
             when (arg) {
-                UIConstraints.ConstraintType.COLOR -> {
+                ConstraintType.COLOR -> {
                     currentRoots[arg] =
                         if (constraint !is ConstantColorConstraint || constraint.color != Color.WHITE) getNodeFromConstraint(
                             constraint,
                             arg.prettyName
                         ) else null
                 }
-                UIConstraints.ConstraintType.TEXT_SCALE -> {
-                    currentRoots[UIConstraints.ConstraintType.TEXT_SCALE] =
+                ConstraintType.TEXT_SCALE -> {
+                    currentRoots[ConstraintType.TEXT_SCALE] =
                         if (constraint !is PixelConstraint || constraint.value != 1f) getNodeFromConstraint(
                             constraint,
                             arg.prettyName
@@ -185,11 +185,11 @@ class InfoBlock(private val inspector: Inspector) : UIContainer() {
         currentRoots.clear()
 
         listOf(
-            constraints.x to UIConstraints.ConstraintType.X,
-            constraints.y to UIConstraints.ConstraintType.Y,
-            constraints.width to UIConstraints.ConstraintType.WIDTH,
-            constraints.height to UIConstraints.ConstraintType.HEIGHT,
-            constraints.radius to UIConstraints.ConstraintType.RADIUS
+            constraints.x to ConstraintType.X,
+            constraints.y to ConstraintType.Y,
+            constraints.width to ConstraintType.WIDTH,
+            constraints.height to ConstraintType.HEIGHT,
+            constraints.radius to ConstraintType.RADIUS
         ).forEach { (constraint, type) ->
             currentRoots[type] =
                 if (constraint !is PixelConstraint || constraint.value != 0f) getNodeFromConstraint(
@@ -199,12 +199,12 @@ class InfoBlock(private val inspector: Inspector) : UIContainer() {
         }
 
         constraints.textScale.also {
-            currentRoots[UIConstraints.ConstraintType.TEXT_SCALE] =
+            currentRoots[ConstraintType.TEXT_SCALE] =
                 if (it !is PixelConstraint || it.value != 1f) getNodeFromConstraint(it, "TextScale") else null
         }
 
         constraints.color.also {
-            currentRoots[UIConstraints.ConstraintType.COLOR] =
+            currentRoots[ConstraintType.COLOR] =
                 if (it !is ConstantColorConstraint || it.color != Color.WHITE) getNodeFromConstraint(
                     it,
                     "Color"

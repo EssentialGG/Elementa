@@ -5,7 +5,6 @@ import club.sk1er.elementa.dsl.asConstraint
 import club.sk1er.elementa.dsl.pixels
 import java.awt.Color
 import java.util.*
-import kotlin.properties.Delegates
 
 open class UIConstraints(protected val component: UIComponent) : Observable() {
     var x: XConstraint = 0.pixels()
@@ -118,12 +117,5 @@ open class UIConstraints(protected val component: UIComponent) : Observable() {
     private fun update(type: ConstraintType) {
         setChanged()
         notifyObservers(type)
-    }
-
-    enum class ConstraintType(val prettyName: String) {
-        X("X"), Y("Y"),
-        WIDTH("Width"), HEIGHT("Height"),
-        RADIUS("Radius"), COLOR("Color"),
-        TEXT_SCALE("TextScale")
     }
 }

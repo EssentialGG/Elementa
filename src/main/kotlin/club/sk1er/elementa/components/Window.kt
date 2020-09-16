@@ -1,12 +1,16 @@
 package club.sk1er.elementa.components
 
 import club.sk1er.elementa.UIComponent
+import club.sk1er.elementa.constraints.*
+import club.sk1er.elementa.constraints.resolution.ConstraintResolver
+import club.sk1er.elementa.constraints.resolution.ConstraintValidationException
 import club.sk1er.elementa.effects.ScissorEffect
-import club.sk1er.mods.core.universal.UniversalGraphicsHandler
-import club.sk1er.mods.core.universal.UniversalMouse
-import club.sk1er.mods.core.universal.UniversalResolutionUtil
+import club.sk1er.mods.core.universal.*
+import club.sk1er.mods.core.universal.wrappers.UniversalPlayer
+import club.sk1er.mods.core.universal.wrappers.message.UniversalTextComponent
 import org.lwjgl.opengl.GL11
 import java.util.concurrent.ConcurrentLinkedQueue
+
 /**
  * "Root" component. All components MUST have a Window in their hierarchy in order to do any rendering
  * or animating.
@@ -21,12 +25,56 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
     private var componentRequestingFocus: UIComponent? = null
 
     var scaledResolution: UniversalResolutionUtil = UniversalResolutionUtil.getInstance()
+    private var cancelDrawing = false
 
     init {
         super.parent = this
     }
 
     override fun draw() {
+        // TODO: Only do this if component or constraint structure has changes
+        if (IS_DEV && !cancelDrawing) {
+            try {
+                ConstraintResolver(this).resolve()
+            } catch (e: ConstraintValidationException) {
+                println("Circular constraint structure detected! Constraint path:")
+                val history = e.history
+                history.forEachIndexed { index, constraint ->
+                    println("$index: ${constraint.javaClass.simpleName}")
+
+                    val properties = when (constraint) {
+                        is AlphaAspectColorConstraint -> listOf(constraint::color, constraint::value)
+                        is AspectConstraint -> listOf(constraint::value)
+                        is ChildBasedSizeConstraint -> listOf(constraint::padding)
+                        is ConstantColorConstraint -> listOf(constraint::color)
+                        is CramSiblingConstraint -> listOf(constraint::padding)
+                        is PixelConstraint -> listOf(constraint::value, constraint::alignOpposite, constraint::alignOutside)
+                        is RainbowColorConstraint -> listOf(constraint::alpha, constraint::speed)
+                        is RelativeConstraint -> listOf(constraint::value)
+                        is ScaledTextConstraint -> listOf(constraint::scale)
+                        is SiblingConstraint -> listOf(constraint::padding, constraint::alignOpposite)
+                        else -> listOf()
+                    }
+
+                    properties.forEach {
+                        println("    ${it.name}: ${it.get()}")
+                    }
+                }
+                println("${history.size}: The first constraint in this path")
+
+                UniversalPlayer.getPlayer()?.addChatMessage(UniversalTextComponent.buildSimple(
+                    "§c§lError rendering Elementa Window: invalid constraints detected. Check your logs for more info."
+                ))
+
+                UniversalMinecraft.getMinecraft().displayGuiScreen(null)
+
+                cancelDrawing = true
+            }
+        }
+
+        if (cancelDrawing)
+            return
+
         val startTime = System.nanoTime()
 
         val it = renderOperations.iterator()
@@ -35,6 +83,9 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
             it.remove()
         }
 
+        //#if MC>=11502
+        //$$ UniversalGraphicsHandler.setStack(MatrixStack());
+        //#endif
         UniversalGraphicsHandler.glClear(GL11.GL_STENCIL_BUFFER_BIT)
         UniversalGraphicsHandler.glClearStencil(0)
 

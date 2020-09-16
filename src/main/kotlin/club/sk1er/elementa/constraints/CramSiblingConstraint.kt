@@ -1,6 +1,7 @@
 package club.sk1er.elementa.constraints
 
 import club.sk1er.elementa.UIComponent
+import club.sk1er.elementa.constraints.resolution.ConstraintVisitor
 import java.lang.UnsupportedOperationException
 
 /**
@@ -50,5 +51,37 @@ class CramSiblingConstraint(padding: Float = 0f) : SiblingConstraint(padding) {
 
     override fun to(component: UIComponent) = apply {
         throw UnsupportedOperationException("Constraint.to(UIComponent) is not available in this context!")
+    }
+
+    override fun visitImpl(visitor: ConstraintVisitor, type: ConstraintType) {
+        val indexInParent = visitor.component.let { it.parent.children.indexOf(it) }
+
+        when (type) {
+            ConstraintType.X -> {
+                if (indexInParent <= 0) {
+                    visitor.visitParent(ConstraintType.X)
+                    return
+                }
+
+                visitor.visitSibling(ConstraintType.X, indexInParent)
+                visitor.visitSibling(ConstraintType.WIDTH, indexInParent)
+                visitor.visitSelf(ConstraintType.WIDTH)
+                visitor.visitParent(ConstraintType.X)
+                visitor.visitParent(ConstraintType.WIDTH)
+            }
+            ConstraintType.Y -> {
+                if (indexInParent <= 0) {
+                    visitor.visitParent(ConstraintType.Y)
+                    return
+                }
+
+                visitor.visitSibling(ConstraintType.X, indexInParent)
+                visitor.visitSibling(ConstraintType.WIDTH, indexInParent)
+                visitor.visitSelf(ConstraintType.WIDTH)
+                visitor.visitParent(ConstraintType.X)
+                visitor.visitParent(ConstraintType.WIDTH)
+            }
+            else -> throw IllegalArgumentException(type.prettyName)
+        }
     }
 }

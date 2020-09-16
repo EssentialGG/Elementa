@@ -1,6 +1,7 @@
 package club.sk1er.elementa.constraints
 
 import club.sk1er.elementa.UIComponent
+import club.sk1er.elementa.constraints.resolution.ConstraintVisitor
 
 /**
  * Centers this box on the X or Y axis.
@@ -27,6 +28,24 @@ class CenterConstraint : PositionConstraint {
             parent.getTop() + parent.getHeight() / 2
         } else {
             parent.getTop() + parent.getHeight() / 2 - component.getHeight() / 2
+        }
+    }
+
+    override fun visitImpl(visitor: ConstraintVisitor, type: ConstraintType) {
+        when (type) {
+            ConstraintType.X -> {
+                visitor.visitParent(ConstraintType.X)
+                visitor.visitParent(ConstraintType.WIDTH)
+                if (!visitor.component.isPositionCenter())
+                    visitor.visitSelf(ConstraintType.WIDTH)
+            }
+            ConstraintType.Y -> {
+                visitor.visitParent(ConstraintType.Y)
+                visitor.visitParent(ConstraintType.HEIGHT)
+                if (!visitor.component.isPositionCenter())
+                    visitor.visitSelf(ConstraintType.HEIGHT)
+            }
+            else -> throw IllegalArgumentException(type.prettyName)
         }
     }
 }
