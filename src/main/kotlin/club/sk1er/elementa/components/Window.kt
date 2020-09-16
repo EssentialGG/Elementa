@@ -6,6 +6,7 @@ import club.sk1er.mods.core.universal.UniversalGraphicsHandler
 import club.sk1er.mods.core.universal.UniversalMouse
 import club.sk1er.mods.core.universal.UniversalResolutionUtil
 import org.lwjgl.opengl.GL11
+import java.util.concurrent.ConcurrentLinkedQueue
 
 //#if MC>=11500
 //$$ import com.mojang.blaze3d.matrix.MatrixStack;
@@ -30,6 +31,9 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
     }
 
     override fun draw() {
+        renderOperations.forEach { it() }
+        renderOperations.clear()
+
         //#if MC>=11500
         //$$ UniversalGraphicsHandler.setStack(MatrixStack());
         //#endif
@@ -193,6 +197,18 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
     }
 
     companion object {
+        private val renderOperations = ConcurrentLinkedQueue<() -> Unit>()
+
+        fun enqueueRenderOperation(operation: Runnable) {
+            renderOperations.add {
+                operation.run()
+            }
+        }
+
+        fun enqueueRenderOperation(operation: () -> Unit) {
+            renderOperations.add(operation)
+        }
+
         fun of(component: UIComponent): Window {
             var current = component
 
