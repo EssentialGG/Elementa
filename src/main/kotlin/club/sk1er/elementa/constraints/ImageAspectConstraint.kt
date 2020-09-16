@@ -2,6 +2,7 @@ package club.sk1er.elementa.constraints
 
 import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.components.UIImage
+import club.sk1er.elementa.constraints.resolution.ConstraintVisitor
 import java.lang.UnsupportedOperationException
 
 /**
@@ -24,5 +25,13 @@ class ImageAspectConstraint : WidthConstraint, HeightConstraint {
 
     override fun to(component: UIComponent) = apply {
         throw UnsupportedOperationException("Constraint.to(UIComponent) is not available in this context!")
+    }
+
+    override fun visitImpl(visitor: ConstraintVisitor, type: ConstraintType) {
+        when (type) {
+            ConstraintType.WIDTH -> visitor.visitSelf(ConstraintType.HEIGHT)
+            ConstraintType.HEIGHT -> visitor.visitSelf(ConstraintType.WIDTH)
+            else -> throw IllegalArgumentException(type.prettyName)
+        }
     }
 }

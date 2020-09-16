@@ -2,6 +2,7 @@ package club.sk1er.elementa.constraints
 
 import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.components.Window
+import club.sk1er.elementa.constraints.resolution.ConstraintVisitor
 
 /**
  * Sets this component's width or height to be the sum of its children's width or height
@@ -30,6 +31,15 @@ class ChildBasedSizeConstraint(val padding: Float = 0f) : SizeConstraint {
     override fun getRadiusImpl(component: UIComponent): Float {
         return (constrainTo ?: component).children.sumByDouble { it.getHeight().toDouble() }.toFloat() * 2f
     }
+
+    override fun visitImpl(visitor: ConstraintVisitor, type: ConstraintType) {
+        when (type) {
+            ConstraintType.WIDTH -> visitor.visitChildren(ConstraintType.WIDTH)
+            ConstraintType.HEIGHT -> visitor.visitChildren(ConstraintType.HEIGHT)
+            ConstraintType.RADIUS -> visitor.visitChildren(ConstraintType.HEIGHT)
+            else -> throw IllegalArgumentException(type.prettyName)
+        }
+    }
 }
 
 class ChildBasedMaxSizeConstraint : SizeConstraint {
@@ -47,6 +57,15 @@ class ChildBasedMaxSizeConstraint : SizeConstraint {
 
     override fun getRadiusImpl(component: UIComponent): Float {
         return (constrainTo ?: component).children.maxBy { it.getHeight() }?.getHeight()?.times(2f) ?: 0f
+    }
+
+    override fun visitImpl(visitor: ConstraintVisitor, type: ConstraintType) {
+        when (type) {
+            ConstraintType.WIDTH -> visitor.visitChildren(ConstraintType.WIDTH)
+            ConstraintType.HEIGHT -> visitor.visitChildren(ConstraintType.HEIGHT)
+            ConstraintType.RADIUS -> visitor.visitChildren(ConstraintType.HEIGHT)
+            else -> throw IllegalArgumentException(type.prettyName)
+        }
     }
 }
 
@@ -89,5 +108,19 @@ class ChildBasedRangeConstraint : WidthConstraint, HeightConstraint {
         }
 
         return (bottomMostPoint - topMostPoint).coerceAtLeast(0f)
+    }
+
+    override fun visitImpl(visitor: ConstraintVisitor, type: ConstraintType) {
+        when (type) {
+            ConstraintType.WIDTH -> {
+                visitor.visitChildren(ConstraintType.X)
+                visitor.visitChildren(ConstraintType.WIDTH)
+            }
+            ConstraintType.HEIGHT -> {
+                visitor.visitChildren(ConstraintType.Y)
+                visitor.visitChildren(ConstraintType.HEIGHT)
+            }
+            else -> throw IllegalArgumentException(type.prettyName)
+        }
     }
 }

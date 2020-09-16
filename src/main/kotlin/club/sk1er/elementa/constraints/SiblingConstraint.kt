@@ -1,6 +1,7 @@
 package club.sk1er.elementa.constraints
 
 import club.sk1er.elementa.UIComponent
+import club.sk1er.elementa.constraints.resolution.ConstraintVisitor
 
 /**
  * Positions this component to be directly after its previous sibling.
@@ -114,5 +115,67 @@ open class SiblingConstraint @JvmOverloads constructor(
         }
 
         return leftmostPoint
+    }
+
+    override fun visitImpl(visitor: ConstraintVisitor, type: ConstraintType) {
+        val indexInParent = visitor.component.let { it.parent.children.indexOf(it) }
+
+        when (type) {
+            ConstraintType.X -> {
+                if (alignOpposite) {
+                    visitor.visitSelf(ConstraintType.WIDTH)
+
+                    if (indexInParent <= 0) {
+                        visitor.visitParent(ConstraintType.X)
+                        visitor.visitParent(ConstraintType.WIDTH)
+                        return
+                    }
+
+                    for (n in indexInParent - 1 downTo 0) {
+                        visitor.visitSibling(ConstraintType.X, n)
+                        visitor.visitSibling(ConstraintType.WIDTH, n)
+                    }
+                } else {
+                    if (indexInParent <= 0) {
+                        visitor.visitParent(ConstraintType.X)
+                        return
+                    }
+
+                    for (n in indexInParent - 1 downTo 0) {
+                        visitor.visitSibling(ConstraintType.X, n)
+                        // TODO: Avoid this width call when not actually called in getXPositionImpl
+                        visitor.visitSibling(ConstraintType.WIDTH, n)
+                    }
+                }
+            }
+            ConstraintType.Y -> {
+                if (alignOpposite) {
+                    visitor.visitSelf(ConstraintType.HEIGHT)
+
+                    if (indexInParent <= 0) {
+                        visitor.visitParent(ConstraintType.Y)
+                        visitor.visitParent(ConstraintType.HEIGHT)
+                        return
+                    }
+
+                    for (n in indexInParent - 1 downTo 0) {
+                        visitor.visitSibling(ConstraintType.Y, n)
+                        visitor.visitSibling(ConstraintType.HEIGHT, n)
+                    }
+                } else {
+                    if (indexInParent <= 0) {
+                        visitor.visitParent(ConstraintType.Y)
+                        return
+                    }
+
+                    for (n in indexInParent - 1 downTo 0) {
+                        visitor.visitSibling(ConstraintType.Y, n)
+                        // TODO: Avoid this width call when not actually called in getXPositionImpl
+                        visitor.visitSibling(ConstraintType.HEIGHT, n)
+                    }
+                }
+            }
+            else -> throw IllegalArgumentException(type.prettyName)
+        }
     }
 }

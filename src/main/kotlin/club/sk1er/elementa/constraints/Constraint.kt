@@ -2,6 +2,7 @@ package club.sk1er.elementa.constraints
 
 import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.constraints.animation.AnimationComponent
+import club.sk1er.elementa.constraints.resolution.ConstraintVisitor
 import java.awt.Color
 
 /**
@@ -34,6 +35,17 @@ interface SuperConstraint<T> {
     fun stopIfSupported() {
         (this as? AnimationComponent<*>)?.stop()
     }
+
+    fun visit(visitor: ConstraintVisitor, type: ConstraintType) {
+        // TODO: Support constrainTo
+        if (constrainTo != null)
+            return
+
+        visitor.visit(this)
+        visitImpl(visitor, type)
+    }
+
+    fun visitImpl(visitor: ConstraintVisitor, type: ConstraintType)
 }
 
 interface GeneralConstraint : PositionConstraint, SizeConstraint {
@@ -82,7 +94,7 @@ interface YConstraint : SuperConstraint<Float> {
 
 interface SizeConstraint : WidthConstraint, HeightConstraint, RadiusConstraint
 
-interface RadiusConstraint: SuperConstraint<Float> {
+interface RadiusConstraint : SuperConstraint<Float> {
     fun getRadiusImpl(component: UIComponent): Float
 
     fun getRadius(component: UIComponent): Float {

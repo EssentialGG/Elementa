@@ -1,6 +1,7 @@
 package club.sk1er.elementa.constraints
 
 import club.sk1er.elementa.UIComponent
+import club.sk1er.elementa.constraints.resolution.ConstraintVisitor
 
 class AdditiveConstraint(
     val constraint1: SuperConstraint<Float>,
@@ -45,5 +46,10 @@ class AdditiveConstraint(
 
     override fun to(component: UIComponent): SuperConstraint<Float> {
         throw UnsupportedOperationException("Constraint.to(UIComponent) is not available in this context, please apply this to the components beforehand.")
+    }
+
+    override fun visitImpl(visitor: ConstraintVisitor, type: ConstraintType) {
+        constraint1.visit(visitor, type)
+        constraint2.visit(visitor, type)
     }
 }

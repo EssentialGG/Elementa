@@ -1,6 +1,7 @@
 package club.sk1er.elementa.constraints
 
 import club.sk1er.elementa.UIComponent
+import club.sk1er.elementa.constraints.resolution.ConstraintVisitor
 
 /**
  * Clamps [constraint] to be AT MOST [maxConstraint]
@@ -46,6 +47,11 @@ class MaxConstraint(
 
     override fun to(component: UIComponent) = apply {
         throw UnsupportedOperationException("Constraint.to(UIComponent) is not available in this context, please apply this to the components beforehand.")
+    }
+
+    override fun visitImpl(visitor: ConstraintVisitor, type: ConstraintType) {
+        constraint.visit(visitor, type)
+        maxConstraint.visit(visitor, type)
     }
 }
 
@@ -93,5 +99,10 @@ class MinConstraint(
 
     override fun to(component: UIComponent) = apply {
         throw UnsupportedOperationException("Constraint.to(UIComponent) is not available in this context, please apply this to the components beforehand.")
+    }
+
+    override fun visitImpl(visitor: ConstraintVisitor, type: ConstraintType) {
+        constraint.visit(visitor, type)
+        minConstraint.visit(visitor, type)
     }
 }

@@ -2,6 +2,7 @@ package club.sk1er.elementa.constraints
 
 import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.components.UIText
+import club.sk1er.elementa.constraints.resolution.ConstraintVisitor
 import club.sk1er.mods.core.universal.UniversalGraphicsHandler
 import club.sk1er.mods.core.universal.UniversalMinecraft
 import net.minecraft.client.Minecraft
@@ -31,5 +32,13 @@ class TextAspectConstraint : WidthConstraint, HeightConstraint {
 
     override fun to(component: UIComponent) = apply {
         throw UnsupportedOperationException("Constraint.to(UIComponent) is not available in this context!")
+    }
+
+    override fun visitImpl(visitor: ConstraintVisitor, type: ConstraintType) {
+        when (type) {
+            ConstraintType.WIDTH -> visitor.visitSelf(ConstraintType.HEIGHT)
+            ConstraintType.HEIGHT -> visitor.visitSelf(ConstraintType.WIDTH)
+            else -> throw IllegalArgumentException(type.prettyName)
+        }
     }
 }
