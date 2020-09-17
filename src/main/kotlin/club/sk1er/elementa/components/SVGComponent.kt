@@ -34,14 +34,14 @@ class SVGComponent(private var svg: SVG) : UIComponent(), ImageProvider {
         val yScale = svg.height?.let { height / it } ?: 1.0
         val strokeWidth = (xScale * svg.strokeWidth).toFloat().coerceAtMost(10f)
 
-        UniversalGraphicsHandler.pushMatrix()
+        UniversalGraphicsHandler.GL.pushMatrix()
 
         UniversalGraphicsHandler.enableBlend()
         UniversalGraphicsHandler.disableTexture2D()
 
         GL11.glColor4f(color.red / 255f, color.green / 255f, color.blue / 255f, 1f)
-        UniversalGraphicsHandler.translate(x, y, 0.0)
-        UniversalGraphicsHandler.scale(xScale, yScale, 0.0)
+        UniversalGraphicsHandler.GL.translate(x, y, 0.0)
+        UniversalGraphicsHandler.GL.scale(xScale, yScale, 0.0)
 
         GL11.glPointSize(strokeWidth)
         GL11.glLineWidth(strokeWidth)
@@ -67,7 +67,7 @@ class SVGComponent(private var svg: SVG) : UIComponent(), ImageProvider {
 
         UniversalGraphicsHandler.enableTexture2D()
 
-        UniversalGraphicsHandler.popMatrix()
+        UniversalGraphicsHandler.GL.popMatrix()
     }
 
     override fun draw() {

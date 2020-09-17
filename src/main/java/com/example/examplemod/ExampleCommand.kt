@@ -27,20 +27,31 @@ class ExampleCommand : CommandBase() {
     //$$     ExampleMod.gui = KtTestGui()
     //$$ }
     //#endif
-
 }
 //#else
 //$$ import com.mojang.brigadier.CommandDispatcher
+//$$ import com.mojang.brigadier.context.CommandContext
+//#if FABRIC
+//$$ import net.minecraft.server.command.CommandSource
+//$$ import net.minecraft.server.command.ServerCommandSource
+//$$ import net.minecraft.server.command.CommandManager
+//$$
+//$$ object ExampleCommand {
+//$$     fun register(dispatcher: CommandDispatcher<ServerCommandSource>) {
+//$$         dispatcher.register(CommandManager.literal("example")
+//#else
 //$$ import net.minecraft.command.CommandSource
 //$$ import net.minecraft.command.Commands
-//$$ import com.mojang.brigadier.context.CommandContext
 //$$
 //$$ object ExampleCommand {
 //$$     fun register(dispatcher: CommandDispatcher<CommandSource?>) {
-//$$         dispatcher.register(Commands.literal("example").requires { usr: CommandSource -> usr.hasPermissionLevel(0) }.executes { usr: CommandContext<CommandSource> ->
-//$$             ExampleMod.gui = KtTestGui()
-//$$             1
-//$$         })
+//$$         dispatcher.register(Commands.literal("example")
+//#endif
+//$$             .requires { it.hasPermissionLevel(0) }
+//$$             .executes {
+//$$                 ExampleMod.gui = KtTestGui()
+//$$                 1
+//$$             })
 //$$     }
 //$$ }
 //#endif
