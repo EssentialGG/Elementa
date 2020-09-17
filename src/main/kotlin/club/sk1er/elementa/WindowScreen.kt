@@ -2,8 +2,11 @@ package club.sk1er.elementa
 
 import club.sk1er.elementa.components.Window
 import club.sk1er.mods.core.universal.UniversalKeyboard
-import club.sk1er.mods.core.universal.UniversalMinecraft
 import club.sk1er.mods.core.universal.UniversalScreen
+
+//#if MC>=11602
+//$$ import club.sk1er.mods.core.universal.UniversalGraphicsHandler
+//#endif
 
 abstract class WindowScreen(
     private val enableRepeatKeys: Boolean = true,
@@ -19,6 +22,10 @@ abstract class WindowScreen(
 
     override fun onDrawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
         super.onDrawScreen(mouseX, mouseY, partialTicks)
+
+        //#if MC>=11602
+        //$$ UniversalGraphicsHandler.setStack(getMatrixStack())
+        //#endif
 
         if (drawDefaultBackground)
             super.onDrawBackground(0)
