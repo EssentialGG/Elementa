@@ -23,44 +23,37 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
     private var focusedComponent: UIComponent? = null
     private var componentRequestingFocus: UIComponent? = null
 
-    var areComponentsDirty = true
-        private set
-    var areConstraintsDirty = true
-        private set
-
-    var isDirty: Boolean
-        get() = areComponentsDirty || areConstraintsDirty
-        private set(value) {
-            areComponentsDirty = value
-            areConstraintsDirty = value
-        }
-
     var scaledResolution: UniversalResolutionUtil = UniversalResolutionUtil.getInstance()
+    private var cancelDrawing = false
+    private var recheckTree = true
 
     init {
         super.parent = this
-    }
 
-    fun markComponentsDirty() {
-        areComponentsDirty = true
-    }
+        children.addObserver { _, _ ->
+            recheckTree = true
+        }
 
-    fun markConstraintsDirty() {
-        areConstraintsDirty = true
+        constraints.addObserver { _, _ ->
+            recheckTree = true
+        }
     }
 
     override fun draw() {
-        if (IS_DEV && isDirty) {
+        if (cancelDrawing)
+            return
+
+        if (IS_DEV && recheckTree) {
+            recheckTree = false
             val cyclicNodes = ConstraintResolver(this).getCyclicNodes()
 
             if (cyclicNodes != null) {
                 UniversalMinecraft.getMinecraft().displayGuiScreen(
                     ConstraintResolutionGui(cyclicNodes)
                 )
+                cancelDrawing = true
+                return
             }
-
-            isDirty = false
-            return
         }
 
         val startTime = System.nanoTime()
@@ -255,18 +248,6 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
 
             return current as? Window
                 ?: throw IllegalStateException("No window parent? It's possible you haven't called Window.addChild() at this point in time.")
-        }
-
-        fun tryMarkComponentsDirty(component: UIComponent) {
-            try {
-                of(component).markComponentsDirty()
-            } catch (e: Exception) {}
-        }
-
-        fun tryMarkConstraintsDirty(component: UIComponent) {
-            try {
-                of(component).markConstraintsDirty()
-            } catch (e: Exception) {}
         }
     }
 }

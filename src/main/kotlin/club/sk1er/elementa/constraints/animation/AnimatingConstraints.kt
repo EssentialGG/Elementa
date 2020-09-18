@@ -39,7 +39,6 @@ class AnimatingConstraints(
             newConstraint,
             totalDelay.toInt()
         )
-        Window.tryMarkConstraintsDirty(component)
     }
 
     @JvmOverloads
@@ -54,7 +53,6 @@ class AnimatingConstraints(
             newConstraint,
             totalDelay.toInt()
         )
-        Window.tryMarkConstraintsDirty(component)
     }
 
     @JvmOverloads
@@ -69,7 +67,6 @@ class AnimatingConstraints(
             newConstraint,
             totalDelay.toInt()
         )
-        Window.tryMarkConstraintsDirty(component)
     }
 
     @JvmOverloads
@@ -84,7 +81,6 @@ class AnimatingConstraints(
             newConstraint,
             totalDelay.toInt()
         )
-        Window.tryMarkConstraintsDirty(component)
     }
 
     @JvmOverloads
@@ -99,7 +95,6 @@ class AnimatingConstraints(
             newConstraint,
             totalDelay.toInt()
         )
-        Window.tryMarkConstraintsDirty(component)
     }
 
     @JvmOverloads
@@ -114,7 +109,6 @@ class AnimatingConstraints(
             newConstraint,
             totalDelay.toInt()
         )
-        Window.tryMarkConstraintsDirty(component)
     }
 
     @JvmOverloads
@@ -129,7 +123,6 @@ class AnimatingConstraints(
             newConstraint,
             totalDelay.toInt()
         )
-        Window.tryMarkConstraintsDirty(component)
     }
 
     /**

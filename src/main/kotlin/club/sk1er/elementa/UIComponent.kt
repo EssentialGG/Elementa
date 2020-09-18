@@ -82,7 +82,6 @@ abstract class UIComponent : Observable() {
     open fun addChild(component: UIComponent) = apply {
         component.parent = this
         children.add(component)
-        Window.tryMarkComponentsDirty(this)
     }
 
     /**
@@ -99,7 +98,6 @@ abstract class UIComponent : Observable() {
 
         component.parent = this
         children.add(index, component)
-        Window.tryMarkComponentsDirty(this)
     }
 
     /**
@@ -117,7 +115,6 @@ abstract class UIComponent : Observable() {
 
         newComponent.parent = this
         children.add(indexOfExisting, newComponent)
-        Window.tryMarkComponentsDirty(this)
     }
 
     /**
@@ -135,7 +132,6 @@ abstract class UIComponent : Observable() {
 
         newComponent.parent = this
         children.add(indexOfExisting + 1, newComponent)
-        Window.tryMarkComponentsDirty(this)
     }
 
     /**
@@ -154,7 +150,6 @@ abstract class UIComponent : Observable() {
         newComponent.parent = this
         children.removeAt(indexOfExisting)
         children.add(indexOfExisting, newComponent)
-        Window.tryMarkComponentsDirty(this)
     }
 
     /**
@@ -172,7 +167,6 @@ abstract class UIComponent : Observable() {
      */
     open fun removeChild(component: UIComponent) = apply {
         children.remove(component)
-        Window.tryMarkComponentsDirty(this)
     }
 
     /**
@@ -180,7 +174,6 @@ abstract class UIComponent : Observable() {
      */
     open fun clearChildren() = apply {
         children.clear()
-        Window.tryMarkComponentsDirty(this)
     }
 
     /**
@@ -207,7 +200,6 @@ abstract class UIComponent : Observable() {
      */
     fun animateTo(constraints: AnimatingConstraints) {
         this.constraints = constraints
-        Window.tryMarkConstraintsDirty(this)
     }
 
     /**
@@ -234,42 +226,34 @@ abstract class UIComponent : Observable() {
 
     fun setChildOf(parent: UIComponent) = apply {
         parent.addChild(this)
-        Window.tryMarkComponentsDirty(this)
     }
 
     fun setX(constraint: XConstraint) = apply {
         this.constraints.withX(constraint)
-        Window.tryMarkConstraintsDirty(this)
     }
 
     fun setY(constraint: YConstraint) = apply {
         this.constraints.withY(constraint)
-        Window.tryMarkConstraintsDirty(this)
     }
 
     fun setWidth(constraint: WidthConstraint) = apply {
         this.constraints.withWidth(constraint)
-        Window.tryMarkConstraintsDirty(this)
     }
 
     fun setHeight(constraint: HeightConstraint) = apply {
         this.constraints.withHeight(constraint)
-        Window.tryMarkConstraintsDirty(this)
     }
 
     fun setRadius(constraint: RadiusConstraint) = apply {
         this.constraints.withRadius(constraint)
-        Window.tryMarkConstraintsDirty(this)
     }
 
     fun setTextScale(constraint: HeightConstraint) = apply {
         this.constraints.withTextScale(constraint)
-        Window.tryMarkConstraintsDirty(this)
     }
 
     fun setColor(constraint: ColorConstraint) = apply {
         this.constraints.withColor(constraint)
-        Window.tryMarkConstraintsDirty(this)
     }
 
     open fun getLeft() = constraints.getX()
