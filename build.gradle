@@ -282,7 +282,11 @@ publishing {
     publications {
         maven(MavenPublication) {
             artifactId = "Elementa"
-            version = "${project.version}-$mcVersion${this.properties.getOrDefault("IS_CI", false) ? "-SNAPSHOT" : ""}"
+
+            def branchStr = this.properties.getOrDefault("branch", "master") != "master" ? this.properties.getOrDefault("branch", "master") + "-" : ""
+            def fabricStr = FABRIC ? "-fabric" : ""
+            def snapshotStr = this.properties.getOrDefault("IS_CI", false) ? "-SNAPSHOT" : ""
+            version = "$branchStr${project.version}-$mcVersion$fabricStr$snapshotStr"
 
             pom.withXml {
                 def dependenciesNode = asNode().appendNode('dependencies')
