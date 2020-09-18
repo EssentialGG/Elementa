@@ -3,7 +3,6 @@ pipeline {
   stages {
     stage('Initialize') {
       steps {
-        sh "mkdir versions/1.15.2"
         sh "./gradlew clean"
         sh "./gradlew preprocessResources"
       }
