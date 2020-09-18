@@ -50,8 +50,8 @@ class MaxConstraint(
     }
 
     override fun visitImpl(visitor: ConstraintVisitor, type: ConstraintType) {
-        constraint.visit(visitor, type)
-        maxConstraint.visit(visitor, type)
+        constraint.visit(visitor, type, setNewConstraint = false)
+        maxConstraint.visit(visitor, type, setNewConstraint = false)
     }
 }
 
@@ -102,7 +102,7 @@ class MinConstraint(
     }
 
     override fun visitImpl(visitor: ConstraintVisitor, type: ConstraintType) {
-        constraint.visit(visitor, type)
-        minConstraint.visit(visitor, type)
+        constraint.visit(visitor, type, setNewConstraint = false)
+        minConstraint.visit(visitor, type, setNewConstraint = false)
     }
 }

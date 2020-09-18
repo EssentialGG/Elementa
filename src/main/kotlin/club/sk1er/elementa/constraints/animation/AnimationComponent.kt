@@ -73,8 +73,8 @@ class XAnimationComponent(
     }
 
     override fun visitImpl(visitor: ConstraintVisitor, type: ConstraintType) {
-        oldConstraint.visit(visitor, type)
-        newConstraint.visit(visitor, type)
+        oldConstraint.visit(visitor, type, setNewConstraint = false)
+        newConstraint.visit(visitor, type, setNewConstraint = false)
     }
 }
 
@@ -107,8 +107,8 @@ class YAnimationComponent(
     }
 
     override fun visitImpl(visitor: ConstraintVisitor, type: ConstraintType) {
-        oldConstraint.visit(visitor, type)
-        newConstraint.visit(visitor, type)
+        oldConstraint.visit(visitor, type, setNewConstraint = false)
+        newConstraint.visit(visitor, type, setNewConstraint = false)
     }
 }
 
@@ -142,8 +142,8 @@ class RadiusAnimationComponent(
     }
 
     override fun visitImpl(visitor: ConstraintVisitor, type: ConstraintType) {
-        oldConstraint.visit(visitor, type)
-        newConstraint.visit(visitor, type)
+        oldConstraint.visit(visitor, type, setNewConstraint = false)
+        newConstraint.visit(visitor, type, setNewConstraint = false)
     }
 }
 
@@ -177,8 +177,8 @@ class WidthAnimationComponent(
     }
 
     override fun visitImpl(visitor: ConstraintVisitor, type: ConstraintType) {
-        oldConstraint.visit(visitor, type)
-        newConstraint.visit(visitor, type)
+        oldConstraint.visit(visitor, type, setNewConstraint = false)
+        newConstraint.visit(visitor, type, setNewConstraint = false)
     }
 }
 
@@ -212,8 +212,8 @@ class HeightAnimationComponent(
     }
 
     override fun visitImpl(visitor: ConstraintVisitor, type: ConstraintType) {
-        oldConstraint.visit(visitor, type)
-        newConstraint.visit(visitor, type)
+        oldConstraint.visit(visitor, type, setNewConstraint = false)
+        newConstraint.visit(visitor, type, setNewConstraint = false)
     }
 }
 
@@ -253,8 +253,8 @@ class ColorAnimationComponent(
     }
 
     override fun visitImpl(visitor: ConstraintVisitor, type: ConstraintType) {
-        oldConstraint.visit(visitor, type)
-        newConstraint.visit(visitor, type)
+        oldConstraint.visit(visitor, type, setNewConstraint = false)
+        newConstraint.visit(visitor, type, setNewConstraint = false)
     }
 }
 

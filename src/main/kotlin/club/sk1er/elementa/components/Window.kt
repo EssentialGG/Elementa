@@ -1,9 +1,8 @@
 package club.sk1er.elementa.components
 
 import club.sk1er.elementa.UIComponent
-import club.sk1er.elementa.constraints.*
+import club.sk1er.elementa.constraints.resolution.ConstraintResolutionGui
 import club.sk1er.elementa.constraints.resolution.ConstraintResolver
-import club.sk1er.elementa.constraints.resolution.ConstraintValidationException
 import club.sk1er.elementa.effects.ScissorEffect
 import club.sk1er.mods.core.universal.*
 import club.sk1er.mods.core.universal.wrappers.UniversalPlayer
@@ -37,7 +36,6 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
         }
 
     var scaledResolution: UniversalResolutionUtil = UniversalResolutionUtil.getInstance()
-    private var cancelDrawing = false
 
     init {
         super.parent = this
@@ -52,49 +50,17 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
     }
 
     override fun draw() {
-        if (cancelDrawing)
-            return
-
         if (IS_DEV && isDirty) {
-            try {
-                ConstraintResolver(this).resolve()
-            } catch (e: ConstraintValidationException) {
-                println("Circular constraint structure detected! Constraint path:")
-                val history = e.history
-                history.forEachIndexed { index, constraint ->
-                    println("$index: ${constraint.javaClass.simpleName}")
+            val cyclicNodes = ConstraintResolver(this).getCyclicNodes()
 
-                    val properties = when (constraint) {
-                        is AlphaAspectColorConstraint -> listOf(constraint::color, constraint::value)
-                        is AspectConstraint -> listOf(constraint::value)
-                        is ChildBasedSizeConstraint -> listOf(constraint::padding)
-                        is ConstantColorConstraint -> listOf(constraint::color)
-                        is CramSiblingConstraint -> listOf(constraint::padding)
-                        is PixelConstraint -> listOf(constraint::value, constraint::alignOpposite, constraint::alignOutside)
-                        is RainbowColorConstraint -> listOf(constraint::alpha, constraint::speed)
-                        is RelativeConstraint -> listOf(constraint::value)
-                        is ScaledTextConstraint -> listOf(constraint::scale)
-                        is SiblingConstraint -> listOf(constraint::padding, constraint::alignOpposite)
-                        else -> listOf()
-                    }
-
-                    properties.forEach {
-                        println("    ${it.name}: ${it.get()}")
-                    }
-                }
-                println("${history.size}: The first constraint in this path")
-
-                UniversalPlayer.getPlayer()?.addChatMessage(UniversalTextComponent.buildSimple(
-                    "§c§lError rendering Elementa Window: invalid constraints detected. Check your logs for more info."
-                ))
-
-                UniversalMinecraft.getMinecraft().displayGuiScreen(null)
-
-                cancelDrawing = true
-                return
+            if (cyclicNodes != null) {
+                UniversalMinecraft.getMinecraft().displayGuiScreen(
+                    ConstraintResolutionGui(cyclicNodes)
+                )
             }
 
             isDirty = false
+            return
         }
 
         val startTime = System.nanoTime()

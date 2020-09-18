@@ -20,16 +20,6 @@ operator fun SuperConstraint<Float>.plus(other: SuperConstraint<Float>) =
 operator fun SuperConstraint<Float>.minus(other: SuperConstraint<Float>) =
     SubtractiveConstraint(this, other)
 
-fun basicWidthConstraint(calculator: (component: UIComponent) -> Float) = object : WidthConstraint {
-    override var cachedValue = 0f
-    override var recalculate = true
-    override var constrainTo: UIComponent? = null
-
-    override fun getWidthImpl(component: UIComponent) = calculator(component)
-
-    override fun visitImpl(visitor: ConstraintVisitor, type: ConstraintType) { }
-}
-
 fun basicXConstraint(calculator: (component: UIComponent) -> Float) = object : XConstraint {
     override var cachedValue = 0f
     override var recalculate = true
@@ -46,6 +36,16 @@ fun basicYConstraint(calculator: (component: UIComponent) -> Float) = object : Y
     override var constrainTo: UIComponent? = null
 
     override fun getYPositionImpl(component: UIComponent) = calculator(component)
+
+    override fun visitImpl(visitor: ConstraintVisitor, type: ConstraintType) { }
+}
+
+fun basicWidthConstraint(calculator: (component: UIComponent) -> Float) = object : WidthConstraint {
+    override var cachedValue = 0f
+    override var recalculate = true
+    override var constrainTo: UIComponent? = null
+
+    override fun getWidthImpl(component: UIComponent) = calculator(component)
 
     override fun visitImpl(visitor: ConstraintVisitor, type: ConstraintType) { }
 }

@@ -36,12 +36,13 @@ interface SuperConstraint<T> {
         (this as? AnimationComponent<*>)?.stop()
     }
 
-    fun visit(visitor: ConstraintVisitor, type: ConstraintType) {
+    fun visit(visitor: ConstraintVisitor, type: ConstraintType, setNewConstraint: Boolean = true) {
         // TODO: Support constrainTo
         if (constrainTo != null)
             return
 
-        visitor.visit(this)
+        if (setNewConstraint)
+            visitor.setConstraint(this)
         visitImpl(visitor, type)
     }
 
