@@ -4,22 +4,36 @@ import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.UIConstraints
 import club.sk1er.elementa.components.Window
 import club.sk1er.elementa.constraints.*
-import club.sk1er.mods.core.universal.UniversalMinecraft
 
-class ConstraintResolver(private val window: Window) {
-    fun resolve() {
-        ConstraintType.values().forEach { resolve(it) }
-    }
+class ConstraintResolver(window: Window) {
+    private val graph = DirectedAcyclicGraph<ResolverNode>()
 
-    private fun resolve(constraintType: ConstraintType) {
-        window.forEachChild { node ->
-            val visitor = ConstraintVisitor(node)
-            node.constraints.getConstraint(constraintType).visit(visitor, constraintType)
+    init {
+        window.forEachChild {
+            // Color constraints are not added because they are always resolvable
+            graph.addVertices(
+                ResolverNode(it, it.constraints.x),
+                ResolverNode(it, it.constraints.y),
+                ResolverNode(it, it.constraints.width),
+                ResolverNode(it, it.constraints.height),
+                ResolverNode(it, it.constraints.textScale),
+                ResolverNode(it, it.constraints.radius)
+            )
+        }
 
-            if (visitor.isInvalid)
-                throw ConstraintValidationException(visitor.constraintHistory())
+        window.forEachChild {
+            val visitor = ConstraintVisitor(graph, it)
+
+            it.constraints.x.visit(visitor, ConstraintType.X)
+            it.constraints.y.visit(visitor, ConstraintType.Y)
+            it.constraints.width.visit(visitor, ConstraintType.WIDTH)
+            it.constraints.height.visit(visitor, ConstraintType.HEIGHT)
+            it.constraints.textScale.visit(visitor, ConstraintType.TEXT_SCALE)
+            it.constraints.radius.visit(visitor, ConstraintType.RADIUS)
         }
     }
+
+    fun getCyclicNodes() = graph.getCyclicLoop()
 }
 
 fun UIConstraints.getConstraint(type: ConstraintType) = when (type) {
@@ -34,8 +48,7 @@ fun UIConstraints.getConstraint(type: ConstraintType) = when (type) {
 
 fun Window.forEachChild(action: (UIComponent) -> Unit) {
     fun helper(component: UIComponent) {
-        if (component !is Window)
-            action(component)
+        action(component)
         component.children.forEach(::helper)
     }
 

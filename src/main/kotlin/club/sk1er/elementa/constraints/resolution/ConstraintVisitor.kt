@@ -6,78 +6,58 @@ import club.sk1er.elementa.components.Window
 import club.sk1er.elementa.constraints.ConstraintType
 import club.sk1er.elementa.constraints.SuperConstraint
 
+class ConstraintVisitor(
+    private val graph: DirectedAcyclicGraph<ResolverNode>,
+    val component: UIComponent
+) {
+    private lateinit var currentConstraint: SuperConstraint<*>
 
-class ConstraintVisitor(var component: UIComponent) {
-    val parent: UIComponent?
-        get() = if (component.hasParent) component.parent else null
-
-    val constraints: UIConstraints
-        get() = component.constraints
-
-    var isInvalid = false
-        private set
-
-    private var seenConstraints = mutableListOf<SuperConstraint<*>>()
-
-    fun constraintHistory(): List<SuperConstraint<*>> = seenConstraints
-
-    fun visit(constraint: SuperConstraint<*>) {
-        if (isInvalid)
-            return
-
-        isInvalid = seenConstraints.contains(constraint)
-        seenConstraints.add(constraint)
+    fun setConstraint(constraint: SuperConstraint<*>) {
+        currentConstraint = constraint
     }
 
     fun visitParent(type: ConstraintType) {
-        if (isInvalid)
+        if (!component.hasParent || component is Window || component.parent is Window)
             return
 
-        if (parent == null || parent is Window)
-            return
-
-        withComponent(parent!!) {
-            visitSelf(type)
-        }
+        graph.addEdge(
+            ResolverNode(component, currentConstraint),
+            ResolverNode(component.parent, component.parent.constraints.getConstraint(type))
+        )
     }
 
     fun visitSelf(type: ConstraintType) {
-        if (isInvalid)
-            return
-
-        val previousSeenConstraints = seenConstraints.toMutableList()
-        constraints.getConstraint(type).visit(this, type)
-        seenConstraints = previousSeenConstraints
+        graph.addEdge(
+            ResolverNode(component, currentConstraint),
+            ResolverNode(component, component.constraints.getConstraint(type))
+        )
     }
 
     fun visitSibling(type: ConstraintType, index: Int) {
-        if (isInvalid)
-            return
-
-        if (parent == null) {
-            // TODO
-            assert(false)
+        if (!component.hasParent) {
+            throw IllegalStateException("""
+                Error during Elementa constraint validation: the current component has no parent,
+                but visitSibling was called. This shouldn't be possible -- if you are seeing this,
+                please notify an Elementa developer ASAP!
+            """.trimIndent())
         }
 
-        withComponent(parent!!.children[index]) {
-            visitSelf(type)
-        }
+        val sibling = component.parent.children[index]
+
+        graph.addEdge(
+            ResolverNode(component, currentConstraint),
+            ResolverNode(sibling, sibling.constraints.getConstraint(type))
+        )
     }
 
     fun visitChildren(type: ConstraintType) {
-        if (isInvalid)
-            return
+        val currNode = ResolverNode(component, currentConstraint)
 
         component.children.forEach {
-            withComponent(it) { visitSelf(type) }
+            graph.addEdge(
+                currNode,
+                ResolverNode(it, it.constraints.getConstraint(type))
+            )
         }
-    }
-
-
-    private fun withComponent(newComponent: UIComponent, action: () -> Unit) {
-        val prevComponent = component
-        component = newComponent
-        action()
-        component = prevComponent
     }
 }

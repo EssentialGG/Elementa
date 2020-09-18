@@ -49,7 +49,7 @@ class SubtractiveConstraint(
     }
 
     override fun visitImpl(visitor: ConstraintVisitor, type: ConstraintType) {
-        constraint1.visit(visitor, type)
-        constraint2.visit(visitor, type)
+        constraint1.visit(visitor, type, setNewConstraint = false)
+        constraint2.visit(visitor, type, setNewConstraint = false)
     }
 }
