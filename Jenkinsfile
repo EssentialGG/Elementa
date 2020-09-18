@@ -18,7 +18,8 @@ pipeline {
       steps {
         archiveArtifacts 'versions/1.8.9/build/libs/*.jar'
         archiveArtifacts 'versions/1.12.2/build/libs/*.jar'
-//         archiveArtifacts 'versions/1.15.2/build/libs/*.jar'
+        archiveArtifacts 'versions/1.15.2/build/libs/*.jar'
+        archiveArtifacts 'versions/1.16.2/build/libs/*.jar'
       }
     }
   }
