@@ -24,6 +24,18 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
     private var focusedComponent: UIComponent? = null
     private var componentRequestingFocus: UIComponent? = null
 
+    var areComponentsDirty = true
+        private set
+    var areConstraintsDirty = true
+        private set
+
+    var isDirty: Boolean
+        get() = areComponentsDirty || areConstraintsDirty
+        private set(value) {
+            areComponentsDirty = value
+            areConstraintsDirty = value
+        }
+
     var scaledResolution: UniversalResolutionUtil = UniversalResolutionUtil.getInstance()
     private var cancelDrawing = false
 
@@ -31,9 +43,19 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
         super.parent = this
     }
 
+    fun markComponentsDirty() {
+        areComponentsDirty = true
+    }
+
+    fun markConstraintsDirty() {
+        areConstraintsDirty = true
+    }
+
     override fun draw() {
-        // TODO: Only do this if component or constraint structure has changes
-        if (IS_DEV && !cancelDrawing) {
+        if (cancelDrawing)
+            return
+
+        if (IS_DEV && isDirty) {
             try {
                 ConstraintResolver(this).resolve()
             } catch (e: ConstraintValidationException) {
@@ -69,11 +91,11 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
                 UniversalMinecraft.getMinecraft().displayGuiScreen(null)
 
                 cancelDrawing = true
+                return
             }
-        }
 
-        if (cancelDrawing)
-            return
+            isDirty = false
+        }
 
         val startTime = System.nanoTime()
 
@@ -267,6 +289,18 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
 
             return current as? Window
                 ?: throw IllegalStateException("No window parent? It's possible you haven't called Window.addChild() at this point in time.")
+        }
+
+        fun tryMarkComponentsDirty(component: UIComponent) {
+            try {
+                of(component).markComponentsDirty()
+            } catch (e: Exception) {}
+        }
+
+        fun tryMarkConstraintsDirty(component: UIComponent) {
+            try {
+                of(component).markConstraintsDirty()
+            } catch (e: Exception) {}
         }
     }
 }
