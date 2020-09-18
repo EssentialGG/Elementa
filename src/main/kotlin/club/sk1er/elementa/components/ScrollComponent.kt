@@ -154,7 +154,6 @@ class ScrollComponent @JvmOverloads constructor(
         actualHolder.children.forEach { it.parent = actualHolder }
 
         needsUpdate = true
-        Window.tryMarkComponentsDirty(this)
     }
 
     @JvmOverloads
@@ -164,7 +163,6 @@ class ScrollComponent @JvmOverloads constructor(
         } else {
             actualHolder.children.sortBy(comparator)
         }
-        Window.tryMarkComponentsDirty(this)
     }
 
     private fun updateGrip(component: UIComponent, mouseY: Float) {
