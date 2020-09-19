@@ -42,7 +42,7 @@ interface SuperConstraint<T> {
             return
 
         if (setNewConstraint)
-            visitor.setConstraint(this)
+            visitor.setConstraint(this, type)
         visitImpl(visitor, type)
     }
 
