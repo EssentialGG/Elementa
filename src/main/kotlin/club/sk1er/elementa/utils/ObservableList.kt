@@ -68,6 +68,10 @@ class ObservableList<T>(private val wrapped: MutableList<T>) : MutableList<T> by
         return removeAll(wrapped.filter { it !in elements })
     }
 
+    override fun sort(c: Comparator<in T>?) {
+        Collections.sort(wrapped, c)
+    }
+
     override fun clear() {
         wrapped.clear()
         update(ObservableClearEvent())

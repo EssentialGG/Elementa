@@ -156,7 +156,8 @@ class ScrollComponent @JvmOverloads constructor(
         needsUpdate = true
     }
 
-    fun <T : Comparable<T>> sortChildren(comparator: (UIComponent) -> T, descending: Boolean = false) {
+    @JvmOverloads
+    fun <T : Comparable<T>> sortChildren(descending: Boolean = false, comparator: (UIComponent) -> T) {
         if (descending) {
             actualHolder.children.sortByDescending(comparator)
         } else {
