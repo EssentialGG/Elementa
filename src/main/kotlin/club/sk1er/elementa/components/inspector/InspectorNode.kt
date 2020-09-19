@@ -15,7 +15,7 @@ import java.awt.Color
 
 class InspectorNode(private val inspector: Inspector, val targetComponent: UIComponent) : TreeNode() {
     private val componentClassName = targetComponent.javaClass.simpleName.ifEmpty { "UnknownType" }
-    private val componentDisplayName = targetComponent.componentName?.let { "$it: $componentClassName" } ?: componentClassName
+    private val componentDisplayName = targetComponent.componentName.let { if (it == componentClassName) it else "$componentClassName: $it" }
     private var wasHidden = false
 
     private val component: UIComponent = object : UIBlock(Color(0, 0, 0, 0)) {

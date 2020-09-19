@@ -29,7 +29,7 @@ import kotlin.reflect.KMutableProperty0
  * everything visible on the screen is a UIComponent.
  */
 abstract class UIComponent : Observable() {
-    var componentName: String? = null
+    var componentName: String = this.javaClass.simpleName
     open val children = CopyOnWriteArrayList<UIComponent>().observable()
     val effects = mutableListOf<Effect>()
 
