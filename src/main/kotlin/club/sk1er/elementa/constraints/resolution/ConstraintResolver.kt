@@ -12,12 +12,12 @@ class ConstraintResolver(window: Window) {
         window.forEachChild {
             // Color constraints are not added because they are always resolvable
             graph.addVertices(
-                ResolverNode(it, it.constraints.x),
-                ResolverNode(it, it.constraints.y),
-                ResolverNode(it, it.constraints.width),
-                ResolverNode(it, it.constraints.height),
-                ResolverNode(it, it.constraints.textScale),
-                ResolverNode(it, it.constraints.radius)
+                ResolverNode(it, it.constraints.x, ConstraintType.X),
+                ResolverNode(it, it.constraints.y, ConstraintType.Y),
+                ResolverNode(it, it.constraints.width, ConstraintType.WIDTH),
+                ResolverNode(it, it.constraints.height, ConstraintType.HEIGHT),
+                ResolverNode(it, it.constraints.textScale, ConstraintType.TEXT_SCALE),
+                ResolverNode(it, it.constraints.radius, ConstraintType.RADIUS)
             )
         }
 

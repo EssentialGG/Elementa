@@ -11,9 +11,11 @@ class ConstraintVisitor(
     val component: UIComponent
 ) {
     private lateinit var currentConstraint: SuperConstraint<*>
+    private lateinit var currentConstraintType: ConstraintType
 
-    fun setConstraint(constraint: SuperConstraint<*>) {
+    fun setConstraint(constraint: SuperConstraint<*>, type: ConstraintType) {
         currentConstraint = constraint
+        currentConstraintType = type
     }
 
     fun visitParent(type: ConstraintType) {
@@ -21,15 +23,15 @@ class ConstraintVisitor(
             return
 
         graph.addEdge(
-            ResolverNode(component, currentConstraint),
-            ResolverNode(component.parent, component.parent.constraints.getConstraint(type))
+            ResolverNode(component, currentConstraint, currentConstraintType),
+            ResolverNode(component.parent, component.parent.constraints.getConstraint(type), type)
         )
     }
 
     fun visitSelf(type: ConstraintType) {
         graph.addEdge(
-            ResolverNode(component, currentConstraint),
-            ResolverNode(component, component.constraints.getConstraint(type))
+            ResolverNode(component, currentConstraint, currentConstraintType),
+            ResolverNode(component, component.constraints.getConstraint(type), type)
         )
     }
 
@@ -45,18 +47,18 @@ class ConstraintVisitor(
         val sibling = component.parent.children[index]
 
         graph.addEdge(
-            ResolverNode(component, currentConstraint),
-            ResolverNode(sibling, sibling.constraints.getConstraint(type))
+            ResolverNode(component, currentConstraint, currentConstraintType),
+            ResolverNode(sibling, sibling.constraints.getConstraint(type), type)
         )
     }
 
     fun visitChildren(type: ConstraintType) {
-        val currNode = ResolverNode(component, currentConstraint)
+        val currNode = ResolverNode(component, currentConstraint, currentConstraintType)
 
         component.children.forEach {
             graph.addEdge(
                 currNode,
-                ResolverNode(it, it.constraints.getConstraint(type))
+                ResolverNode(it, it.constraints.getConstraint(type), type)
             )
         }
     }
