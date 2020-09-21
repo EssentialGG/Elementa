@@ -5,8 +5,6 @@ import club.sk1er.elementa.constraints.resolution.ConstraintResolutionGui
 import club.sk1er.elementa.constraints.resolution.ConstraintResolver
 import club.sk1er.elementa.effects.ScissorEffect
 import club.sk1er.mods.core.universal.*
-import club.sk1er.mods.core.universal.wrappers.UniversalPlayer
-import club.sk1er.mods.core.universal.wrappers.message.UniversalTextComponent
 import org.lwjgl.opengl.GL11
 import java.util.concurrent.ConcurrentLinkedQueue
 
@@ -25,36 +23,14 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
 
     var scaledResolution: UniversalResolutionUtil = UniversalResolutionUtil.getInstance()
     private var cancelDrawing = false
-    private var recheckTree = true
 
     init {
         super.parent = this
-
-        children.addObserver { _, _ ->
-            recheckTree = true
-        }
-
-        constraints.addObserver { _, _ ->
-            recheckTree = true
-        }
     }
 
     override fun draw() {
         if (cancelDrawing)
             return
-
-        if (IS_DEV && recheckTree) {
-            recheckTree = false
-            val cyclicNodes = ConstraintResolver(this).getCyclicNodes()
-
-            if (cyclicNodes != null) {
-                UniversalMinecraft.getMinecraft().displayGuiScreen(
-                    ConstraintResolutionGui(cyclicNodes)
-                )
-                cancelDrawing = true
-                return
-            }
-        }
 
         val startTime = System.nanoTime()
 
@@ -64,9 +40,6 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
             it.remove()
         }
 
-        //#if MC>=11502
-        //$$ UniversalGraphicsHandler.setStack(MatrixStack());
-        //#endif
         UniversalGraphicsHandler.glClear(GL11.GL_STENCIL_BUFFER_BIT)
         UniversalGraphicsHandler.glClearStencil(0)
 
@@ -75,15 +48,37 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
         if (systemTime == -1L)
             systemTime = System.currentTimeMillis()
 
-        while (this.systemTime < System.currentTimeMillis() + 1000 / animationFPS) {
-            animationFrame()
+        try {
+            while (this.systemTime < System.currentTimeMillis() + 1000 / animationFPS) {
+                animationFrame()
+                this.systemTime += 1000 / animationFPS;
+            }
 
-            this.systemTime += 1000 / animationFPS;
+            mouseMove()
+            super.draw()
+        } catch (e: StackOverflowError) {
+            val guiName = UniversalMinecraft.getMinecraft().currentScreen?.javaClass?.simpleName ?: "<unknown>"
+
+            if (IS_DEV) {
+                val cyclicNodes = ConstraintResolver(this).getCyclicNodes()
+
+                UniversalMinecraft.getMinecraft().displayGuiScreen(
+                    ConstraintResolutionGui(guiName, cyclicNodes)
+                )
+                cancelDrawing = true
+                return
+            } else {
+                UniversalMinecraft.getMinecraft().displayGuiScreen(null)
+
+                // TODO: Print a chat message when this gets merged into the new-versions branch.
+                // We'll avoid it for now because the UC new-versions branch has a few conflicts.
+                // UniversalChat.chat("&c&lElementa encountered a GUI error. Check your logs for more information.");
+                println("Elementa: Cyclic constraint structure detected!")
+                println("If you are a developer, set the environment variable \"elementa.dev=true\" to assist in debugging the issue.")
+                println("If you are a user, please report this!")
+                println("Gui name: $guiName")
+            }
         }
-
-        mouseMove()
-
-        super.draw()
     }
 
     override fun mouseClick(mouseX: Double, mouseY: Double, button: Int) {

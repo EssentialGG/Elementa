@@ -13,7 +13,7 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats
 import org.lwjgl.opengl.GL11
 import java.awt.Color
 
-class ConstraintResolutionGui(private val nodes: List<ResolverNode>) : WindowScreen() {
+class ConstraintResolutionGui(guiName: String, private val nodes: List<ResolverNode>?) : WindowScreen() {
     init {
         UIBlock(Color(22, 22, 24)).constrain {
             width = FillConstraint()
@@ -55,23 +55,28 @@ class ConstraintResolutionGui(private val nodes: List<ResolverNode>) : WindowScr
             color = Color(239, 83, 80).asConstraint()
         } childOf content
 
-        val guiName = UniversalMinecraft.getMinecraft().currentScreen?.javaClass?.simpleName ?: "<unknown>"
-
         UIText("Open Screen name: $guiName").constrain {
             y = SiblingConstraint(15f)
             textScale = 1.25f.pixels()
         } childOf content
 
-        UIText("Cyclic constraints:").constrain {
-            y = SiblingConstraint(15f)
-            textScale = 1.25f.pixels()
-        } childOf content
+        if (nodes != null) {
+            UIText("Cyclic constraints:").constrain {
+                y = SiblingConstraint(15f)
+                textScale = 1.25f.pixels()
+            } childOf content
 
-        ConstraintPathComponent().constrain {
-            y = SiblingConstraint(10f)
-            width = RelativeConstraint()
-            height = FillConstraint()
-        } childOf content
+            ConstraintPathComponent().constrain {
+                y = SiblingConstraint(10f)
+                width = RelativeConstraint()
+                height = FillConstraint()
+            } childOf content
+        } else {
+            UIWrappedText("Unfortunately Elementa is unable to determine the constraints responsible. This is most likely due to the use of basicConstraints. ").constrain {
+                width = RelativeConstraint()
+                color = Color(239, 83, 80).asConstraint()
+            } childOf content
+        }
     }
 
     private inner class ConstraintPathComponent : UIContainer() {
@@ -81,7 +86,7 @@ class ConstraintResolutionGui(private val nodes: List<ResolverNode>) : WindowScr
                 height = RelativeConstraint()
             } childOf this
 
-            nodes.indices.forEach { index ->
+            nodes!!.indices.forEach { index ->
                 ConstraintPathItem(index).constrain {
                     y = SiblingConstraint(15f)
                 } childOf scrollComponent
@@ -90,7 +95,7 @@ class ConstraintResolutionGui(private val nodes: List<ResolverNode>) : WindowScr
     }
 
     private inner class ConstraintPathItem(index: Int) : UIContainer() {
-        private val node = nodes[index]
+        private val node = nodes!![index]
 
         init {
             constrain {
@@ -114,7 +119,7 @@ class ConstraintResolutionGui(private val nodes: List<ResolverNode>) : WindowScr
 
             right childOf this
 
-            if (index != nodes.lastIndex) {
+            if (index != nodes!!.lastIndex) {
                 UIText("§7Component: §r${node.component.componentName}").constrain {
                     y = SiblingConstraint()
                 } childOf right
