@@ -27,15 +27,21 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
     }
 
     override fun draw() {
-        renderOperations.forEach { it() }
-        renderOperations.clear()
+        val startTime = System.nanoTime()
+
+        val it = renderOperations.iterator()
+        while (it.hasNext() && System.nanoTime() - startTime < 5000) {
+            it.next()()
+            it.remove()
+        }
 
         UniversalGraphicsHandler.glClear(GL11.GL_STENCIL_BUFFER_BIT)
         UniversalGraphicsHandler.glClearStencil(0)
 
         scaledResolution = UniversalResolutionUtil.getInstance()
 
-        if (systemTime == -1L) systemTime = System.currentTimeMillis()
+        if (systemTime == -1L)
+            systemTime = System.currentTimeMillis()
 
         while (this.systemTime < System.currentTimeMillis() + 1000 / animationFPS) {
             animationFrame()
