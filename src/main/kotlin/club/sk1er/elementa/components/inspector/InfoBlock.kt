@@ -3,7 +3,7 @@ package club.sk1er.elementa.components.inspector
 import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.UIConstraints
 import club.sk1er.elementa.components.TreeNode
-import club.sk1er.elementa.components.TreeView
+import club.sk1er.elementa.components.TreeListComponent
 import club.sk1er.elementa.components.UIContainer
 import club.sk1er.elementa.components.UIText
 import club.sk1er.elementa.constraints.*
@@ -25,7 +25,7 @@ class InfoBlock(private val inspector: Inspector) : UIContainer() {
         height = ChildBasedSizeConstraint()
     } childOf this
 
-    private val constraintsContent = TreeView().constrain {
+    private val constraintsContent = TreeListComponent().constrain {
         x = 5.pixels()
         y = 5.pixels()
         width = ChildBasedMaxSizeConstraint()
