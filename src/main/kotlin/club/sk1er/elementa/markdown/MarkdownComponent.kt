@@ -64,7 +64,7 @@ class MarkdownComponent @JvmOverloads constructor(
             height = 30.pixels()
         } childOf scrollBarContainer
 
-        scrollComponent.setScrollBarComponent(scrollBarGrip, hideWhenUseless = true)
+        scrollComponent.setVerticalScrollBarComponent(scrollBarGrip, hideWhenUseless = true)
 
         onMouseClick { event ->
             document?.onClick(event.absoluteX, event.absoluteY)
