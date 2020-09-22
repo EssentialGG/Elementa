@@ -13,7 +13,7 @@ abstract class TreeArrowComponent : UIComponent() {
     abstract fun close()
 }
 
-open class TreeView(roots: List<TreeNode>) : UIContainer() {
+open class TreeListComponent(roots: List<TreeNode>) : UIContainer() {
     constructor(root: TreeNode) : this(listOf(root))
 
     constructor() : this(emptyList())

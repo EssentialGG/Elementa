@@ -22,7 +22,7 @@ class Inspector @JvmOverloads constructor(
 ) : UIContainer() {
     private val rootNode = componentToNode(rootComponent)
     private val treeBlock: UIContainer
-    private var treeView: TreeView
+    private var TreeListComponent: TreeListComponent
     private val container: UIComponent
     internal var selectedNode: InspectorNode? = null
         private set
@@ -108,7 +108,7 @@ class Inspector @JvmOverloads constructor(
 
         treeBlock childOf treeBlockScroller
 
-        treeView = TreeView(rootNode).constrain {
+        TreeListComponent = TreeListComponent(rootNode).constrain {
             x = 5.pixels()
             y = SiblingConstraint() + 5.pixels()
         } childOf treeBlock

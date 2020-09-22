@@ -24,7 +24,7 @@ What the entire playground GUI looks like:
 - [MarkdownComponent](#markdown)
 - [SVGComponent](#svg)
 - [GraphComponent](#graphcomponent)
-- [TreeView](#treeview)
+- [TreeListComponent](#TreeListComponent)
 - [Inspector](#inspector)
 
 ### UIContainer
@@ -606,14 +606,14 @@ Now we can see the true power of this component -- with only six lines of stylin
 The `GraphStyle` class has many more configuration options that aren't shown above. Check it out 
 [here](../src/main/kotlin/club/sk1er/elementa/components/graph/GraphStyle.kt)!
 
-### TreeView
+### TreeListComponent
 
-The [TreeView](../src/main/kotlin/club/sk1er/elementa/components/TreeView.kt) is a component which allows the display of
+The [TreeListComponent](../src/main/kotlin/club/sk1er/elementa/components/TreeListComponent.kt) is a component which allows the display of
 information in a tree. It allows the user to provide a tree-like UIComponent hierarchy, as well as a component to
 use as the "arrow" (the icon that is clicked to expand or contract a node), and takes care of the component layout. 
 
 To start, you will need a class that inherits from the abstract 
-[TreeNode](../src/main/kotlin/club/sk1er/elementa/components/TreeView.kt) class. A node that simply displays some text
+[TreeNode](../src/main/kotlin/club/sk1er/elementa/components/TreeListComponent.kt) class. A node that simply displays some text
 would look like the following:
 
 ```kotlin
@@ -631,12 +631,12 @@ class TextNode(private val text: String) : TreeNode() {
 ```
 
 Note that we also have to provide a component to serve as the clickable open/close button of the tree -- which we call 
-the [TreeArrowComponent](../src/main/kotlin/club/sk1er/elementa/components/TreeView.kt) -- in the method 
+the [TreeArrowComponent](../src/main/kotlin/club/sk1er/elementa/components/TreeListComponent.kt) -- in the method 
 `getArrowComponent`. A `TreeArrowComponent` is simply a component with two abstract functions: `open` and `close`, which
 are called when the user changes the state of that particular `TreeNode`. This is important for showing the user which 
 nodes are expanded and which nodes are not. Note that no arrow component will be rendered if a node has no children
 
-Now that we have a node class, let's create a `TreeView`. We provide a Kotlin DSL for creating a Node structure easily:
+Now that we have a node class, let's create a `TreeListComponent`. We provide a Kotlin DSL for creating a Node structure easily:
 
 ```kotlin
 val rootNode = TextNode("root node").withChildren {
@@ -649,19 +649,19 @@ val rootNode = TextNode("root node").withChildren {
     add(TextNode("item 3"))
 }
 
-val treeView = TreeView(rootNode).constrain {
+val TreeListComponent = TreeListComponent(rootNode).constrain {
     // ...
 }
 ```
 
-Note that you can provide a list of `TreeNode`s to the `TreeView` constructor to have multiple roots. All nodes of the
+Note that you can provide a list of `TreeNode`s to the `TreeListComponent` constructor to have multiple roots. All nodes of the
 tree start in a closed position.
 
-The `TreeView` is convenient because the user only has to worry about the layout of each particular node. The user
+The `TreeListComponent` is convenient because the user only has to worry about the layout of each particular node. The user
 does not have to worry about aligning the children, or even aligning the arrow component.
 
 A few things to note:
-- You can provide a list of `TreeNode`s to the `TreeView` constructor to have multiple roots.
+- You can provide a list of `TreeNode`s to the `TreeListComponent` constructor to have multiple roots.
 - All nodes of the tree start in a closed position, and the `close` methods of the `TreeArrowComponent`s are _not_ 
 initially called.
 - Components returned from `getPrimaryComponent` must have constraints that do not depends on their parent. The 
@@ -671,7 +671,7 @@ initially called.
 
 The [Inspector](../src/main/kotlin/club/sk1er/elementa/components/inspector/Inspector.kt) is a very handy tool used for
 debugging/inspecting your Elementa GUIs. It is meant to be similar to a browser's "Inspect Element" tool. It uses a
-[TreeView](../src/main/kotlin/club/sk1er/elementa/components/TreeView.kt) to display the component hierarchy starting
+[TreeListComponent](../src/main/kotlin/club/sk1er/elementa/components/TreeListComponent.kt) to display the component hierarchy starting
 from a specific root component. The `Inspector` can also be used to show the current position, size, color, etc.
 constraints of components, as well as their value as of the current frame.
 
