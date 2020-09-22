@@ -2,14 +2,15 @@ package club.sk1er.elementa.components
 
 import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.constraints.CenterConstraint
+import club.sk1er.elementa.constraints.FillConstraint
 import club.sk1er.elementa.constraints.RelativeConstraint
 import club.sk1er.elementa.constraints.SiblingConstraint
 import club.sk1er.elementa.constraints.animation.Animations
 import club.sk1er.elementa.dsl.*
 import club.sk1er.elementa.effects.ScissorEffect
-import club.sk1er.elementa.events.UIClickEvent
 import club.sk1er.elementa.svg.SVGParser
-import club.sk1er.elementa.utils.observable
+import club.sk1er.elementa.utils.bindLast
+import club.sk1er.mods.core.universal.UniversalKeyboard
 import club.sk1er.mods.core.universal.UniversalMouse
 import java.awt.Color
 import java.util.concurrent.CopyOnWriteArrayList
@@ -23,9 +24,12 @@ import kotlin.math.abs
  */
 class ScrollComponent @JvmOverloads constructor(
     emptyString: String = "",
-    private val scrollOpposite: Boolean = false,
-    private val innerPadding: Double = 0.0,
-    private val scrollIconColor: Color = Color.WHITE
+    private val innerPadding: Float = 0f,
+    private val scrollIconColor: Color = Color.WHITE,
+    private val horizontalScrollEnabled: Boolean = false,
+    private val verticalScrollEnabled: Boolean = true,
+    private val horizontalScrollOpposite: Boolean = false,
+    private val verticalScrollOpposite: Boolean = false
 ) : UIContainer() {
     private val actualHolder = UIContainer().constrain {
         x = innerPadding.pixels()
@@ -39,11 +43,26 @@ class ScrollComponent @JvmOverloads constructor(
         y = SiblingConstraint() + 4.pixels()
     }
 
-    private var offset = innerPadding
-    private val scrollAdjustEvents: MutableList<(Float, Float) -> Unit> = mutableListOf(::updateScrollBar)
-    private var scrollBarGrip: UIComponent? = null
-    private var hideScrollWhenUseless = false
-    private var dragBeginPos = -1f
+    private val scrollSVGComponent = SVGComponent(scrollSVG).constrain {
+        width = 24.pixels()
+        height = 24.pixels()
+
+        color = scrollIconColor.asConstraint()
+    }
+
+    private var horizontalOffset = innerPadding
+    private var verticalOffset = innerPadding
+
+    private var horizontalScrollBarGrip: UIComponent? = null
+    private var horizontalHideScrollWhenUseless = false
+    private var verticalScrollBarGrip: UIComponent? = null
+    private var verticalHideScrollWhenUseless = false
+
+    private var horizontalDragBeginPos = -1f
+    private var verticalDragBeginPos = -1f
+
+    private val horizontalScrollAdjustEvents: MutableList<(Float, Float) -> Unit> = mutableListOf(::updateScrollBar.bindLast(true))
+    private val verticalScrollAdjustEvents: MutableList<(Float, Float) -> Unit> = mutableListOf(::updateScrollBar.bindLast(false))
     private var needsUpdate = true
 
     private var isAutoScrolling = false
@@ -52,45 +71,54 @@ class ScrollComponent @JvmOverloads constructor(
     val allChildren = CopyOnWriteArrayList<UIComponent>()
 
     init {
+        if (!horizontalScrollEnabled && !verticalScrollEnabled)
+            throw IllegalArgumentException("ScrollComponent must have at least one direction of scrolling enabled")
+
         super.addChild(actualHolder)
         actualHolder.addChild(emptyText)
         this.enableEffects(ScissorEffect())
 
-        onMouseScroll {
-            onScroll(it.delta)
-            it.stopPropagation()
-        }
-        onMouseClick { event -> onClick(event.relativeX, event.relativeY, event.mouseButton) }
-    }
-
-    private val scrollSVGComponent = SVGComponent(scrollSVG).constrain {
-        width = 24.pixels()
-        height = 24.pixels()
-
-        color = scrollIconColor.asConstraint()
-    }
-
-    init {
         super.addChild(scrollSVGComponent)
         scrollSVGComponent.hide(instantly = true)
+
+        onMouseScroll {
+            if (UniversalKeyboard.isShiftKeyDown() && horizontalScrollEnabled) {
+                onScroll(it.delta.toFloat(), isHorizontal = true)
+            } else if (verticalScrollEnabled) {
+                onScroll(it.delta.toFloat(), isHorizontal = false)
+            }
+
+            it.stopPropagation()
+        }
+
+        onMouseClick { event ->
+            onClick(event.relativeX, event.relativeY, event.mouseButton)
+        }
     }
 
     override fun draw() {
         if (needsUpdate) {
             needsUpdate = false
-            val range = calculateOffsetRange()
+            val horizontalRange = calculateOffsetRange(isHorizontal = true)
+            val verticalRange = calculateOffsetRange(isHorizontal = false)
 
             // Recalculate our scroll box and move the content inside if needed.
             actualHolder.animate {
-                offset = if (range.isEmpty()) innerPadding else offset.coerceIn(range)
+                horizontalOffset = if (horizontalRange.isEmpty()) innerPadding else horizontalOffset.coerceIn(horizontalRange)
+                verticalOffset = if (verticalRange.isEmpty()) innerPadding else verticalOffset.coerceIn(verticalRange)
 
-                setYAnimation(Animations.IN_SIN, 0.1f, offset.pixels())
+                setXAnimation(Animations.IN_SIN, 0.1f, horizontalOffset.pixels())
+                setYAnimation(Animations.IN_SIN, 0.1f, verticalOffset.pixels())
             }
 
             // Run our scroll adjust event, normally updating [scrollBarGrip]
-            val percent = abs(offset) / range.width()
-            val percentageOfParent = this.getHeight() / calculateActualHeight()
-            scrollAdjustEvents.forEach { it(percent.toFloat(), percentageOfParent) }
+            var percent = abs(horizontalOffset) / verticalRange.width()
+            var percentageOfParent = this.getWidth() / calculateActualWidth()
+            horizontalScrollAdjustEvents.forEach { it(percent, percentageOfParent) }
+
+            percent = abs(verticalOffset) / horizontalRange.width()
+            percentageOfParent = this.getHeight() / calculateActualHeight()
+            verticalScrollAdjustEvents.forEach { it(percent, percentageOfParent) }
         }
 
         super.draw()
@@ -103,8 +131,18 @@ class ScrollComponent @JvmOverloads constructor(
         emptyText.setText(text)
     }
 
-    fun addScrollAdjustEvent(event: (scrollPercentage: Float, percentageOfParent: Float) -> Unit) {
-        scrollAdjustEvents.add(event)
+    fun addScrollAdjustEvent(isHorizontal: Boolean, event: (scrollPercentage: Float, percentageOfParent: Float) -> Unit) {
+        if (isHorizontal) horizontalScrollAdjustEvents.add(event) else verticalScrollAdjustEvents.add(event)
+    }
+
+    @JvmOverloads
+    fun setHorizontalScrollBarComponent(component: UIComponent, hideWhenUseless: Boolean = false) {
+        setScrollBarComponent(component, hideWhenUseless, isHorizontal = true)
+    }
+
+    @JvmOverloads
+    fun setVerticalScrollBarComponent(component: UIComponent, hideWhenUseless: Boolean = false) {
+        setScrollBarComponent(component, hideWhenUseless, isHorizontal = false)
     }
 
     /**
@@ -121,28 +159,51 @@ class ScrollComponent @JvmOverloads constructor(
      *  If [hideWhenUseless] is enabled, [component] will have [hide] called on it when the scrollbar is full height
      *  and dragging it would do nothing.
      */
-    @JvmOverloads
-    fun setScrollBarComponent(component: UIComponent, hideWhenUseless: Boolean = false) {
-        scrollBarGrip = component
-        hideScrollWhenUseless = hideWhenUseless
+    fun setScrollBarComponent(component: UIComponent, hideWhenUseless: Boolean, isHorizontal: Boolean) {
+        if (isHorizontal) {
+            horizontalScrollBarGrip = component
+            horizontalHideScrollWhenUseless = hideWhenUseless
+        } else {
+            verticalScrollBarGrip = component
+            verticalHideScrollWhenUseless = hideWhenUseless
+        }
 
         component.onMouseScroll {
-            onScroll(it.delta)
+            if (isHorizontal && horizontalScrollEnabled && UniversalKeyboard.isShiftKeyDown()) {
+                onScroll(it.delta.toFloat(), isHorizontal = true)
+            } else if (!isHorizontal && verticalScrollEnabled) {
+                onScroll(it.delta.toFloat(), isHorizontal = false)
+            }
+
             it.stopPropagation()
         }
 
         component.onMouseClick { event ->
-            dragBeginPos = event.relativeY
+            if (isHorizontal) {
+                horizontalDragBeginPos = event.relativeX
+            } else {
+                verticalDragBeginPos = event.relativeY
+            }
         }
 
-        component.onMouseDrag { _, mouseY, _ ->
-            if (dragBeginPos == -1f) return@onMouseDrag
-
-            updateGrip(component, mouseY)
+        component.onMouseDrag { mouseX, mouseY, _ ->
+            if (isHorizontal) {
+                if (horizontalDragBeginPos == -1f)
+                    return@onMouseDrag
+                updateGrip(component, mouseX, isHorizontal = true)
+            } else {
+                if (verticalDragBeginPos == -1f)
+                    return@onMouseDrag
+                updateGrip(component, mouseY, isHorizontal = false)
+            }
         }
 
         component.onMouseRelease {
-            dragBeginPos = -1f
+            if (isHorizontal) {
+                horizontalDragBeginPos = -1f
+            } else {
+                verticalDragBeginPos = -1f
+            }
         }
 
         needsUpdate = true
@@ -165,75 +226,127 @@ class ScrollComponent @JvmOverloads constructor(
         }
     }
 
-    private fun updateGrip(component: UIComponent, mouseY: Float) {
-        val minY = component.parent.getTop()
-        val maxY = component.parent.getBottom()
+    private fun updateGrip(component: UIComponent, mouseCoord: Float, isHorizontal: Boolean) {
+        if (isHorizontal) {
+            val minCoord = component.parent.getLeft()
+            val maxCoord = component.parent.getRight()
+            val dragDelta = mouseCoord - horizontalDragBeginPos
 
-        val dragDelta = mouseY - dragBeginPos
+            horizontalOffset = if (horizontalScrollOpposite) {
+                val newPos = maxCoord - component.getRight() - dragDelta
+                val percentage = newPos / (maxCoord - minCoord)
 
-        offset = if (scrollOpposite) {
-            val newPos = maxY - component.getBottom() - dragDelta
-            val percentage = newPos / (maxY - minY)
+                percentage * calculateActualWidth()
+            } else {
+                val newPos = component.getLeft() + dragDelta - minCoord
+                val percentage = newPos / (maxCoord - minCoord)
 
-            percentage * calculateActualHeight().toDouble()
+                -(percentage * calculateActualWidth())
+            }
         } else {
-            val newPos = component.getTop() + dragDelta - minY
-            val percentage = newPos / (maxY - minY)
+            val minCoord = component.parent.getTop()
+            val maxCoord = component.parent.getBottom()
+            val dragDelta = mouseCoord - verticalDragBeginPos
 
-            -(percentage * calculateActualHeight()).toDouble()
+            verticalOffset = if (verticalScrollOpposite) {
+                val newPos = maxCoord - component.getBottom() - dragDelta
+                val percentage = newPos / (maxCoord - minCoord)
+
+                percentage * calculateActualHeight()
+            } else {
+                val newPos = component.getTop() + dragDelta - minCoord
+                val percentage = newPos / (maxCoord - minCoord)
+
+                -(percentage * calculateActualHeight())
+            }
         }
 
         needsUpdate = true
     }
 
-    private fun onScroll(delta: Double) {
-        offset += (delta * 15.0)
+    private fun onScroll(delta: Float, isHorizontal: Boolean) {
+        if (isHorizontal) {
+            horizontalOffset += delta * 15f
+        } else {
+            verticalOffset += delta * 15f
+        }
 
         needsUpdate = true
     }
 
-    private fun updateScrollBar(scrollPercentage: Float, percentageOfParent: Float) {
-        val comp = scrollBarGrip ?: return
+    private fun updateScrollBar(scrollPercentage: Float, percentageOfParent: Float, isHorizontal: Boolean) {
+        val component = if (isHorizontal) {
+            horizontalScrollBarGrip ?: return
+        } else {
+            verticalScrollBarGrip ?: return
+        }
 
         val clampedPercentage = percentageOfParent.coerceAtMost(1f)
 
-        if (hideScrollWhenUseless) {
+        if ((isHorizontal && horizontalHideScrollWhenUseless) || (!isHorizontal && verticalHideScrollWhenUseless)) {
             if (clampedPercentage == 1f) {
-                comp.hide()
+                component.hide()
                 return
             } else {
-                comp.unhide()
+                component.unhide()
             }
         }
 
-        comp.setHeight(RelativeConstraint(clampedPercentage))
+        if (isHorizontal) {
+            component.setWidth(RelativeConstraint(clampedPercentage))
+        } else {
+            component.setHeight(RelativeConstraint(clampedPercentage))
+        }
 
-        comp.animate {
-            setYAnimation(
-                Animations.IN_SIN, 0.1f, basicYConstraint { component ->
-                val offset = (component.parent.getHeight() - component.getHeight()) * scrollPercentage
+        component.animate {
+            if (isHorizontal) {
+                setXAnimation(
+                    Animations.IN_SIN, 0.1f, basicXConstraint { component ->
+                        val offset = (component.parent.getWidth() - component.getWidth()) * scrollPercentage
 
-                if (scrollOpposite) component.parent.getBottom() - component.getHeight() - offset
-                else component.parent.getTop() + offset
+                        if (horizontalScrollOpposite) component.parent.getRight() - component.getHeight() - offset
+                        else component.parent.getLeft() + offset
+                    }
+                )
+            } else {
+                setYAnimation(
+                    Animations.IN_SIN, 0.1f, basicYConstraint { component ->
+                        val offset = (component.parent.getHeight() - component.getHeight()) * scrollPercentage
+
+                        if (verticalScrollOpposite) component.parent.getBottom() - component.getHeight() - offset
+                        else component.parent.getTop() + offset
+                    }
+                )
             }
-            )
+        }
+    }
+
+    private fun calculateActualWidth(): Float {
+        if (actualHolder.children.isEmpty()) return 0f
+
+        return actualHolder.children.let { c ->
+            c.map { it.getRight() }.max()!! - c.map { it.getLeft() }.min()!!
         }
     }
 
     private fun calculateActualHeight(): Float {
         if (actualHolder.children.isEmpty()) return 0f
 
-        return if (scrollOpposite) {
-            actualHolder.children.first().getBottom() - actualHolder.children.last().getTop()
-        } else {
-            actualHolder.children.last().getBottom() - actualHolder.children.first().getTop()
+        return actualHolder.children.let { c ->
+            c.map { it.getBottom() }.max()!! - c.map { it.getTop() }.min()!!
         }
     }
 
-    private fun calculateOffsetRange(): ClosedFloatingPointRange<Double> {
-        val actualHeight = calculateActualHeight()
-        val maxNegative = this.getHeight() - actualHeight - innerPadding
-        return if (scrollOpposite) (-innerPadding)..-maxNegative else maxNegative..(innerPadding)
+    private fun calculateOffsetRange(isHorizontal: Boolean): ClosedFloatingPointRange<Float> {
+        return if (isHorizontal) {
+            val actualWidth = calculateActualWidth()
+            val maxNegative = this.getWidth() - actualWidth - innerPadding
+            if (horizontalScrollOpposite) (-innerPadding)..-maxNegative else maxNegative..(innerPadding)
+        } else {
+            val actualHeight = calculateActualHeight()
+            val maxNegative = this.getHeight() - actualHeight - innerPadding
+            if (verticalScrollOpposite) (-innerPadding)..-maxNegative else maxNegative..(innerPadding)
+        }
     }
 
     private fun onClick(mouseX: Float, mouseY: Float, mouseButton: Int) {
@@ -261,20 +374,25 @@ class ScrollComponent @JvmOverloads constructor(
         super.animationFrame()
 
         if (!isAutoScrolling) return
+
+        val xBegin = autoScrollBegin.first + getLeft()
         val yBegin = autoScrollBegin.second + getTop()
 
-        val sr = Window.of(this).scaledResolution
-        val scaledHeight = sr.scaledHeight
-        val currentY = scaledHeight - UniversalMouse.getScaledY() - 1
+        val scaledHeight = Window.of(this).scaledResolution.scaledHeight
         val currentX = UniversalMouse.getScaledX()
+        val currentY = scaledHeight - UniversalMouse.getScaledY() - 1
 
         if (currentY < getTop() || currentY > getBottom()) return
         if (currentX < getLeft() || currentX > getRight()) return
 
+        val deltaX = currentX - xBegin
         val deltaY = currentY - yBegin
-        val percent = deltaY / ((getTop() - getBottom()) / 2)
+        val percentX = deltaX / (-getWidth() / 2)
+        val percentY = deltaY / (-getHeight() / 2)
 
-        offset += (percent * 5)
+        horizontalOffset += (percentX * 5)
+        verticalOffset += (percentY * 5)
+
         needsUpdate = true
     }
 
@@ -408,6 +526,55 @@ class ScrollComponent @JvmOverloads constructor(
     }
 
     private fun ClosedFloatingPointRange<Double>.width() = abs(this.start - this.endInclusive)
+    private fun ClosedFloatingPointRange<Float>.width() = abs(this.start - this.endInclusive)
+
+    class DefaultScrollBar(isHorizontal: Boolean) : UIComponent() {
+        val grip: UIComponent
+
+        init {
+            if (isHorizontal) {
+                constrain {
+                    y = 2.pixels(alignOpposite = true)
+                    width = FillConstraint()
+                    height = 10.pixels()
+                }
+
+                val container = UIContainer().constrain {
+                    x = 2.pixels()
+                    y = CenterConstraint()
+                    width = RelativeConstraint() - 4.pixels()
+                    height = 4.pixels()
+                } childOf this
+
+                grip = UIBlock(Color(70, 70, 70)).constrain {
+                    x = 0.pixels(alignOpposite = true)
+                    y = CenterConstraint()
+                    width = 30.pixels()
+                    height = 3.pixels()
+                } childOf container
+            } else {
+                constrain {
+                    x = 2.pixels(alignOpposite = true)
+                    width = 10.pixels()
+                    height = FillConstraint()
+                }
+
+                val container = UIContainer().constrain {
+                    x = CenterConstraint()
+                    y = 2.pixels()
+                    width = 4.pixels()
+                    height = RelativeConstraint() - 4.pixels()
+                } childOf this
+
+                grip = UIBlock(Color(70, 70, 70)).constrain {
+                    x = CenterConstraint()
+                    y = 0.pixels(alignOpposite = true)
+                    width = 3.pixels()
+                    height = 30.pixels()
+                } childOf container
+            }
+        }
+    }
 
     companion object {
         private val scrollSVG = SVGParser.parseFromResource("/svg/scroll.svg")

@@ -167,6 +167,48 @@ class KtTestGui : WindowScreen() {
             input2.grabWindowFocus()
         }
 
+        val canvasContainer = UIContainer().constrain {
+            x = 30.pixels()
+            y = 30.pixels(alignOpposite = true)
+            width = 120.pixels()
+            height = 120.pixels()
+        } childOf window
+
+        val canvas = ScrollComponent(horizontalScrollEnabled = true, verticalScrollEnabled = true).constrain {
+            width = RelativeConstraint()
+            height = RelativeConstraint()
+        } childOf canvasContainer
+
+        val horizontalScroll = ScrollComponent.DefaultScrollBar(isHorizontal = true) childOf canvasContainer
+        val verticalScroll = ScrollComponent.DefaultScrollBar(isHorizontal = false) childOf canvasContainer
+
+        canvas.setHorizontalScrollBarComponent(horizontalScroll.grip)
+        canvas.setVerticalScrollBarComponent(verticalScroll.grip)
+
+        UIBlock(Color.RED).constrain {
+            width = 100.pixels()
+            height = 100.pixels()
+        } childOf canvas
+
+        UIBlock(Color.GREEN).constrain {
+            x = 100.pixels()
+            width = 100.pixels()
+            height = 100.pixels()
+        } childOf canvas
+
+        UIBlock(Color.BLUE).constrain {
+            y = 100.pixels()
+            width = 100.pixels()
+            height = 100.pixels()
+        } childOf canvas
+
+        UIBlock(Color.YELLOW).constrain {
+            x = 100.pixels()
+            y = 100.pixels()
+            width = 100.pixels()
+            height = 100.pixels()
+        } childOf canvas
+
         val img = UIImage.ofURL(URL("https://i.imgur.com/Pc6iMw3e.png")).constrain {
             x = CenterConstraint()
             y = CenterConstraint()
