@@ -48,7 +48,7 @@ open class UIShape @JvmOverloads constructor(color: Color = Color.WHITE) : UICom
         worldRenderer.begin(drawMode, DefaultVertexFormats.POSITION_COLOR)
         vertices.forEach {
             worldRenderer
-                .pos(it.getX().toDouble(), it.getY().toDouble(), 0.0)
+                .pos(it.absoluteX.toDouble(), it.absoluteY.toDouble(), 0.0)
                 .color(red, green, blue, alpha)
                 .endVertex()
         }

@@ -42,10 +42,9 @@ open class UIBlock(colorConstraint: ColorConstraint = Color.WHITE.asConstraint()
         fun drawBlock(color: Color, x1: Double, y1: Double, x2: Double, y2: Double) {
             UniversalGraphicsHandler.enableBlend()
             UniversalGraphicsHandler.disableTexture2D()
+            UniversalGraphicsHandler.tryBlendFuncSeparate(770, 771, 1, 0)
 
             val worldRenderer = UniversalGraphicsHandler.getFromTessellator()
-
-            UniversalGraphicsHandler.tryBlendFuncSeparate(770, 771, 1, 0)
 
             val red = color.red.toFloat() / 255f
             val green = color.green.toFloat() / 255f
