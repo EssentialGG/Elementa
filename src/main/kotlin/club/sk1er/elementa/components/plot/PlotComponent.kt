@@ -1,4 +1,4 @@
-package club.sk1er.elementa.components.graph
+package club.sk1er.elementa.components.plot
 
 import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.components.UIContainer
@@ -6,11 +6,11 @@ import club.sk1er.elementa.components.UIText
 import club.sk1er.elementa.constraints.*
 import club.sk1er.elementa.dsl.*
 
-class GraphComponent(
-    private val points: List<GraphPoint>,
+class PlotComponent(
+    private val points: List<PlotPoint>,
     private val xBounds: Bounds = Bounds.fromPoints(points.map { it.x }),
     private val yBounds: Bounds = Bounds.fromPoints(points.map { it.y }),
-    private val style: GraphStyle = GraphStyle()
+    private val style: PlotStyle = PlotStyle()
 ) : UIComponent() {
     private val container = UIContainer().constrain {
         x = style.padding.left.pixels()
@@ -116,9 +116,9 @@ class GraphComponent(
 
         values.forEach {
             val (start, end) = if (isX) {
-                GraphPoint(it, yBounds.min) to GraphPoint(it, yBounds.max)
+                PlotPoint(it, yBounds.min) to PlotPoint(it, yBounds.max)
             } else {
-                GraphPoint(xBounds.min, it) to GraphPoint(xBounds.max, it)
+                PlotPoint(xBounds.min, it) to PlotPoint(xBounds.max, it)
             }.let { (a, b) -> transformPoint(a) to transformPoint(b) }
 
             style.gridStyle.type.draw(listOf(start, end), style.gridStyle.color, style.gridStyle.width)
@@ -137,14 +137,14 @@ class GraphComponent(
         )
     }
 
-    private fun transformPoint(point: GraphPoint): GraphPoint {
+    private fun transformPoint(point: PlotPoint): PlotPoint {
         val xPercent = (point.x - xBounds.min) / xBounds.range
         val yPercent = (point.y - yBounds.min) / yBounds.range
 
         val newX = drawLeft + xPercent * drawWidth
         val newY = drawTop + yPercent * drawHeight
 
-        return GraphPoint(newX, newY)
+        return PlotPoint(newX, newY)
     }
 
     override fun draw() {
