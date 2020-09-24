@@ -23,7 +23,7 @@ What the entire playground GUI looks like:
 - [ScrollComponent](#scrollcomponent)
 - [MarkdownComponent](#markdown)
 - [SVGComponent](#svg)
-- [GraphComponent](#graphcomponent)
+- [PlotComponent](#PlotComponent)
 - [TreeListComponent](#TreeListComponent)
 - [Inspector](#inspector)
 
@@ -554,15 +554,15 @@ and `stroke-linejoin` attributes from the topmost `<svg>` element in your SVG fi
 
 ![SVGComponent Example](https://i.imgur.com/Rp5khlc.png)
 
-### GraphComponent
+### PlotComponent
 
-The [GraphComponent](../src/main/kotlin/club/sk1er/elementa/components/graph/GraphComponent.kt), as its name implies,
+The [PlotComponent](../src/main/kotlin/club/sk1er/elementa/components/graph/PlotComponent.kt), as its name implies,
 allow the user to display a graph of information to the user. The great thing about this component is that it is
 extremely customizable. Everything can be changed, from the axis labels to the line widths. Lets look at a basic 
 example:
 
 ```kotlin
-GraphComponent(listOf(
+PlotComponent(listOf(
     GraphPoint(0, 6),
     GraphPoint(1, 1.3),
     GraphPoint(2, 8.5),
@@ -580,7 +580,7 @@ With no styling applied, using only the defaults provided by the component, we g
 However, let's apply some basic styling to improve the look:
 
 ```kotlin
-GraphComponent(
+PlotComponent(
     listOf(
         GraphPoint(0, 6),
         GraphPoint(1, 1.3),

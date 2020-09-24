@@ -19,11 +19,11 @@ Read more about how to use the Inspector [here](components.md#inspector).
 Elementa v2.0.0 now has a full-fledged Markdown parser and renderer. This is a very useful component for rendering
 rich text. Read more about the features of the `MarkdownComponent` and how to use it [here](components.md#markdown).
 
-### GraphComponent
+### PlotComponent
 
-The [GraphComponent](../src/main/kotlin/club/sk1er/elementa/components/graph/GraphComponent.kt) allows the user to 
+The [PlotComponent](../src/main/kotlin/club/sk1er/elementa/components/graph/PlotComponent.kt) allows the user to 
 display an extremely customizable point graph. Nearly every aspect of the way the graph is drawn is configurable. Read more
-[here](components.md#graphcomponent)
+[here](components.md#PlotComponent)
 
 ### TreeListComponent
 
@@ -33,8 +33,7 @@ Inspector, and is highly customizable. Read more [here](components.md#TreeListCo
 
 ### TreeGraphComponent
 
-Not to be confused with the `GraphComponent`, which displays plot data, the 
-[TreeGraphComponent](../src/main/kotlin/club/sk1er/elementa/components/TreeGraphComponent.kt) displays nodes in a 
+The [TreeGraphComponent](../src/main/kotlin/club/sk1er/elementa/components/TreeGraphComponent.kt) displays nodes in a 
 top-down tree view. It shows the exact same information as the `TreeListComponent` but in a different visual style. Read
 more [here](components.md#TreeGraphComponent).
 

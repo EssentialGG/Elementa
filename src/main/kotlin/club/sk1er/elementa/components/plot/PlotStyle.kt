@@ -1,8 +1,8 @@
-package club.sk1er.elementa.components.graph
+package club.sk1er.elementa.components.plot
 
 import java.awt.Color
 
-data class GraphStyle(
+data class PlotStyle(
     val pointStyle: PointStyle = PointStyle(),
     val lineStyle: LineStyle = LineStyle(),
     val gridStyle: GridStyle = GridStyle(),

@@ -1,10 +1,10 @@
-package club.sk1er.elementa.components.graph
+package club.sk1er.elementa.components.plot
 
 import java.awt.Color
 import kotlin.math.abs
 import kotlin.math.round
 
-data class GraphPoint(val x: Float, val y: Float) {
+data class PlotPoint(val x: Float, val y: Float) {
     constructor(x: Number, y: Number) : this(x.toFloat(), y.toFloat())
 }
 

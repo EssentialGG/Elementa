@@ -1,10 +1,10 @@
-package club.sk1er.elementa.components.graph
+package club.sk1er.elementa.components.plot
 
 import club.sk1er.mods.core.universal.UniversalGraphicsHandler
 import org.lwjgl.opengl.GL11
 import java.awt.Color
 
-enum class LineType(private val drawFunc: (List<GraphPoint>) -> Unit) {
+enum class LineType(private val drawFunc: (List<PlotPoint>) -> Unit) {
     Linear({ points ->
         GL11.glEnable(GL11.GL_LINE_SMOOTH)
         GL11.glBegin(GL11.GL_LINE_STRIP)
@@ -14,7 +14,7 @@ enum class LineType(private val drawFunc: (List<GraphPoint>) -> Unit) {
         GL11.glEnd()
     });
 
-    fun draw(points: List<GraphPoint>, color: Color, width: Float) {
+    fun draw(points: List<PlotPoint>, color: Color, width: Float) {
         beforeDraw(color, width)
         drawFunc(points)
         afterDraw()
