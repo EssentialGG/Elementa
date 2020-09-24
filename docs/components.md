@@ -71,8 +71,8 @@ With the UIContainer's bounding box outlined:
 
 ### UIBlock
 
-[UIBlock](../src/main/kotlin/club/sk1er/elementa/components/UIBlock.kt) is another extremely basic, but frequently used component.
-It simply renders a monochromatic rectangle (with the color white by default).
+[UIBlock](../src/main/kotlin/club/sk1er/elementa/components/UIBlock.kt) is another extremely basic, but frequently used 
+component. It simply renders a monochromatic rectangle (with the color white by default).
 
 ```kotlin
 UIBlock().constrain {
@@ -608,12 +608,14 @@ The `GraphStyle` class has many more configuration options that aren't shown abo
 
 ### TreeListComponent
 
-The [TreeListComponent](../src/main/kotlin/club/sk1er/elementa/components/TreeListComponent.kt) is a component which allows the display of
-information in a tree. It allows the user to provide a tree-like UIComponent hierarchy, as well as a component to
-use as the "arrow" (the icon that is clicked to expand or contract a node), and takes care of the component layout. 
+The [TreeListComponent](../src/main/kotlin/club/sk1er/elementa/components/TreeListComponent.kt) is a component which 
+allows the display of information in a tree. It allows the user to provide a tree-like UIComponent hierarchy, as well as 
+a component to use as the "arrow" (the icon that is clicked to expand or contract a node), and takes care of the 
+component layout. 
 
 To start, you will need a class that inherits from the abstract 
-[TreeNode](../src/main/kotlin/club/sk1er/elementa/components/TreeListComponent.kt) class. A node that simply displays some text
+[TreeNode](../src/main/kotlin/club/sk1er/elementa/components/TreeListComponent.kt) class. A node that simply displays 
+some text
 would look like the following:
 
 ```kotlin
@@ -636,7 +638,8 @@ the [TreeArrowComponent](../src/main/kotlin/club/sk1er/elementa/components/TreeL
 are called when the user changes the state of that particular `TreeNode`. This is important for showing the user which 
 nodes are expanded and which nodes are not. Note that no arrow component will be rendered if a node has no children
 
-Now that we have a node class, let's create a `TreeListComponent`. We provide a Kotlin DSL for creating a Node structure easily:
+Now that we have a node class, let's create a `TreeListComponent`. We provide a Kotlin DSL for creating a Node structure 
+easily:
 
 ```kotlin
 val rootNode = TextNode("root node").withChildren {
@@ -665,7 +668,14 @@ A few things to note:
 - All nodes of the tree start in a closed position, and the `close` methods of the `TreeArrowComponent`s are _not_ 
 initially called.
 - Components returned from `getPrimaryComponent` must have constraints that do not depends on their parent. The 
-`TreeNode` makes heavy use of child-based constraints, and thus the children must be absolutely resolvable. 
+`TreeNode` makes heavy use of child-based constraints, and thus the children must be absolutely resolvable.
+
+### TreeGraphComponent 
+
+The [TreeGraphComponent](../src/main/kotlin/club/sk1er/elementa/components/TreeGraphComponent.kt) has a similar API as 
+the `TreeListComponent`, and the exact same use case, however it displays information in a top-down visual style instead
+of a collapsible list. It can be used in place of the `TreeListComponent` when there is ample room to display it, as it 
+takes up quite a bit of space. 
 
 ### Inspector
 
