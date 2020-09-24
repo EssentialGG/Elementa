@@ -1,6 +1,5 @@
 package club.sk1er.elementa.components.graph
 
-import club.sk1er.mods.core.gui.common.graph.LineType
 import java.awt.Color
 
 data class GraphStyle(

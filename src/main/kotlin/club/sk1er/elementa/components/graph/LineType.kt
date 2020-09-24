@@ -1,6 +1,5 @@
-package club.sk1er.mods.core.gui.common.graph
+package club.sk1er.elementa.components.graph
 
-import club.sk1er.elementa.components.graph.GraphPoint
 import club.sk1er.mods.core.universal.UniversalGraphicsHandler
 import org.lwjgl.opengl.GL11
 import java.awt.Color
