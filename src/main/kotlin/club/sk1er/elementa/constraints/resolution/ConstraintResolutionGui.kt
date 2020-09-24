@@ -1,8 +1,10 @@
 package club.sk1er.elementa.constraints.resolution
 
+import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.WindowScreen
 import club.sk1er.elementa.components.*
 import club.sk1er.elementa.components.inspector.Inspector
+import club.sk1er.elementa.components.inspector.InspectorNode
 import club.sk1er.elementa.constraints.*
 import club.sk1er.elementa.dsl.*
 import club.sk1er.elementa.effects.OutlineEffect
@@ -13,7 +15,11 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats
 import org.lwjgl.opengl.GL11
 import java.awt.Color
 
-class ConstraintResolutionGui(guiName: String, private val nodes: List<ResolverNode>?) : WindowScreen() {
+class ConstraintResolutionGui(
+    private val guiName: String,
+    private val gui: UIComponent,
+    private val nodes: List<ResolverNode>?
+) : WindowScreen() {
     init {
         UIBlock(Color(22, 22, 24)).constrain {
             width = FillConstraint()
@@ -23,7 +29,7 @@ class ConstraintResolutionGui(guiName: String, private val nodes: List<ResolverN
         val container = UIContainer().constrain {
             x = RelativeConstraint(0.1f)
             y = RelativeConstraint(0.1f)
-            width = RelativeConstraint(0.8f)
+            width = RelativeConstraint(0.8f) - 2.pixels()
             height = RelativeConstraint(0.8f)
         } effect ScissorEffect() childOf window
 
@@ -32,50 +38,119 @@ class ConstraintResolutionGui(guiName: String, private val nodes: List<ResolverN
             height = RelativeConstraint()
         } childOf container
 
-        val contentParent = UIContainer().constrain {
-            x = SiblingConstraint()
-            width = RelativeConstraint() - 4.pixels()
-            height = RelativeConstraint()
+        val titleContent = UIContainer().constrain {
+            x = 1.pixels()
+            width = RelativeConstraint() - 2.pixels()
+            height = RelativeConstraint(0.1f)
         } childOf container
 
+        UIText("Cyclic Constraint Tree Detected").constrain {
+            x = CenterConstraint()
+            y = CenterConstraint()
+            textScale = 2.pixels()
+            color = Color(239, 83, 80).asConstraint()
+        } childOf titleContent
+
+        val displayContent = UIContainer().constrain {
+            x = 1.pixels()
+            y = SiblingConstraint().to(titleContent) + RelativeConstraint(0.05f) as YConstraint
+            width = RelativeConstraint() - 2.pixels()
+            height = FillConstraint()
+        } childOf container
+
+        ListView().constrain {
+            x = RelativeConstraint(0.05f)
+            width = RelativeConstraint(0.4f)
+            height = RelativeConstraint()
+        } childOf displayContent
+
         UIBlock(Color(80, 80, 80)).constrain {
-            x = SiblingConstraint()
+            x = RelativeConstraint(0.5f)
+            width = 1.pixels()
+            height = RelativeConstraint()
+        } childOf displayContent
+
+        TreeView(gui).constrain {
+            x = RelativeConstraint(0.55f)
+            width = RelativeConstraint(0.4f)
+            height = RelativeConstraint()
+        } childOf displayContent
+
+        UIBlock(Color(80, 80, 80)).constrain {
+            x = (-1).pixels(alignOpposite = true)
             width = 1.pixels()
             height = RelativeConstraint()
         } childOf container
 
-        val content = UIContainer().constrain {
-            x = RelativeConstraint(0.1f)
-            width = RelativeConstraint(0.8f)
+        UIBlock(Color(80, 80, 80)).constrain {
+            x = (-1).pixels(alignOpposite = true)
+            width = 1.pixels()
             height = RelativeConstraint()
-        } childOf contentParent
+        } childOf container
 
-        UIText("Cyclic Constraint Tree Detected").constrain {
-            textScale = 2.pixels()
-            color = Color(239, 83, 80).asConstraint()
-        } childOf content
+        Inspector(window) childOf window
+    }
 
-        UIText("Open Screen name: $guiName").constrain {
-            y = SiblingConstraint(15f)
-            textScale = 1.25f.pixels()
-        } childOf content
-
-        if (nodes != null) {
-            UIText("Cyclic constraints:").constrain {
+    private inner class ListView : UIContainer() {
+        init {
+            UIText("Open Screen name: $guiName").constrain {
                 y = SiblingConstraint(15f)
                 textScale = 1.25f.pixels()
-            } childOf content
+            } childOf this
 
-            ConstraintPathComponent().constrain {
-                y = SiblingConstraint(10f)
+            if (nodes != null) {
+                UIText("Cyclic constraints:").constrain {
+                    y = SiblingConstraint(15f)
+                    textScale = 1.25f.pixels()
+                } childOf this
+
+                ConstraintPathComponent().constrain {
+                    y = SiblingConstraint(10f)
+                    width = RelativeConstraint()
+                    height = FillConstraint()
+                } childOf this
+            } else {
+                UIWrappedText("Unfortunately Elementa is unable to determine the constraints responsible. This is most likely due to the use of basicConstraints. ").constrain {
+                    width = RelativeConstraint()
+                    color = Color(239, 83, 80).asConstraint()
+                } childOf this
+            }
+        }
+    }
+
+    private inner class TreeView(rootComponent: UIComponent) : UIContainer() {
+        init {
+            val rootNode = componentToNode(rootComponent)
+
+            TreeGraphComponent(rootNode, TreeGraphStyle().copy(heightBetweenRows = 20f)).constrain {
                 width = RelativeConstraint()
-                height = FillConstraint()
-            } childOf content
-        } else {
-            UIWrappedText("Unfortunately Elementa is unable to determine the constraints responsible. This is most likely due to the use of basicConstraints. ").constrain {
-                width = RelativeConstraint()
-                color = Color(239, 83, 80).asConstraint()
-            } childOf content
+                height = RelativeConstraint()
+            } childOf this
+        }
+
+        private fun componentToNode(component: UIComponent): TreeGraphNode {
+            return ConstraintTreeNode(component).withChildren {
+                component.children.forEach {
+                    add(componentToNode(it))
+                }
+            }
+        }
+    }
+
+    private class ConstraintTreeNode(private val target: UIComponent) : TreeGraphNode() {
+        override fun makeComponent(): UIComponent {
+            val block = UIBlock(Color(50, 50, 50)).constrain {
+                width = ChildBasedSizeConstraint() + 3.pixels()
+                height = ChildBasedSizeConstraint() + 3.pixels()
+            } effect OutlineEffect(Color(100, 100, 100), 1f)
+
+            UIText("${target.componentName}@${Integer.toHexString(target.hashCode())}").constrain {
+                x = CenterConstraint()
+                y = CenterConstraint()
+                textScale = 0.5f.pixels()
+            } childOf block
+
+            return block
         }
     }
 
@@ -120,7 +195,7 @@ class ConstraintResolutionGui(guiName: String, private val nodes: List<ResolverN
             right childOf this
 
             if (index != nodes!!.lastIndex) {
-                UIText("§7Component: §r${node.component.componentName}").constrain {
+                UIText("§7Component: §r${node.component.componentName}@${Integer.toHexString(node.component.hashCode())}").constrain {
                     y = SiblingConstraint()
                 } childOf right
 

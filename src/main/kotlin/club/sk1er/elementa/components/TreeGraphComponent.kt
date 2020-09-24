@@ -192,6 +192,8 @@ class TreeGraphComponent(
     }
 
     override fun draw() {
+        beforeDraw()
+
         if (!layedOut) {
             rootNode.layoutChildren(style)
             lines = rootNode.collectLines()
