@@ -63,7 +63,7 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
                 val cyclicNodes = ConstraintResolver(this).getCyclicNodes()
 
                 UniversalMinecraft.getMinecraft().displayGuiScreen(
-                    ConstraintResolutionGui(guiName, cyclicNodes)
+                    ConstraintResolutionGui(guiName, this, cyclicNodes)
                 )
                 cancelDrawing = true
                 return
