@@ -755,6 +755,7 @@ abstract class UIComponent : Observable() {
         val totalFrames = (time * Window.of(this@UIComponent).animationFPS).toInt()
         val totalDelay = (delay * Window.of(this@UIComponent).animationFPS).toInt()
 
+        fieldAnimationQueue.removeIf { it.field == this }
         fieldAnimationQueue.addFirst(IntFieldAnimationComponent(this, strategy, totalFrames, this.get(), newValue, totalDelay))
     }
 
@@ -762,6 +763,7 @@ abstract class UIComponent : Observable() {
         val totalFrames = (time * Window.of(this@UIComponent).animationFPS).toInt()
         val totalDelay = (delay * Window.of(this@UIComponent).animationFPS).toInt()
 
+        fieldAnimationQueue.removeIf { it.field == this }
         fieldAnimationQueue.addFirst(FloatFieldAnimationComponent(this, strategy, totalFrames, this.get(), newValue, totalDelay))
     }
 
@@ -769,6 +771,7 @@ abstract class UIComponent : Observable() {
         val totalFrames = (time * Window.of(this@UIComponent).animationFPS).toInt()
         val totalDelay = (delay * Window.of(this@UIComponent).animationFPS).toInt()
 
+        fieldAnimationQueue.removeIf { it.field == this }
         fieldAnimationQueue.addFirst(LongFieldAnimationComponent(this, strategy, totalFrames, this.get(), newValue, totalDelay))
     }
 
@@ -776,6 +779,7 @@ abstract class UIComponent : Observable() {
         val totalFrames = (time * Window.of(this@UIComponent).animationFPS).toInt()
         val totalDelay = (delay * Window.of(this@UIComponent).animationFPS).toInt()
 
+        fieldAnimationQueue.removeIf { it.field == this }
         fieldAnimationQueue.addFirst(DoubleFieldAnimationComponent(this, strategy, totalFrames, this.get(), newValue, totalDelay))
     }
 
@@ -783,6 +787,7 @@ abstract class UIComponent : Observable() {
         val totalFrames = (time * Window.of(this@UIComponent).animationFPS).toInt()
         val totalDelay = (delay * Window.of(this@UIComponent).animationFPS).toInt()
 
+        fieldAnimationQueue.removeIf { it.field == this }
         fieldAnimationQueue.addFirst(ColorFieldAnimationComponent(this, strategy, totalFrames, this.get(), newValue, totalDelay))
     }
 
