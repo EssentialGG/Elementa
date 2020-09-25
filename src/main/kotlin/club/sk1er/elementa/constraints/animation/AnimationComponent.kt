@@ -235,6 +235,8 @@ sealed class FieldAnimationComponent<T>(
     override var recalculate = true
     override var constrainTo: UIComponent? = null
 
+    abstract val field: KMutableProperty0<*>
+
     override fun animationFrame() {
         super.animationFrame()
 
@@ -250,7 +252,7 @@ sealed class FieldAnimationComponent<T>(
 }
 
 class FloatFieldAnimationComponent(
-    private val field: KMutableProperty0<Float>,
+    override val field: KMutableProperty0<Float>,
     strategy: AnimationStrategy,
     totalFrames: Int,
     private val oldValue: Float,
@@ -265,7 +267,7 @@ class FloatFieldAnimationComponent(
 }
 
 class DoubleFieldAnimationComponent(
-    private val field: KMutableProperty0<Double>,
+    override val field: KMutableProperty0<Double>,
     strategy: AnimationStrategy,
     totalFrames: Int,
     private val oldValue: Double,
@@ -280,7 +282,7 @@ class DoubleFieldAnimationComponent(
 }
 
 class IntFieldAnimationComponent(
-    private val field: KMutableProperty0<Int>,
+    override val field: KMutableProperty0<Int>,
     strategy: AnimationStrategy,
     totalFrames: Int,
     private val oldValue: Int,
@@ -295,7 +297,7 @@ class IntFieldAnimationComponent(
 }
 
 class LongFieldAnimationComponent(
-    private val field: KMutableProperty0<Long>,
+    override val field: KMutableProperty0<Long>,
     strategy: AnimationStrategy,
     totalFrames: Int,
     private val oldValue: Long,
@@ -310,7 +312,7 @@ class LongFieldAnimationComponent(
 }
 
 class ColorFieldAnimationComponent(
-    private val field: KMutableProperty0<Color>,
+    override val field: KMutableProperty0<Color>,
     strategy: AnimationStrategy,
     totalFrames: Int,
     private val oldValue: Color,
