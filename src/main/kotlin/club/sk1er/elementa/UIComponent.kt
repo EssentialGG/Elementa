@@ -69,6 +69,8 @@ abstract class UIComponent : Observable() {
     // For the field animation API
     private val fieldAnimationQueue = ConcurrentLinkedDeque<FieldAnimationComponent<*>>()
 
+    private var isInitialized = false
+
     /**
      * Adds [component] to this component's children tree,
      * as well as sets [component]'s parent to this component.
@@ -319,11 +321,18 @@ abstract class UIComponent : Observable() {
         return false
     }
 
+    open fun afterInitialization() { }
+
     /**
      * Does the actual drawing for this component, meant to be overridden by specific components.
      * Also does some housekeeping dealing with hovering and effects.
      */
     open fun draw() {
+        if (!isInitialized) {
+            isInitialized = true
+            afterInitialization()
+        }
+
         // Draw colored outline around the components
         if (IS_DEBUG) {
             if (ScissorEffect.currentScissorState != null) {
