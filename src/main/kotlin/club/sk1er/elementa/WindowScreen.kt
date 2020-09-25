@@ -16,6 +16,7 @@ abstract class WindowScreen(
     private val drawDefaultBackground: Boolean = true
 ) : UniversalScreen() {
     protected val window = Window()
+    private var isInitialized = false
 
     init {
         window.onKeyType { typedChar, keyCode ->
@@ -23,7 +24,14 @@ abstract class WindowScreen(
         }
     }
 
+    open fun afterInitialization() { }
+
     override fun onDrawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
+        if (!isInitialized) {
+            isInitialized = true
+            afterInitialization()
+        }
+
         super.onDrawScreen(mouseX, mouseY, partialTicks)
 
         //#if MC>=11602
