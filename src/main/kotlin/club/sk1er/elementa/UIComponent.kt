@@ -752,6 +752,14 @@ abstract class UIComponent : Observable() {
      */
 
     fun KMutableProperty0<Int>.animate(strategy: AnimationStrategy, time: Float, newValue: Int, delay: Float = 0f) {
+        if (!validateAnimationFields(time, delay))
+            return
+
+        if (time == 0f) {
+            this.set(newValue)
+            return
+        }
+
         val totalFrames = (time * Window.of(this@UIComponent).animationFPS).toInt()
         val totalDelay = (delay * Window.of(this@UIComponent).animationFPS).toInt()
 
@@ -760,6 +768,14 @@ abstract class UIComponent : Observable() {
     }
 
     fun KMutableProperty0<Float>.animate(strategy: AnimationStrategy, time: Float, newValue: Float, delay: Float = 0f) {
+        if (!validateAnimationFields(time, delay))
+            return
+
+        if (time == 0f) {
+            this.set(newValue)
+            return
+        }
+
         val totalFrames = (time * Window.of(this@UIComponent).animationFPS).toInt()
         val totalDelay = (delay * Window.of(this@UIComponent).animationFPS).toInt()
 
@@ -768,6 +784,14 @@ abstract class UIComponent : Observable() {
     }
 
     fun KMutableProperty0<Long>.animate(strategy: AnimationStrategy, time: Float, newValue: Long, delay: Float = 0f) {
+        if (!validateAnimationFields(time, delay))
+            return
+
+        if (time == 0f) {
+            this.set(newValue)
+            return
+        }
+
         val totalFrames = (time * Window.of(this@UIComponent).animationFPS).toInt()
         val totalDelay = (delay * Window.of(this@UIComponent).animationFPS).toInt()
 
@@ -776,6 +800,14 @@ abstract class UIComponent : Observable() {
     }
 
     fun KMutableProperty0<Double>.animate(strategy: AnimationStrategy, time: Float, newValue: Double, delay: Float = 0f) {
+        if (!validateAnimationFields(time, delay))
+            return
+
+        if (time == 0f) {
+            this.set(newValue)
+            return
+        }
+
         val totalFrames = (time * Window.of(this@UIComponent).animationFPS).toInt()
         val totalDelay = (delay * Window.of(this@UIComponent).animationFPS).toInt()
 
@@ -784,11 +816,31 @@ abstract class UIComponent : Observable() {
     }
 
     fun KMutableProperty0<Color>.animate(strategy: AnimationStrategy, time: Float, newValue: Color, delay: Float = 0f) {
+        if (!validateAnimationFields(time, delay))
+            return
+
+        if (time == 0f) {
+            this.set(newValue)
+            return
+        }
+
         val totalFrames = (time * Window.of(this@UIComponent).animationFPS).toInt()
         val totalDelay = (delay * Window.of(this@UIComponent).animationFPS).toInt()
 
         fieldAnimationQueue.removeIf { it.field == this }
         fieldAnimationQueue.addFirst(ColorFieldAnimationComponent(this, strategy, totalFrames, this.get(), newValue, totalDelay))
+    }
+
+    private fun validateAnimationFields(time: Float, delay: Float): Boolean {
+        if (time < 0f) {
+            println("time parameter of field animation call cannot be less than 0")
+            return false
+        }
+        if (delay < 0f) {
+            println("delay parameter of field animation call cannot be less than 0")
+            return false
+        }
+        return true
     }
 
     companion object {
