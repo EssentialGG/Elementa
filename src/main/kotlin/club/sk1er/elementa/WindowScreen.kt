@@ -1,8 +1,11 @@
 package club.sk1er.elementa
 
 import club.sk1er.elementa.components.Window
+import club.sk1er.elementa.constraints.animation.*
 import club.sk1er.mods.core.universal.UniversalKeyboard
 import club.sk1er.mods.core.universal.UniversalScreen
+import java.awt.Color
+import kotlin.reflect.KMutableProperty0
 
 //#if MC>=11602
 //$$ import club.sk1er.mods.core.universal.UniversalGraphicsHandler
@@ -83,5 +86,29 @@ abstract class WindowScreen(
 
     fun defaultKeyBehavior(typedChar: Char, keyCode: Int) {
         super.onKeyPressed(keyCode, typedChar, UniversalKeyboard.getModifiers())
+    }
+
+    /**
+     * Field animation API
+     */
+
+    fun KMutableProperty0<Int>.animate(strategy: AnimationStrategy, time: Float, newValue: Int, delay: Float = 0f) {
+        window.apply { this@animate.animate(strategy, time, newValue, delay) }
+    }
+
+    fun KMutableProperty0<Float>.animate(strategy: AnimationStrategy, time: Float, newValue: Float, delay: Float = 0f) {
+        window.apply { this@animate.animate(strategy, time, newValue, delay) }
+    }
+
+    fun KMutableProperty0<Long>.animate(strategy: AnimationStrategy, time: Float, newValue: Long, delay: Float = 0f) {
+        window.apply { this@animate.animate(strategy, time, newValue, delay) }
+    }
+
+    fun KMutableProperty0<Double>.animate(strategy: AnimationStrategy, time: Float, newValue: Double, delay: Float = 0f) {
+        window.apply { this@animate.animate(strategy, time, newValue, delay) }
+    }
+
+    fun KMutableProperty0<Color>.animate(strategy: AnimationStrategy, time: Float, newValue: Color, delay: Float = 0f) {
+        window.apply { this@animate.animate(strategy, time, newValue, delay) }
     }
 }

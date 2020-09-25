@@ -3,7 +3,7 @@ package club.sk1er.elementa
 import club.sk1er.elementa.components.UIBlock
 import club.sk1er.elementa.components.Window
 import club.sk1er.elementa.constraints.*
-import club.sk1er.elementa.constraints.animation.AnimatingConstraints
+import club.sk1er.elementa.constraints.animation.*
 import club.sk1er.elementa.dsl.animate
 import club.sk1er.elementa.effects.Effect
 import club.sk1er.elementa.effects.ScissorEffect
@@ -16,11 +16,13 @@ import club.sk1er.mods.core.universal.UniversalResolutionUtil
 import org.lwjgl.opengl.GL11
 import java.awt.Color
 import java.util.*
+import java.util.concurrent.ConcurrentLinkedDeque
 import java.util.concurrent.CopyOnWriteArrayList
 import java.util.function.BiConsumer
 import java.util.function.Consumer
 import kotlin.math.PI
 import kotlin.math.sin
+import kotlin.reflect.KMutableProperty0
 
 /**
  * UIComponent is the base of all drawing, meaning
@@ -63,6 +65,9 @@ abstract class UIComponent : Observable() {
      * back into the same position
      */
     private var indexInParent = 0
+
+    // For the field animation API
+    private val fieldAnimationQueue = ConcurrentLinkedDeque<FieldAnimationComponent<*>>()
 
     /**
      * Adds [component] to this component's children tree,
@@ -503,6 +508,14 @@ abstract class UIComponent : Observable() {
         constraints.animationFrame()
 
         this.children.forEach(UIComponent::animationFrame)
+
+        // Process field animations
+        val queueIterator = fieldAnimationQueue.iterator()
+        queueIterator.forEachRemaining {
+            it.animationFrame()
+            if (it.isComplete())
+                queueIterator.remove()
+        }
     }
 
     open fun alwaysDrawChildren(): Boolean {
@@ -723,6 +736,45 @@ abstract class UIComponent : Observable() {
         } else {
             Window.of(this).removeFloatingComponent(this)
         }
+    }
+
+    /**
+     * Field animation API
+     */
+
+    fun KMutableProperty0<Int>.animate(strategy: AnimationStrategy, time: Float, newValue: Int, delay: Float = 0f) {
+        val totalFrames = (time * Window.of(this@UIComponent).animationFPS).toInt()
+        val totalDelay = (delay * Window.of(this@UIComponent).animationFPS).toInt()
+
+        fieldAnimationQueue.addFirst(IntFieldAnimationComponent(this, strategy, totalFrames, this.get(), newValue, totalDelay))
+    }
+
+    fun KMutableProperty0<Float>.animate(strategy: AnimationStrategy, time: Float, newValue: Float, delay: Float = 0f) {
+        val totalFrames = (time * Window.of(this@UIComponent).animationFPS).toInt()
+        val totalDelay = (delay * Window.of(this@UIComponent).animationFPS).toInt()
+
+        fieldAnimationQueue.addFirst(FloatFieldAnimationComponent(this, strategy, totalFrames, this.get(), newValue, totalDelay))
+    }
+
+    fun KMutableProperty0<Long>.animate(strategy: AnimationStrategy, time: Float, newValue: Long, delay: Float = 0f) {
+        val totalFrames = (time * Window.of(this@UIComponent).animationFPS).toInt()
+        val totalDelay = (delay * Window.of(this@UIComponent).animationFPS).toInt()
+
+        fieldAnimationQueue.addFirst(LongFieldAnimationComponent(this, strategy, totalFrames, this.get(), newValue, totalDelay))
+    }
+
+    fun KMutableProperty0<Double>.animate(strategy: AnimationStrategy, time: Float, newValue: Double, delay: Float = 0f) {
+        val totalFrames = (time * Window.of(this@UIComponent).animationFPS).toInt()
+        val totalDelay = (delay * Window.of(this@UIComponent).animationFPS).toInt()
+
+        fieldAnimationQueue.addFirst(DoubleFieldAnimationComponent(this, strategy, totalFrames, this.get(), newValue, totalDelay))
+    }
+
+    fun KMutableProperty0<Color>.animate(strategy: AnimationStrategy, time: Float, newValue: Color, delay: Float = 0f) {
+        val totalFrames = (time * Window.of(this@UIComponent).animationFPS).toInt()
+        val totalDelay = (delay * Window.of(this@UIComponent).animationFPS).toInt()
+
+        fieldAnimationQueue.addFirst(ColorFieldAnimationComponent(this, strategy, totalFrames, this.get(), newValue, totalDelay))
     }
 
     companion object {
