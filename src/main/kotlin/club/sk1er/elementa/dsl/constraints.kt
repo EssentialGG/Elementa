@@ -2,6 +2,7 @@ package club.sk1er.elementa.dsl
 
 import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.constraints.*
+import java.awt.Color
 
 infix fun SuperConstraint<Float>.min(minConstraint: SuperConstraint<Float>) =
     MinConstraint(this, minConstraint)
@@ -48,4 +49,22 @@ fun basicYConstraint(calculator: (component: UIComponent) -> Float) = object : Y
     override var constrainTo: UIComponent? = null
 
     override fun getYPositionImpl(component: UIComponent) = calculator(component)
+}
+
+fun basicRadiusConstraint(calculator: (component: UIComponent) -> Float) = object : RadiusConstraint {
+    override var cachedValue = 0f
+    override var recalculate = true
+    override var constrainTo: UIComponent? = null
+
+    override fun getRadiusImpl(component: UIComponent) = calculator(component)
+}
+
+fun basicTextScaleConstraint(calculator: (component: UIComponent) -> Float) = basicHeightConstraint(calculator)
+
+fun basicColorConstraint(calculator: (component: UIComponent) -> Color) = object : ColorConstraint {
+    override var cachedValue = Color.WHITE
+    override var recalculate = true
+    override var constrainTo: UIComponent? = null
+
+    override fun getColorImpl(component: UIComponent) = calculator(component)
 }
