@@ -6,6 +6,7 @@ import java.awt.Color
 import java.lang.UnsupportedOperationException
 import kotlin.math.max
 import kotlin.math.roundToInt
+import kotlin.reflect.KMutableProperty0
 
 sealed class AnimationComponent<T>(
     val strategy: AnimationStrategy,
@@ -223,5 +224,107 @@ class ColorAnimationComponent(
 
     override fun to(component: UIComponent) = apply {
         throw UnsupportedOperationException("Constraint.to(UIComponent) is not available in this context!")
+    }
+}
+
+sealed class FieldAnimationComponent<T>(
+    strategy: AnimationStrategy,
+    totalFrames: Int,
+    delay: Int
+): AnimationComponent<T>(strategy, totalFrames, delay) {
+    override var recalculate = true
+    override var constrainTo: UIComponent? = null
+
+    override fun animationFrame() {
+        super.animationFrame()
+
+        if (!isComplete())
+            setValue(getPercentComplete())
+    }
+
+    abstract fun setValue(percentComplete: Float)
+
+    override fun to(component: UIComponent) = apply {
+        throw UnsupportedOperationException("Constraint.to(UIComponent) is not available in this context!")
+    }
+}
+
+class FloatFieldAnimationComponent(
+    private val field: KMutableProperty0<Float>,
+    strategy: AnimationStrategy,
+    totalFrames: Int,
+    private val oldValue: Float,
+    private val newValue: Float,
+    delay: Int
+): FieldAnimationComponent<Float>(strategy, totalFrames, delay) {
+    override var cachedValue = 0f
+
+    override fun setValue(percentComplete: Float) {
+        field.set(oldValue + percentComplete * (newValue - oldValue))
+    }
+}
+
+class DoubleFieldAnimationComponent(
+    private val field: KMutableProperty0<Double>,
+    strategy: AnimationStrategy,
+    totalFrames: Int,
+    private val oldValue: Double,
+    private val newValue: Double,
+    delay: Int
+): FieldAnimationComponent<Double>(strategy, totalFrames, delay) {
+    override var cachedValue = 0.0
+
+    override fun setValue(percentComplete: Float) {
+        field.set(oldValue + percentComplete * (newValue - oldValue))
+    }
+}
+
+class IntFieldAnimationComponent(
+    private val field: KMutableProperty0<Int>,
+    strategy: AnimationStrategy,
+    totalFrames: Int,
+    private val oldValue: Int,
+    private val newValue: Int,
+    delay: Int
+): FieldAnimationComponent<Int>(strategy, totalFrames, delay) {
+    override var cachedValue = 0
+
+    override fun setValue(percentComplete: Float) {
+        field.set((oldValue + percentComplete * (newValue - oldValue)).toInt())
+    }
+}
+
+class LongFieldAnimationComponent(
+    private val field: KMutableProperty0<Long>,
+    strategy: AnimationStrategy,
+    totalFrames: Int,
+    private val oldValue: Long,
+    private val newValue: Long,
+    delay: Int
+): FieldAnimationComponent<Long>(strategy, totalFrames, delay) {
+    override var cachedValue = 0L
+
+    override fun setValue(percentComplete: Float) {
+        field.set((oldValue + percentComplete * (newValue - oldValue)).toLong())
+    }
+}
+
+class ColorFieldAnimationComponent(
+    private val field: KMutableProperty0<Color>,
+    strategy: AnimationStrategy,
+    totalFrames: Int,
+    private val oldValue: Color,
+    private val newValue: Color,
+    delay: Int
+): FieldAnimationComponent<Color>(strategy, totalFrames, delay) {
+    override var cachedValue: Color = Color.WHITE
+
+    override fun setValue(percentComplete: Float) {
+        val newR = oldValue.red + ((newValue.red - oldValue.red) * percentComplete)
+        val newG = oldValue.green + ((newValue.green - oldValue.green) * percentComplete)
+        val newB = oldValue.blue + ((newValue.blue - oldValue.blue) * percentComplete)
+        val newA = oldValue.alpha + ((newValue.alpha - oldValue.alpha) * percentComplete)
+
+        field.set(Color(newR.roundToInt(), newG.roundToInt(), newB.roundToInt(), newA.roundToInt()))
     }
 }
