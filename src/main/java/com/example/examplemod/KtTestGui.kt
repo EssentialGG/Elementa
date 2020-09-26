@@ -167,6 +167,17 @@ class KtTestGui : WindowScreen() {
             input2.grabWindowFocus()
         }
 
+        // For testing constraint error resolution
+//        val firstBad = UIContainer().constrain {
+//            width = ChildBasedSizeConstraint()
+//            height = AspectConstraint()
+//        } childOf parent2
+//
+//        val secondBad = UIContainer().constrain {
+//            width = AspectConstraint()
+//            height = RelativeConstraint()
+//        } childOf firstBad
+
         val canvasContainer = UIContainer().constrain {
             x = 30.pixels()
             y = 30.pixels(alignOpposite = true)

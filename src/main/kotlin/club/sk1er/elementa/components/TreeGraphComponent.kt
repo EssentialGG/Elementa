@@ -173,8 +173,8 @@ class TreeGraphComponent(
         val horizontalScroll = ScrollComponent.DefaultScrollBar(isHorizontal = true) childOf this
         val verticalScroll = ScrollComponent.DefaultScrollBar(isHorizontal = false) childOf this
 
-        scroll.setHorizontalScrollBarComponent(horizontalScroll.grip)
-        scroll.setVerticalScrollBarComponent(verticalScroll.grip)
+        scroll.setHorizontalScrollBarComponent(horizontalScroll.grip, hideWhenUseless = true)
+        scroll.setVerticalScrollBarComponent(verticalScroll.grip, hideWhenUseless = true)
 
         rootNode.setDepths(0)
 

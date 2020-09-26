@@ -112,11 +112,11 @@ class ScrollComponent @JvmOverloads constructor(
             }
 
             // Run our scroll adjust event, normally updating [scrollBarGrip]
-            var percent = abs(horizontalOffset) / verticalRange.width()
+            var percent = abs(horizontalOffset) / horizontalRange.width()
             var percentageOfParent = this.getWidth() / calculateActualWidth()
             horizontalScrollAdjustEvents.forEach { it(percent, percentageOfParent) }
 
-            percent = abs(verticalOffset) / horizontalRange.width()
+            percent = abs(verticalOffset) / verticalRange.width()
             percentageOfParent = this.getHeight() / calculateActualHeight()
             verticalScrollAdjustEvents.forEach { it(percent, percentageOfParent) }
         }
