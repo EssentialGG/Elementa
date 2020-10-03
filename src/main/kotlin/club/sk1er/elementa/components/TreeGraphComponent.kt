@@ -14,17 +14,20 @@ data class TreeGraphStyle(
     val heightBetweenRows: Float = 10f,
     val lineColor: Color = Color.WHITE,
     val lineWidth: Float = 2f,
+    val isHorizontal: Boolean = false,
     val lineDrawer: (UIPoint, UIPoint) -> Unit = { p0, p1 ->
         LineUtils.drawLine(p0, p1, lineColor, lineWidth)
     }
 )
 
-abstract class TreeGraphNode() {
+abstract class TreeGraphNode {
     var depth by Delegates.notNull<Int>()
     val children = mutableListOf<TreeGraphNode>()
     val component by lazy { makeComponent() }
 
+    // TODO: invalidate these if component tree changes
     private var widthBacker: Double? = null
+    private var heightBacker: Double? = null
 
     fun width(style: TreeGraphStyle): Double {
         if (widthBacker == null) {
@@ -39,6 +42,21 @@ abstract class TreeGraphNode() {
         }
 
         return widthBacker!!
+    }
+
+    fun height(style: TreeGraphStyle): Double {
+        if (heightBacker == null) {
+            heightBacker = if (children.isEmpty()) {
+                component.getHeight().toDouble()
+            } else {
+                max(
+                    children.sumByDouble { it.height(style) } + (children.size - 1) * style.heightBetweenRows,
+                    component.getHeight().toDouble()
+                )
+            }
+        }
+
+        return heightBacker!!
     }
 
     // Must have absolutely-resolvable width and height. The position
@@ -63,30 +81,51 @@ abstract class TreeGraphNode() {
         component.setX(0.pixels())
         component.setY(0.pixels())
 
-        layoutChildrenHelper(style, 0.0, component.getHeight() + style.heightBetweenRows.toDouble())
+        if (style.isHorizontal) {
+            layoutChildrenHelper(style, component.getWidth() + style.widthBetweenNodes.toDouble(), 0.0)
+        } else {
+            layoutChildrenHelper(style, 0.0, component.getHeight() + style.heightBetweenRows.toDouble())
+        }
 
         normalizePositions()
     }
 
-    private fun layoutChildrenHelper(style: TreeGraphStyle, x_: Double, y: Double) {
+    private fun layoutChildrenHelper(style: TreeGraphStyle, x_: Double, y_: Double) {
         if (children.isEmpty())
             return
 
-        val totalWidth = children.sumByDouble { it.width(style) } + (children.size - 1) * style.widthBetweenNodes
-        val maxHeight = children.map { it.component.getHeight().toDouble() }.max()!!
+        if (style.isHorizontal) {
+            val totalHeight = children.sumByDouble { it.height(style) } + (children.size - 1) * style.heightBetweenRows
+            val maxWidth = children.map { it.component.getWidth().toDouble() }.max()!!
 
-        var x = x_ - totalWidth / 2.0
+            var y = y_ - totalHeight / 2.0
 
-        children.forEach { node ->
-            x += node.width(style) / 2f
+            children.forEach { node ->
+                y += node.height(style) / 2f
 
-            node.component.setX(x.pixels())
-            node.component.setY((y + (maxHeight - node.component.getHeight()) / 2.0).pixels())
+                node.component.setX((x_ + (maxWidth - node.component.getWidth()) / 2.0).pixels())
+                node.component.setY(y.pixels())
 
+                node.layoutChildrenHelper(style, x_ + maxWidth + style.widthBetweenNodes, y)
 
-            node.layoutChildrenHelper(style, x, y + maxHeight + style.heightBetweenRows)
+                y += node.height(style) / 2f + style.heightBetweenRows
+            }
+        } else {
+            val totalWidth = children.sumByDouble { it.width(style) } + (children.size - 1) * style.widthBetweenNodes
+            val maxHeight = children.map { it.component.getHeight().toDouble() }.max()!!
 
-            x += node.width(style) / 2f + style.widthBetweenNodes
+            var x = x_ - totalWidth / 2.0
+
+            children.forEach { node ->
+                x += node.width(style) / 2f
+
+                node.component.setX(x.pixels())
+                node.component.setY((y_ + (maxHeight - node.component.getHeight()) / 2.0).pixels())
+
+                node.layoutChildrenHelper(style, x, y_ + maxHeight + style.heightBetweenRows)
+
+                x += node.width(style) / 2f + style.widthBetweenNodes
+            }
         }
     }
 
@@ -125,32 +164,43 @@ abstract class TreeGraphNode() {
         }
     }
 
-    internal fun collectLines(): List<Pair<UIPoint, UIPoint>> {
-        val widthModifiers = if (children.isEmpty()) emptyList() else {
+    internal fun collectLines(isHorizontal: Boolean): List<Pair<UIPoint, UIPoint>> {
+        val modifiers = if (children.isEmpty()) emptyList() else {
             val delta = 1f / (children.size + 1)
             (1..children.size).map { it * delta }
         }.map {
-            it * component.getWidth() - component.getWidth() / 2f
+            (if (isHorizontal) component.getHeight() else component.getWidth()) * (it - 0.5f)
         }
 
         return children.mapIndexed { index, node ->
-            val p1 = point(alignBottom = true).let {
-                it.withX(it.x + widthModifiers[index].pixels())
+            val p1 = point(isHorizontal, align = true).let {
+                if (isHorizontal) {
+                    it.withY(it.y + modifiers[index].pixels())
+                } else it.withX(it.x + modifiers[index].pixels())
             }
 
-            p1 to node.point(alignBottom = false)
+            p1 to node.point(isHorizontal, align = false)
         } + children.map {
-            it.collectLines()
+            it.collectLines(isHorizontal)
         }.flatten()
     }
 
-    private fun point(alignBottom: Boolean): UIPoint {
-        val extraHeight = if (alignBottom) component.getHeight() else 0f
+    private fun point(isHorizontal: Boolean, align: Boolean): UIPoint {
+        return if (isHorizontal) {
+            val extraWidth = if (align) component.getWidth() else 0f
 
-        return UIPoint(
-            (component.getLeft() + component.getWidth() / 2f - component.parent.getLeft()).pixels(),
-            (component.getTop() + extraHeight - component.parent.getTop()).pixels()
-        )
+            UIPoint(
+                (component.getLeft() + extraWidth - component.parent.getLeft()).pixels(),
+                (component.getTop() + component.getHeight() / 2f - component.parent.getTop()).pixels()
+            )
+        } else {
+            val extraHeight = if (align) component.getHeight() else 0f
+
+            UIPoint(
+                (component.getLeft() + component.getWidth() / 2f - component.parent.getLeft()).pixels(),
+                (component.getTop() + extraHeight - component.parent.getTop()).pixels()
+            )
+        }
     }
 }
 
@@ -196,7 +246,7 @@ class TreeGraphComponent(
 
         if (!layedOut) {
             rootNode.layoutChildren(style)
-            lines = rootNode.collectLines()
+            lines = rootNode.collectLines(style.isHorizontal)
             lines.forEach { (p0, p1) ->
                 scroll.insertChildAt(p0, 0)
                 scroll.insertChildAt(p1, 1)

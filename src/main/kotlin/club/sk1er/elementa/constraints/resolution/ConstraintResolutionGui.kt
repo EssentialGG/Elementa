@@ -290,7 +290,7 @@ class ConstraintResolutionGui(
         init {
             val rootNode = componentToNode(rootComponent)
 
-            TreeGraphComponent(rootNode, TreeGraphStyle().copy(heightBetweenRows = 20f)).constrain {
+            TreeGraphComponent(rootNode, TreeGraphStyle().copy(isHorizontal = true, heightBetweenRows = 20f)).constrain {
                 x = RelativeConstraint(0.05f)
                 width = RelativeConstraint(0.9f)
                 height = RelativeConstraint()
