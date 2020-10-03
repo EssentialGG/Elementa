@@ -103,6 +103,9 @@ abstract class TreeGraphNode {
             children.forEach { node ->
                 y += node.height(style) / 2f
 
+                if (children.size == 1)
+                    y += (component.getHeight() - node.component.getHeight()) / 2f
+
                 node.component.setX((x_ + (maxWidth - node.component.getWidth()) / 2.0).pixels())
                 node.component.setY(y.pixels())
 
@@ -118,6 +121,9 @@ abstract class TreeGraphNode {
 
             children.forEach { node ->
                 x += node.width(style) / 2f
+
+                if (children.size == 1)
+                    x += (component.getWidth() - node.component.getWidth()) / 2f
 
                 node.component.setX(x.pixels())
                 node.component.setY((y_ + (maxHeight - node.component.getHeight()) / 2.0).pixels())
