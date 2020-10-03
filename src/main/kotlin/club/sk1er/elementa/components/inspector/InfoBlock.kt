@@ -46,6 +46,9 @@ class InfoBlock(private val inspector: Inspector) : UIContainer() {
     private val yValueText: UIText
     private val widthValueText: UIText
     private val heightValueText: UIText
+    private val radiusValueText: UIText
+    private val textScaleValueText: UIText
+    private val colorValueText: UIText
 
     private var constraintsSelected = true
     private val currentRoots = mutableMapOf<ConstraintType, TreeNode?>()
@@ -111,11 +114,17 @@ class InfoBlock(private val inspector: Inspector) : UIContainer() {
         yValueText = UIText("0")
         widthValueText = UIText("0")
         heightValueText = UIText("0")
+        radiusValueText = UIText("0")
+        textScaleValueText = UIText("0")
+        colorValueText = UIText("Color(255, 255, 255)")
 
         initializeText("x", xValueText) childOf valuesContent
         initializeText("y", yValueText) childOf valuesContent
         initializeText("width", widthValueText) childOf valuesContent
         initializeText("height", heightValueText) childOf valuesContent
+        initializeText("radius", radiusValueText) childOf valuesContent
+        initializeText("textScale", textScaleValueText) childOf valuesContent
+        initializeText("color", colorValueText) childOf valuesContent
     }
 
     private fun initializeText(name: String, valueText: UIText): UIContainer {
@@ -282,6 +291,15 @@ class InfoBlock(private val inspector: Inspector) : UIContainer() {
             yValueText.setText("%.2f".format(cachedComponent!!.getTop()))
             widthValueText.setText("%.2f".format(cachedComponent!!.getWidth()))
             heightValueText.setText("%.2f".format(cachedComponent!!.getHeight()))
+            radiusValueText.setText("%.2f".format(cachedComponent!!.getRadius()))
+            textScaleValueText.setText("%.2f".format(cachedComponent!!.getTextScale()))
+
+            val color = cachedComponent!!.getColor()
+            colorValueText.setText(if (color.alpha == 255) {
+                "Color(%d, %d, %d)".format(color.red, color.green, color.blue)
+            } else {
+                "Color(%d, %d, %d, %d)".format(color.red, color.green, color.blue, color.alpha)
+            })
         }
     }
 }
