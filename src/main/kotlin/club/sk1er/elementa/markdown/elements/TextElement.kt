@@ -332,7 +332,7 @@ class TextElement internal constructor(internal val spans: List<Span>) : Element
             it.style.texture?.let { texture ->
                 val glTextureId = texture.glTextureId
                 if (glTextureId != 0 && glTextureId != -1) {
-                    UniversalGraphicsHandler.deleteTexture(glTextureId);
+                    UniversalGraphicsHandler.deleteTexture(glTextureId)
                 }
             }
         }

@@ -51,7 +51,7 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
         try {
             while (this.systemTime < System.currentTimeMillis() + 1000 / animationFPS) {
                 animationFrame()
-                this.systemTime += 1000 / animationFPS;
+                this.systemTime += 1000 / animationFPS
             }
 
             mouseMove()

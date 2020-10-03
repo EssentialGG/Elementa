@@ -66,7 +66,7 @@ open class BlurHashImage(private val hash: String) : UIComponent(), ImageProvide
     protected fun finalize() {
         val glTextureId = texture.glTextureId
         if (glTextureId != 0 && glTextureId != -1) {
-            UniversalGraphicsHandler.deleteTexture(glTextureId);
+            UniversalGraphicsHandler.deleteTexture(glTextureId)
         }
     }
 

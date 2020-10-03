@@ -72,7 +72,7 @@ open class UIImage @JvmOverloads constructor(
     protected fun finalize() {
         val glTextureId = texture.glTextureId
         if (glTextureId != 0 && glTextureId != -1) {
-            UniversalGraphicsHandler.deleteTexture(glTextureId);
+            UniversalGraphicsHandler.deleteTexture(glTextureId)
         }
     }
 
