@@ -1,6 +1,6 @@
 # Elementa
 
-Elementa (from the name of the first book published on Geometry by Euclid) is a library
+Elementa (from the name of the first book published on [Geometry by Euclid](http://farside.ph.utexas.edu/Books/Euclid/Elements.pdf)) is a library
 that aims to make GUI creation extremely simple. It's based on a couple key concepts, some of which
 may already be familiar to those who have worked with a browser's DOM.
 
