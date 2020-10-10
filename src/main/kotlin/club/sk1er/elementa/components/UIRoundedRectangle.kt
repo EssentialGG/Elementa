@@ -30,11 +30,20 @@ open class UIRoundedRectangle(radius: Float) : UIComponent() {
     }
 
     companion object {
-        private val shader = Shader("rect", "rounded_rect")
-        private val shaderRadiusUniform = FloatUniform(shader.getUniformLocation("u_Radius"))
-        private val shaderInnerRectUniform = Vec4Uniform(shader.getUniformLocation("u_InnerRect"))
+        private lateinit var shader: Shader
+        private lateinit var shaderRadiusUniform: FloatUniform
+        private lateinit var shaderInnerRectUniform: Vec4Uniform
 
         fun drawRoundedRectangle(left: Float, top: Float, right: Float, bottom: Float, radius: Float, color: Color) {
+            Window.enqueueRenderOperation {
+                shader = Shader("rect", "rounded_rect")
+                shaderRadiusUniform = FloatUniform(shader.getUniformLocation("u_Radius"))
+                shaderInnerRectUniform = Vec4Uniform(shader.getUniformLocation("u_InnerRect"))
+            }
+
+            if (!::shader.isInitialized)
+                return
+
             UniversalGraphicsHandler.pushMatrix()
 
             shader.bindIfUsable()
