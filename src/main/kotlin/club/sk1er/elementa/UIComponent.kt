@@ -834,6 +834,10 @@ abstract class UIComponent : Observable() {
         fieldAnimationQueue.addFirst(ColorFieldAnimationComponent(this, strategy, totalFrames, this.get(), newValue, totalDelay))
     }
 
+    fun KMutableProperty0<*>.stopAnimating() {
+        fieldAnimationQueue.removeIf { it.field == this }
+    }
+
     private fun validateAnimationFields(time: Float, delay: Float): Boolean {
         if (time < 0f) {
             println("time parameter of field animation call cannot be less than 0")
