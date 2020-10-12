@@ -15,6 +15,7 @@ import club.sk1er.mods.core.universal.UniversalMouse
 import java.awt.Color
 import java.util.concurrent.CopyOnWriteArrayList
 import kotlin.math.abs
+import kotlin.math.max
 
 
 /**
@@ -69,6 +70,22 @@ class ScrollComponent @JvmOverloads constructor(
     private var autoScrollBegin: Pair<Float, Float> = -1f to -1f
 
     val allChildren = CopyOnWriteArrayList<UIComponent>()
+
+    /**
+     * Difference between the ScrollComponent's width and its contents' width.
+     * Will not be less than zero, even if the contents' width is less than the
+     * component's width.
+     */
+    val horizontalOverhang: Float
+        get() = max(0f, calculateActualWidth() - getWidth())
+
+    /**
+     * Difference between the ScrollComponent's height and its contents' height.
+     * Will not be less than zero, even if the contents' height is less than the
+     * component's height.
+     */
+    val verticalOverhang: Float
+        get() = max(0f, calculateActualHeight() - getHeight())
 
     init {
         if (!horizontalScrollEnabled && !verticalScrollEnabled)
