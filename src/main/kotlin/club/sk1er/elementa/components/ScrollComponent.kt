@@ -51,8 +51,10 @@ class ScrollComponent @JvmOverloads constructor(
         color = scrollIconColor.asConstraint()
     }
 
-    private var horizontalOffset = innerPadding
-    private var verticalOffset = innerPadding
+    var horizontalOffset = innerPadding
+        private set
+    var verticalOffset = innerPadding
+        private set
 
     private var horizontalScrollBarGrip: UIComponent? = null
     private var horizontalHideScrollWhenUseless = false

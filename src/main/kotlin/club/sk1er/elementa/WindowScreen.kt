@@ -120,7 +120,7 @@ abstract class WindowScreen(
     fun KMutableProperty0<Color>.animate(strategy: AnimationStrategy, time: Float, newValue: Color, delay: Float = 0f) {
         window.apply { this@animate.animate(strategy, time, newValue, delay) }
     }
-    
+
     fun KMutableProperty0<*>.stopAnimating() {
         window.apply { this@stopAnimating.stopAnimating() }
     }
