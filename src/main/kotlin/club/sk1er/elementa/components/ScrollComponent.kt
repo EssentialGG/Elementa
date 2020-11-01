@@ -30,7 +30,8 @@ class ScrollComponent @JvmOverloads constructor(
     private val horizontalScrollEnabled: Boolean = false,
     private val verticalScrollEnabled: Boolean = true,
     private val horizontalScrollOpposite: Boolean = false,
-    private val verticalScrollOpposite: Boolean = false
+    private val verticalScrollOpposite: Boolean = false,
+    customScissorBoundingBox: UIComponent? = null
 ) : UIContainer() {
     private val actualHolder = UIContainer().constrain {
         x = innerPadding.pixels()
@@ -95,7 +96,7 @@ class ScrollComponent @JvmOverloads constructor(
 
         super.addChild(actualHolder)
         actualHolder.addChild(emptyText)
-        this.enableEffects(ScissorEffect())
+        this.enableEffects(ScissorEffect(customScissorBoundingBox))
 
         super.addChild(scrollSVGComponent)
         scrollSVGComponent.hide(instantly = true)
