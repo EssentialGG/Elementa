@@ -306,14 +306,16 @@ publishing {
         }
     }
 
-    repositories {
-        maven {
-            name 'nexus'
-            url "https://repo.sk1er.club/repository/maven-${this.properties.getOrDefault("IS_CI", false) ? "snapshots" : "releases"}/"
+    if (project.hasProperty("nexus_user") && project.hasProperty("nexus_password")) {
+        repositories {
+            maven {
+                name 'nexus'
+                url "https://repo.sk1er.club/repository/maven-${this.properties.getOrDefault("IS_CI", false) ? "snapshots" : "releases"}/"
 
-            credentials {
-                username project.nexus_user
-                password project.nexus_password
+                credentials {
+                    username project.nexus_user
+                    password project.nexus_password
+                }
             }
         }
     }
