@@ -70,14 +70,19 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
             } else {
                 UniversalMinecraft.getMinecraft().displayGuiScreen(null)
 
-                // TODO: Print a chat message when this gets merged into the new-versions branch.
-                // We'll avoid it for now because the UC new-versions branch has a few conflicts.
-                // UniversalChat.chat("&c&lElementa encountered a GUI error. Check your logs for more information.");
+                UniversalChat.chat("Elementa encountered an error while drawing a GUI. Check your logs for more information.");
                 println("Elementa: Cyclic constraint structure detected!")
                 println("If you are a developer, set the environment variable \"elementa.dev=true\" to assist in debugging the issue.")
-                println("If you are a user, please report this!")
                 println("Gui name: $guiName")
+                e.printStackTrace()
             }
+        } catch (e: Throwable) {
+            val guiName = UniversalMinecraft.getMinecraft().currentScreen?.javaClass?.simpleName ?: "<unknown>"
+            UniversalMinecraft.getMinecraft().displayGuiScreen(null)
+            UniversalChat.chat("§cElementa encountered an error while drawing a GUI. Check your logs for more information.")
+            println("Elementa: encountered an error while drawing a GUI")
+            println("Gui name: $guiName")
+            e.printStackTrace()
         }
     }
 
