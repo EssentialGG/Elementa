@@ -1,4 +1,8 @@
+<div align="center">
+
 # Elementa
+
+</div>
 
 Elementa (from the name of the first book published on Geometry by Euclid) is a library
 that aims to make GUI creation extremely simple. It's based on a couple key concepts, some of which
