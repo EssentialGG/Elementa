@@ -271,6 +271,7 @@ artifacts {
 }
 
 jar {
+    exclude('com/example/examplemod/**')
     manifest {
         attributes(
             'FMLModType': 'LIBRARY'
