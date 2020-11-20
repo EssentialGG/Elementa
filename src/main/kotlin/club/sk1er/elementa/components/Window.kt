@@ -56,33 +56,39 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
 
             mouseMove()
             super.draw()
-        } catch (e: StackOverflowError) {
-            val guiName = UniversalMinecraft.getMinecraft().currentScreen?.javaClass?.simpleName ?: "<unknown>"
+        } catch (e: Throwable) {
+            cancelDrawing = true
 
-            if (IS_DEV) {
-                val cyclicNodes = ConstraintResolver(this).getCyclicNodes()
+            if (e is StackOverflowError) {
+                val guiName = UniversalMinecraft.getMinecraft().currentScreen?.javaClass?.simpleName ?: "<unknown>"
 
-                UniversalMinecraft.getMinecraft().displayGuiScreen(
-                    ConstraintResolutionGui(guiName, this, cyclicNodes)
-                )
-                cancelDrawing = true
-                return
+                if (IS_DEV) {
+                    val cyclicNodes = ConstraintResolver(this).getCyclicNodes()
+
+                    UniversalMinecraft.getMinecraft().displayGuiScreen(
+                        ConstraintResolutionGui(guiName, this, cyclicNodes)
+                    )
+                } else {
+                    UniversalMinecraft.getMinecraft().displayGuiScreen(null)
+
+                    UniversalChat.chat("Elementa encountered an error while drawing a GUI. Check your logs for more information.");
+                    println("Elementa: Cyclic constraint structure detected!")
+                    println("If you are a developer, set the environment variable \"elementa.dev=true\" to assist in debugging the issue.")
+                    println("Gui name: $guiName")
+                    e.printStackTrace()
+                }
             } else {
+                val guiName = UniversalMinecraft.getMinecraft().currentScreen?.javaClass?.simpleName ?: "<unknown>"
                 UniversalMinecraft.getMinecraft().displayGuiScreen(null)
-
-                UniversalChat.chat("Elementa encountered an error while drawing a GUI. Check your logs for more information.");
-                println("Elementa: Cyclic constraint structure detected!")
-                println("If you are a developer, set the environment variable \"elementa.dev=true\" to assist in debugging the issue.")
+                UniversalChat.chat("§cElementa encountered an error while drawing a GUI. Check your logs for more information.")
+                println("Elementa: encountered an error while drawing a GUI")
                 println("Gui name: $guiName")
                 e.printStackTrace()
             }
-        } catch (e: Throwable) {
-            val guiName = UniversalMinecraft.getMinecraft().currentScreen?.javaClass?.simpleName ?: "<unknown>"
-            UniversalMinecraft.getMinecraft().displayGuiScreen(null)
-            UniversalChat.chat("§cElementa encountered an error while drawing a GUI. Check your logs for more information.")
-            println("Elementa: encountered an error while drawing a GUI")
-            println("Gui name: $guiName")
-            e.printStackTrace()
+
+            // We may have thrown in the middle of a ScissorEffect, in which case we
+            // need to disable the scissor if we don't want half the user's screen gone
+            GL11.glDisable(GL11.GL_SCISSOR_TEST)
         }
     }
 
