@@ -1,14 +1,20 @@
 package club.sk1er.elementa.components
 
 import club.sk1er.elementa.UIComponent
+import club.sk1er.elementa.constraints.ColorConstraint
 import club.sk1er.elementa.dsl.pixels
 import club.sk1er.mods.core.universal.UniversalGraphicsHandler
+import java.awt.Color
 
 /**
  * Simple text component that draws its given [text] at the scale determined by
- * this component's width & height constrains.
+ * this component's width & height constraints.
  */
-open class UIText @JvmOverloads constructor(private var text: String = "", private var shadow: Boolean = true) :
+open class UIText @JvmOverloads constructor(
+    private var text: String = "",
+    private var shadow: Boolean = true,
+    private var shadowColor: Color? = null
+) :
     UIComponent() {
 
     private var textWidth: Float = UniversalGraphicsHandler.getStringWidth(text).toFloat()
@@ -29,6 +35,9 @@ open class UIText @JvmOverloads constructor(private var text: String = "", priva
 
     fun getShadow() = shadow
     fun setShadow(shadow: Boolean) = apply { this.shadow = shadow }
+
+    fun getShadowColor() = shadowColor
+    fun setShadowColor(shadowColor: Color?) = apply { this.shadowColor = shadowColor }
 
     /**
      * Returns the text width if no scale is applied to the text
@@ -60,7 +69,11 @@ open class UIText @JvmOverloads constructor(private var text: String = "", priva
         UniversalGraphicsHandler.enableBlend()
 
         UniversalGraphicsHandler.scale(width.toDouble(), height.toDouble(), 1.0)
-        UniversalGraphicsHandler.drawString(text, x / width, y / height, color.rgb, shadow)
+        if (shadow && shadowColor != null) {
+            UniversalGraphicsHandler.drawString(text, x / width, y / height, color.rgb, shadowColor!!.rgb)
+        } else {
+            UniversalGraphicsHandler.drawString(text, x / width, y / height, color.rgb, shadow)
+        }
         UniversalGraphicsHandler.scale(1 / width.toDouble(), 1 / height.toDouble(), 1.0)
 
         super.draw()
