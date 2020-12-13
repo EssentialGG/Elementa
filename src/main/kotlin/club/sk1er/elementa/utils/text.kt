@@ -4,6 +4,7 @@ import club.sk1er.elementa.dsl.width
 import club.sk1er.mods.core.universal.UniversalGraphicsHandler
 
 val spaceWidth = ' '.width()
+
 fun getStringSplitToWidth(text: String, maxLineWidth: Float): List<String> {
     val maxLineWidthSpace = maxLineWidth - spaceWidth
     val lineList = mutableListOf<String>()
@@ -20,11 +21,12 @@ fun getStringSplitToWidth(text: String, maxLineWidth: Float): List<String> {
     while (textPos < text.length) {
         val builder = StringBuilder()
 
-        while (textPos < text.length && text[textPos] != ' ') {
+        while (textPos < text.length && text[textPos].let { it != ' ' && it != '\n'}) {
             builder.append(text[textPos])
             textPos++
         }
 
+        val newline = textPos < text.length && text[textPos] == '\n'
         val word = builder.toString()
         val wordWidth = word.width()
 
@@ -47,21 +49,29 @@ fun getStringSplitToWidth(text: String, maxLineWidth: Float): List<String> {
 
             // Check if we have a space, and if so, append it to the new line
             if (textPos < text.length) {
-                if (currLineWidth + spaceWidth > maxLineWidthSpace)
+                if (!newline) {
+                    if (currLineWidth + spaceWidth > maxLineWidthSpace)
+                        pushLine()
+                    currLine.append(' ')
+                    currLineWidth += spaceWidth
+                    textPos++
+                } else {
                     pushLine()
-                currLine.append(' ')
-                currLineWidth += spaceWidth
-                textPos++
+                    textPos++
+                }
             }
         } else {
             currLine.append(word)
             currLineWidth += wordWidth
 
             // Check if we have a space, and if so, append it to a line
-            if (textPos < text.length) {
+            if (!newline && textPos < text.length) {
                 textPos++
                 currLine.append(' ')
                 currLineWidth += spaceWidth
+            } else if (newline) {
+                pushLine()
+                textPos++
             }
         }
     }
