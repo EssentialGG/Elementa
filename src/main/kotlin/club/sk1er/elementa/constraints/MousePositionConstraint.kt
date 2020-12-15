@@ -15,7 +15,7 @@ class MousePositionConstraint : PositionConstraint {
     }
 
     override fun getYPositionImpl(component: UIComponent): Float {
-        return UniversalResolutionUtil.getInstance().scaledHeight - UniversalMouse.getScaledY().toFloat()
+        return UniversalResolutionUtil.scaledHeight - UniversalMouse.getScaledY().toFloat()
     }
 
     override fun visitImpl(visitor: ConstraintVisitor, type: ConstraintType) { }

@@ -172,10 +172,9 @@ class Inspector @JvmOverloads constructor(
         separator2.setWidth(container.getWidth().pixels())
 
         if (isClickSelecting) {
-            val res = Window.of(rootNode.targetComponent).scaledResolution
+            val scaledHeight = UniversalResolutionUtil.scaledHeight
             val mouseX = UniversalMouse.getScaledX().toFloat()
-            val mouseY = res.scaledHeight - UniversalMouse.getTrueY() * res.scaledHeight /
-                    UniversalResolutionUtil.getInstance().windowHeight - 1f
+            val mouseY = scaledHeight - UniversalMouse.getTrueY().toFloat() * scaledHeight / UniversalResolutionUtil.windowHeight - 1f
             val hitComponent = rootNode.targetComponent.hitTest(mouseX, mouseY)
 
             // TODO: Implement some kind of way to hook into a UIComponent to intercept events,

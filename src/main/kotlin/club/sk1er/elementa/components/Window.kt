@@ -21,7 +21,6 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
     private var focusedComponent: UIComponent? = null
     private var componentRequestingFocus: UIComponent? = null
 
-    var scaledResolution: UniversalResolutionUtil = UniversalResolutionUtil.getInstance()
     private var cancelDrawing = false
 
     init {
@@ -42,8 +41,6 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
 
         UniversalGraphicsHandler.glClear(GL11.GL_STENCIL_BUFFER_BIT)
         UniversalGraphicsHandler.glClearStencil(0)
-
-        scaledResolution = UniversalResolutionUtil.getInstance()
 
         if (systemTime == -1L)
             systemTime = System.currentTimeMillis()
@@ -138,8 +135,8 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
     override fun animationFrame() {
         if (currentMouseButton != -1) {
             dragMouse(
-                UniversalMouse.getScaledX(),
-                scaledResolution.scaledHeight - UniversalMouse.getScaledY(),
+                UniversalMouse.getScaledX().toInt(),
+                UniversalResolutionUtil.scaledHeight - UniversalMouse.getScaledY().toInt(),
                 currentMouseButton
             )
         }
@@ -165,11 +162,11 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
     }
 
     override fun getWidth(): Float {
-        return scaledResolution.scaledWidth.toFloat()
+        return UniversalResolutionUtil.scaledWidth.toFloat()
     }
 
     override fun getHeight(): Float {
-        return scaledResolution.scaledHeight.toFloat()
+        return UniversalResolutionUtil.scaledHeight.toFloat()
     }
 
     override fun getRight() = getWidth()
@@ -183,12 +180,12 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
         ) return false
 
         val currentScissor = ScissorEffect.currentScissorState ?: return true
-        val sf = scaledResolution.scaleFactor
+        val sf = UniversalResolutionUtil.scaleFactor
 
         val realX = currentScissor.x / sf
         val realWidth = currentScissor.width / sf
 
-        val bottomY = ((scaledResolution.scaledHeight * sf) - currentScissor.y) / sf
+        val bottomY = ((UniversalResolutionUtil.scaledHeight * sf) - currentScissor.y) / sf
         val realHeight = currentScissor.height / sf
 
         return right > realX &&

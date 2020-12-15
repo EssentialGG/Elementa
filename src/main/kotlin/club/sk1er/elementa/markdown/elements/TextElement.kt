@@ -240,7 +240,7 @@ class TextElement internal constructor(internal val spans: List<Span>) : Element
             UniversalGraphicsHandler.scale(scale, scale, 1.0)
 
             val mouseX = UniversalMouse.getScaledX()
-            val mouseY = UniversalResolutionUtil.getInstance().scaledHeight - UniversalMouse.getScaledY()
+            val mouseY = UniversalResolutionUtil.scaledHeight - UniversalMouse.getScaledY()
 
             val isHovered = span.style.isURL && spanRenderables.any { renderable ->
                 renderable.bounds.let {

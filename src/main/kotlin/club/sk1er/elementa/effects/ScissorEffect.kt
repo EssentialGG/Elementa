@@ -2,6 +2,7 @@ package club.sk1er.elementa.effects
 
 import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.components.Window
+import club.sk1er.mods.core.universal.UniversalResolutionUtil
 import org.lwjgl.opengl.GL11.*
 import kotlin.math.max
 import kotlin.math.min
@@ -22,7 +23,7 @@ class ScissorEffect @JvmOverloads constructor(
 
     override fun beforeDraw(component: UIComponent) {
         val boundingBox = customBoundingBox ?: component
-        val res = Window.of(component).scaledResolution
+        val scaleFactor = UniversalResolutionUtil.scaleFactor.toInt()
 
         if (currentScissorState == null) {
             glEnable(GL_SCISSOR_TEST)
@@ -31,10 +32,10 @@ class ScissorEffect @JvmOverloads constructor(
         oldState = currentScissorState
         val state = oldState
 
-        var x = boundingBox.getLeft().toInt() * res.scaleFactor
-        var y = (res.scaledHeight * res.scaleFactor) - (boundingBox.getBottom().toInt() * res.scaleFactor)
-        var width = boundingBox.getWidth().toInt() * res.scaleFactor
-        var height = boundingBox.getHeight().toInt() * res.scaleFactor
+        var x = boundingBox.getLeft().toInt() * scaleFactor
+        var y = (UniversalResolutionUtil.scaledHeight * scaleFactor) - (boundingBox.getBottom().toInt() * scaleFactor)
+        var width = boundingBox.getWidth().toInt() * scaleFactor
+        var height = boundingBox.getHeight().toInt() * scaleFactor
 
         val x2 = x + width
         val y2 = y + height

@@ -71,7 +71,7 @@ abstract class WindowScreen(
         window.mouseScroll(delta.coerceIn(-1.0, 1.0))
     }
 
-    override fun onKeyPressed(keyCode: Int, typedChar: Char, modifiers: UniversalKeyboard.Modifier?) {
+    override fun onKeyPressed(keyCode: Int, typedChar: Char, modifiers: UniversalKeyboard.Modifiers?) {
         // We also need to pass along typed keys
         window.keyType(typedChar, keyCode)
     }
@@ -83,7 +83,7 @@ abstract class WindowScreen(
         // to type. This is a wrapper around a base LWJGL function.
         // - Keyboard.enableRepeatEvents in <= 1.12.2
         if (enableRepeatKeys)
-            UniversalKeyboard.enableRepeatEvents(true)
+            UniversalKeyboard.allowRepeatEvents(true)
     }
 
     override fun onScreenClose() {
@@ -91,7 +91,7 @@ abstract class WindowScreen(
 
         // We need to disable repeat events when leaving the gui.
         if (enableRepeatKeys)
-            UniversalKeyboard.enableRepeatEvents(false)
+            UniversalKeyboard.allowRepeatEvents(false)
     }
 
     fun defaultKeyBehavior(typedChar: Char, keyCode: Int) {

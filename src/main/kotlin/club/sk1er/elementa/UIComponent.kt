@@ -286,10 +286,9 @@ abstract class UIComponent : Observable() {
      * that are being hovered, it will NOT consider this component as hovered.
      */
     open fun isHovered(): Boolean {
-        val res = Window.of(this).scaledResolution
-
+        val scaledHeight = UniversalResolutionUtil.scaledHeight
         val mouseX = UniversalMouse.getScaledX().toFloat()
-        val mouseY = res.scaledHeight - UniversalMouse.getTrueY() * res.scaledHeight / UniversalResolutionUtil.getInstance().windowHeight - 1f
+        val mouseY = scaledHeight - UniversalMouse.getTrueY().toFloat() * scaledHeight / UniversalResolutionUtil.windowHeight - 1f
 
         return isPointInside(mouseX, mouseY)
     }

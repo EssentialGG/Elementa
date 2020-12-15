@@ -12,6 +12,7 @@ import club.sk1er.elementa.svg.SVGParser
 import club.sk1er.elementa.utils.bindLast
 import club.sk1er.mods.core.universal.UniversalKeyboard
 import club.sk1er.mods.core.universal.UniversalMouse
+import club.sk1er.mods.core.universal.UniversalResolutionUtil
 import java.awt.Color
 import java.util.concurrent.CopyOnWriteArrayList
 import kotlin.math.abs
@@ -423,9 +424,8 @@ class ScrollComponent @JvmOverloads constructor(
         val xBegin = autoScrollBegin.first + getLeft()
         val yBegin = autoScrollBegin.second + getTop()
 
-        val scaledHeight = Window.of(this).scaledResolution.scaledHeight
         val currentX = UniversalMouse.getScaledX()
-        val currentY = scaledHeight - UniversalMouse.getScaledY() - 1
+        val currentY = UniversalResolutionUtil.scaledHeight - UniversalMouse.getScaledY() - 1
 
         if (currentY < getTop() || currentY > getBottom()) return
         if (currentX < getLeft() || currentX > getRight()) return
@@ -435,8 +435,8 @@ class ScrollComponent @JvmOverloads constructor(
         val percentX = deltaX / (-getWidth() / 2)
         val percentY = deltaY / (-getHeight() / 2)
 
-        horizontalOffset += (percentX * 5)
-        verticalOffset += (percentY * 5)
+        horizontalOffset += (percentX.toFloat() * 5f)
+        verticalOffset += (percentY.toFloat() * 5f)
 
         needsUpdate = true
     }

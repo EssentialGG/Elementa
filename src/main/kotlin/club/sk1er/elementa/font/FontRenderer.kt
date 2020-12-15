@@ -15,7 +15,7 @@ import java.util.regex.Pattern
 class FontRenderer private constructor(private val fontSize: Float) {
     private val cachedStringWidth: MutableMap<String, Float> = HashMap()
     private var unicodeFont: UnicodeFont? = null
-    private var prevScaleFactor = UniversalResolutionUtil.getInstance().scaleFactor
+    private var prevScaleFactor = UniversalResolutionUtil.scaleFactor.toInt()
 
     constructor(font: Font, fontSize: Float) : this(fontSize) {
         setUnicodeFont(font)
@@ -63,7 +63,7 @@ class FontRenderer private constructor(private val fontSize: Float) {
         if (shadow)
             drawString(StringUtils.stripControlCodes(text), x + 0.5f, y + 0.5f, 0x000000, false)
 
-        val scaleFactor = UniversalResolutionUtil.getInstance().scaleFactor
+        val scaleFactor = UniversalResolutionUtil.scaleFactor.toInt()
         try {
             if (scaleFactor != prevScaleFactor) {
                 prevScaleFactor = scaleFactor
