@@ -421,22 +421,29 @@ class ScrollComponent @JvmOverloads constructor(
 
         if (!isAutoScrolling) return
 
-        val xBegin = autoScrollBegin.first + getLeft()
-        val yBegin = autoScrollBegin.second + getTop()
+        if (horizontalScrollEnabled) {
+            val xBegin = autoScrollBegin.first + getLeft()
+            val currentX = UniversalMouse.getScaledX()
 
-        val currentX = UniversalMouse.getScaledX()
-        val currentY = UniversalResolutionUtil.scaledHeight - UniversalMouse.getScaledY() - 1
+            if (currentX in getLeft()..getRight()) {
+                val deltaX = currentX - xBegin
+                val percentX = deltaX / (-getWidth() / 2)
+                horizontalOffset += (percentX.toFloat() * 5f)
+                needsUpdate = true
+            }
+        }
 
-        if (currentY < getTop() || currentY > getBottom()) return
-        if (currentX < getLeft() || currentX > getRight()) return
+        if (verticalScrollEnabled) {
+            val yBegin = autoScrollBegin.second + getTop()
+            val currentY = UniversalResolutionUtil.scaledHeight - UniversalMouse.getScaledY() - 1
 
-        val deltaX = currentX - xBegin
-        val deltaY = currentY - yBegin
-        val percentX = deltaX / (-getWidth() / 2)
-        val percentY = deltaY / (-getHeight() / 2)
-
-        horizontalOffset += (percentX.toFloat() * 5f)
-        verticalOffset += (percentY.toFloat() * 5f)
+            if (currentY in getTop()..getBottom()) {
+                val deltaY = currentY - yBegin
+                val percentY = deltaY / (-getHeight() / 2)
+                verticalOffset += (percentY.toFloat() * 5f)
+                needsUpdate = true
+            }
+        }
 
         needsUpdate = true
     }
