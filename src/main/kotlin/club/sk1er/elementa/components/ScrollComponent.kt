@@ -231,28 +231,52 @@ class ScrollComponent @JvmOverloads constructor(
         needsUpdate = true
     }
 
-    fun horizontalScrollToBeginning() {
-        // This gets clamped later
-        horizontalOffset = Float.NEGATIVE_INFINITY
-        needsUpdate = true
+    fun horizontalScrollToBeginning(smoothScroll: Boolean = true) {
+        if (smoothScroll) {
+            // This gets clamped later
+            horizontalOffset = Float.POSITIVE_INFINITY
+            needsUpdate = true
+            return
+        }
+
+        val horizontalRange = calculateOffsetRange(isHorizontal = true)
+        actualHolder.setX(horizontalRange.start.pixels())
     }
 
-    fun horizontalScrollToEnd() {
-        // This gets clamped later
-        horizontalOffset = Float.POSITIVE_INFINITY
-        needsUpdate = true
+    fun horizontalScrollToEnd(smoothScroll: Boolean = true) {
+        if (smoothScroll) {
+            // This gets clamped later
+            horizontalOffset = Float.NEGATIVE_INFINITY
+            needsUpdate = true
+            return
+        }
+
+        val horizontalRange = calculateOffsetRange(isHorizontal = true)
+        actualHolder.setX(horizontalRange.endInclusive.pixels())
     }
 
-    fun verticalScrollToBeginning() {
-        // This gets clamped later
-        verticalOffset = Float.POSITIVE_INFINITY
-        needsUpdate = true
+    fun verticalScrollToBeginning(smoothScroll: Boolean = true) {
+        if (smoothScroll) {
+            // This gets clamped later
+            verticalOffset = Float.POSITIVE_INFINITY
+            needsUpdate = true
+            return
+        }
+
+        val verticalRange = calculateOffsetRange(isHorizontal = false)
+        actualHolder.setY(verticalRange.start.pixels())
     }
 
-    fun verticalScrollToEnd() {
-        // This gets clamped later
-        verticalOffset = Float.NEGATIVE_INFINITY
-        needsUpdate = true
+    fun verticalScrollToEnd(smoothScroll: Boolean = true) {
+        if (smoothScroll) {
+            // This gets clamped later
+            verticalOffset = Float.NEGATIVE_INFINITY
+            needsUpdate = true
+            return
+        }
+
+        val verticalRange = calculateOffsetRange(isHorizontal = false)
+        actualHolder.setY(verticalRange.endInclusive.pixels())
     }
 
     fun filterChildren(filter: (component: UIComponent) -> Boolean) {
