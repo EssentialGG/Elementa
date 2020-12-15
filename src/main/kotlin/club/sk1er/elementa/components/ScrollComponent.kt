@@ -230,6 +230,30 @@ class ScrollComponent @JvmOverloads constructor(
         needsUpdate = true
     }
 
+    fun horizontalScrollToBeginning() {
+        // This gets clamped later
+        horizontalOffset = Float.NEGATIVE_INFINITY
+        needsUpdate = true
+    }
+
+    fun horizontalScrollToEnd() {
+        // This gets clamped later
+        horizontalOffset = Float.POSITIVE_INFINITY
+        needsUpdate = true
+    }
+
+    fun verticalScrollToBeginning() {
+        // This gets clamped later
+        verticalOffset = Float.NEGATIVE_INFINITY
+        needsUpdate = true
+    }
+
+    fun verticalScrollToEnd() {
+        // This gets clamped later
+        verticalOffset = Float.POSITIVE_INFINITY
+        needsUpdate = true
+    }
+
     fun filterChildren(filter: (component: UIComponent) -> Boolean) {
         actualHolder.children.clear()
         actualHolder.children.addAll(allChildren.filter(filter).ifEmpty { listOf(emptyText) })
