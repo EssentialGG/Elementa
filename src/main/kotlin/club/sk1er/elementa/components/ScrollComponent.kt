@@ -31,6 +31,7 @@ class ScrollComponent @JvmOverloads constructor(
     private val verticalScrollEnabled: Boolean = true,
     private val horizontalScrollOpposite: Boolean = false,
     private val verticalScrollOpposite: Boolean = false,
+    private val pixelsPerScroll: Float = 15f,
     customScissorBoundingBox: UIComponent? = null
 ) : UIContainer() {
     private val actualHolder = UIContainer().constrain {
@@ -286,9 +287,9 @@ class ScrollComponent @JvmOverloads constructor(
 
     private fun onScroll(delta: Float, isHorizontal: Boolean) {
         if (isHorizontal) {
-            horizontalOffset += delta * 15f
+            horizontalOffset += delta * pixelsPerScroll
         } else {
-            verticalOffset += delta * 15f
+            verticalOffset += delta * pixelsPerScroll
         }
 
         needsUpdate = true
