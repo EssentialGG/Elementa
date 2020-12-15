@@ -245,13 +245,13 @@ class ScrollComponent @JvmOverloads constructor(
 
     fun verticalScrollToBeginning() {
         // This gets clamped later
-        verticalOffset = Float.NEGATIVE_INFINITY
+        verticalOffset = Float.POSITIVE_INFINITY
         needsUpdate = true
     }
 
     fun verticalScrollToEnd() {
         // This gets clamped later
-        verticalOffset = Float.POSITIVE_INFINITY
+        verticalOffset = Float.NEGATIVE_INFINITY
         needsUpdate = true
     }
 
