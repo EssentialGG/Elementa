@@ -106,7 +106,7 @@ class ScrollComponent @JvmOverloads constructor(
         onMouseScroll {
             if (UniversalKeyboard.isShiftKeyDown() && horizontalScrollEnabled) {
                 onScroll(it.delta.toFloat(), isHorizontal = true)
-            } else if (verticalScrollEnabled) {
+            } else if (!UniversalKeyboard.isShiftKeyDown() && verticalScrollEnabled) {
                 onScroll(it.delta.toFloat(), isHorizontal = false)
             }
 
