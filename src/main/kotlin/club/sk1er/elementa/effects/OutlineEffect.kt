@@ -14,8 +14,6 @@ class OutlineEffect @JvmOverloads constructor(
     private val width: Float,
     private val drawAfterChildren: Boolean = false
 ) : Effect {
-    override fun beforeDraw(component: UIComponent) { }
-
     override fun beforeChildrenDraw(component: UIComponent) {
         if (!drawAfterChildren)
             drawOutline(component)

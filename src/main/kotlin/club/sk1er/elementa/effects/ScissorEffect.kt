@@ -57,10 +57,6 @@ class ScissorEffect @JvmOverloads constructor(
         currentScissorState = ScissorState(x, y, width.coerceAtLeast(0), height.coerceAtLeast(0))
     }
 
-    override fun beforeChildrenDraw(component: UIComponent) {
-        // do nothing
-    }
-
     override fun afterDraw(component: UIComponent) {
         val state = oldState
 
