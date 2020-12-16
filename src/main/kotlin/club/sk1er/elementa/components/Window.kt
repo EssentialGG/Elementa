@@ -27,6 +27,13 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
         super.parent = this
     }
 
+    override fun afterInitialization() {
+        enqueueRenderOperation {
+            UICircle.initShaders()
+            UIRoundedRectangle.initShaders()
+        }
+    }
+
     override fun draw() {
         if (cancelDrawing)
             return

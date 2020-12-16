@@ -57,13 +57,16 @@ class UICircle @JvmOverloads constructor(radius: Float = 0f, color: Color = Colo
         private lateinit var shaderRadiusUniform: FloatUniform
         private lateinit var shaderCenterPositionUniform: Vec2Uniform
 
-        fun drawCircle(centerX: Float, centerY: Float, radius: Float, color: Color) {
-            Window.enqueueRenderOperation {
-                shader = Shader("rect", "circle")
-                shaderRadiusUniform = FloatUniform(shader.getUniformLocation("u_Radius"))
-                shaderCenterPositionUniform = Vec2Uniform(shader.getUniformLocation("u_CenterPos"))
-            }
+        fun initShaders() {
+            if (::shader.isInitialized)
+                return
 
+            shader = Shader("rect", "circle")
+            shaderRadiusUniform = FloatUniform(shader.getUniformLocation("u_Radius"))
+            shaderCenterPositionUniform = Vec2Uniform(shader.getUniformLocation("u_CenterPos"))
+        }
+
+        fun drawCircle(centerX: Float, centerY: Float, radius: Float, color: Color) {
             if (!::shader.isInitialized)
                 return
 

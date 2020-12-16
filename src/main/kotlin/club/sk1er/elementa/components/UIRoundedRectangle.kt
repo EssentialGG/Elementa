@@ -34,13 +34,16 @@ open class UIRoundedRectangle(radius: Float) : UIComponent() {
         private lateinit var shaderRadiusUniform: FloatUniform
         private lateinit var shaderInnerRectUniform: Vec4Uniform
 
-        fun drawRoundedRectangle(left: Float, top: Float, right: Float, bottom: Float, radius: Float, color: Color) {
-            Window.enqueueRenderOperation {
-                shader = Shader("rect", "rounded_rect")
-                shaderRadiusUniform = FloatUniform(shader.getUniformLocation("u_Radius"))
-                shaderInnerRectUniform = Vec4Uniform(shader.getUniformLocation("u_InnerRect"))
-            }
+        fun initShaders() {
+            if (::shader.isInitialized)
+                return
 
+            shader = Shader("rect", "rounded_rect")
+            shaderRadiusUniform = FloatUniform(shader.getUniformLocation("u_Radius"))
+            shaderInnerRectUniform = Vec4Uniform(shader.getUniformLocation("u_InnerRect"))
+        }
+
+        fun drawRoundedRectangle(left: Float, top: Float, right: Float, bottom: Float, radius: Float, color: Color) {
             if (!::shader.isInitialized)
                 return
 
