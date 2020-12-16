@@ -30,7 +30,7 @@ class ConstraintResolutionGui(
         UIBlock(Color(80, 80, 80)).constrain {
             x = RelativeConstraint(0.1f)
             y = RelativeConstraint(0.1f)
-            width = 1.pixels()
+            width = 1.pixel()
             height = RelativeConstraint(0.8f)
         } childOf window
 
@@ -44,13 +44,13 @@ class ConstraintResolutionGui(
         UIBlock(Color(80, 80, 80)).constrain {
             x = SiblingConstraint()
             y = RelativeConstraint(0.1f)
-            width = 1.pixels()
+            width = 1.pixel()
             height = RelativeConstraint()
             height = RelativeConstraint(0.8f)
         } childOf window
 
         val titleContent = UIContainer().constrain {
-            x = 1.pixels()
+            x = 1.pixel()
             width = RelativeConstraint() - 2.pixels()
             height = ChildBasedSizeConstraint()
         } childOf container
@@ -106,7 +106,7 @@ class ConstraintResolutionGui(
         } childOf treeTab
 
         val displayContent = UIContainer().constrain {
-            x = 1.pixels()
+            x = 1.pixel()
             y = SiblingConstraint(30f)
             width = RelativeConstraint() - 2.pixels()
             height = FillConstraint()
@@ -183,7 +183,7 @@ class ConstraintResolutionGui(
 
         UIBlock(Color(80, 80, 80)).constrain {
             x = (-1).pixels(alignOpposite = true)
-            width = 1.pixels()
+            width = 1.pixel()
             height = RelativeConstraint()
         } childOf container
     }

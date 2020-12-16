@@ -48,7 +48,7 @@ abstract class AbstractTextInput(
 
     protected var cursorComponent: UIComponent = UIBlock(Color(255, 255, 255, 0)).constrain {
         y = CenterConstraint() - 0.5f.pixels()
-        width = 1.pixels()
+        width = 1.pixel()
         height = 9f.pixels()
     } childOf this
 

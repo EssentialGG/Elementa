@@ -16,6 +16,10 @@ fun Number.pixels(alignOpposite: Boolean = false, alignOutside: Boolean = false)
     return PixelConstraint(this.toFloat(), alignOpposite, alignOutside)
 }
 
+// For 1.pixel()
+@JvmOverloads
+fun Number.pixel(alignOpposite: Boolean = false, alignOutside: Boolean = false) = pixels(alignOpposite, alignOutside)
+
 fun Number.percent() = RelativeConstraint(this.toFloat() / 100f)
 
 fun Color.asConstraint() = ConstantColorConstraint(this)

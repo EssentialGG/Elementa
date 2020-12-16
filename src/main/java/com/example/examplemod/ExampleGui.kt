@@ -232,8 +232,8 @@ class ExampleGui : WindowScreen() {
                 // of this sticky note component, but we want to leave a little
                 // bit of room so we can let the sticky note's background show,
                 // giving us an outline.
-                x = 1.pixels()
-                y = 1.pixels()
+                x = 1.pixel()
+                y = 1.pixel()
 
                 // We want our yellow top bar to take up the entire width of the sticky note,
                 // so we use a [RelativeConstraint]. A relative constraint describes what percentage
@@ -355,7 +355,7 @@ class ExampleGui : WindowScreen() {
             // the sticky note's text area. A darkish gray color will suffice.
             val textHolder = UIBlock(Color(80, 80, 80)).constrain {
                 // We want this to also start at the far left of the parent.
-                x = 1.pixels()
+                x = 1.pixel()
 
                 // However, we want this area to begin on the Y axis directly
                 // after the top-bar has ended. In this specific case we know how tall the top bar
