@@ -532,6 +532,7 @@ abstract class UIComponent : Observable() {
     open fun animationFrame() {
         constraints.animationFrame()
 
+        effects.forEach(Effect::animationFrame)
         this.children.forEach(UIComponent::animationFrame)
 
         // Process field animations

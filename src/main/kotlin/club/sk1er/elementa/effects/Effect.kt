@@ -17,9 +17,14 @@ abstract class Effect {
         boundComponent = component
     }
     /**
-     * Called once inside of the component's afterInitialization method
+     * Called once inside of the component's afterInitialization function
      */
     open fun setup() {}
+
+    /**
+     * Called in the component's animationFrame function
+     */
+    open fun animationFrame() {}
 
     /**
      * Set up all drawing, turn on shaders, etc.
