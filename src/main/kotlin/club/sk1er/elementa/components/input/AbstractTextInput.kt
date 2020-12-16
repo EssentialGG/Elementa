@@ -455,7 +455,7 @@ abstract class AbstractTextInput(
 
     // TODO: Look into optimization of this algorithm
     protected open fun splitTextForWrapping(text: String, maxLineWidth: Float): List<String> {
-        return getStringSplitToWidth(text, maxLineWidth)
+        return getStringSplitToWidth(text, maxLineWidth, getTextScale())
     }
 
     protected fun commitTextRemoval(startPos: LinePosition, endPos: LinePosition, selectAfterUndo: Boolean) {
@@ -827,8 +827,7 @@ abstract class AbstractTextInput(
 
         fun toScreenPos(): Pair<Float, Float> {
             val visualPos = toVisualPos()
-            val x = visualLines[visualPos.line].text.substring(0, visualPos.column).width()
-                .toFloat() - horizontalScrollingOffset
+            val x = visualLines[visualPos.line].text.substring(0, visualPos.column).width(getTextScale()) - horizontalScrollingOffset
             val y = (9f * visualPos.line) + verticalScrollingOffset
             return x to y
         }

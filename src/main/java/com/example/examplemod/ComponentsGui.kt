@@ -83,6 +83,13 @@ class ComponentsGui : WindowScreen() {
 
                 width = 100.pixels()
             } childOf this
+
+            UIWrappedText("I have a height, a lot of text, and will trim. foo bar baz qux", trimText = true).constrain {
+                x = 2.pixels()
+                y = SiblingConstraint() + 5.pixels()
+                width = 100.pixels()
+                height = 30.pixels()
+            } childOf this
         } childOf window
 
         ComponentType("UIRoundedRectangle") {

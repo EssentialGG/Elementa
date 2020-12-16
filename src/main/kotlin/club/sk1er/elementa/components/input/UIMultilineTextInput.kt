@@ -5,7 +5,7 @@ import club.sk1er.elementa.dsl.max
 import club.sk1er.elementa.dsl.pixels
 import club.sk1er.elementa.dsl.width
 import club.sk1er.elementa.utils.getStringSplitToWidth
-import club.sk1er.elementa.utils.spaceWidth
+import club.sk1er.elementa.utils.getStringSplitToWidthTruncated
 import club.sk1er.mods.core.universal.UniversalKeyboard
 import java.awt.Color
 
@@ -73,12 +73,9 @@ class UIMultilineTextInput @JvmOverloads constructor(
     override fun draw() {
         beforeDraw()
 
+        val textScale = getTextScale()
         if (!active && !hasText()) {
-            val textToDraw = if (placeholder.width() > getWidth()) {
-                val maxWidth = getWidth() - "...".width()
-                getStringSplitToWidth(placeholder, maxWidth)[0] + "..."
-            } else placeholder
-
+            val textToDraw = getStringSplitToWidthTruncated(placeholder, getWidth(), textScale, 1)[0]
             drawUnselectedText(textToDraw, getLeft(), 0)
             return super.draw()
         }
@@ -127,10 +124,10 @@ class UIMultilineTextInput @JvmOverloads constructor(
                     else -> ""
                 }
 
-                val startTextWidth = startText.width()
-                val selectedTextWidth = selectedText.width()
+                val startTextWidth = startText.width(textScale)
+                val selectedTextWidth = selectedText.width(textScale)
 
-                val newlinePadding = if (i < selectionEnd.line) spaceWidth else 0f
+                val newlinePadding = if (i < selectionEnd.line) ' '.width(textScale) else 0f
 
                 if (startText.isNotEmpty())
                     drawUnselectedText(startText, getLeft(), i)
@@ -172,7 +169,7 @@ class UIMultilineTextInput @JvmOverloads constructor(
             return LinePosition(line, visualLines[line].text.length, isVisual = true)
 
         for (char in text.toCharArray()) {
-            val charWidth = char.width()
+            val charWidth = char.width(getTextScale())
             if (currWidth + (charWidth / 2) >= x)
                 return LinePosition(line, column, isVisual = true)
 

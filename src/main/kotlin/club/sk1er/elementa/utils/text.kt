@@ -3,10 +3,26 @@ package club.sk1er.elementa.utils
 import club.sk1er.elementa.dsl.width
 import club.sk1er.mods.core.universal.UniversalGraphicsHandler
 
-val spaceWidth = ' '.width()
+fun getStringSplitToWidthTruncated(text: String, maxLineWidth: Float, textScale: Float, maxLines: Int): List<String> {
+    val lines = getStringSplitToWidth(text, maxLineWidth, textScale)
+    if (lines.size <= maxLines)
+        return lines
 
-fun getStringSplitToWidth(text: String, maxLineWidth: Float): List<String> {
-    val maxLineWidthSpace = maxLineWidth - spaceWidth
+    val ellipsisWidth = "...".width(textScale)
+
+    return lines.subList(0, maxLines).mapIndexed { index, contents ->
+        if (index == maxLines - 1) {
+            var length = contents.lastIndex
+            while (contents.substring(0, length).width(textScale) + ellipsisWidth > maxLineWidth * textScale)
+                length--
+            contents.substring(0, length) + "..."
+        } else contents
+    }
+}
+
+fun getStringSplitToWidth(text: String, maxLineWidth: Float, textScale: Float): List<String> {
+    val spaceWidth = ' '.width(textScale)
+    val maxLineWidthSpace = maxLineWidth * textScale - spaceWidth
     val lineList = mutableListOf<String>()
     val currLine = StringBuilder()
     var currLineWidth = 0f
@@ -28,7 +44,7 @@ fun getStringSplitToWidth(text: String, maxLineWidth: Float): List<String> {
 
         val newline = textPos < text.length && text[textPos] == '\n'
         val word = builder.toString()
-        val wordWidth = word.width()
+        val wordWidth = word.width(textScale)
 
         if (currLineWidth + wordWidth > maxLineWidthSpace) {
             if (wordWidth > maxLineWidthSpace) {
@@ -37,9 +53,9 @@ fun getStringSplitToWidth(text: String, maxLineWidth: Float): List<String> {
                     pushLine()
 
                 for (char in word.toCharArray()) {
-                    currLineWidth += char.width()
+                    currLineWidth += char.width(textScale)
                     if (currLineWidth > maxLineWidthSpace)
-                        pushLine(char.width())
+                        pushLine(char.width(textScale))
                     currLine.append(char)
                 }
             } else {

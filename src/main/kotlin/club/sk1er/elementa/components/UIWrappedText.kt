@@ -5,6 +5,7 @@ import club.sk1er.elementa.dsl.basicHeightConstraint
 import club.sk1er.elementa.dsl.pixels
 import club.sk1er.elementa.dsl.width
 import club.sk1er.elementa.utils.getStringSplitToWidth
+import club.sk1er.elementa.utils.getStringSplitToWidthTruncated
 import club.sk1er.mods.core.universal.UniversalGraphicsHandler
 
 /**
@@ -14,7 +15,12 @@ import club.sk1er.mods.core.universal.UniversalGraphicsHandler
 open class UIWrappedText @JvmOverloads constructor(
     private var text: String = "",
     private var shadow: Boolean = true,
-    private var centered: Boolean = false
+    private var centered: Boolean = false,
+    /**
+     * Keeps the rendered text without the bounds of the component,
+     * inserting an ellipsis ("...") if text is trimmed
+     */
+    private val trimText: Boolean = false
 ) : UIComponent() {
 
     private val charWidth = UniversalGraphicsHandler.getCharWidth('x')
@@ -23,8 +29,7 @@ open class UIWrappedText @JvmOverloads constructor(
     init {
         setWidth(textWidth.pixels())
         setHeight(basicHeightConstraint {
-            val width = getWidth() / getTextScale()
-            val lines = getStringSplitToWidth(text, width)
+            val lines = getStringSplitToWidth(text, getWidth(), getTextScale())
 
             lines.size * 9f * getTextScale()
         })
@@ -47,9 +52,11 @@ open class UIWrappedText @JvmOverloads constructor(
     override fun draw() {
         beforeDraw()
 
-        val x = getLeft() / getTextScale()
-        val y = getTop() / getTextScale()
-        val width = getWidth() / getTextScale()
+        val textScale = getTextScale()
+        val x = getLeft() / textScale
+        val y = getTop() / textScale
+        val width = getWidth()
+        val scaledWidth = width / textScale
         val color = getColor()
 
         // We aren't visible, don't draw
@@ -57,7 +64,7 @@ open class UIWrappedText @JvmOverloads constructor(
             return super.draw()
         }
 
-        if (width <= charWidth) {
+        if (scaledWidth <= charWidth) {
             // If we are smaller than a char, we can't physically split this string into
             // "width" strings, so we'll prefer a no-op to an error.
             return super.draw()
@@ -65,19 +72,22 @@ open class UIWrappedText @JvmOverloads constructor(
 
         UniversalGraphicsHandler.enableBlend()
 
-        UniversalGraphicsHandler.scale(getTextScale().toDouble(), getTextScale().toDouble(), 1.0)
+        UniversalGraphicsHandler.scale(textScale.toDouble(), textScale.toDouble(), 1.0)
         UniversalGraphicsHandler.translate(x.toDouble(), y.toDouble(), 0.0)
 
-        val lines = getStringSplitToWidth(text, width)
+        val lines = if (trimText) {
+            getStringSplitToWidthTruncated(text, width, textScale, (getHeight() / 9f / textScale).toInt())
+        } else getStringSplitToWidth(text, width, textScale)
+
         lines.forEachIndexed { i, line ->
             val xOffset = if (centered)
-                (width - line.width()) / 2f
+                (scaledWidth - line.width(textScale)) / 2f
             else 0f
             UniversalGraphicsHandler.drawString(line, xOffset, i * 9f, color.rgb, shadow)
         }
 
         UniversalGraphicsHandler.translate(-x.toDouble(), -y.toDouble(), 0.0)
-        UniversalGraphicsHandler.scale(1 / getTextScale().toDouble(), 1 / getTextScale().toDouble(), 1.0)
+        UniversalGraphicsHandler.scale(1 / textScale.toDouble(), 1 / textScale.toDouble(), 1.0)
 
         super.draw()
     }
