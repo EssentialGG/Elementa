@@ -9,6 +9,11 @@ import club.sk1er.elementa.UIComponent
  */
 interface Effect {
     /**
+     * Called once inside of the component's afterInitialization method
+     */
+    fun setup(component: UIComponent) {}
+
+    /**
      * Set up all drawing, turn on shaders, etc.
      */
     fun beforeDraw(component: UIComponent) {}

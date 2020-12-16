@@ -324,7 +324,14 @@ abstract class UIComponent : Observable() {
         return false
     }
 
-    open fun afterInitialization() { }
+    /**
+     * Called once before the component's first draw. This method can
+     * be used to do any initialization that dependent on the component
+     * hierarchy (such as calls to getWidth/getHeight/etc).
+     */
+    open fun afterInitialization() {
+        effects.forEach { it.setup(this) }
+    }
 
     /**
      * Does the actual drawing for this component, meant to be overridden by specific components.
