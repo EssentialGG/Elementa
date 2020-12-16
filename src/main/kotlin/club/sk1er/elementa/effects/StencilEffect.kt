@@ -9,8 +9,8 @@ import org.lwjgl.opengl.GL11.*
  *
  * In order to use, you must call [enableStencil] in mod initialization.
  */
-class StencilEffect : Effect {
-    override fun beforeDraw(component: UIComponent) {
+class StencilEffect : Effect() {
+    override fun beforeDraw() {
         glEnable(GL_STENCIL_TEST)
         // commented to make component still draw
         //glColorMask ( false, false, false, false)
@@ -18,13 +18,13 @@ class StencilEffect : Effect {
         glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE)
     }
 
-    override fun beforeChildrenDraw(component: UIComponent) {
+    override fun beforeChildrenDraw() {
         //glColorMask (true, true, true, true)
         glStencilFunc(GL_EQUAL, 2, 0xffffffff.toInt())
         glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP)
     }
 
-    override fun afterDraw(component: UIComponent) {
+    override fun afterDraw() {
         glDisable(GL_STENCIL_TEST)
     }
 

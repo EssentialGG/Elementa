@@ -74,7 +74,7 @@ class MarkdownComponent @JvmOverloads constructor(
     override fun draw() {
         super.draw()
 
-        scissor.beforeDraw(this)
+        scissor.beforeDraw()
 
         if (document == null && documentFuture.isDone && !documentFuture.isCompletedExceptionally)
             document = documentFuture.get()
@@ -91,7 +91,7 @@ class MarkdownComponent @JvmOverloads constructor(
         document?.draw(state)
         scrollChild.setHeight(state.y.pixels())
 
-        scissor.afterDraw(this)
+        scissor.afterDraw()
     }
 
     companion object {

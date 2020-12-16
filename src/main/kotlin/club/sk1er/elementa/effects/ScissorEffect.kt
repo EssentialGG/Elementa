@@ -18,11 +18,11 @@ import kotlin.math.min
 class ScissorEffect @JvmOverloads constructor(
     private val customBoundingBox: UIComponent? = null,
     private val scissorIntersection: Boolean = true
-) : Effect {
+) : Effect() {
     private var oldState: ScissorState? = null
 
-    override fun beforeDraw(component: UIComponent) {
-        val boundingBox = customBoundingBox ?: component
+    override fun beforeDraw() {
+        val boundingBox = customBoundingBox ?: boundComponent
         val scaleFactor = UniversalResolutionUtil.scaleFactor.toInt()
 
         if (currentScissorState == null) {
@@ -57,7 +57,7 @@ class ScissorEffect @JvmOverloads constructor(
         currentScissorState = ScissorState(x, y, width.coerceAtLeast(0), height.coerceAtLeast(0))
     }
 
-    override fun afterDraw(component: UIComponent) {
+    override fun afterDraw() {
         val state = oldState
 
         if (state != null) {

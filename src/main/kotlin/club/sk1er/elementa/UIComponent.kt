@@ -206,6 +206,7 @@ abstract class UIComponent : Observable() {
      * Enables a set of effects to be applied when this component draws.
      */
     fun enableEffects(vararg effects: Effect) = apply {
+        effects.forEach { it.bindComponent(this) }
         this.effects.addAll(effects)
     }
 
@@ -213,6 +214,7 @@ abstract class UIComponent : Observable() {
      * Enables a single effect to be applied when the component draws.
      */
     fun enableEffect(effect: Effect) = apply {
+        effect.bindComponent(this)
         this.effects.add(effect)
     }
 
@@ -222,6 +224,10 @@ abstract class UIComponent : Observable() {
 
     fun <T : Effect> removeEffect(clazz: Class<T>) {
         this.effects.removeIf { clazz.isInstance(it) }
+    }
+
+    fun removeEffect(effect: Effect) {
+        this.effects.remove(effect)
     }
 
     fun setChildOf(parent: UIComponent) = apply {
@@ -330,7 +336,7 @@ abstract class UIComponent : Observable() {
      * hierarchy (such as calls to getWidth/getHeight/etc).
      */
     open fun afterInitialization() {
-        effects.forEach { it.setup(this) }
+        effects.forEach { it.setup() }
     }
 
     /**
@@ -406,15 +412,15 @@ abstract class UIComponent : Observable() {
     }
 
     open fun beforeDraw() {
-        effects.forEach { it.beforeDraw(this) }
+        effects.forEach { it.beforeDraw() }
     }
 
     open fun afterDraw() {
-        effects.forEach { it.afterDraw(this) }
+        effects.forEach { it.afterDraw() }
     }
 
     open fun beforeChildrenDraw() {
-        effects.forEach { it.beforeChildrenDraw(this) }
+        effects.forEach { it.beforeChildrenDraw() }
     }
 
     open fun mouseMove() {

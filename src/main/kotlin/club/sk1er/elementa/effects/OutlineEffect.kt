@@ -13,22 +13,22 @@ class OutlineEffect @JvmOverloads constructor(
     private val color: Color,
     private val width: Float,
     private val drawAfterChildren: Boolean = false
-) : Effect {
-    override fun beforeChildrenDraw(component: UIComponent) {
+) : Effect() {
+    override fun beforeChildrenDraw() {
         if (!drawAfterChildren)
-            drawOutline(component)
+            drawOutline()
     }
 
-    override fun afterDraw(component: UIComponent) {
+    override fun afterDraw() {
         if (drawAfterChildren)
-            drawOutline(component)
+            drawOutline()
     }
 
-    private fun drawOutline(component: UIComponent) {
-        val left = component.getLeft().toDouble()
-        val right = component.getRight().toDouble()
-        val top = component.getTop().toDouble()
-        val bottom = component.getBottom().toDouble()
+    private fun drawOutline() {
+        val left = boundComponent.getLeft().toDouble()
+        val right = boundComponent.getRight().toDouble()
+        val top = boundComponent.getTop().toDouble()
+        val bottom = boundComponent.getBottom().toDouble()
 
         // Top outline block
         UIBlock.drawBlock(color, left - width, top - width, right + width, top)
