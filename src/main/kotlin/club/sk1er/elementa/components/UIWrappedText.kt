@@ -29,7 +29,7 @@ open class UIWrappedText @JvmOverloads constructor(
     init {
         setWidth(textWidth.pixels())
         setHeight(basicHeightConstraint {
-            val lines = getStringSplitToWidth(text, getWidth(), getTextScale())
+            val lines = getStringSplitToWidth(text, getWidth(), getTextScale(), ensureSpaceAtEndOfLines = false)
 
             lines.size * 9f * getTextScale()
         })
@@ -76,13 +76,13 @@ open class UIWrappedText @JvmOverloads constructor(
         UniversalGraphicsHandler.translate(x.toDouble(), y.toDouble(), 0.0)
 
         val lines = if (trimText) {
-            getStringSplitToWidthTruncated(text, width, textScale, (getHeight() / 9f / textScale).toInt())
-        } else getStringSplitToWidth(text, width, textScale)
+            getStringSplitToWidthTruncated(text, width, textScale, (getHeight() / 9f / textScale).toInt(), ensureSpaceAtEndOfLines = false)
+        } else getStringSplitToWidth(text, width, textScale, ensureSpaceAtEndOfLines = false)
 
         lines.forEachIndexed { i, line ->
-            val xOffset = if (centered)
+            val xOffset = if (centered) {
                 (scaledWidth - line.width(textScale)) / 2f
-            else 0f
+            } else 0f
             UniversalGraphicsHandler.drawString(line, xOffset, i * 9f, color.rgb, shadow)
         }
 

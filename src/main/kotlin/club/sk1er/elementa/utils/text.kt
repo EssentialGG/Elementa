@@ -3,8 +3,14 @@ package club.sk1er.elementa.utils
 import club.sk1er.elementa.dsl.width
 import club.sk1er.mods.core.universal.UniversalGraphicsHandler
 
-fun getStringSplitToWidthTruncated(text: String, maxLineWidth: Float, textScale: Float, maxLines: Int): List<String> {
-    val lines = getStringSplitToWidth(text, maxLineWidth, textScale)
+fun getStringSplitToWidthTruncated(
+    text: String,
+    maxLineWidth: Float,
+    textScale: Float,
+    maxLines: Int,
+    ensureSpaceAtEndOfLines: Boolean = true
+): List<String> {
+    val lines = getStringSplitToWidth(text, maxLineWidth, textScale, ensureSpaceAtEndOfLines)
     if (lines.size <= maxLines)
         return lines
 
@@ -20,9 +26,14 @@ fun getStringSplitToWidthTruncated(text: String, maxLineWidth: Float, textScale:
     }
 }
 
-fun getStringSplitToWidth(text: String, maxLineWidth: Float, textScale: Float): List<String> {
+fun getStringSplitToWidth(
+    text: String,
+    maxLineWidth: Float,
+    textScale: Float,
+    ensureSpaceAtEndOfLines: Boolean = true
+): List<String> {
     val spaceWidth = ' '.width(textScale)
-    val maxLineWidthSpace = maxLineWidth * textScale - spaceWidth
+    val maxLineWidthSpace = maxLineWidth * textScale - if (ensureSpaceAtEndOfLines) spaceWidth else 0f
     val lineList = mutableListOf<String>()
     val currLine = StringBuilder()
     var currLineWidth = 0f
