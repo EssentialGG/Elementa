@@ -46,8 +46,8 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
             it.remove()
         }
 
-        UniversalGraphicsHandler.glClear(GL11.GL_STENCIL_BUFFER_BIT)
-        UniversalGraphicsHandler.glClearStencil(0)
+        UGraphics.glClear(GL11.GL_STENCIL_BUFFER_BIT)
+        UGraphics.glClearStencil(0)
 
         if (systemTime == -1L)
             systemTime = System.currentTimeMillis()
@@ -64,27 +64,27 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
             cancelDrawing = true
 
             if (e is StackOverflowError) {
-                val guiName = UniversalMinecraft.getMinecraft().currentScreen?.javaClass?.simpleName ?: "<unknown>"
+                val guiName = UMinecraft.getMinecraft().currentScreen?.javaClass?.simpleName ?: "<unknown>"
 
                 if (IS_DEV) {
                     val cyclicNodes = ConstraintResolver(this).getCyclicNodes()
 
-                    UniversalMinecraft.getMinecraft().displayGuiScreen(
+                    UMinecraft.getMinecraft().displayGuiScreen(
                         ConstraintResolutionGui(guiName, this, cyclicNodes)
                     )
                 } else {
-                    UniversalMinecraft.getMinecraft().displayGuiScreen(null)
+                    UMinecraft.getMinecraft().displayGuiScreen(null)
 
-                    UniversalChat.chat("Elementa encountered an error while drawing a GUI. Check your logs for more information.");
+                    UChat.chat("Elementa encountered an error while drawing a GUI. Check your logs for more information.");
                     println("Elementa: Cyclic constraint structure detected!")
                     println("If you are a developer, set the environment variable \"elementa.dev=true\" to assist in debugging the issue.")
                     println("Gui name: $guiName")
                     e.printStackTrace()
                 }
             } else {
-                val guiName = UniversalMinecraft.getMinecraft().currentScreen?.javaClass?.simpleName ?: "<unknown>"
-                UniversalMinecraft.getMinecraft().displayGuiScreen(null)
-                UniversalChat.chat("§cElementa encountered an error while drawing a GUI. Check your logs for more information.")
+                val guiName = UMinecraft.getMinecraft().currentScreen?.javaClass?.simpleName ?: "<unknown>"
+                UMinecraft.getMinecraft().displayGuiScreen(null)
+                UChat.chat("§cElementa encountered an error while drawing a GUI. Check your logs for more information.")
                 println("Elementa: encountered an error while drawing a GUI")
                 println("Gui name: $guiName")
                 e.printStackTrace()
@@ -142,8 +142,8 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
     override fun animationFrame() {
         if (currentMouseButton != -1) {
             dragMouse(
-                UniversalMouse.getScaledX().toInt(),
-                UniversalResolutionUtil.scaledHeight - UniversalMouse.getScaledY().toInt(),
+                UMouse.getScaledX().toInt(),
+                UResolution.scaledHeight - UMouse.getScaledY().toInt(),
                 currentMouseButton
             )
         }
@@ -169,11 +169,11 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
     }
 
     override fun getWidth(): Float {
-        return UniversalResolutionUtil.scaledWidth.toFloat()
+        return UResolution.scaledWidth.toFloat()
     }
 
     override fun getHeight(): Float {
-        return UniversalResolutionUtil.scaledHeight.toFloat()
+        return UResolution.scaledHeight.toFloat()
     }
 
     override fun getRight() = getWidth()
@@ -187,12 +187,12 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
         ) return false
 
         val currentScissor = ScissorEffect.currentScissorState ?: return true
-        val sf = UniversalResolutionUtil.scaleFactor
+        val sf = UResolution.scaleFactor
 
         val realX = currentScissor.x / sf
         val realWidth = currentScissor.width / sf
 
-        val bottomY = ((UniversalResolutionUtil.scaledHeight * sf) - currentScissor.y) / sf
+        val bottomY = ((UResolution.scaledHeight * sf) - currentScissor.y) / sf
         val realHeight = currentScissor.height / sf
 
         return right > realX &&

@@ -1,16 +1,16 @@
 package club.sk1er.elementa.utils
 
 import club.sk1er.elementa.components.UIPoint
-import club.sk1er.mods.core.universal.UniversalGraphicsHandler
+import club.sk1er.mods.core.universal.UGraphics
 import org.lwjgl.opengl.GL11
 import java.awt.Color
 
 object LineUtils {
     @JvmStatic
     fun drawLine(x1: Number, y1: Number, x2: Number, y2: Number, color: Color, width: Float) {
-        UniversalGraphicsHandler.pushMatrix()
-        UniversalGraphicsHandler.enableBlend()
-        UniversalGraphicsHandler.disableTexture2D()
+        UGraphics.pushMatrix()
+        UGraphics.enableBlend()
+        UGraphics.disableTexture2D()
 
         GL11.glColor4f(color.red / 255f, color.green / 255f, color.blue / 255f, color.alpha / 255f)
         GL11.glLineWidth(width)
@@ -21,8 +21,8 @@ object LineUtils {
         GL11.glVertex2f(x2.toFloat(), y2.toFloat())
         GL11.glEnd()
 
-        UniversalGraphicsHandler.enableTexture2D()
-        UniversalGraphicsHandler.popMatrix()
+        UGraphics.enableTexture2D()
+        UGraphics.popMatrix()
     }
 
     @JvmStatic

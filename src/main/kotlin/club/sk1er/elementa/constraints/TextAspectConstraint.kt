@@ -3,8 +3,8 @@ package club.sk1er.elementa.constraints
 import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.components.UIText
 import club.sk1er.elementa.constraints.resolution.ConstraintVisitor
-import club.sk1er.mods.core.universal.UniversalGraphicsHandler
-import club.sk1er.mods.core.universal.UniversalMinecraft
+import club.sk1er.mods.core.universal.UGraphics
+import club.sk1er.mods.core.universal.UMinecraft
 import net.minecraft.client.Minecraft
 import java.lang.UnsupportedOperationException
 
@@ -22,12 +22,12 @@ class TextAspectConstraint : WidthConstraint, HeightConstraint {
 
     override fun getWidthImpl(component: UIComponent): Float {
         val text = (component as? UIText)?.getText() ?: throw IllegalStateException("TextAspectConstraint can only be used in UIText components")
-        return UniversalGraphicsHandler.getStringWidth(text) * component.getHeight() / 9
+        return UGraphics.getStringWidth(text) * component.getHeight() / 9
     }
 
     override fun getHeightImpl(component: UIComponent): Float {
         val text = (component as? UIText)?.getText() ?: throw IllegalStateException("TextAspectConstraint can only be used in UIText components")
-        return 9 * component.getWidth() / UniversalGraphicsHandler.getStringWidth(text)
+        return 9 * component.getWidth() / UGraphics.getStringWidth(text)
     }
 
     override fun to(component: UIComponent) = apply {

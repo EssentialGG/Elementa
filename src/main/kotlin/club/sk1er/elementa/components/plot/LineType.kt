@@ -1,6 +1,6 @@
 package club.sk1er.elementa.components.plot
 
-import club.sk1er.mods.core.universal.UniversalGraphicsHandler
+import club.sk1er.mods.core.universal.UGraphics
 import org.lwjgl.opengl.GL11
 import java.awt.Color
 
@@ -21,16 +21,16 @@ enum class LineType(private val drawFunc: (List<PlotPoint>) -> Unit) {
     }
 
     private fun beforeDraw(color: Color, width: Float) {
-        UniversalGraphicsHandler.pushMatrix()
-        UniversalGraphicsHandler.enableBlend()
-        UniversalGraphicsHandler.disableTexture2D()
+        UGraphics.pushMatrix()
+        UGraphics.enableBlend()
+        UGraphics.disableTexture2D()
 
         GL11.glColor4f(color.red / 255f, color.green / 255f, color.blue / 255f, color.alpha / 255f)
         GL11.glLineWidth(width)
     }
 
     private fun afterDraw() {
-        UniversalGraphicsHandler.enableTexture2D()
-        UniversalGraphicsHandler.popMatrix()
+        UGraphics.enableTexture2D()
+        UGraphics.popMatrix()
     }
 }

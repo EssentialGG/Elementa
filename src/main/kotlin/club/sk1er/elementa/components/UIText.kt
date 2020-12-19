@@ -3,7 +3,7 @@ package club.sk1er.elementa.components
 import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.constraints.ColorConstraint
 import club.sk1er.elementa.dsl.pixels
-import club.sk1er.mods.core.universal.UniversalGraphicsHandler
+import club.sk1er.mods.core.universal.UGraphics
 import java.awt.Color
 
 /**
@@ -17,7 +17,7 @@ open class UIText @JvmOverloads constructor(
 ) :
     UIComponent() {
 
-    private var textWidth: Float = UniversalGraphicsHandler.getStringWidth(text).toFloat()
+    private var textWidth: Float = UGraphics.getStringWidth(text).toFloat()
 
     init {
         setWidth(textWidth.pixels())
@@ -29,7 +29,7 @@ open class UIText @JvmOverloads constructor(
     @JvmOverloads
     fun setText(text: String, adjustWidth: Boolean = true) = apply {
         this.text = text
-        textWidth = UniversalGraphicsHandler.getStringWidth(text).toFloat()
+        textWidth = UGraphics.getStringWidth(text).toFloat()
         if (adjustWidth) setWidth(textWidth.pixels())
     }
 
@@ -66,15 +66,15 @@ open class UIText @JvmOverloads constructor(
             return super.draw()
         }
 
-        UniversalGraphicsHandler.enableBlend()
+        UGraphics.enableBlend()
 
-        UniversalGraphicsHandler.scale(width.toDouble(), height.toDouble(), 1.0)
+        UGraphics.scale(width.toDouble(), height.toDouble(), 1.0)
         if (shadow && shadowColor != null) {
-            UniversalGraphicsHandler.drawString(text, x / width, y / height, color.rgb, shadowColor!!.rgb)
+            UGraphics.drawString(text, x / width, y / height, color.rgb, shadowColor!!.rgb)
         } else {
-            UniversalGraphicsHandler.drawString(text, x / width, y / height, color.rgb, shadow)
+            UGraphics.drawString(text, x / width, y / height, color.rgb, shadow)
         }
-        UniversalGraphicsHandler.scale(1 / width.toDouble(), 1 / height.toDouble(), 1.0)
+        UGraphics.scale(1 / width.toDouble(), 1 / height.toDouble(), 1.0)
 
         super.draw()
     }

@@ -10,8 +10,8 @@ import club.sk1er.elementa.constraints.animation.Animations
 import club.sk1er.elementa.dsl.*
 import club.sk1er.elementa.effects.OutlineEffect
 import club.sk1er.elementa.effects.ScissorEffect
-import club.sk1er.mods.core.universal.UniversalGraphicsHandler
-import club.sk1er.mods.core.universal.UniversalMinecraft
+import club.sk1er.mods.core.universal.UGraphics
+import club.sk1er.mods.core.universal.UMinecraft
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats
 import org.lwjgl.opengl.GL11
 import java.awt.Color

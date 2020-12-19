@@ -7,8 +7,8 @@ import club.sk1er.elementa.constraints.animation.Animations
 import club.sk1er.elementa.dsl.*
 import club.sk1er.elementa.effects.ScissorEffect
 import club.sk1er.elementa.utils.getStringSplitToWidth
-import club.sk1er.mods.core.universal.UniversalGraphicsHandler
-import club.sk1er.mods.core.universal.UniversalKeyboard
+import club.sk1er.mods.core.universal.UGraphics
+import club.sk1er.mods.core.universal.UKeyboard
 import java.awt.Color
 import java.awt.Toolkit
 import java.awt.datatransfer.DataFlavor
@@ -77,22 +77,22 @@ abstract class AbstractTextInput(
 
             if (keyCode == 1) {
                 releaseWindowFocus()
-            } else if (UniversalKeyboard.isKeyComboCtrlA(keyCode)) {
+            } else if (UKeyboard.isKeyComboCtrlA(keyCode)) {
                 selectAll()
-            } else if (UniversalKeyboard.isKeyComboCtrlC(keyCode) && hasSelection()) {
+            } else if (UKeyboard.isKeyComboCtrlC(keyCode) && hasSelection()) {
                 copySelection()
-            } else if (UniversalKeyboard.isKeyComboCtrlX(keyCode) && hasSelection()) {
+            } else if (UKeyboard.isKeyComboCtrlX(keyCode) && hasSelection()) {
                 copySelection()
                 deleteSelection()
-            } else if (UniversalKeyboard.isKeyComboCtrlV(keyCode)) {
+            } else if (UKeyboard.isKeyComboCtrlV(keyCode)) {
                 commitTextAddition(Toolkit.getDefaultToolkit().systemClipboard.getData(DataFlavor.stringFlavor) as String)
-            } else if (UniversalKeyboard.isKeyComboCtrlZ(keyCode)) {
+            } else if (UKeyboard.isKeyComboCtrlZ(keyCode)) {
                 if (undoStack.isEmpty())
                     return@onKeyType
                 val operationToUndo = undoStack.pop()
                 operationToUndo.undo()
                 redoStack.push(operationToUndo)
-            } else if (UniversalKeyboard.isKeyComboCtrlShiftZ(keyCode) || UniversalKeyboard.isKeyComboCtrlY(keyCode)) {
+            } else if (UKeyboard.isKeyComboCtrlShiftZ(keyCode) || UKeyboard.isKeyComboCtrlY(keyCode)) {
                 if (redoStack.isEmpty())
                     return@onKeyType
                 val operationToRedo = redoStack.pop()
@@ -101,8 +101,8 @@ abstract class AbstractTextInput(
             } else if (typedChar in ' '..'~') { // Most of the ASCII characters
                 commitTextAddition(typedChar.toString())
             } else if (keyCode == 203) { // Left Arrow
-                val holdingShift = UniversalKeyboard.isShiftKeyDown()
-                val holdingCtrl = UniversalKeyboard.isCtrlKeyDown()
+                val holdingShift = UKeyboard.isShiftKeyDown()
+                val holdingCtrl = UKeyboard.isCtrlKeyDown()
 
                 val newCursorPosition = when {
                     holdingCtrl -> getNearestWordBoundary(cursor, Direction.Left)
@@ -118,8 +118,8 @@ abstract class AbstractTextInput(
                 cursor = newCursorPosition
                 cursorNeedsRefocus = true
             } else if (keyCode == 205) { // Right Arrow
-                val holdingShift = UniversalKeyboard.isShiftKeyDown()
-                val holdingCtrl = UniversalKeyboard.isCtrlKeyDown()
+                val holdingShift = UKeyboard.isShiftKeyDown()
+                val holdingCtrl = UKeyboard.isCtrlKeyDown()
 
                 val newCursorPosition = when {
                     holdingCtrl -> getNearestWordBoundary(cursor, Direction.Right)
@@ -142,7 +142,7 @@ abstract class AbstractTextInput(
                     screenPosToVisualPos(currX, currY - 9)
                 }
 
-                if (UniversalKeyboard.isShiftKeyDown()) {
+                if (UKeyboard.isShiftKeyDown()) {
                     cursor = newVisualPos
                     cursorNeedsRefocus = true
                 } else {
@@ -156,7 +156,7 @@ abstract class AbstractTextInput(
                     screenPosToVisualPos(currX, currY + 9)
                 }
 
-                if (UniversalKeyboard.isShiftKeyDown()) {
+                if (UKeyboard.isShiftKeyDown()) {
                     cursor = newVisualPos
                     cursorNeedsRefocus = true
                 } else {
@@ -177,7 +177,7 @@ abstract class AbstractTextInput(
                     commitTextRemoval(cursor, cursor.offsetColumn(1), selectAfterUndo = false)
                 }
             } else if (keyCode == 199) { // Home
-                if (UniversalKeyboard.isShiftKeyDown()) {
+                if (UKeyboard.isShiftKeyDown()) {
                     cursor = cursor.withColumn(0)
                     cursorNeedsRefocus = true
                 } else {
@@ -185,7 +185,7 @@ abstract class AbstractTextInput(
                 }
             } else if (keyCode == 207) { // End
                 cursor.withColumn(visualLines[cursor.line].length).also {
-                    if (UniversalKeyboard.isShiftKeyDown()) {
+                    if (UKeyboard.isShiftKeyDown()) {
                         cursor = it
                         cursorNeedsRefocus = true
                     } else {
@@ -664,7 +664,7 @@ abstract class AbstractTextInput(
     protected open fun hasText() = textualLines.size > 1 || textualLines[0].text.isNotEmpty()
 
     protected open fun drawUnselectedText(text: String, left: Float, row: Int) {
-        UniversalGraphicsHandler.drawString(
+        UGraphics.drawString(
             text,
             left - horizontalScrollingOffset,
             getTop() + (9 * row) + verticalScrollingOffset,
@@ -682,7 +682,7 @@ abstract class AbstractTextInput(
             getTop().toDouble() + (9 * (row + 1)) + verticalScrollingOffset
         )
         if (text.isNotEmpty()) {
-            UniversalGraphicsHandler.drawString(
+            UGraphics.drawString(
                 text,
                 left - horizontalScrollingOffset,
                 getTop() + (9 * row) + verticalScrollingOffset,

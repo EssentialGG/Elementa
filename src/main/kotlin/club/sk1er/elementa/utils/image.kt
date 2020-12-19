@@ -5,7 +5,7 @@ import net.minecraft.client.renderer.texture.AbstractTexture
 //#else
 //$$ import net.minecraft.client.renderer.texture.Texture
 //#endif
-import club.sk1er.mods.core.universal.UniversalGraphicsHandler
+import club.sk1er.mods.core.universal.UGraphics
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats
 import java.awt.Color
 import java.awt.image.BufferedImage
@@ -26,22 +26,22 @@ internal fun drawTexture(
     width: Double,
     height: Double
 ) {
-    UniversalGraphicsHandler.pushMatrix()
+    UGraphics.pushMatrix()
 
-    UniversalGraphicsHandler.enableBlend()
-    UniversalGraphicsHandler.enableAlpha()
-    UniversalGraphicsHandler.scale(1f, 1f, 50f)
+    UGraphics.enableBlend()
+    UGraphics.enableAlpha()
+    UGraphics.scale(1f, 1f, 50f)
     //#if MC<=11202
-    UniversalGraphicsHandler.bindTexture(texture.glTextureId)
+    UGraphics.bindTexture(texture.glTextureId)
     //#else
-    //$$ UniversalGraphicsHandler.bindTexture(texture.getGlTextureId())
+    //$$ UGraphics.bindTexture(texture.getGlTextureId())
     //#endif
-    UniversalGraphicsHandler.enableTexture2D()
+    UGraphics.enableTexture2D()
     val red = color.red.toFloat() / 255f
     val green = color.green.toFloat() / 255f
     val blue = color.blue.toFloat() / 255f
     val alpha = color.alpha.toFloat() / 255f
-    val worldRenderer = UniversalGraphicsHandler.getFromTessellator()
+    val worldRenderer = UGraphics.getFromTessellator()
 
     worldRenderer.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR)
 
@@ -49,9 +49,9 @@ internal fun drawTexture(
     worldRenderer.pos(x + width, y + height, 0.0).tex(1.0, 1.0).color(red, green, blue, alpha).endVertex()
     worldRenderer.pos(x + width, y, 0.0).tex(1.0, 0.0).color(red, green, blue, alpha).endVertex()
     worldRenderer.pos(x, y, 0.0).tex(0.0, 0.0).color(red, green, blue, alpha).endVertex()
-    UniversalGraphicsHandler.draw()
+    UGraphics.draw()
 
-    UniversalGraphicsHandler.popMatrix()
+    UGraphics.popMatrix()
 }
 
 fun decodeBlurHash(blurHash: String?, width: Int, height: Int, punch: Float = 1f): BufferedImage? {

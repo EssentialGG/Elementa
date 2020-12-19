@@ -1,13 +1,13 @@
 package club.sk1er.elementa
 
 //#if MC>=11602
-//$$ import club.sk1er.mods.core.universal.UniversalGraphicsHandler
+//$$ import club.sk1er.mods.core.universal.UGraphics
 //#endif
 
 import club.sk1er.elementa.components.Window
 import club.sk1er.elementa.constraints.animation.*
-import club.sk1er.mods.core.universal.UniversalKeyboard
-import club.sk1er.mods.core.universal.UniversalScreen
+import club.sk1er.mods.core.universal.UKeyboard
+import club.sk1er.mods.core.universal.UScreen
 
 import java.awt.Color
 import kotlin.reflect.KMutableProperty0
@@ -17,7 +17,7 @@ abstract class WindowScreen(
     private val drawDefaultBackground: Boolean = true,
     restoreCurrentGuiOnClose: Boolean = false,
     newGuiScale: Int = -1
-) : UniversalScreen(restoreCurrentGuiOnClose, newGuiScale) {
+) : UScreen(restoreCurrentGuiOnClose, newGuiScale) {
     protected val window = Window()
     private var isInitialized = false
 
@@ -38,7 +38,7 @@ abstract class WindowScreen(
         super.onDrawScreen(mouseX, mouseY, partialTicks)
 
         //#if MC>=11602
-        //$$ UniversalGraphicsHandler.setStack(getMatrixStack())
+        //$$ UGraphics.setStack(getMatrixStack())
         //#endif
 
         if (drawDefaultBackground)
@@ -72,7 +72,7 @@ abstract class WindowScreen(
         window.mouseScroll(delta.coerceIn(-1.0, 1.0))
     }
 
-    override fun onKeyPressed(keyCode: Int, typedChar: Char, modifiers: UniversalKeyboard.Modifiers?) {
+    override fun onKeyPressed(keyCode: Int, typedChar: Char, modifiers: UKeyboard.Modifiers?) {
         // We also need to pass along typed keys
         window.keyType(typedChar, keyCode)
     }
@@ -84,7 +84,7 @@ abstract class WindowScreen(
         // to type. This is a wrapper around a base LWJGL function.
         // - Keyboard.enableRepeatEvents in <= 1.12.2
         if (enableRepeatKeys)
-            UniversalKeyboard.allowRepeatEvents(true)
+            UKeyboard.allowRepeatEvents(true)
     }
 
     override fun onScreenClose() {
@@ -92,11 +92,11 @@ abstract class WindowScreen(
 
         // We need to disable repeat events when leaving the gui.
         if (enableRepeatKeys)
-            UniversalKeyboard.allowRepeatEvents(false)
+            UKeyboard.allowRepeatEvents(false)
     }
 
     fun defaultKeyBehavior(typedChar: Char, keyCode: Int) {
-        super.onKeyPressed(keyCode, typedChar, UniversalKeyboard.getModifiers())
+        super.onKeyPressed(keyCode, typedChar, UKeyboard.getModifiers())
     }
 
     /**

@@ -2,7 +2,7 @@ package club.sk1er.elementa.constraints
 
 import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.constraints.resolution.ConstraintVisitor
-import club.sk1er.mods.core.universal.UniversalMathHelper
+import club.sk1er.mods.core.universal.UMath
 import java.awt.Color
 import kotlin.math.sin
 import kotlin.random.Random

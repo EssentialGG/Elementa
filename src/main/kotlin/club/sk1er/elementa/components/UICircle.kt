@@ -7,7 +7,7 @@ import club.sk1er.elementa.shaders.FloatUniform
 import club.sk1er.elementa.shaders.Shader
 import club.sk1er.elementa.shaders.Vec2Uniform
 import club.sk1er.elementa.utils.Vector2f
-import club.sk1er.mods.core.universal.UniversalGraphicsHandler
+import club.sk1er.mods.core.universal.UGraphics
 import java.awt.Color
 
 class UICircle @JvmOverloads constructor(radius: Float = 0f, color: Color = Color.WHITE, var steps: Int = 40) :
@@ -70,7 +70,7 @@ class UICircle @JvmOverloads constructor(radius: Float = 0f, color: Color = Colo
             if (!::shader.isInitialized)
                 return
 
-            UniversalGraphicsHandler.pushMatrix()
+            UGraphics.pushMatrix()
 
             shader.bindIfUsable()
             shaderRadiusUniform.setValue(radius)
@@ -86,7 +86,7 @@ class UICircle @JvmOverloads constructor(radius: Float = 0f, color: Color = Colo
 
             shader.unbindIfUsable()
 
-            UniversalGraphicsHandler.popMatrix()
+            UGraphics.popMatrix()
         }
     }
 }

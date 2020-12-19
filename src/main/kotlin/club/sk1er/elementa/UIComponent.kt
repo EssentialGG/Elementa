@@ -11,8 +11,8 @@ import club.sk1er.elementa.events.UIClickEvent
 import club.sk1er.elementa.events.UIScrollEvent
 import club.sk1er.elementa.utils.TriConsumer
 import club.sk1er.elementa.utils.observable
-import club.sk1er.mods.core.universal.UniversalMouse
-import club.sk1er.mods.core.universal.UniversalResolutionUtil
+import club.sk1er.mods.core.universal.UMouse
+import club.sk1er.mods.core.universal.UResolution
 import org.lwjgl.opengl.GL11
 import java.awt.Color
 import java.util.*
@@ -292,9 +292,9 @@ abstract class UIComponent : Observable() {
      * that are being hovered, it will NOT consider this component as hovered.
      */
     open fun isHovered(): Boolean {
-        val scaledHeight = UniversalResolutionUtil.scaledHeight
-        val mouseX = UniversalMouse.getScaledX().toFloat()
-        val mouseY = scaledHeight - UniversalMouse.getTrueY().toFloat() * scaledHeight / UniversalResolutionUtil.windowHeight - 1f
+        val scaledHeight = UResolution.scaledHeight
+        val mouseX = UMouse.getScaledX().toFloat()
+        val mouseY = scaledHeight - UMouse.getTrueY().toFloat() * scaledHeight / UResolution.windowHeight - 1f
 
         return isPointInside(mouseX, mouseY)
     }

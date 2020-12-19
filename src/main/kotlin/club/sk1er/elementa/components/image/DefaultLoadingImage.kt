@@ -1,7 +1,7 @@
 package club.sk1er.elementa.components.image
 
 import club.sk1er.elementa.utils.drawTexture
-import club.sk1er.mods.core.universal.UniversalGraphicsHandler
+import club.sk1er.mods.core.universal.UGraphics
 import net.minecraft.client.renderer.texture.DynamicTexture
 import java.awt.Color
 import java.awt.image.BufferedImage
@@ -13,7 +13,7 @@ object DefaultLoadingImage : ImageProvider {
 
     override fun drawImage(x: Double, y: Double, width: Double, height: Double, color: Color) {
         if (!::loadingTexture.isInitialized) {
-            loadingTexture = UniversalGraphicsHandler.getTexture(loadingImage!!)
+            loadingTexture = UGraphics.getTexture(loadingImage!!)
             loadingImage = null
         }
 

@@ -4,7 +4,7 @@ import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.components.image.ImageProvider
 import club.sk1er.elementa.svg.SVGParser
 import club.sk1er.elementa.svg.data.SVG
-import club.sk1er.mods.core.universal.UniversalGraphicsHandler
+import club.sk1er.mods.core.universal.UGraphics
 import org.lwjgl.BufferUtils
 import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL15
@@ -34,14 +34,14 @@ class SVGComponent(private var svg: SVG) : UIComponent(), ImageProvider {
         val yScale = svg.height?.let { height / it } ?: 1.0
         val strokeWidth = (xScale * svg.strokeWidth).toFloat().coerceAtMost(10f)
 
-        UniversalGraphicsHandler.GL.pushMatrix()
+        UGraphics.GL.pushMatrix()
 
-        UniversalGraphicsHandler.enableBlend()
-        UniversalGraphicsHandler.disableTexture2D()
+        UGraphics.enableBlend()
+        UGraphics.disableTexture2D()
 
         GL11.glColor4f(color.red / 255f, color.green / 255f, color.blue / 255f, 1f)
-        UniversalGraphicsHandler.GL.translate(x, y, 0.0)
-        UniversalGraphicsHandler.GL.scale(xScale, yScale, 0.0)
+        UGraphics.GL.translate(x, y, 0.0)
+        UGraphics.GL.scale(xScale, yScale, 0.0)
 
         GL11.glPointSize(strokeWidth)
         GL11.glLineWidth(strokeWidth)
@@ -65,9 +65,9 @@ class SVGComponent(private var svg: SVG) : UIComponent(), ImageProvider {
         GL11.glDisableClientState(GL11.GL_VERTEX_ARRAY)
         GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0)
 
-        UniversalGraphicsHandler.enableTexture2D()
+        UGraphics.enableTexture2D()
 
-        UniversalGraphicsHandler.GL.popMatrix()
+        UGraphics.GL.popMatrix()
     }
 
     override fun draw() {

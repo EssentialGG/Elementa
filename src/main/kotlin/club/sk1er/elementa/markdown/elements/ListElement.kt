@@ -2,7 +2,7 @@ package club.sk1er.elementa.markdown.elements
 
 import club.sk1er.elementa.dsl.width
 import club.sk1er.elementa.markdown.MarkdownState
-import club.sk1er.mods.core.universal.UniversalGraphicsHandler
+import club.sk1er.mods.core.universal.UGraphics
 
 class ListElement private constructor(
     private val items: List<ListItem>,
@@ -27,7 +27,7 @@ class ListElement private constructor(
             state.x += indent
             val glyph = glyphForLevel(it.level)
 
-            UniversalGraphicsHandler.drawString(
+            UGraphics.drawString(
                 glyphForLevel(it.level),
                 state.left + state.x,
                 state.top + state.y,

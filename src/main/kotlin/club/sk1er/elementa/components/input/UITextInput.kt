@@ -4,7 +4,7 @@ import club.sk1er.elementa.constraints.WidthConstraint
 import club.sk1er.elementa.dsl.minMax
 import club.sk1er.elementa.dsl.pixels
 import club.sk1er.elementa.dsl.width
-import club.sk1er.mods.core.universal.UniversalGraphicsHandler
+import club.sk1er.mods.core.universal.UGraphics
 import java.awt.Color
 
 open class UITextInput @JvmOverloads constructor(
@@ -98,7 +98,7 @@ open class UITextInput @JvmOverloads constructor(
         beforeDraw()
 
         if (!active && !hasText()) {
-            UniversalGraphicsHandler.drawString(placeholder, getLeft(), getTop(), getColor().rgb, shadow)
+            UGraphics.drawString(placeholder, getLeft(), getTop(), getColor().rgb, shadow)
             return super.draw()
         }
 

@@ -4,7 +4,7 @@ import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.components.image.DefaultLoadingImage
 import club.sk1er.elementa.components.image.ImageProvider
 import club.sk1er.elementa.utils.drawTexture
-import club.sk1er.mods.core.universal.UniversalGraphicsHandler
+import club.sk1er.mods.core.universal.UGraphics
 import net.minecraft.client.renderer.texture.DynamicTexture
 import java.awt.Color
 import java.awt.image.BufferedImage
@@ -41,7 +41,7 @@ open class UIImage @JvmOverloads constructor(
 
                 imageWidth = image.width.toFloat()
                 imageHeight = image.height.toFloat()
-                texture = UniversalGraphicsHandler.getTexture(image)
+                texture = UGraphics.getTexture(image)
 
                 imageFuture.obtrudeValue(null)
             }
@@ -72,7 +72,7 @@ open class UIImage @JvmOverloads constructor(
     protected fun finalize() {
         val glTextureId = texture.glTextureId
         if (glTextureId != 0 && glTextureId != -1) {
-            UniversalGraphicsHandler.deleteTexture(glTextureId)
+            UGraphics.deleteTexture(glTextureId)
         }
     }
 

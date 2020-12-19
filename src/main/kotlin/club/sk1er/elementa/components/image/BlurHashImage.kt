@@ -4,7 +4,7 @@ import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.components.UIImage
 import club.sk1er.elementa.utils.decodeBlurHash
 import club.sk1er.elementa.utils.drawTexture
-import club.sk1er.mods.core.universal.UniversalGraphicsHandler
+import club.sk1er.mods.core.universal.UGraphics
 import net.minecraft.client.renderer.texture.DynamicTexture
 import java.awt.Color
 import java.io.File
@@ -19,10 +19,10 @@ open class BlurHashImage(private val hash: String) : UIComponent(), ImageProvide
 
     private fun generateTexture(): DynamicTexture {
         return decodeBlurHash(hash, dimensions.first.toInt(), dimensions.second.toInt())?.let {
-            UniversalGraphicsHandler.getTexture(it)
+            UGraphics.getTexture(it)
         } ?: run {
             // We encountered an issue decoding the blur hash, it's probably invalid.
-            UniversalGraphicsHandler.getEmptyTexture()
+            UGraphics.getEmptyTexture()
         }
     }
 
@@ -66,7 +66,7 @@ open class BlurHashImage(private val hash: String) : UIComponent(), ImageProvide
     protected fun finalize() {
         val glTextureId = texture.glTextureId
         if (glTextureId != 0 && glTextureId != -1) {
-            UniversalGraphicsHandler.deleteTexture(glTextureId)
+            UGraphics.deleteTexture(glTextureId)
         }
     }
 

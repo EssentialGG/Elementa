@@ -8,8 +8,8 @@ import club.sk1er.elementa.effects.OutlineEffect
 import club.sk1er.elementa.utils.ObservableAddEvent
 import club.sk1er.elementa.utils.ObservableClearEvent
 import club.sk1er.elementa.utils.ObservableRemoveEvent
-import club.sk1er.mods.core.universal.UniversalMouse
-import club.sk1er.mods.core.universal.UniversalResolutionUtil
+import club.sk1er.mods.core.universal.UMouse
+import club.sk1er.mods.core.universal.UResolution
 import java.awt.Color
 import java.text.NumberFormat
 
@@ -172,9 +172,9 @@ class Inspector @JvmOverloads constructor(
         separator2.setWidth(container.getWidth().pixels())
 
         if (isClickSelecting) {
-            val scaledHeight = UniversalResolutionUtil.scaledHeight
-            val mouseX = UniversalMouse.getScaledX().toFloat()
-            val mouseY = scaledHeight - UniversalMouse.getTrueY().toFloat() * scaledHeight / UniversalResolutionUtil.windowHeight - 1f
+            val scaledHeight = UResolution.scaledHeight
+            val mouseX = UMouse.getScaledX().toFloat()
+            val mouseY = scaledHeight - UMouse.getTrueY().toFloat() * scaledHeight / UResolution.windowHeight - 1f
             val hitComponent = rootNode.targetComponent.hitTest(mouseX, mouseY)
 
             // TODO: Implement some kind of way to hook into a UIComponent to intercept events,

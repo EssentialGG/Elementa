@@ -6,7 +6,7 @@ import club.sk1er.elementa.shaders.FloatUniform
 import club.sk1er.elementa.shaders.Shader
 import club.sk1er.elementa.shaders.Vec4Uniform
 import club.sk1er.elementa.utils.Vector4f
-import club.sk1er.mods.core.universal.UniversalGraphicsHandler
+import club.sk1er.mods.core.universal.UGraphics
 import java.awt.Color
 
 /**
@@ -47,7 +47,7 @@ open class UIRoundedRectangle(radius: Float) : UIComponent() {
             if (!::shader.isInitialized)
                 return
 
-            UniversalGraphicsHandler.pushMatrix()
+            UGraphics.pushMatrix()
 
             shader.bindIfUsable()
             shaderRadiusUniform.setValue(radius)
@@ -57,7 +57,7 @@ open class UIRoundedRectangle(radius: Float) : UIComponent() {
 
             shader.unbindIfUsable()
 
-            UniversalGraphicsHandler.popMatrix()
+            UGraphics.popMatrix()
         }
     }
 }

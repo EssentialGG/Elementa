@@ -6,7 +6,7 @@ import club.sk1er.elementa.dsl.pixels
 import club.sk1er.elementa.dsl.width
 import club.sk1er.elementa.utils.getStringSplitToWidth
 import club.sk1er.elementa.utils.getStringSplitToWidthTruncated
-import club.sk1er.mods.core.universal.UniversalKeyboard
+import club.sk1er.mods.core.universal.UKeyboard
 import java.awt.Color
 
 class UIMultilineTextInput @JvmOverloads constructor(
@@ -62,7 +62,7 @@ class UIMultilineTextInput @JvmOverloads constructor(
     }
 
     override fun onEnterPressed() {
-        if (UniversalKeyboard.isShiftKeyDown()) {
+        if (UKeyboard.isShiftKeyDown()) {
             commitTextAddition("\n")
             updateAction(getText())
         } else {

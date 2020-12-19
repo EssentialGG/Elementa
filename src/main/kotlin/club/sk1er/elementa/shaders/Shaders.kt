@@ -1,7 +1,7 @@
 package club.sk1er.elementa.shaders
 
-import club.sk1er.mods.core.universal.UniversalGraphicsHandler
+import club.sk1er.mods.core.universal.UGraphics
 
 object Shaders {
-    val newShaders = UniversalGraphicsHandler.areShadersSupported()
+    val newShaders = UGraphics.areShadersSupported()
 }

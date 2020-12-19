@@ -1,7 +1,7 @@
 package club.sk1er.elementa.utils
 
 import club.sk1er.elementa.dsl.width
-import club.sk1er.mods.core.universal.UniversalGraphicsHandler
+import club.sk1er.mods.core.universal.UGraphics
 
 fun getStringSplitToWidthTruncated(
     text: String,
@@ -122,7 +122,7 @@ fun sizeStringToWidth(string: String, width: Float): Int {
             '\n' -> k--
             ' ' -> {
                 l = k
-                j += UniversalGraphicsHandler.getCharWidth(c0)
+                j += UGraphics.getCharWidth(c0)
 
                 if (flag) j++
             }
@@ -138,7 +138,7 @@ fun sizeStringToWidth(string: String, width: Float): Int {
                 }
             }
             else -> {
-                j += UniversalGraphicsHandler.getCharWidth(c0)
+                j += UGraphics.getCharWidth(c0)
 
                 if (flag) j++
             }

@@ -6,10 +6,10 @@ import club.sk1er.elementa.dsl.width
 import club.sk1er.elementa.markdown.MarkdownComponent
 import club.sk1er.elementa.markdown.MarkdownState
 import club.sk1er.elementa.utils.drawTexture
-import club.sk1er.mods.core.universal.UniversalDesktop
-import club.sk1er.mods.core.universal.UniversalGraphicsHandler
-import club.sk1er.mods.core.universal.UniversalMouse
-import club.sk1er.mods.core.universal.UniversalResolutionUtil
+import club.sk1er.mods.core.universal.UDesktop
+import club.sk1er.mods.core.universal.UGraphics
+import club.sk1er.mods.core.universal.UMouse
+import club.sk1er.mods.core.universal.UResolution
 import net.minecraft.client.renderer.texture.DynamicTexture
 import java.awt.Color
 import java.awt.image.BufferedImage
@@ -62,7 +62,7 @@ class TextElement internal constructor(internal val spans: List<Span>) : Element
             }
 
         if (clicked != null)
-            UniversalDesktop.browse(URI(clicked.first.style.url!!))
+            UDesktop.browse(URI(clicked.first.style.url!!))
     }
 
     internal fun calculateRenderables(state: MarkdownState) {
@@ -75,7 +75,7 @@ class TextElement internal constructor(internal val spans: List<Span>) : Element
                     val image = span.style.bufferedImage!!.get()
 
                     if (span.style.texture == null)
-                        span.style.texture = UniversalGraphicsHandler.getTexture(image)
+                        span.style.texture = UGraphics.getTexture(image)
 
                     val width = image.width.toFloat().coerceAtMost(state.width)
                     val scale = width / image.width
@@ -207,7 +207,7 @@ class TextElement internal constructor(internal val spans: List<Span>) : Element
                         shadow
                     )
                 } else {
-                    UniversalGraphicsHandler.drawString(text, x, y, actualColor.rgb, shadow)
+                    UGraphics.drawString(text, x, y, actualColor.rgb, shadow)
                 }
             }
 
@@ -237,10 +237,10 @@ class TextElement internal constructor(internal val spans: List<Span>) : Element
             }
 
             val scale = state.textScaleModifier.toDouble()
-            UniversalGraphicsHandler.scale(scale, scale, 1.0)
+            UGraphics.scale(scale, scale, 1.0)
 
-            val mouseX = UniversalMouse.getScaledX()
-            val mouseY = UniversalResolutionUtil.scaledHeight - UniversalMouse.getScaledY()
+            val mouseX = UMouse.getScaledX()
+            val mouseY = UResolution.scaledHeight - UMouse.getScaledY()
 
             val isHovered = span.style.isURL && spanRenderables.any { renderable ->
                 renderable.bounds.let {
@@ -288,7 +288,7 @@ class TextElement internal constructor(internal val spans: List<Span>) : Element
                 }
             }
 
-            UniversalGraphicsHandler.scale(1f / scale, 1f / scale, 1.0)
+            UGraphics.scale(1f / scale, 1f / scale, 1.0)
         }
     }
 
@@ -332,7 +332,7 @@ class TextElement internal constructor(internal val spans: List<Span>) : Element
             it.style.texture?.let { texture ->
                 val glTextureId = texture.glTextureId
                 if (glTextureId != 0 && glTextureId != -1) {
-                    UniversalGraphicsHandler.deleteTexture(glTextureId)
+                    UGraphics.deleteTexture(glTextureId)
                 }
             }
         }

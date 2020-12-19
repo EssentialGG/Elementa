@@ -9,9 +9,9 @@ import club.sk1er.elementa.constraints.PixelConstraint;
 import club.sk1er.elementa.constraints.animation.AnimatingConstraints;
 import club.sk1er.elementa.constraints.animation.Animations;
 import club.sk1er.elementa.effects.ScissorEffect;
-import club.sk1er.mods.core.universal.UniversalScreen;
+import club.sk1er.mods.core.universal.UScreen;
 
-public class JavaTestGui extends UniversalScreen {
+public class JavaTestGui extends UScreen {
     Window window = new Window();
 
     UIComponent box = new UIBlock()

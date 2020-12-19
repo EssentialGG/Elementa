@@ -3,7 +3,7 @@ package club.sk1er.elementa.components
 import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.constraints.ColorConstraint
 import club.sk1er.elementa.dsl.asConstraint
-import club.sk1er.mods.core.universal.UniversalGraphicsHandler
+import club.sk1er.mods.core.universal.UGraphics
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats
 import org.lwjgl.opengl.GL11
 import java.awt.Color
@@ -29,22 +29,22 @@ open class UIBlock(colorConstraint: ColorConstraint = Color.WHITE.asConstraint()
         val color = getColor()
         if (color.alpha == 0) return super.draw()
 
-        UniversalGraphicsHandler.pushMatrix()
+        UGraphics.pushMatrix()
 
         drawBlock(color, x, y, x2, y2)
 
-        UniversalGraphicsHandler.popMatrix()
+        UGraphics.popMatrix()
 
         super.draw()
     }
 
     companion object {
         fun drawBlock(color: Color, x1: Double, y1: Double, x2: Double, y2: Double) {
-            UniversalGraphicsHandler.enableBlend()
-            UniversalGraphicsHandler.disableTexture2D()
-            UniversalGraphicsHandler.tryBlendFuncSeparate(770, 771, 1, 0)
+            UGraphics.enableBlend()
+            UGraphics.disableTexture2D()
+            UGraphics.tryBlendFuncSeparate(770, 771, 1, 0)
 
-            val worldRenderer = UniversalGraphicsHandler.getFromTessellator()
+            val worldRenderer = UGraphics.getFromTessellator()
 
             val red = color.red.toFloat() / 255f
             val green = color.green.toFloat() / 255f
@@ -56,11 +56,11 @@ open class UIBlock(colorConstraint: ColorConstraint = Color.WHITE.asConstraint()
             worldRenderer.pos(x2, y2, 0.0).color(red, green, blue, alpha).endVertex()
             worldRenderer.pos(x2, y1, 0.0).color(red, green, blue, alpha).endVertex()
             worldRenderer.pos(x1, y1, 0.0).color(red, green, blue, alpha).endVertex()
-            UniversalGraphicsHandler.draw()
+            UGraphics.draw()
 
 
-            UniversalGraphicsHandler.enableTexture2D()
-            UniversalGraphicsHandler.disableBlend()
+            UGraphics.enableTexture2D()
+            UGraphics.disableBlend()
         }
     }
 }

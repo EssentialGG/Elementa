@@ -2,7 +2,7 @@ package club.sk1er.elementa.components
 
 import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.dsl.asConstraint
-import club.sk1er.mods.core.universal.UniversalGraphicsHandler
+import club.sk1er.mods.core.universal.UGraphics
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats
 import org.lwjgl.opengl.GL11
 import java.awt.Color
@@ -34,16 +34,16 @@ open class UIShape @JvmOverloads constructor(color: Color = Color.WHITE) : UICom
         val color = this.getColor()
         if (color.alpha == 0) return super.draw()
 
-        UniversalGraphicsHandler.pushMatrix()
-        UniversalGraphicsHandler.enableBlend()
-        UniversalGraphicsHandler.disableTexture2D()
+        UGraphics.pushMatrix()
+        UGraphics.enableBlend()
+        UGraphics.disableTexture2D()
         val red = color.red.toFloat() / 255f
         val green = color.green.toFloat() / 255f
         val blue = color.blue.toFloat() / 255f
         val alpha = color.alpha.toFloat() / 255f
 
-        val worldRenderer = UniversalGraphicsHandler.getFromTessellator()
-        UniversalGraphicsHandler.tryBlendFuncSeparate(770, 771, 1, 0)
+        val worldRenderer = UGraphics.getFromTessellator()
+        UGraphics.tryBlendFuncSeparate(770, 771, 1, 0)
 
         worldRenderer.begin(drawMode, DefaultVertexFormats.POSITION_COLOR)
         vertices.forEach {
@@ -52,11 +52,11 @@ open class UIShape @JvmOverloads constructor(color: Color = Color.WHITE) : UICom
                 .color(red, green, blue, alpha)
                 .endVertex()
         }
-        UniversalGraphicsHandler.draw()
+        UGraphics.draw()
 
-        UniversalGraphicsHandler.enableTexture2D()
-        UniversalGraphicsHandler.disableBlend()
-        UniversalGraphicsHandler.popMatrix()
+        UGraphics.enableTexture2D()
+        UGraphics.disableBlend()
+        UGraphics.popMatrix()
 
         super.draw()
     }

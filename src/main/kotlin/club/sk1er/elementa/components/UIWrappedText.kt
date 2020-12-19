@@ -6,7 +6,7 @@ import club.sk1er.elementa.dsl.pixels
 import club.sk1er.elementa.dsl.width
 import club.sk1er.elementa.utils.getStringSplitToWidth
 import club.sk1er.elementa.utils.getStringSplitToWidthTruncated
-import club.sk1er.mods.core.universal.UniversalGraphicsHandler
+import club.sk1er.mods.core.universal.UGraphics
 
 /**
  * Simple text component that draws its given [text] at the scale determined by
@@ -23,8 +23,8 @@ open class UIWrappedText @JvmOverloads constructor(
     private val trimText: Boolean = false
 ) : UIComponent() {
 
-    private val charWidth = UniversalGraphicsHandler.getCharWidth('x')
-    private var textWidth: Float = UniversalGraphicsHandler.getStringWidth(text).toFloat()
+    private val charWidth = UGraphics.getCharWidth('x')
+    private var textWidth: Float = UGraphics.getStringWidth(text).toFloat()
 
     init {
         setWidth(textWidth.pixels())
@@ -38,7 +38,7 @@ open class UIWrappedText @JvmOverloads constructor(
     fun getText() = text
     fun setText(text: String) = apply {
         this.text = text
-        textWidth = UniversalGraphicsHandler.getStringWidth(text).toFloat()
+        textWidth = UGraphics.getStringWidth(text).toFloat()
     }
 
     fun getShadow() = shadow
@@ -70,10 +70,10 @@ open class UIWrappedText @JvmOverloads constructor(
             return super.draw()
         }
 
-        UniversalGraphicsHandler.enableBlend()
+        UGraphics.enableBlend()
 
-        UniversalGraphicsHandler.scale(textScale.toDouble(), textScale.toDouble(), 1.0)
-        UniversalGraphicsHandler.translate(x.toDouble(), y.toDouble(), 0.0)
+        UGraphics.scale(textScale.toDouble(), textScale.toDouble(), 1.0)
+        UGraphics.translate(x.toDouble(), y.toDouble(), 0.0)
 
         val lines = if (trimText) {
             getStringSplitToWidthTruncated(text, width, textScale, (getHeight() / 9f / textScale).toInt(), ensureSpaceAtEndOfLines = false)
@@ -83,11 +83,11 @@ open class UIWrappedText @JvmOverloads constructor(
             val xOffset = if (centered) {
                 (scaledWidth - line.width(textScale)) / 2f
             } else 0f
-            UniversalGraphicsHandler.drawString(line, xOffset, i * 9f, color.rgb, shadow)
+            UGraphics.drawString(line, xOffset, i * 9f, color.rgb, shadow)
         }
 
-        UniversalGraphicsHandler.translate(-x.toDouble(), -y.toDouble(), 0.0)
-        UniversalGraphicsHandler.scale(1 / textScale.toDouble(), 1 / textScale.toDouble(), 1.0)
+        UGraphics.translate(-x.toDouble(), -y.toDouble(), 0.0)
+        UGraphics.scale(1 / textScale.toDouble(), 1 / textScale.toDouble(), 1.0)
 
         super.draw()
     }

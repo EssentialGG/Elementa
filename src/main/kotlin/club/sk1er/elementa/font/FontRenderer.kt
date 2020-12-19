@@ -1,7 +1,7 @@
 package club.sk1er.elementa.font
 
-import club.sk1er.mods.core.universal.UniversalGraphicsHandler
-import club.sk1er.mods.core.universal.UniversalResolutionUtil
+import club.sk1er.mods.core.universal.UGraphics
+import club.sk1er.mods.core.universal.UResolution
 import net.minecraft.client.Minecraft
 import net.minecraft.util.StringUtils
 import org.lwjgl.opengl.GL11
@@ -15,7 +15,7 @@ import java.util.regex.Pattern
 class FontRenderer private constructor(private val fontSize: Float) {
     private val cachedStringWidth: MutableMap<String, Float> = HashMap()
     private var unicodeFont: UnicodeFont? = null
-    private var prevScaleFactor = UniversalResolutionUtil.scaleFactor.toInt()
+    private var prevScaleFactor = UResolution.scaleFactor.toInt()
 
     constructor(font: Font, fontSize: Float) : this(fontSize) {
         setUnicodeFont(font)
@@ -48,11 +48,11 @@ class FontRenderer private constructor(private val fontSize: Float) {
     }
 
     fun drawStringScaled(text: String, givenX: Int, givenY: Int, color: Int, givenScale: Double) {
-        UniversalGraphicsHandler.pushMatrix()
-        UniversalGraphicsHandler.translate(givenX.toDouble(), givenY.toDouble(), 0.0)
-        UniversalGraphicsHandler.scale(givenScale, givenScale, givenScale)
+        UGraphics.pushMatrix()
+        UGraphics.translate(givenX.toDouble(), givenY.toDouble(), 0.0)
+        UGraphics.scale(givenScale, givenScale, givenScale)
         drawString(text, 0f, 0f, color)
-        UniversalGraphicsHandler.popMatrix()
+        UGraphics.popMatrix()
     }
 
     @JvmOverloads
@@ -63,7 +63,7 @@ class FontRenderer private constructor(private val fontSize: Float) {
         if (shadow)
             drawString(StringUtils.stripControlCodes(text), x + 0.5f, y + 0.5f, 0x000000, false)
 
-        val scaleFactor = UniversalResolutionUtil.scaleFactor.toInt()
+        val scaleFactor = UResolution.scaleFactor.toInt()
         try {
             if (scaleFactor != prevScaleFactor) {
                 prevScaleFactor = scaleFactor
@@ -75,8 +75,8 @@ class FontRenderer private constructor(private val fontSize: Float) {
         if (unicodeFont == null)
             return
 
-        UniversalGraphicsHandler.pushMatrix()
-        UniversalGraphicsHandler.scale(1f / prevScaleFactor, 1f / prevScaleFactor, 1f / prevScaleFactor)
+        UGraphics.pushMatrix()
+        UGraphics.scale(1f / prevScaleFactor, 1f / prevScaleFactor, 1f / prevScaleFactor)
 
         x *= prevScaleFactor
         y *= prevScaleFactor
@@ -88,9 +88,9 @@ class FontRenderer private constructor(private val fontSize: Float) {
         val alpha = (color shr 24 and 255).toFloat() / 255.0f
         GL11.glColor4f(red, green, blue, alpha)
 
-        UniversalGraphicsHandler.disableLighting()
-        UniversalGraphicsHandler.enableBlend()
-        UniversalGraphicsHandler.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO)
+        UGraphics.disableLighting()
+        UGraphics.enableBlend()
+        UGraphics.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO)
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA)
 
         val parts = COLOR_CODE_PATTERN.split(text)
@@ -131,8 +131,8 @@ class FontRenderer private constructor(private val fontSize: Float) {
         }
 
         GL11.glColor4f(1f, 1f, 1f, 1f)
-        UniversalGraphicsHandler.bindTexture(0)
-        UniversalGraphicsHandler.popMatrix()
+        UGraphics.bindTexture(0)
+        UGraphics.popMatrix()
     }
 
     fun drawCenteredString(text: String, x: Float, y: Float, color: Int) {
@@ -140,11 +140,11 @@ class FontRenderer private constructor(private val fontSize: Float) {
     }
 
     fun drawCenteredTextScaled(text: String, givenX: Int, givenY: Int, color: Int, givenScale: Double) {
-        UniversalGraphicsHandler.pushMatrix()
-        UniversalGraphicsHandler.translate(givenX.toDouble(), givenY.toDouble(), 0.0)
-        UniversalGraphicsHandler.scale(givenScale, givenScale, givenScale)
+        UGraphics.pushMatrix()
+        UGraphics.translate(givenX.toDouble(), givenY.toDouble(), 0.0)
+        UGraphics.scale(givenScale, givenScale, givenScale)
         drawCenteredString(text, 0f, 0f, color)
-        UniversalGraphicsHandler.popMatrix()
+        UGraphics.popMatrix()
     }
 
     fun drawCenteredStringWithShadow(text: String, x: Float, y: Float, color: Int) {

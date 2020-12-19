@@ -3,13 +3,13 @@ package club.sk1er.elementa.dsl
 import club.sk1er.elementa.constraints.ConstantColorConstraint
 import club.sk1er.elementa.constraints.PixelConstraint
 import club.sk1er.elementa.constraints.RelativeConstraint
-import club.sk1er.mods.core.universal.UniversalGraphicsHandler
+import club.sk1er.mods.core.universal.UGraphics
 import net.minecraft.client.Minecraft
 import java.awt.Color
 
-fun Char.width(textScale: Float = 1f) = UniversalGraphicsHandler.getCharWidth(this) * textScale
+fun Char.width(textScale: Float = 1f) = UGraphics.getCharWidth(this) * textScale
 
-fun String.width(textScale: Float = 1f) = UniversalGraphicsHandler.getStringWidth(this) * textScale
+fun String.width(textScale: Float = 1f) = UGraphics.getStringWidth(this) * textScale
 
 @JvmOverloads
 fun Number.pixels(alignOpposite: Boolean = false, alignOutside: Boolean = false): PixelConstraint {
