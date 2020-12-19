@@ -70,10 +70,10 @@ class RainbowColorConstraint(val alpha: Int = 255, val speed: Float = 50f) : Col
         val blue = ((sin(currentStep / speed + 4 * Math.PI / 3) + 0.75) * 170).toInt()
 
         currentColor = Color(
-            UniversalMathHelper.clamp_int(red, 0, 255),
-            UniversalMathHelper.clamp_int(green, 0, 255),
-            UniversalMathHelper.clamp_int(blue, 0, 255),
-            UniversalMathHelper.clamp_int(alpha, 0, 255)
+            red.coerceIn(0, 255),
+            green.coerceIn(0, 255),
+            blue.coerceIn(0, 255),
+            alpha.coerceIn(0, 255)
         )
     }
 
