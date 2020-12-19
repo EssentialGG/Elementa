@@ -15,8 +15,9 @@ import kotlin.reflect.KMutableProperty0
 abstract class WindowScreen(
     private val enableRepeatKeys: Boolean = true,
     private val drawDefaultBackground: Boolean = true,
-    restoreCurrentGuiOnClose: Boolean = false
-) : UniversalScreen(restoreCurrentGuiOnClose) {
+    restoreCurrentGuiOnClose: Boolean = false,
+    newGuiScale: Int = -1
+) : UniversalScreen(restoreCurrentGuiOnClose, newGuiScale) {
     protected val window = Window()
     private var isInitialized = false
 
