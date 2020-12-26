@@ -4,21 +4,24 @@ import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.constraints.resolution.ConstraintVisitor
 import club.sk1er.elementa.state.BasicState
 import club.sk1er.elementa.state.State
-import club.sk1er.elementa.state.state
 
 /**
  * Sets this component's X/Y position or width/height to be some
  * multiple of its parents.
  */
 class RelativeConstraint @JvmOverloads constructor(value: Float = 1f) : PositionConstraint, SizeConstraint {
-    var value by state(value)
-
     override var cachedValue = 0f
     override var recalculate = true
     override var constrainTo: UIComponent? = null
 
+    private var valueState: State<Float> = BasicState(value)
+
+    var value: Float
+        get() = valueState.get()
+        set(value) { valueState.set(value) }
+
     fun bindValue(newState: State<Float>) = apply {
-        State.setDelegate(::value, newState)
+        valueState = newState
     }
 
     override fun getXPositionImpl(component: UIComponent): Float {
@@ -30,15 +33,15 @@ class RelativeConstraint @JvmOverloads constructor(value: Float = 1f) : Position
     }
 
     override fun getWidthImpl(component: UIComponent): Float {
-        return (constrainTo ?: component.parent).getWidth() * value
+        return (constrainTo ?: component.parent).getWidth() * valueState.get()
     }
 
     override fun getHeightImpl(component: UIComponent): Float {
-        return (constrainTo ?: component.parent).getHeight() * value
+        return (constrainTo ?: component.parent).getHeight() * valueState.get()
     }
 
     override fun getRadiusImpl(component: UIComponent): Float {
-        return ((constrainTo ?: component.parent).getWidth() * value) / 2f
+        return ((constrainTo ?: component.parent).getWidth() * valueState.get()) / 2f
     }
 
     override fun visitImpl(visitor: ConstraintVisitor, type: ConstraintType) {

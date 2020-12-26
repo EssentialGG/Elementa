@@ -25,3 +25,8 @@ fun Number.percent() = RelativeConstraint(this.toFloat() / 100f)
 fun Number.percentOfWindow() = RelativeWindowConstraint(this.toFloat() / 100f)
 
 fun Color.asConstraint() = ConstantColorConstraint(this)
+
+operator fun Color.component1() = red
+operator fun Color.component2() = green
+operator fun Color.component3() = blue
+operator fun Color.component4() = alpha
