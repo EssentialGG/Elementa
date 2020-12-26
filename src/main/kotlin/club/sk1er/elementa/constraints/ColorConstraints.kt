@@ -2,7 +2,8 @@ package club.sk1er.elementa.constraints
 
 import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.constraints.resolution.ConstraintVisitor
-import club.sk1er.mods.core.universal.UMath
+import club.sk1er.elementa.state.BasicState
+import club.sk1er.elementa.state.State
 import java.awt.Color
 import kotlin.math.sin
 import kotlin.random.Random
@@ -10,10 +11,16 @@ import kotlin.random.Random
 /**
  * Sets the color to be a constant, determined color.
  */
-class ConstantColorConstraint(val color: Color) : ColorConstraint {
-    override var cachedValue = Color.WHITE
+class ConstantColorConstraint(color: Color = Color.WHITE) : ColorConstraint {
+    var color by BasicState(color)
+
+    override var cachedValue: Color = Color.WHITE
     override var recalculate = true
     override var constrainTo: UIComponent? = null
+
+    fun bindColor(newState: State<Color>) = apply {
+        State.setDelegate(::color, newState)
+    }
 
     override fun getColorImpl(component: UIComponent): Color {
         return color
@@ -31,14 +38,31 @@ class ConstantColorConstraint(val color: Color) : ColorConstraint {
 /**
  * Sets the color to be constant but with an alpha based off of its parent.
  */
-class AlphaAspectColorConstraint(val color: Color, val value: Float = 1f) : ColorConstraint {
-    override var cachedValue = Color.WHITE
+class AlphaAspectColorConstraint(color: Color = Color.WHITE, alphaValue: Float = 1f) : ColorConstraint {
+    var color by BasicState(color)
+    var alpha by BasicState(alphaValue)
+
+    override var cachedValue: Color = Color.WHITE
     override var recalculate = true
     override var constrainTo: UIComponent? = null
 
+    fun bindColor(newState: State<Color>) = apply {
+        State.setDelegate(::color, newState)
+    }
+
+    fun bindAlpha(newState: State<Float>) = apply {
+        State.setDelegate(::alpha, newState)
+    }
+
     override fun getColorImpl(component: UIComponent): Color {
-        return Color(color.red, color.green, color.blue, ((constrainTo
-                ?: component.parent).getColor().alpha * value).toInt())
+        return color.let { color ->
+            Color(
+                color.red,
+                color.green,
+                color.blue,
+                ((constrainTo ?: component.parent).getColor().alpha * alpha).toInt()
+            )
+        }
     }
 
     // Color constraints will only ever have parent dependencies, so there is no possibility

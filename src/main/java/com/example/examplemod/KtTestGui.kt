@@ -11,7 +11,7 @@ import club.sk1er.elementa.dsl.*
 import club.sk1er.elementa.effects.OutlineEffect
 import club.sk1er.elementa.effects.ScissorEffect
 import club.sk1er.elementa.state.BasicState
-import club.sk1er.elementa.state.toConstraint
+import club.sk1er.elementa.state.pixels
 import java.awt.Color
 import java.net.URL
 import kotlin.concurrent.thread
@@ -111,14 +111,16 @@ class KtTestGui : WindowScreen() {
 //        }
 
         val textState = BasicState("my text")
+        val offset = BasicState(20f)
 
         val theText = UIText().bindText(textState).constrain {
             x = CenterConstraint()
-            y = 20.pixels(alignOpposite = true)
+            y = offset.pixels(alignOpposite = true)
         } childOf window
 
         timer(period = 1000) {
-            textState.setValue(textState.getValue() + "L")
+            textState.setValue { it + "L" }
+            offset.setValue { it + 1f }
         }
 
         val blocky = UIBlock().constrain {

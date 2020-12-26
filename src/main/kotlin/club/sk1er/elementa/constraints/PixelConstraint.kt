@@ -2,34 +2,42 @@ package club.sk1er.elementa.constraints
 
 import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.constraints.resolution.ConstraintVisitor
+import club.sk1er.elementa.state.BasicState
+import club.sk1er.elementa.state.State
 
 /**
  * Sets this component's X/Y position or width/height to be a constant
  * number of pixels.
  */
 class PixelConstraint @JvmOverloads constructor(
-    var value: Float,
-    var alignOpposite: Boolean = false,
-    var alignOutside:  Boolean = false
+    value: Float,
+    alignOpposite: Boolean = false,
+    alignOutside:  Boolean = false
 ) : MasterConstraint {
+    var value by BasicState(value)
+    var alignOpposite by BasicState(alignOpposite)
+    var alignOutside by BasicState(alignOutside)
+
     override var cachedValue = 0f
     override var recalculate = true
     override var constrainTo: UIComponent? = null
 
-    fun alignOutside(value: Boolean) = apply {
-        this.alignOutside = value
+    fun bindValue(newState: State<Float>) = apply {
+        State.setDelegate(::value, newState)
     }
 
-    fun alignOpposite(value: Boolean) = apply {
-        this.alignOpposite = value
+    fun bindAlignOpposite(newState: State<Boolean>) = apply {
+        State.setDelegate(::alignOpposite, newState)
     }
 
-    fun setValue(value: Float) = apply {
-        this.value = value
+    fun bindAlignOutside(newState: State<Boolean>) = apply {
+        State.setDelegate(::alignOutside, newState)
     }
 
     override fun getXPositionImpl(component: UIComponent): Float {
         val target = (constrainTo ?: component.parent)
+        val alignOutside = alignOutside
+
 
         return if (alignOpposite) {
             if (alignOutside) {

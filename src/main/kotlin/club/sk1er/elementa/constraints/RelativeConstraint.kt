@@ -2,15 +2,23 @@ package club.sk1er.elementa.constraints
 
 import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.constraints.resolution.ConstraintVisitor
+import club.sk1er.elementa.state.BasicState
+import club.sk1er.elementa.state.State
 
 /**
  * Sets this component's X/Y position or width/height to be some
  * multiple of its parents.
  */
-class RelativeConstraint @JvmOverloads constructor(val value: Float = 1f) : PositionConstraint, SizeConstraint {
+class RelativeConstraint @JvmOverloads constructor(value: Float = 1f) : PositionConstraint, SizeConstraint {
+    var value by BasicState(value)
+
     override var cachedValue = 0f
     override var recalculate = true
     override var constrainTo: UIComponent? = null
+
+    fun bindValue(newState: State<Float>) = apply {
+        State.setDelegate(::value, newState)
+    }
 
     override fun getXPositionImpl(component: UIComponent): Float {
         return (constrainTo ?: component.parent).getLeft() + getWidth(component)
