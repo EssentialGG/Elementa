@@ -110,17 +110,15 @@ class KtTestGui : WindowScreen() {
 //            myText.active = false
 //        }
 
-        val textState = BasicState("my text")
-        val offset = BasicState(20f)
+        val state = BasicState(20f)
 
-        val theText = UIText().bindText(textState).constrain {
+        val theText = UIText().bindText(state.map { it.toString() }).constrain {
             x = CenterConstraint()
-            y = offset.pixels(alignOpposite = true)
+            y = state.pixels(alignOpposite = true)
         } childOf window
 
         timer(period = 1000) {
-            textState.set { it + "L" }
-            offset.set { it + 1f }
+            state.set(state.get() + 2f)
         }
 
         val blocky = UIBlock().constrain {

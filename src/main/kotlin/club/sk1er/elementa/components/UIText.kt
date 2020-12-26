@@ -21,7 +21,6 @@ open class UIText @JvmOverloads constructor(
     private var shadowState: State<Boolean> = BasicState(shadow)
     private var shadowColorState: State<Color?> = BasicState(shadowColor)
     private var textWidthState = this.textState.map { UGraphics.getStringWidth(it).toFloat() }
-    // private var textWidthState by State.map(::textState) { UGraphics.getStringWidth(it).toFloat() }
 
     init {
         setWidth(textWidthState.pixels())

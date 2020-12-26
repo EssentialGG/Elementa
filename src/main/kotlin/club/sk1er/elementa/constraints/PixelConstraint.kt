@@ -4,7 +4,6 @@ import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.constraints.resolution.ConstraintVisitor
 import club.sk1er.elementa.state.BasicState
 import club.sk1er.elementa.state.State
-import club.sk1er.elementa.state.state
 
 /**
  * Sets this component's X/Y position or width/height to be a constant
@@ -15,39 +14,48 @@ class PixelConstraint @JvmOverloads constructor(
     alignOpposite: Boolean = false,
     alignOutside:  Boolean = false
 ) : MasterConstraint {
-    var value by state(value)
-    var alignOpposite by state(alignOpposite)
-    var alignOutside by state(alignOutside)
-
     override var cachedValue = 0f
     override var recalculate = true
     override var constrainTo: UIComponent? = null
 
+    private var valueState: State<Float> = BasicState(value)
+    private var alignOppositeState: State<Boolean> = BasicState(alignOpposite)
+    private var alignOutsideState: State<Boolean> = BasicState(alignOutside)
+
+    var value: Float
+        get() = valueState.get()
+        set(value) { valueState.set(value) }
+    var alignOpposite: Boolean
+        get() = alignOppositeState.get()
+        set(value) { alignOppositeState.set(value) }
+    var alignOutside: Boolean
+        get() = alignOutsideState.get()
+        set(value) { alignOutsideState.set(value) }
+
     fun bindValue(newState: State<Float>) = apply {
-        State.setDelegate(::value, newState)
+        valueState = newState
     }
 
     fun bindAlignOpposite(newState: State<Boolean>) = apply {
-        State.setDelegate(::alignOpposite, newState)
+        alignOppositeState = newState
     }
 
     fun bindAlignOutside(newState: State<Boolean>) = apply {
-        State.setDelegate(::alignOutside, newState)
+        alignOutsideState = newState
     }
 
     override fun getXPositionImpl(component: UIComponent): Float {
         val target = (constrainTo ?: component.parent)
-        val alignOutside = alignOutside
+        val value = this.valueState.get()
 
-
-        return if (alignOpposite) {
-            if (alignOutside) {
+        return if (alignOppositeState.get()) {
+            if (alignOutsideState.get()) {
                 target.getRight() + value
             } else {
                 target.getRight() - value - component.getWidth()
             }
         } else {
-            if (alignOutside) {
+            if (alignOutsideState.get()) {
                 target.getLeft() - component.getWidth() - value
             } else {
                 target.getLeft() + value
@@ -57,15 +65,16 @@ class PixelConstraint @JvmOverloads constructor(
 
     override fun getYPositionImpl(component: UIComponent): Float {
         val target = (constrainTo ?: component.parent)
+        val value = this.valueState.get()
 
-        return if (alignOpposite) {
-            if (alignOutside) {
+        return if (alignOppositeState.get()) {
+            if (alignOutsideState.get()) {
                 target.getBottom() + value
             } else {
                 target.getBottom() - value - component.getHeight()
             }
         } else {
-            if (alignOutside) {
+            if (alignOutsideState.get()) {
                 target.getTop() - component.getHeight() - value
             } else {
                 target.getTop() + value
@@ -74,40 +83,40 @@ class PixelConstraint @JvmOverloads constructor(
     }
 
     override fun getWidthImpl(component: UIComponent): Float {
-        return value
+        return valueState.get()
     }
 
     override fun getHeightImpl(component: UIComponent): Float {
-        return value
+        return valueState.get()
     }
 
     override fun getRadiusImpl(component: UIComponent): Float {
-        return value
+        return valueState.get()
     }
 
     override fun visitImpl(visitor: ConstraintVisitor, type: ConstraintType) {
         when (type) {
             ConstraintType.X -> {
-                if (alignOpposite) {
+                if (alignOppositeState.get()) {
                     visitor.visitParent(ConstraintType.X)
                     visitor.visitParent(ConstraintType.WIDTH)
-                    if (alignOutside)
+                    if (alignOutsideState.get())
                         visitor.visitSelf(ConstraintType.WIDTH)
                 } else {
                     visitor.visitParent(ConstraintType.X)
-                    if (alignOutside)
+                    if (alignOutsideState.get())
                         visitor.visitSelf(ConstraintType.WIDTH)
                 }
             }
             ConstraintType.Y -> {
-                if (alignOpposite) {
+                if (alignOppositeState.get()) {
                     visitor.visitParent(ConstraintType.Y)
                     visitor.visitParent(ConstraintType.HEIGHT)
-                    if (alignOutside)
+                    if (alignOutsideState.get())
                         visitor.visitSelf(ConstraintType.HEIGHT)
                 } else {
                     visitor.visitParent(ConstraintType.Y)
-                    if (alignOutside)
+                    if (alignOutsideState.get())
                         visitor.visitSelf(ConstraintType.HEIGHT)
                 }
             }
