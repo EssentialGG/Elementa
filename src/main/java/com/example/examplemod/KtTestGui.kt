@@ -119,8 +119,8 @@ class KtTestGui : WindowScreen() {
         } childOf window
 
         timer(period = 1000) {
-            textState.setValue { it + "L" }
-            offset.setValue { it + 1f }
+            textState.set { it + "L" }
+            offset.set { it + 1f }
         }
 
         val blocky = UIBlock().constrain {

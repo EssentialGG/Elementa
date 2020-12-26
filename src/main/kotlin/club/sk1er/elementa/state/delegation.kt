@@ -4,18 +4,17 @@ import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 import kotlin.reflect.KProperty0
 import kotlin.reflect.jvm.isAccessible
-import kotlin.system.measureTimeMillis
 
 class StateDelegator<T>(val state: State<T>) : ReadWriteProperty<Any?, T> {
-    override fun getValue(thisRef: Any?, property: KProperty<*>) = state.getValue()
+    override fun getValue(thisRef: Any?, property: KProperty<*>) = state.get()
 
     override fun setValue(thisRef: Any?, property: KProperty<*>, value: T) {
-        state.setValue(value)
+        state.set(value)
     }
 }
 
 class MappedStateDelegator<T, U>(val state: State<T>, val mapper: (T) -> U) : ReadWriteProperty<Any?, U> {
-    private var cachedValue = mapper(state.getValue())
+    private var cachedValue = mapper(state.get())
 
     init {
         state.onSetValue {

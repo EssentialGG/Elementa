@@ -41,19 +41,19 @@ open class UIText @JvmOverloads constructor(
         this.shadowColorState = newShadowColorState
     }
 
-    fun getText() = textState.getValue()
-    fun setText(text: String) = apply { textState.setValue(text) }
+    fun getText() = textState.get()
+    fun setText(text: String) = apply { textState.set(text) }
 
-    fun getShadow() = shadowState.getValue()
-    fun setShadow(shadow: Boolean) = apply { shadowState.setValue(shadow) }
+    fun getShadow() = shadowState.get()
+    fun setShadow(shadow: Boolean) = apply { shadowState.set(shadow) }
 
     fun getShadowColor() = shadowColorState
-    fun setShadowColor(shadowColor: Color?) = apply { shadowColorState.setValue(shadowColor) }
+    fun setShadowColor(shadowColor: Color?) = apply { shadowColorState.set(shadowColor) }
 
     /**
      * Returns the text width if no scale is applied to the text
      */
-    fun getTextWidth() = textWidthState.getValue()
+    fun getTextWidth() = textWidthState.get()
 
     override fun getWidth(): Float {
         return super.getWidth() * getTextScale()
@@ -68,7 +68,7 @@ open class UIText @JvmOverloads constructor(
 
         val x = getLeft()
         val y = getTop()
-        val width = getWidth() / textWidthState.getValue()
+        val width = getWidth() / textWidthState.get()
         val height = getHeight() / 9f
         val color = getColor()
 
@@ -80,12 +80,12 @@ open class UIText @JvmOverloads constructor(
         UGraphics.enableBlend()
 
         UGraphics.scale(width.toDouble(), height.toDouble(), 1.0)
-        val shadow = shadowState.getValue()
-        val shadowColor = shadowColorState.getValue()
+        val shadow = shadowState.get()
+        val shadowColor = shadowColorState.get()
         if (shadow && shadowColor != null) {
-            UGraphics.drawString(textState.getValue(), x / width, y / height, color.rgb, shadowColor.rgb)
+            UGraphics.drawString(textState.get(), x / width, y / height, color.rgb, shadowColor.rgb)
         } else {
-            UGraphics.drawString(textState.getValue(), x / width, y / height, color.rgb, shadow)
+            UGraphics.drawString(textState.get(), x / width, y / height, color.rgb, shadow)
         }
         UGraphics.scale(1 / width.toDouble(), 1 / height.toDouble(), 1.0)
 
