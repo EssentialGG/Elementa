@@ -1,8 +1,10 @@
 package club.sk1er.elementa.components
 
 import club.sk1er.elementa.UIComponent
-import club.sk1er.elementa.constraints.ColorConstraint
 import club.sk1er.elementa.dsl.pixels
+import club.sk1er.elementa.state.BasicState
+import club.sk1er.elementa.state.State
+import club.sk1er.elementa.state.toConstraint
 import club.sk1er.mods.core.universal.UGraphics
 import java.awt.Color
 
@@ -11,38 +13,46 @@ import java.awt.Color
  * this component's width & height constraints.
  */
 open class UIText @JvmOverloads constructor(
-    private var text: String = "",
-    private var shadow: Boolean = true,
-    private var shadowColor: Color? = null
-) :
-    UIComponent() {
-
-    private var textWidth: Float = UGraphics.getStringWidth(text).toFloat()
+    text: String = "",
+    shadow: Boolean = true,
+    shadowColor: Color? = null
+) : UIComponent() {
+    private var textState: State<String> = BasicState(text)
+    private var shadowState: State<Boolean> = BasicState(shadow)
+    private var shadowColorState: State<Color?> = BasicState(shadowColor)
+    private var textWidthState = this.textState.map { UGraphics.getStringWidth(it).toFloat() }
 
     init {
-        setWidth(textWidth.pixels())
+        setWidth(textWidthState.toConstraint())
         setHeight(9.pixels())
     }
 
-    fun getText() = text
-
-    @JvmOverloads
-    fun setText(text: String, adjustWidth: Boolean = true) = apply {
-        this.text = text
-        textWidth = UGraphics.getStringWidth(text).toFloat()
-        if (adjustWidth) setWidth(textWidth.pixels())
+    fun bindText(newTextState: State<String>) = apply {
+        textState = newTextState
+        textWidthState.rebind(newTextState)
     }
 
-    fun getShadow() = shadow
-    fun setShadow(shadow: Boolean) = apply { this.shadow = shadow }
+    fun bindShadow(newShadowState: State<Boolean>) = apply {
+        this.shadowState = newShadowState
+    }
 
-    fun getShadowColor() = shadowColor
-    fun setShadowColor(shadowColor: Color?) = apply { this.shadowColor = shadowColor }
+    fun bindShadowColor(newShadowColorState: State<Color?>) = apply {
+        this.shadowColorState = newShadowColorState
+    }
+
+    fun getText() = textState.getValue()
+    fun setText(text: String) = apply { textState.setValue(text) }
+
+    fun getShadow() = shadowState.getValue()
+    fun setShadow(shadow: Boolean) = apply { shadowState.setValue(shadow) }
+
+    fun getShadowColor() = shadowColorState
+    fun setShadowColor(shadowColor: Color?) = apply { shadowColorState.setValue(shadowColor) }
 
     /**
      * Returns the text width if no scale is applied to the text
      */
-    fun getTextWidth() = textWidth
+    fun getTextWidth() = textWidthState.getValue()
 
     override fun getWidth(): Float {
         return super.getWidth() * getTextScale()
@@ -57,7 +67,7 @@ open class UIText @JvmOverloads constructor(
 
         val x = getLeft()
         val y = getTop()
-        val width = getWidth() / textWidth
+        val width = getWidth() / textWidthState.getValue()
         val height = getHeight() / 9f
         val color = getColor()
 
@@ -69,10 +79,12 @@ open class UIText @JvmOverloads constructor(
         UGraphics.enableBlend()
 
         UGraphics.scale(width.toDouble(), height.toDouble(), 1.0)
+        val shadow = shadowState.getValue()
+        val shadowColor = shadowColorState.getValue()
         if (shadow && shadowColor != null) {
-            UGraphics.drawString(text, x / width, y / height, color.rgb, shadowColor!!.rgb)
+            UGraphics.drawString(textState.getValue(), x / width, y / height, color.rgb, shadowColor.rgb)
         } else {
-            UGraphics.drawString(text, x / width, y / height, color.rgb, shadow)
+            UGraphics.drawString(textState.getValue(), x / width, y / height, color.rgb, shadow)
         }
         UGraphics.scale(1 / width.toDouble(), 1 / height.toDouble(), 1.0)
 

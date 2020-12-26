@@ -1,6 +1,5 @@
 package com.example.examplemod
 
-import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.WindowScreen
 import club.sk1er.elementa.components.*
 import club.sk1er.elementa.components.input.UIMultilineTextInput
@@ -11,9 +10,12 @@ import club.sk1er.elementa.constraints.animation.Animations
 import club.sk1er.elementa.dsl.*
 import club.sk1er.elementa.effects.OutlineEffect
 import club.sk1er.elementa.effects.ScissorEffect
+import club.sk1er.elementa.state.BasicState
+import club.sk1er.elementa.state.toConstraint
 import java.awt.Color
 import java.net.URL
 import kotlin.concurrent.thread
+import kotlin.concurrent.timer
 
 class KtTestGui : WindowScreen() {
     private val myTextBox = UIBlock(Color(0, 0, 0, 255))
@@ -107,6 +109,17 @@ class KtTestGui : WindowScreen() {
 //        window.onMouseClick {
 //            myText.active = false
 //        }
+
+        val textState = BasicState("my text")
+
+        val theText = UIText().bindText(textState).constrain {
+            x = CenterConstraint()
+            y = 20.pixels(alignOpposite = true)
+        } childOf window
+
+        timer(period = 1000) {
+            textState.setValue(textState.getValue() + "L")
+        }
 
         val blocky = UIBlock().constrain {
             x = CenterConstraint()
