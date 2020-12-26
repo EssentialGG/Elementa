@@ -4,11 +4,25 @@ import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.constraints.ColorConstraint
 import club.sk1er.elementa.constraints.ConstraintType
 import club.sk1er.elementa.constraints.MasterConstraint
+import club.sk1er.elementa.constraints.PixelConstraint
 import club.sk1er.elementa.constraints.resolution.ConstraintVisitor
 import java.awt.Color
 import java.util.function.Consumer
 import java.util.function.Function
+import kotlin.reflect.KMutableProperty0
 import kotlin.reflect.KProperty
+import kotlin.reflect.KProperty0
+import kotlin.reflect.jvm.isAccessible
+
+class StateDelegateProvider<T>(var state: State<T>) {
+    operator fun getValue(thisRef: Any?, property: KProperty<*>) = state.getValue()
+
+    operator fun setValue(thisRef: Any?, property: KProperty<*>, value: T) = state.setValue(value)
+
+    fun rebind(newState: State<T>) {
+        state = newState
+    }
+}
 
 abstract class State<T> {
     protected val listeners = mutableListOf<(T) -> Unit>()
@@ -19,6 +33,8 @@ abstract class State<T> {
         listeners.forEach { it(value) }
     }
 
+    fun setValue(mapper: (T) -> T) = setValue(mapper(getValue()))
+
     fun onSetValue(listener: (T) -> Unit): () -> Unit {
         listeners.add(listener)
         return { listeners.remove(listener) }
@@ -26,9 +42,7 @@ abstract class State<T> {
 
     fun onSetValue(listener: Consumer<T>) = onSetValue { listener.accept(it) }
 
-    operator fun getValue(thisRef: Any?, property: KProperty<*>) = getValue()
-
-    operator fun setValue(thisRef: Any?, property: KProperty<*>, value: T) = setValue(value)
+    operator fun provideDelegate(thisRef: Any?, prop: KProperty<*>) = StateDelegateProvider(this)
 
     fun getOrDefault(defaultValue: T) = getValue() ?: defaultValue
 
@@ -39,6 +53,16 @@ abstract class State<T> {
     fun <U> map(mapper: Function<T, U>): State<U> = map { mapper.apply(it) }
 
     fun <U> zip(otherState: State<U>): State<Pair<T, U>> = ZippedState(this, otherState)
+
+    companion object {
+        @Suppress("UNCHECKED_CAST")
+        fun <U> setDelegate(property: KProperty0<*>, newState: State<U>) {
+            property.isAccessible = true
+            val delegateProvider = (property.getDelegate() as? StateDelegateProvider<U>) ?:
+                throw IllegalArgumentException("Cannot redelegate a property which is not delegated")
+            delegateProvider.rebind(newState)
+        }
+    }
 }
 
 open class BasicState<T>(private var value: T) : State<T>() {
@@ -106,56 +130,4 @@ class MutableListState<T>(private var list: MutableList<T>) : State<MutableList<
         list[index] = value
         listeners.forEach { it(list) }
     }
-}
-
-abstract class ConstraintState : State<Float>(), MasterConstraint {
-    override var recalculate = false
-    override var constrainTo: UIComponent? = null
-
-    override fun getValue() = cachedValue
-
-    override fun setValue(value: Float) {
-        this.cachedValue = value
-        super.setValue(value)
-    }
-
-    override fun getXPositionImpl(component: UIComponent) = cachedValue
-
-    override fun getYPositionImpl(component: UIComponent) = cachedValue
-
-    override fun getRadiusImpl(component: UIComponent) = cachedValue
-
-    override fun getWidthImpl(component: UIComponent) = cachedValue
-
-    override fun getHeightImpl(component: UIComponent) = cachedValue
-
-    override fun visitImpl(visitor: ConstraintVisitor, type: ConstraintType) { }
-}
-
-class MappedConstraintState(initialState: State<Float>) : ConstraintState() {
-    override var cachedValue: Float = initialState.getValue()
-
-    init {
-        initialState.onSetValue {
-            cachedValue = it
-        }
-    }
-}
-
-fun State<Float>.toConstraint() = MappedConstraintState(this)
-
-class ColorConstraintState(override var cachedValue: Color) : State<Color>(), ColorConstraint {
-    override var recalculate = false
-    override var constrainTo: UIComponent? = null
-
-    override fun getValue() = cachedValue
-
-    override fun setValue(value: Color) {
-        this.cachedValue = value
-        super.setValue(value)
-    }
-
-    override fun getColorImpl(component: UIComponent) = cachedValue
-
-    override fun visitImpl(visitor: ConstraintVisitor, type: ConstraintType) { }
 }

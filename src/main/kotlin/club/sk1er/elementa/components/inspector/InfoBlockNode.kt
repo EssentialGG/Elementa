@@ -27,7 +27,7 @@ class InfoBlockNode<T>(private val constraint: SuperConstraint<T>, private val n
             } childOf this
 
             val properties = when (constraint) {
-                is AlphaAspectColorConstraint -> listOf(constraint::color, constraint::value)
+                is AlphaAspectColorConstraint -> listOf(constraint::color, constraint::alpha)
                 is AspectConstraint -> listOf(constraint::value)
                 is ChildBasedSizeConstraint -> listOf(constraint::padding)
                 is ConstantColorConstraint -> listOf(constraint::color)

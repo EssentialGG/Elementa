@@ -4,7 +4,7 @@ import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.dsl.pixels
 import club.sk1er.elementa.state.BasicState
 import club.sk1er.elementa.state.State
-import club.sk1er.elementa.state.toConstraint
+import club.sk1er.elementa.state.pixels
 import club.sk1er.mods.core.universal.UGraphics
 import java.awt.Color
 
@@ -23,7 +23,7 @@ open class UIText @JvmOverloads constructor(
     private var textWidthState = this.textState.map { UGraphics.getStringWidth(it).toFloat() }
 
     init {
-        setWidth(textWidthState.toConstraint())
+        setWidth(textWidthState.pixels())
         setHeight(9.pixels())
     }
 
