@@ -4,13 +4,14 @@ import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.constraints.resolution.ConstraintVisitor
 import club.sk1er.elementa.state.BasicState
 import club.sk1er.elementa.state.State
+import club.sk1er.elementa.state.state
 
 /**
  * Sets this component's X/Y position or width/height to be some
  * multiple of its parents.
  */
 class RelativeConstraint @JvmOverloads constructor(value: Float = 1f) : PositionConstraint, SizeConstraint {
-    var value by BasicState(value)
+    var value by state(value)
 
     override var cachedValue = 0f
     override var recalculate = true
