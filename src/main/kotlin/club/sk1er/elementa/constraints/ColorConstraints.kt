@@ -4,6 +4,7 @@ import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.constraints.resolution.ConstraintVisitor
 import club.sk1er.elementa.state.BasicState
 import club.sk1er.elementa.state.State
+import club.sk1er.elementa.state.state
 import java.awt.Color
 import kotlin.math.sin
 import kotlin.random.Random
@@ -12,7 +13,7 @@ import kotlin.random.Random
  * Sets the color to be a constant, determined color.
  */
 class ConstantColorConstraint(color: Color = Color.WHITE) : ColorConstraint {
-    var color by BasicState(color)
+    var color by state(color)
 
     override var cachedValue: Color = Color.WHITE
     override var recalculate = true
@@ -39,8 +40,8 @@ class ConstantColorConstraint(color: Color = Color.WHITE) : ColorConstraint {
  * Sets the color to be constant but with an alpha based off of its parent.
  */
 class AlphaAspectColorConstraint(color: Color = Color.WHITE, alphaValue: Float = 1f) : ColorConstraint {
-    var color by BasicState(color)
-    var alpha by BasicState(alphaValue)
+    var color by state(color)
+    var alpha by state(alphaValue)
 
     override var cachedValue: Color = Color.WHITE
     override var recalculate = true
