@@ -9,13 +9,13 @@ import kotlin.reflect.jvm.javaField
 abstract class State<T> {
     protected val listeners = mutableListOf<(T) -> Unit>()
 
-    abstract fun getValue(): T
+    abstract fun get(): T
 
-    open fun setValue(value: T) {
+    open fun set(value: T) {
         listeners.forEach { it(value) }
     }
 
-    fun setValue(mapper: (T) -> T) = setValue(mapper(getValue()))
+    fun set(mapper: (T) -> T) = set(mapper(get()))
 
     fun onSetValue(listener: (T) -> Unit): () -> Unit {
         listeners.add(listener)
@@ -24,9 +24,9 @@ abstract class State<T> {
 
     fun onSetValue(listener: Consumer<T>) = onSetValue { listener.accept(it) }
 
-    fun getOrDefault(defaultValue: T) = getValue() ?: defaultValue
+    fun getOrDefault(defaultValue: T) = get() ?: defaultValue
 
-    fun getOrElse(defaultProvider: () -> T) = getValue() ?: defaultProvider()
+    fun getOrElse(defaultProvider: () -> T) = get() ?: defaultProvider()
 
     fun <U> map(mapper: (T) -> U) = MappedState(this, mapper)
 
@@ -45,15 +45,15 @@ abstract class State<T> {
 }
 
 open class BasicState<T>(protected var valueBacker: T) : State<T>() {
-    override fun getValue() = valueBacker
+    override fun get() = valueBacker
 
-    override fun setValue(value: T) {
+    override fun set(value: T) {
         valueBacker = value
-        super.setValue(value)
+        super.set(value)
     }
 }
 
-open class MappedState<T, U>(initialState: State<T>, private val mapper: (T) -> U) : BasicState<U>(mapper(initialState.getValue())) {
+open class MappedState<T, U>(initialState: State<T>, private val mapper: (T) -> U) : BasicState<U>(mapper(initialState.get())) {
     private var removeListener = initialState.onSetValue {
         valueBacker = mapper(it)
     }
@@ -63,13 +63,13 @@ open class MappedState<T, U>(initialState: State<T>, private val mapper: (T) -> 
         removeListener = newState.onSetValue {
             valueBacker = mapper(it)
         }
-        setValue(mapper(newState.getValue()))
+        set(mapper(newState.get()))
     }
 }
 
 class ZippedState<T, U>(firstState: State<T>, secondState: State<U>) : State<Pair<T, U>>() {
-    private var firstCachedValue = firstState.getValue()
-    private var secondCachedValue = secondState.getValue()
+    private var firstCachedValue = firstState.get()
+    private var secondCachedValue = secondState.get()
 
     init {
         firstState.onSetValue {
@@ -80,26 +80,26 @@ class ZippedState<T, U>(firstState: State<T>, secondState: State<U>) : State<Pai
         }
     }
 
-    override fun getValue(): Pair<T, U> = firstCachedValue to secondCachedValue
+    override fun get(): Pair<T, U> = firstCachedValue to secondCachedValue
 }
 
 open class ListState<T>(private var list: List<T>) : State<List<T>>() {
-    override fun getValue() = list
+    override fun get() = list
 
-    override fun setValue(value: List<T>) {
+    override fun set(value: List<T>) {
         this.list = value
-        super.setValue(value)
+        super.set(value)
     }
 
     operator fun get(index: Int) = list[index]
 }
 
 class MutableListState<T>(private var list: MutableList<T>) : State<MutableList<T>>() {
-    override fun getValue() = list
+    override fun get() = list
 
-    override fun setValue(value: MutableList<T>) {
+    override fun set(value: MutableList<T>) {
         this.list = value
-        super.setValue(value)
+        super.set(value)
     }
 
     operator fun get(index: Int) = list[index]
