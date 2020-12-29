@@ -52,29 +52,28 @@ fun getStringSplitToWidth(
 
     while (textPos < text.length) {
         val builder = StringBuilder()
-        var lookingForCode = false
 
         while (textPos < text.length && text[textPos].let { it != ' ' && it != '\n'}) {
             val ch = text[textPos]
-            if (lookingForCode) {
-                lookingForCode = false
-                val nextColor = ChatColor.values().firstOrNull { it.char == ch }
+            if ((ch == '§' || ch == '&') && textPos + 1 < text.length) {
+                val colorCh = text[textPos + 1]
+                val nextColor = ChatColor.values().firstOrNull { it.char == colorCh }
                 if (nextColor != null) {
+                    builder.append('§')
+                    builder.append(colorCh)
+
                     if (nextColor.isFormat) {
                         currChatFormatting = nextColor
                     } else {
                         currChatColor = nextColor
                     }
+
+                    textPos += 2
+                    continue
                 }
             }
 
-            if (!lookingForCode && (ch == '§' || ch == '&')) {
-                lookingForCode = true
-                builder.append('§')
-            } else {
-                builder.append(ch)
-            }
-
+            builder.append(ch)
             textPos++
         }
 
