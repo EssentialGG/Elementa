@@ -5,26 +5,26 @@ import net.minecraft.command.CommandBase
 import net.minecraft.command.ICommandSender
 import net.minecraft.server.MinecraftServer
 
-class ExampleCommand : CommandBase() {
+class ComponentsCommand : CommandBase() {
     //#if MC<=10809
-    override fun getCommandName() = "example"
+    override fun getCommandName() = "components"
 
     override fun getCommandUsage(sender: ICommandSender?) = "/example - open example gui"
 
     override fun getRequiredPermissionLevel() = 0
 
     override fun processCommand(sender: ICommandSender?, args: Array<String>) {
-       ExampleMod.gui = KtTestGui()
+       ExampleMod.gui = ComponentsGui()
     }
     //#else
-    //$$ override fun getName() = "example"
+    //$$ override fun getName() = "components"
     //$$
     //$$ override fun getUsage(sender: ICommandSender) = "/example - open example gui"
     //$$
     //$$ override fun getRequiredPermissionLevel() = 0
     //$$
     //$$ override fun execute(server: MinecraftServer, sender: ICommandSender, args: Array<String>) {
-    //$$     ExampleMod.gui = KtTestGui()
+    //$$     ExampleMod.gui = ComponentsGui()
     //$$ }
     //#endif
 }
@@ -36,20 +36,20 @@ class ExampleCommand : CommandBase() {
 //$$ import net.minecraft.server.command.ServerCommandSource
 //$$ import net.minecraft.server.command.CommandManager
 //$$
-//$$ object ExampleCommand {
+//$$ object ComponentsCommand {
 //$$     fun register(dispatcher: CommandDispatcher<ServerCommandSource>) {
-//$$         dispatcher.register(CommandManager.literal("example")
+//$$         dispatcher.register(CommandManager.literal("components")
 //#else
 //$$ import net.minecraft.command.CommandSource
 //$$ import net.minecraft.command.Commands
 //$$
-//$$ object ExampleCommand {
+//$$ object ComponentsCommand {
 //$$     fun register(dispatcher: CommandDispatcher<CommandSource?>) {
-//$$         dispatcher.register(Commands.literal("example")
+//$$         dispatcher.register(Commands.literal("components")
 //#endif
 //$$             .requires { it.hasPermissionLevel(0) }
 //$$             .executes {
-//$$                 ExampleMod.gui = KtTestGui()
+//$$                 ExampleMod.gui = ComponentsGui()
 //$$                 1
 //$$             })
 //$$     }

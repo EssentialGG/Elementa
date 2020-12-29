@@ -270,7 +270,7 @@ class ComponentsGui : WindowScreen() {
                 """
                     # Markdown!
                     
-                    This is pretty cool. We can now render arbitrary markdown beautifully.
+                    This is pretty cool. We [can](https://google.com) now render arbitrary markdown beautifully.
                     
                     ```
                     We even have code :)

@@ -46,7 +46,10 @@ class ExampleMod {
     //$$ override fun onInitialize() {
     //$$     StencilEffect.enableStencil()
     //$$     MinecraftForge.EVENT_BUS.register(this)
-    //$$     CommandRegistrationCallback.EVENT.register { dispatcher, dedicated -> ExampleCommand.register(dispatcher) }
+    //$$     CommandRegistrationCallback.EVENT.register { dispatcher, dedicated ->
+    //$$         ExampleCommand.register(dispatcher)
+    //$$         ComponentsCommand.register(dispatcher)
+    //$$     }
     //$$ }
     //#else
     //#if MC<=11202
@@ -55,6 +58,7 @@ class ExampleMod {
         StencilEffect.enableStencil()
         MinecraftForge.EVENT_BUS.register(this)
         ClientCommandHandler.instance.registerCommand(ExampleCommand())
+        ClientCommandHandler.instance.registerCommand(ComponentsCommand())
     }
     //#else
     //$$ init {
@@ -66,11 +70,13 @@ class ExampleMod {
     //$$ @SubscribeEvent
     //$$ fun registerCommands(event: RegisterCommandsEvent) {
     //$$     ExampleCommand.register(event.dispatcher)
+    //$$     ComponentsCommand.register(event.dispatcher)
     //$$ }
     //#else
     //$$ @SubscribeEvent
     //$$ fun serverStarting(event: FMLServerStartingEvent) {
     //$$     ExampleCommand.register(event.commandDispatcher)
+    //$$     ComponentsCommand.register(event.commandDispatcher)
     //$$ }
     //#endif
     //#endif
