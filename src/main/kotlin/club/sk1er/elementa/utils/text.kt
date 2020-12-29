@@ -68,10 +68,13 @@ fun getStringSplitToWidth(
                 }
             }
 
-            if (!lookingForCode && ch == '§')
+            if (!lookingForCode && (ch == '§' || ch == '&')) {
                 lookingForCode = true
+                builder.append('§')
+            } else {
+                builder.append(ch)
+            }
 
-            builder.append(ch)
             textPos++
         }
 
