@@ -82,6 +82,11 @@ fun getStringSplitToWidth(
         val word = builder.toString()
         val wordWidth = word.width(textScale)
 
+        if (newline) {
+            currChatColor = ChatColor.WHITE
+            currChatFormatting = null
+        }
+
         if (currLineWidth + wordWidth > maxLineWidthSpace) {
             if (wordWidth > maxLineWidthSpace) {
                 // Split up the word into it's own lines
