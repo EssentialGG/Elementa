@@ -1,6 +1,7 @@
 package club.sk1er.elementa.utils
 
 import club.sk1er.elementa.dsl.width
+import club.sk1er.mods.core.universal.ChatColor
 import club.sk1er.mods.core.universal.UGraphics
 
 fun getStringSplitToWidthTruncated(
@@ -38,18 +39,39 @@ fun getStringSplitToWidth(
     val currLine = StringBuilder()
     var currLineWidth = 0f
     var textPos = 0
+    var currChatColor = ChatColor.WHITE
+    var currChatFormatting: ChatColor? = null
 
     fun pushLine(newLineWidth: Float = 0f) {
         lineList.add(currLine.toString())
         currLine.clear()
         currLineWidth = newLineWidth
+        currLine.append("§${currChatColor.char}")
+        currChatFormatting?.let { currLine.append("§${it.char}") }
     }
 
     while (textPos < text.length) {
         val builder = StringBuilder()
+        var lookingForCode = false
 
         while (textPos < text.length && text[textPos].let { it != ' ' && it != '\n'}) {
-            builder.append(text[textPos])
+            val ch = text[textPos]
+            if (lookingForCode) {
+                lookingForCode = false
+                val nextColor = ChatColor.values().firstOrNull { it.char == ch }
+                if (nextColor != null) {
+                    if (nextColor.isFormat) {
+                        currChatFormatting = nextColor
+                    } else {
+                        currChatColor = nextColor
+                    }
+                }
+            }
+
+            if (!lookingForCode && ch == '§')
+                lookingForCode = true
+
+            builder.append(ch)
             textPos++
         }
 
