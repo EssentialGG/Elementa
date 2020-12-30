@@ -166,15 +166,23 @@ abstract class AbstractTextInput(
                 if (hasSelection()) {
                     deleteSelection()
                 } else if (!cursor.isAtAbsoluteStart) {
-                    val startPos = cursor.offsetColumn(-1).toTextualPos()
+                    val startPos = if (UKeyboard.isCtrlKeyDown()) {
+                        getNearestWordBoundary(cursor, Direction.Left)
+                    } else cursor.offsetColumn(-1).toTextualPos()
                     val endPos = cursor.toTextualPos()
+
                     commitTextRemoval(startPos, endPos, selectAfterUndo = false)
                 }
             } else if (keyCode == 211) { // Delete
                 if (hasSelection()) {
                     deleteSelection()
                 } else if (!cursor.isAtAbsoluteEnd) {
-                    commitTextRemoval(cursor, cursor.offsetColumn(1), selectAfterUndo = false)
+                    val startPos = cursor.toTextualPos()
+                    val endPos = if (UKeyboard.isCtrlKeyDown()) {
+                        getNearestWordBoundary(cursor, Direction.Right)
+                    } else cursor.offsetColumn(1).toTextualPos()
+
+                    commitTextRemoval(startPos, endPos, selectAfterUndo = false)
                 }
             } else if (keyCode == 199) { // Home
                 if (UKeyboard.isShiftKeyDown()) {
@@ -708,8 +716,7 @@ abstract class AbstractTextInput(
         }
     }
 
-    protected inner class LinePosition(val line: Int, val column: Int, val isVisual: Boolean) :
-        Comparable<LinePosition> {
+    protected inner class LinePosition(val line: Int, val column: Int, val isVisual: Boolean) : Comparable<LinePosition> {
         val isAtLineStart: Boolean get() = column == 0
         val isAtLineEnd: Boolean get() = column == lines[line].length
 
