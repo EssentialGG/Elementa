@@ -9,9 +9,10 @@ fun getStringSplitToWidthTruncated(
     maxLineWidth: Float,
     textScale: Float,
     maxLines: Int,
-    ensureSpaceAtEndOfLines: Boolean = true
+    ensureSpaceAtEndOfLines: Boolean = true,
+    processColorCodes: Boolean = true
 ): List<String> {
-    val lines = getStringSplitToWidth(text, maxLineWidth, textScale, ensureSpaceAtEndOfLines)
+    val lines = getStringSplitToWidth(text, maxLineWidth, textScale, ensureSpaceAtEndOfLines, processColorCodes)
     if (lines.size <= maxLines)
         return lines
 
@@ -31,7 +32,8 @@ fun getStringSplitToWidth(
     text: String,
     maxLineWidth: Float,
     textScale: Float,
-    ensureSpaceAtEndOfLines: Boolean = true
+    ensureSpaceAtEndOfLines: Boolean = true,
+    processColorCodes: Boolean = true
 ): List<String> {
     val spaceWidth = ' '.width(textScale)
     val maxLineWidthSpace = maxLineWidth * textScale - if (ensureSpaceAtEndOfLines) spaceWidth else 0f
@@ -46,8 +48,10 @@ fun getStringSplitToWidth(
         lineList.add(currLine.toString())
         currLine.clear()
         currLineWidth = newLineWidth
-        currLine.append("§${currChatColor.char}")
-        currChatFormatting?.let { currLine.append("§${it.char}") }
+        if (processColorCodes) {
+            currLine.append("§${currChatColor.char}")
+            currChatFormatting?.let { currLine.append("§${it.char}") }
+        }
     }
 
     while (textPos < text.length) {
@@ -55,7 +59,7 @@ fun getStringSplitToWidth(
 
         while (textPos < text.length && text[textPos].let { it != ' ' && it != '\n'}) {
             val ch = text[textPos]
-            if ((ch == '§' || ch == '&') && textPos + 1 < text.length) {
+            if (processColorCodes && (ch == '§' || ch == '&') && textPos + 1 < text.length) {
                 val colorCh = text[textPos + 1]
                 val nextColor = ChatColor.values().firstOrNull { it.char == colorCh }
                 if (nextColor != null) {
@@ -81,7 +85,7 @@ fun getStringSplitToWidth(
         val word = builder.toString()
         val wordWidth = word.width(textScale)
 
-        if (newline) {
+        if (processColorCodes && newline) {
             currChatColor = ChatColor.WHITE
             currChatFormatting = null
         }

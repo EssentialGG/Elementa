@@ -463,7 +463,7 @@ abstract class AbstractTextInput(
 
     // TODO: Look into optimization of this algorithm
     protected open fun splitTextForWrapping(text: String, maxLineWidth: Float): List<String> {
-        return getStringSplitToWidth(text, maxLineWidth, getTextScale())
+        return getStringSplitToWidth(text, maxLineWidth, getTextScale(), processColorCodes = false)
     }
 
     protected fun commitTextRemoval(startPos: LinePosition, endPos: LinePosition, selectAfterUndo: Boolean) {
