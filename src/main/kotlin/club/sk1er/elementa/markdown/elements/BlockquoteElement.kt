@@ -2,6 +2,7 @@ package club.sk1er.elementa.markdown.elements
 
 import club.sk1er.elementa.components.UIBlock
 import club.sk1er.elementa.markdown.Document
+import club.sk1er.elementa.markdown.MarkdownConfig
 import club.sk1er.elementa.markdown.MarkdownState
 
 class BlockquoteElement private constructor(private val lines: List<Element>) : Element() {
@@ -41,7 +42,10 @@ class BlockquoteElement private constructor(private val lines: List<Element>) : 
 
     companion object {
         // TODO: Headers must start with a '>' character to be included in the block quote
-        fun parse(lines: MutableList<String>): BlockquoteElement? {
+        fun parse(lines: MutableList<String>, config: MarkdownConfig): BlockquoteElement? {
+            if (!config.blockquoteConfig.enabled)
+                return null
+
             if (lines.isEmpty())
                 return null
 
@@ -69,7 +73,7 @@ class BlockquoteElement private constructor(private val lines: List<Element>) : 
 
             assert(consumedLines.isNotEmpty())
 
-            return BlockquoteElement(Document.fromLines(consumedLines)?.elements ?: return null)
+            return BlockquoteElement(Document.fromLines(consumedLines, config)?.elements ?: return null)
         }
 
         fun matches(line: String): Boolean {

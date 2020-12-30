@@ -19,7 +19,8 @@ data class HeaderConfig @JvmOverloads constructor(
     val level3: HeaderLevelConfig = HeaderLevelConfig(fontColor, 1.33f, 8f, 4f),
     val level4: HeaderLevelConfig = HeaderLevelConfig(fontColor, 1.0f, 6f, 3f),
     val level5: HeaderLevelConfig = HeaderLevelConfig(fontColor, 0.7f, 4f, 2f),
-    val level6: HeaderLevelConfig = HeaderLevelConfig(Color(155, 155, 155), 0.7f, 4f, 2f)
+    val level6: HeaderLevelConfig = HeaderLevelConfig(Color(155, 155, 155), 0.7f, 4f, 2f),
+    val enabled: Boolean = true
 )
 
 data class HeaderLevelConfig @JvmOverloads constructor(
@@ -38,7 +39,8 @@ data class ListConfig @JvmOverloads constructor(
     val elementSpacing: Float = 5f,
     val spaceBeforeText: Float = 4f,
     val spaceBeforeList: Float = 5f,
-    val spaceAfterList: Float = 5f
+    val spaceAfterList: Float = 5f,
+    val enabled: Boolean = true
 )
 
 data class TextConfig @JvmOverloads constructor(
@@ -57,7 +59,8 @@ data class InlineCodeConfig @JvmOverloads constructor(
     val leftPadding: Float = 2f,
     val topPadding: Float = 2f,
     val rightPadding: Float = 2f,
-    val bottomPadding: Float = 2f
+    val bottomPadding: Float = 2f,
+    val enabled: Boolean = true
 )
 
 data class CodeblockConfig @JvmOverloads constructor(
@@ -71,7 +74,8 @@ data class CodeblockConfig @JvmOverloads constructor(
     val rightPadding: Float = 5f,
     val bottomPadding: Float = 5f,
     val topMargin: Float = 10f,
-    val bottomMargin: Float = 10f
+    val bottomMargin: Float = 10f,
+    val enabled: Boolean = true
 )
 
 data class URLConfig @JvmOverloads constructor(
@@ -79,7 +83,8 @@ data class URLConfig @JvmOverloads constructor(
     val showBarOnHover: Boolean = true,
     val barColor: Color = Color(6, 217, 210),
     val barWidth: Float = 1f,
-    val spaceBeforeBar: Float = 1f
+    val spaceBeforeBar: Float = 1f,
+    val enabled: Boolean = true
 )
 
 data class BlockquoteConfig @JvmOverloads constructor(
@@ -89,5 +94,6 @@ data class BlockquoteConfig @JvmOverloads constructor(
     val spaceAfterBlockquote: Float = 7f,
     val spaceBetweenLines: Float = 2f,
     val dividerColor: Color = Color(80, 80, 80),
-    val dividerWidth: Float = 2f
+    val dividerWidth: Float = 2f,
+    val enabled: Boolean = true
 )

@@ -1,5 +1,6 @@
 package club.sk1er.elementa.markdown.elements
 
+import club.sk1er.elementa.markdown.MarkdownConfig
 import club.sk1er.elementa.markdown.MarkdownState
 
 class ParagraphElement private constructor(private val textElement: TextElement) : Element() {
@@ -12,7 +13,7 @@ class ParagraphElement private constructor(private val textElement: TextElement)
     }
 
     companion object {
-        fun parse(lines: MutableList<String>): ParagraphElement? {
+        fun parse(lines: MutableList<String>, config: MarkdownConfig): ParagraphElement? {
             var consumed = false
             val builder = StringBuilder()
 
@@ -24,16 +25,16 @@ class ParagraphElement private constructor(private val textElement: TextElement)
                 if (line.isBlank())
                     break
 
-                if (BlockquoteElement.matches(line))
+                if (config.blockquoteConfig.enabled && BlockquoteElement.matches(line))
                     break
 
-                if (HeaderElement.matches(line))
+                if (config.headerConfig.enabled && HeaderElement.matches(line))
                     break
 
-                if (ListElement.matches(line))
+                if (config.listConfig.enabled && ListElement.matches(line))
                     break
 
-                if (CodeblockElement.matches(lines))
+                if (config.codeblockConfig.enabled && CodeblockElement.matches(lines))
                     break
 
                 if (consumed)
@@ -46,7 +47,7 @@ class ParagraphElement private constructor(private val textElement: TextElement)
             if (!consumed)
                 return null
 
-            return ParagraphElement(TextElement.parse(builder.toString()))
+            return ParagraphElement(TextElement.parse(builder.toString(), config))
         }
     }
 }

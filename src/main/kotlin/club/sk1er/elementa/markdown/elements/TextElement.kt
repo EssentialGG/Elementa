@@ -4,6 +4,7 @@ import club.sk1er.elementa.components.UIBlock
 import club.sk1er.elementa.components.UIRoundedRectangle
 import club.sk1er.elementa.dsl.width
 import club.sk1er.elementa.markdown.MarkdownComponent
+import club.sk1er.elementa.markdown.MarkdownConfig
 import club.sk1er.elementa.markdown.MarkdownState
 import club.sk1er.elementa.utils.drawTexture
 import club.sk1er.mods.core.universal.UDesktop
@@ -341,7 +342,7 @@ class TextElement internal constructor(internal val spans: List<Span>) : Element
     companion object {
         private val specialChars = listOf('*', '_', '`', '[', ']', ')', '!')
 
-        fun parse(text: String): TextElement {
+        fun parse(text: String, config: MarkdownConfig): TextElement {
             val style = Style()
             var spanStart = 0
             val spans = mutableListOf<Span>()
@@ -381,6 +382,11 @@ class TextElement internal constructor(internal val spans: List<Span>) : Element
                         }
                     }
                     '`' -> {
+                        if (!config.inlineCodeConfig.enabled) {
+                            index++
+                            continue@loop
+                        }
+
                         addSpan(index)
                         if (style.code) {
                             style.code = false
@@ -405,6 +411,11 @@ class TextElement internal constructor(internal val spans: List<Span>) : Element
                         continue@loop
                     }
                     '[' -> {
+                        if (!config.urlConfig.enabled) {
+                            index++
+                            continue@loop
+                        }
+
                         if (index + 3 >= text.length) {
                             index++
                             continue@loop

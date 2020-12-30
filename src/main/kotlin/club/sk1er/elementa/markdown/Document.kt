@@ -15,33 +15,33 @@ class Document private constructor(internal val elements: List<Element>) : Eleme
     }
 
     companion object {
-        fun elementFromLines(lines: MutableList<String>): Element? {
-            val blockquote = BlockquoteElement.parse(lines)
+        private fun elementFromLines(lines: MutableList<String>, config: MarkdownConfig): Element? {
+            val blockquote = BlockquoteElement.parse(lines, config)
             if (blockquote != null)
                 return blockquote
 
-            val header = HeaderElement.parse(lines)
+            val header = HeaderElement.parse(lines, config)
             if (header != null)
                 return header
 
-            val list = ListElement.parse(lines)
+            val list = ListElement.parse(lines, config)
             if (list != null)
                 return list
 
-            val paragraph = ParagraphElement.parse(lines)
+            val paragraph = ParagraphElement.parse(lines, config)
             if (paragraph != null)
                 return paragraph
 
-            val codeblock = CodeblockElement.parse(lines)
+            val codeblock = CodeblockElement.parse(lines, config)
             if (codeblock != null)
                 return codeblock
 
             return null
         }
 
-        fun fromString(text: String): Document? = fromLines(text.lines().toMutableList())
+        fun fromString(text: String, config: MarkdownConfig): Document? = fromLines(text.lines().toMutableList(), config)
 
-        fun fromLines(lines: MutableList<String>): Document? {
+        fun fromLines(lines: MutableList<String>, config: MarkdownConfig): Document? {
             val elements = mutableListOf<Element>()
             var addBreak = false
 
@@ -64,7 +64,7 @@ class Document private constructor(internal val elements: List<Element>) : Eleme
                     continue
                 }
 
-                val element = elementFromLines(lines) ?: return null
+                val element = elementFromLines(lines, config) ?: return null
 
                 if (addBreak && element is ParagraphElement)
                     elements.add(BreakElement())

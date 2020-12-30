@@ -27,7 +27,7 @@ class MarkdownComponent @JvmOverloads constructor(
     private val codeFontRenderer: FontRenderer = defaultCodeFontRenderer
 ) : UIComponent() {
     private val documentFuture = CompletableFuture.supplyAsync {
-        Document.fromString(text)
+        Document.fromString(text, config)
     }
     private var document: Document? = null
 

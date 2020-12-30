@@ -3,6 +3,7 @@ package club.sk1er.elementa.markdown.elements
 import club.sk1er.elementa.components.UIBlock
 import club.sk1er.elementa.markdown.HeaderConfig
 import club.sk1er.elementa.markdown.HeaderLevelConfig
+import club.sk1er.elementa.markdown.MarkdownConfig
 import club.sk1er.elementa.markdown.MarkdownState
 
 class HeaderElement private constructor(
@@ -115,7 +116,10 @@ class HeaderElement private constructor(
     }
 
     companion object {
-        fun parse(lines: MutableList<String>): HeaderElement? {
+        fun parse(lines: MutableList<String>, config: MarkdownConfig): HeaderElement? {
+            if (!config.headerConfig.enabled)
+                return null
+
             if (lines.isEmpty())
                 return null
 
@@ -127,7 +131,7 @@ class HeaderElement private constructor(
 
             lines.removeAt(0)
             val text = if (level + 1 >= line.length) "" else line.substring(level + 1)
-            return HeaderElement(TextElement.parse(text), level)
+            return HeaderElement(TextElement.parse(text, config), level)
         }
 
         fun matches(line: String): Boolean {

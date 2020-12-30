@@ -1,6 +1,7 @@
 package club.sk1er.elementa.markdown.elements
 
 import club.sk1er.elementa.components.UIRoundedRectangle
+import club.sk1er.elementa.markdown.MarkdownConfig
 import club.sk1er.elementa.markdown.MarkdownState
 
 class CodeblockElement private constructor(val text: TextElement) : Element() {
@@ -50,7 +51,10 @@ class CodeblockElement private constructor(val text: TextElement) : Element() {
     }
 
     companion object {
-        fun parse(lines: MutableList<String>): CodeblockElement? {
+        fun parse(lines: MutableList<String>, config: MarkdownConfig): CodeblockElement? {
+            if (!config.codeblockConfig.enabled)
+                return null
+
             if (!matches(lines))
                 return null
 

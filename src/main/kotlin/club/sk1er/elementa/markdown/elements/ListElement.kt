@@ -1,6 +1,7 @@
 package club.sk1er.elementa.markdown.elements
 
 import club.sk1er.elementa.dsl.width
+import club.sk1er.elementa.markdown.MarkdownConfig
 import club.sk1er.elementa.markdown.MarkdownState
 import club.sk1er.mods.core.universal.UGraphics
 
@@ -60,7 +61,10 @@ class ListElement private constructor(
     }
 
     companion object {
-        fun parse(lines: MutableList<String>): ListElement? {
+        fun parse(lines: MutableList<String>, config: MarkdownConfig): ListElement? {
+            if (!config.listConfig.enabled)
+                return null
+
             var consumed = false
             val items = mutableListOf<ListItem>()
 
@@ -81,7 +85,7 @@ class ListElement private constructor(
                 lines.removeAt(0)
                 consumed = true
                 items.add(ListItem(
-                    TextElement.parse(if (index + 2 >= line.length) "" else line.substring(index + 2)),
+                    TextElement.parse(if (index + 2 >= line.length) "" else line.substring(index + 2), config),
                     level
                 ))
             }
