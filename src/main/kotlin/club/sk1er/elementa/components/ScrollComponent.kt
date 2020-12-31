@@ -490,8 +490,8 @@ class ScrollComponent @JvmOverloads constructor(
     }
 
     override fun insertChildAt(component: UIComponent, index: Int) = apply {
-        if (index < 0 || index > children.size) {
-            println("Bad index given to insertChildAt (index: $index, children size: ${children.size}")
+        if (index < 0 || index > allChildren.size) {
+            println("Bad index given to insertChildAt (index: $index, children size: ${allChildren.size}")
             return@apply
         }
 
@@ -505,7 +505,7 @@ class ScrollComponent @JvmOverloads constructor(
     }
 
     override fun insertChildBefore(newComponent: UIComponent, targetComponent: UIComponent) = apply {
-        val indexOfExisting = children.indexOf(targetComponent)
+        val indexOfExisting = allChildren.indexOf(targetComponent)
         if (indexOfExisting == -1) {
             println("targetComponent given to insertChildBefore is not a child of this component")
             return@apply
@@ -515,7 +515,7 @@ class ScrollComponent @JvmOverloads constructor(
     }
 
     override fun insertChildAfter(newComponent: UIComponent, targetComponent: UIComponent) = apply {
-        val indexOfExisting = children.indexOf(targetComponent)
+        val indexOfExisting = allChildren.indexOf(targetComponent)
         if (indexOfExisting == -1) {
             println("targetComponent given to insertChildAfter is not a child of this component")
             return@apply
@@ -525,7 +525,7 @@ class ScrollComponent @JvmOverloads constructor(
     }
 
     override fun replaceChild(newComponent: UIComponent, componentToReplace: UIComponent) = apply {
-        val indexOfExisting = children.indexOf(componentToReplace)
+        val indexOfExisting = allChildren.indexOf(componentToReplace)
         if (indexOfExisting == -1) {
             println("componentToReplace given to replaceChild is not a child of this component")
             return@apply
