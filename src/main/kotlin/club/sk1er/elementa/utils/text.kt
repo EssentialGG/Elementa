@@ -41,7 +41,7 @@ fun getStringSplitToWidth(
     val currLine = StringBuilder()
     var currLineWidth = 0f
     var textPos = 0
-    var currChatColor = ChatColor.WHITE
+    var currChatColor: ChatColor? = null
     var currChatFormatting: ChatColor? = null
 
     fun pushLine(newLineWidth: Float = 0f) {
@@ -49,8 +49,8 @@ fun getStringSplitToWidth(
         currLine.clear()
         currLineWidth = newLineWidth
         if (processColorCodes) {
-            currLine.append("§${currChatColor.char}")
-            currChatFormatting?.let { currLine.append("§${it.char}") }
+            currChatColor?.also { currLine.append("§${it.char}") }
+            currChatFormatting?.also { currLine.append("§${it.char}") }
         }
     }
 
