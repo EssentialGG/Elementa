@@ -5,14 +5,14 @@ import club.sk1er.elementa.constraints.*
 import club.sk1er.elementa.constraints.resolution.ConstraintVisitor
 import java.awt.Color
 
-infix fun SuperConstraint<Float>.min(minConstraint: SuperConstraint<Float>) =
-    MinConstraint(this, minConstraint)
+infix fun SuperConstraint<Float>.coerceAtLeast(minConstraint: SuperConstraint<Float>) =
+    CoerceAtLeastConstraint(this, minConstraint)
 
-infix fun SuperConstraint<Float>.max(minConstraint: SuperConstraint<Float>) =
-    MaxConstraint(this, minConstraint)
+infix fun SuperConstraint<Float>.coerceAtMost(minConstraint: SuperConstraint<Float>) =
+    CoerceAtMostConstraint(this, minConstraint)
 
-fun SuperConstraint<Float>.minMax(minConstraint: SuperConstraint<Float>, maxConstraint: SuperConstraint<Float>) =
-    MaxConstraint(MinConstraint(this, minConstraint), maxConstraint)
+fun SuperConstraint<Float>.coerceIn(minConstraint: SuperConstraint<Float>, maxConstraint: SuperConstraint<Float>) =
+    CoerceInConstraint(this, minConstraint, maxConstraint)
 
 operator fun SuperConstraint<Float>.plus(other: SuperConstraint<Float>) =
     AdditiveConstraint(this, other)

@@ -95,8 +95,8 @@ class InfoBlockNode<T>(private val constraint: SuperConstraint<T>, private val n
     companion object {
         private fun constraintHasChildren(constraint: SuperConstraint<*>) = when (constraint) {
             is AdditiveConstraint,
-            is MaxConstraint,
-            is MinConstraint,
+            is CoerceAtMostConstraint,
+            is CoerceAtLeastConstraint,
             is SubtractiveConstraint -> true
             is AnimationComponent<*> -> true
             else -> false

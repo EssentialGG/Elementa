@@ -231,11 +231,11 @@ class InfoBlock(private val inspector: Inspector) : UIContainer() {
                 add(getNodeFromConstraint(constraint.constraint1))
                 add(getNodeFromConstraint(constraint.constraint2))
             }
-            is MaxConstraint -> baseInfoNode.withChildren {
+            is CoerceAtMostConstraint -> baseInfoNode.withChildren {
                 add(getNodeFromConstraint(constraint.constraint))
                 add(getNodeFromConstraint(constraint.maxConstraint))
             }
-            is MinConstraint -> baseInfoNode.withChildren {
+            is CoerceAtLeastConstraint -> baseInfoNode.withChildren {
                 add(getNodeFromConstraint(constraint.constraint))
                 add(getNodeFromConstraint(constraint.minConstraint))
             }

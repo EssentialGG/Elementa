@@ -302,8 +302,8 @@ class ComponentsGui : WindowScreen() {
     class ComponentType(componentName: String, initBlock: ComponentType.() -> Unit) : UIContainer() {
         init {
             constrain {
-                x = CramSiblingConstraint(10f) min 5.pixels()
-                y = CramSiblingConstraint(10f) min 5.pixels()
+                x = CramSiblingConstraint(10f) coerceAtLeast 5.pixels()
+                y = CramSiblingConstraint(10f) coerceAtLeast 5.pixels()
                 width = ChildBasedMaxSizeConstraint() + 5.pixels()
                 height = ChildBasedSizeConstraint(padding = 5f) + 5.pixels()
             }

@@ -1,10 +1,9 @@
 package club.sk1er.elementa.components.input
 
 import club.sk1er.elementa.constraints.HeightConstraint
-import club.sk1er.elementa.dsl.max
+import club.sk1er.elementa.dsl.coerceAtMost
 import club.sk1er.elementa.dsl.pixels
 import club.sk1er.elementa.dsl.width
-import club.sk1er.elementa.utils.getStringSplitToWidth
 import club.sk1er.elementa.utils.getStringSplitToWidthTruncated
 import club.sk1er.mods.core.universal.UKeyboard
 import java.awt.Color
@@ -58,7 +57,7 @@ class UIMultilineTextInput @JvmOverloads constructor(
         if (maxHeight == null)
             return
 
-        setHeight((9 * visualLines.size).pixels().max(maxHeight!!))
+        setHeight((9 * visualLines.size).pixels().coerceAtMost(maxHeight!!))
     }
 
     override fun onEnterPressed() {

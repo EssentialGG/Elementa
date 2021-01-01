@@ -1,7 +1,7 @@
 package club.sk1er.elementa.components.input
 
 import club.sk1er.elementa.constraints.WidthConstraint
-import club.sk1er.elementa.dsl.minMax
+import club.sk1er.elementa.dsl.coerceIn
 import club.sk1er.elementa.dsl.pixels
 import club.sk1er.elementa.dsl.width
 import club.sk1er.mods.core.universal.UGraphics
@@ -82,7 +82,7 @@ open class UITextInput @JvmOverloads constructor(
     override fun recalculateDimensions() {
         if (minWidth != null && maxWidth != null) {
             val width = if (!hasText() && !this.active) placeholderWidth else getText().width()
-            setWidth(width.pixels().minMax(minWidth!!, maxWidth!!))
+            setWidth(width.pixels().coerceIn(minWidth!!, maxWidth!!))
         }
     }
 
