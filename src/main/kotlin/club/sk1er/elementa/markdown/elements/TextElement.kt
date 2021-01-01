@@ -144,7 +144,7 @@ class TextElement internal constructor(internal val spans: List<Span>) : Element
 
                     if (textIndex - 1 < text.lastIndex && text[textIndex] != ' ') {
                         // Handle word wrapping
-                        while (text[textIndex - 1] != ' ') {
+                        while (textIndex >= 1 && text[textIndex - 1] != ' ') {
                             if (textIndex - 1 == 0) {
                                 state.gotoNextLine()
                                 textIndex = text.length
