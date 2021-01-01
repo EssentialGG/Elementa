@@ -25,6 +25,8 @@ fun max(first: SuperConstraint<Float>, second: SuperConstraint<Float>) = MaxCons
 
 fun min(first: SuperConstraint<Float>, second: SuperConstraint<Float>) = MinConstraint(first, second)
 
+infix fun <T, U : SuperConstraint<T>> U.boundTo(component: UIComponent) = apply { this.to(component) }
+
 fun basicXConstraint(calculator: (component: UIComponent) -> Float) = object : XConstraint {
     override var cachedValue = 0f
     override var recalculate = true

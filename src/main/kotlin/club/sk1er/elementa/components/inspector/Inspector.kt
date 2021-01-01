@@ -102,8 +102,8 @@ class Inspector @JvmOverloads constructor(
 
         val treeBlockScroller = ScrollComponent().constrain {
             y = SiblingConstraint()
-            width = RelativeConstraint(1f).to(treeBlock) as WidthConstraint
-            height = RelativeConstraint(1f).to(treeBlock) coerceAtMost (maxSectionHeight ?: RelativeConstraint(1 / 3f).to(rootWindow))
+            width = RelativeConstraint(1f) boundTo treeBlock
+            height = RelativeConstraint(1f).boundTo(treeBlock) coerceAtMost (maxSectionHeight ?: RelativeConstraint(1 / 3f) boundTo rootWindow)
         } childOf container
 
         treeBlock childOf treeBlockScroller
@@ -126,8 +126,8 @@ class Inspector @JvmOverloads constructor(
 
         infoBlockScroller = ScrollComponent().constrain {
             y = SiblingConstraint()
-            width = RelativeConstraint(1f).to(infoBlock) as WidthConstraint
-            height = RelativeConstraint(1f).to(infoBlock) coerceAtMost (maxSectionHeight ?: RelativeConstraint(1 / 3f).to(rootWindow))
+            width = RelativeConstraint(1f) boundTo infoBlock
+            height = RelativeConstraint(1f) boundTo infoBlock coerceAtMost (maxSectionHeight ?: RelativeConstraint(1 / 3f) boundTo rootWindow)
         }
 
         infoBlock childOf infoBlockScroller

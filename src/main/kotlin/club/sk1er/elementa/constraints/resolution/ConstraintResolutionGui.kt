@@ -3,17 +3,11 @@ package club.sk1er.elementa.constraints.resolution
 import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.WindowScreen
 import club.sk1er.elementa.components.*
-import club.sk1er.elementa.components.inspector.Inspector
-import club.sk1er.elementa.components.inspector.InspectorNode
 import club.sk1er.elementa.constraints.*
 import club.sk1er.elementa.constraints.animation.Animations
 import club.sk1er.elementa.dsl.*
 import club.sk1er.elementa.effects.OutlineEffect
 import club.sk1er.elementa.effects.ScissorEffect
-import club.sk1er.mods.core.universal.UGraphics
-import club.sk1er.mods.core.universal.UMinecraft
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats
-import org.lwjgl.opengl.GL11
 import java.awt.Color
 
 class ConstraintResolutionGui(
@@ -62,7 +56,7 @@ class ConstraintResolutionGui(
         } childOf titleContent
 
         val tabContainer = UIContainer().constrain {
-            y = SiblingConstraint(10f).to(titleContent) as YConstraint
+            y = SiblingConstraint(10f) boundTo titleContent
             width = RelativeConstraint()
             height = ChildBasedSizeConstraint()
         } childOf container
@@ -75,7 +69,7 @@ class ConstraintResolutionGui(
 
         val tabHighlight = UIBlock(Color(200, 200, 200)).constrain {
             y = (-2).pixels(alignOpposite = true)
-            width = RelativeConstraint(0.5f).to(tabContent) as WidthConstraint
+            width = RelativeConstraint(0.5f) boundTo tabContent
             height = 2.pixels()
         } childOf tabContent
 
