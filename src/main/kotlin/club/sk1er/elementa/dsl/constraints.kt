@@ -3,6 +3,7 @@ package club.sk1er.elementa.dsl
 import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.constraints.*
 import club.sk1er.elementa.constraints.resolution.ConstraintVisitor
+import club.sk1er.elementa.constraints.MinConstraint
 import java.awt.Color
 
 infix fun SuperConstraint<Float>.coerceAtLeast(minConstraint: SuperConstraint<Float>) =
@@ -19,6 +20,10 @@ operator fun SuperConstraint<Float>.plus(other: SuperConstraint<Float>) =
 
 operator fun SuperConstraint<Float>.minus(other: SuperConstraint<Float>) =
     SubtractiveConstraint(this, other)
+
+fun max(first: SuperConstraint<Float>, second: SuperConstraint<Float>) = MaxConstraint(first, second)
+
+fun min(first: SuperConstraint<Float>, second: SuperConstraint<Float>) = MinConstraint(first, second)
 
 fun basicXConstraint(calculator: (component: UIComponent) -> Float) = object : XConstraint {
     override var cachedValue = 0f
