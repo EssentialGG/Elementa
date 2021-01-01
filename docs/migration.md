@@ -101,3 +101,8 @@ Changes in the usage of these components are as follows:
 ### UIShape
 
 The function `UIShape#addVertex` now returns the `this` instance of `UIShape`.
+
+## Constraints
+
+The `.max` and `.min` DSL functions have been renamed to `.coerceAtMost` and `.coerceAtLeast`, which nicely matches the
+Kotlin stdlib naming. 

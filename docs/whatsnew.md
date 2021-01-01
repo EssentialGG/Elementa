@@ -130,6 +130,16 @@ Added the [ChildBasedRangeConstraint](../src/main/kotlin/club/sk1er/elementa/con
 evaluates the width/height difference between the component's two furthest children. This constraint is tricky to use
 as this component and all of its children need to have their X/Y position not reliant on any parental width/height.
 
+### MinConstraint/MaxConstraint
+
+The `MinConstraint` and `MaxConstraint` constraints that existed previously have been renamed to `CoerceAtLeastConstraint`
+and `CoerceAtMostConstraint`, to match the Kotlin stdlib naming. In addition, there is now a `CoerceInConstraint`, as well
+as a `.coerceIn` DSL extension function. 
+
+With those constraints renamed, we have added _new_ constraints called `MinConstraint` and `MaxConstraint`. These now do
+what you would expect; `MaxConstraint` chooses the larger of the two constraints, and `MinConstraint` chooses the 
+smaller. These constraints have top-level helper functions called `max(a, b)` and `min(a, b)`.
+
 ### AnimatingConstraints
 
 There is now a way to delay an animation from completing for a certain amount of time after it has actually completed
