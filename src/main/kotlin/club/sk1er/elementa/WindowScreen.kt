@@ -18,7 +18,7 @@ abstract class WindowScreen(
     restoreCurrentGuiOnClose: Boolean = false,
     newGuiScale: Int = -1
 ) : UScreen(restoreCurrentGuiOnClose, newGuiScale) {
-    protected val window = Window()
+    val window = Window()
     private var isInitialized = false
 
     init {
