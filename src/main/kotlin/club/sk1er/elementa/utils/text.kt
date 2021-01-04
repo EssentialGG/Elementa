@@ -86,7 +86,7 @@ fun getStringSplitToWidth(
         val wordWidth = word.width(textScale)
 
         if (processColorCodes && newline) {
-            currChatColor = ChatColor.WHITE
+            currChatColor = null
             currChatFormatting = null
         }
 
