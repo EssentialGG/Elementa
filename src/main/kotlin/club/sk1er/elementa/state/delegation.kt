@@ -5,6 +5,17 @@ import kotlin.reflect.KProperty
 import kotlin.reflect.KProperty0
 import kotlin.reflect.jvm.isAccessible
 
+/**
+ * Allows Kotlin property delegation to and from a State.
+ *
+ * The entry point for this class is generally the top-level
+ * utility methods provided in this file. See those functions
+ * for example usage.
+ *
+ * @see club.sk1er.elementa.state.state
+ * @see club.sk1er.elementa.state.map
+ * @see club.sk1er.elementa.state.zip
+ */
 open class StateDelegator<T>(val state: State<T>) : ReadWriteProperty<Any?, T> {
     override fun getValue(thisRef: Any?, property: KProperty<*>) = state.get()
 
@@ -19,12 +30,63 @@ class MappedStateDelegator<T, U>(state: State<T>, mapper: (T) -> U) :
 class ZippedStateDelegator<T, U>(firstState: State<T>, secondState: State<U>) :
     StateDelegator<Pair<T, U>>(ZippedState(firstState, secondState))
 
+/**
+ * A top-level utility function allowing simple state delegation.
+ *
+ * Example usage:
+ *
+ *     object Test {
+ *         private var foo by state(1)
+ *
+ *         fun main() {
+ *             println(foo) // prints 1
+ *             foo = 10
+ *             println(foo) // prints 10
+ *         }
+ *     }
+ */
 fun <T> state(target: T) = StateDelegator(BasicState(target))
 
+/**
+ * A top-level utility function allowing simple mapped state delegation.
+ *
+ * Example usage:
+ *
+ *     object Test {
+ *         private var foo by state(1)
+ *         private val bar by map(::foo) { it * 2 }
+ *
+ *         fun main() {
+ *             println(bar) // prints 2
+ *             foo = 10
+ *             println(bar) // prints 20
+ *         }
+ *     }
+ */
 fun <T, U> map(property: KProperty0<T>, mapper: (T) -> U): MappedStateDelegator<T, U> {
     return MappedStateDelegator(getDelegate(property).state, mapper)
 }
 
+/**
+ * A top-level utility function allowing simple zipped state delegation.
+ *
+ * This function accepts two Kotlin properties and returns a delegator which
+ * zips their values together into a [Pair].
+ *
+ * Example usage:
+ *
+ *     object Test {
+ *         private var foo by state(1)
+ *         private var bar by state(2)
+ *         private val baz by zip(::foo, ::bar)
+ *
+ *         fun main() {
+ *             println(baz) // prints (1, 2)
+ *             foo = 10
+ *             println(baz) // prints (10, 2)
+ *         }
+ *     }
+ */
 fun <T, U> zip(property1: KProperty0<T>, property2: KProperty0<U>): ZippedStateDelegator<T, U> {
     return ZippedStateDelegator(getDelegate(property1).state, getDelegate(property2).state)
 }
