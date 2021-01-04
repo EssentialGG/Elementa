@@ -153,3 +153,25 @@ Renamed the old function `AnimationConstraints#complete` to `AnimationConstraint
 
 Added option to draw the outline after all children have drawn via the `drawAfterChildren: Boolean` constructor
 parameter. 
+
+## Other
+
+### Timer API
+
+`UIComponent` now has a couple functions relating to timers, to allow repetitive actions:
+
+- `startTimer(interval: Long, delay: Long, callback: (id: Int) -> Unit): Int`
+    - Starts a timer which activates the callback after a period of `interval` milliseconds has elapsed. Waits `delay`
+      milliseconds before activating. The callback receives the timer ID for cancelling the timer if needed.
+    - Returns the timer ID
+- `stopTimer(id: Int): Boolean`
+    - Accepts a timer ID and cancels the timer. Returns true if the timer exists and was cancelled, false otherwise.
+- `startDelay(delay: Long, callback: () -> Unit): Int`
+    - Runs the callback once after `delay` milliseconds. 
+    - This is implemented as a normal timer, so it returns the timer ID.
+- `stopDelay(id: Int): Boolean`
+    - Just an alias for `stopTimer`, will work with the return values of both `startTimer` and `startDelay`
+- `timer(interval: Long, delay: Long, callback: (id: Int) -> Unit): () -> Unit`
+    - Like `startTimer`, but returns a function which, when executed, will cancel the timer
+- `delay(delay: Long, callback: () -> Unit): () -> Unit`
+    - Like `startDelay`, but returns a function which, when executed, will cancel the timer

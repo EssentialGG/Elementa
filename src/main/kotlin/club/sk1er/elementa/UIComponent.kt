@@ -70,8 +70,12 @@ abstract class UIComponent : Observable() {
      */
     private var indexInParent = 0
 
-    // For the field animation API
+    // Field animation API
     private val fieldAnimationQueue = ConcurrentLinkedDeque<FieldAnimationComponent<*>>()
+
+    // Timer API
+    private val activeTimers = mutableMapOf<Int, Timer>()
+    private var nextTimerId = 0
 
     private var isInitialized = false
 
@@ -542,6 +546,24 @@ abstract class UIComponent : Observable() {
             if (it.isComplete())
                 queueIterator.remove()
         }
+
+        // Process timers
+        val timerIterator = activeTimers.iterator()
+        timerIterator.forEachRemaining { (id, timer) ->
+            val time = System.currentTimeMillis()
+            timer.timeLeft -= (time - timer.lastTime)
+            timer.lastTime = time
+
+            if (!timer.hasDelayed && timer.timeLeft <= 0L) {
+                timer.hasDelayed = true
+                timer.timeLeft += timer.interval
+            }
+
+            while (timer.timeLeft <= 0L) {
+                timer.callback(id)
+                timer.timeLeft += timer.interval
+            }
+        }
     }
 
     open fun alwaysDrawChildren(): Boolean {
@@ -861,6 +883,50 @@ abstract class UIComponent : Observable() {
             return false
         }
         return true
+    }
+
+    /**
+     * Timer API
+     */
+
+    fun startTimer(interval: Long, delay: Long = 0, callback: (Int) -> Unit): Int {
+        val id = nextTimerId++
+        activeTimers[id] = Timer(delay, interval, callback)
+        return id
+    }
+
+    fun stopTimer(id: Int): Boolean = activeTimers.remove(id) != null
+
+    fun timer(interval: Long, delay: Long = 0, callback: (Int) -> Unit): () -> Unit {
+        val id = startTimer(interval, delay, callback)
+        return { stopTimer(id) }
+    }
+
+    fun startDelay(delay: Long, callback: () -> Unit): Int {
+        return startTimer(delay) {
+            callback()
+            stopTimer(it)
+        }
+    }
+
+    fun stopDelay(id: Int) = stopTimer(id)
+
+    fun delay(delay: Long, callback: () -> Unit): () -> Unit {
+        val id = startDelay(delay, callback)
+        return { stopDelay(id) }
+    }
+
+    private class Timer(val delay: Long, val interval: Long, val callback: (Int) -> Unit) {
+        var hasDelayed = false
+        var timeLeft = delay
+        var lastTime = System.currentTimeMillis()
+
+        init {
+            if (delay == 0L) {
+                hasDelayed = true
+                timeLeft = interval
+            }
+        }
     }
 
     companion object {
