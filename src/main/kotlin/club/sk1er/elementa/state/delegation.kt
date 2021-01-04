@@ -5,7 +5,7 @@ import kotlin.reflect.KProperty
 import kotlin.reflect.KProperty0
 import kotlin.reflect.jvm.isAccessible
 
-class StateDelegator<T>(val state: State<T>) : ReadWriteProperty<Any?, T> {
+open class StateDelegator<T>(val state: State<T>) : ReadWriteProperty<Any?, T> {
     override fun getValue(thisRef: Any?, property: KProperty<*>) = state.get()
 
     override fun setValue(thisRef: Any?, property: KProperty<*>, value: T) {
@@ -13,24 +13,27 @@ class StateDelegator<T>(val state: State<T>) : ReadWriteProperty<Any?, T> {
     }
 }
 
-class MappedStateDelegator<T, U>(val state: State<T>, val mapper: (T) -> U) : ReadWriteProperty<Any?, U> {
-    private var cachedValue = mapper(state.get())
+class MappedStateDelegator<T, U>(state: State<T>, mapper: (T) -> U) :
+    StateDelegator<U>(MappedState(state, mapper))
 
-    init {
-        state.onSetValue {
-            cachedValue = mapper(it)
-        }
-    }
-
-    override fun getValue(thisRef: Any?, property: KProperty<*>) = cachedValue
-
-    override fun setValue(thisRef: Any?, property: KProperty<*>, value: U) { }
-}
+class ZippedStateDelegator<T, U>(firstState: State<T>, secondState: State<U>) :
+    StateDelegator<Pair<T, U>>(ZippedState(firstState, secondState))
 
 fun <T> state(target: T) = StateDelegator(BasicState(target))
 
-@Suppress("UNCHECKED_CAST")
 fun <T, U> map(property: KProperty0<T>, mapper: (T) -> U): MappedStateDelegator<T, U> {
+    return MappedStateDelegator(getDelegate(property).state, mapper)
+}
+
+fun <T, U> zip(property1: KProperty0<T>, property2: KProperty0<U>): ZippedStateDelegator<T, U> {
+    return ZippedStateDelegator(getDelegate(property1).state, getDelegate(property2).state)
+}
+
+private fun <T> getDelegate(property: KProperty0<T>): StateDelegator<T> {
     property.isAccessible = true
-    return MappedStateDelegator((property.getDelegate() as StateDelegator<T>).state, mapper)
+    val delegate = property.getDelegate() ?:
+        throw IllegalArgumentException("map cannot be used on a non-delegated property")
+    @Suppress("UNCHECKED_CAST")
+    return (delegate as? StateDelegator<T>) ?:
+        throw IllegalArgumentException("map can only be used on StateDelegator<T> properties")
 }

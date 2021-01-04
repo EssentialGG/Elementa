@@ -55,57 +55,42 @@ open class BasicState<T>(protected var valueBacker: T) : State<T>() {
 
 open class MappedState<T, U>(initialState: State<T>, private val mapper: (T) -> U) : BasicState<U>(mapper(initialState.get())) {
     private var removeListener = initialState.onSetValue {
-        valueBacker = mapper(it)
+        set(mapper(it))
     }
 
     fun rebind(newState: State<T>) {
         removeListener()
         removeListener = newState.onSetValue {
-            valueBacker = mapper(it)
+            set(mapper(it))
         }
         set(mapper(newState.get()))
     }
 }
 
-class ZippedState<T, U>(firstState: State<T>, secondState: State<U>) : State<Pair<T, U>>() {
-    private var firstCachedValue = firstState.get()
-    private var secondCachedValue = secondState.get()
+class ZippedState<T, U>(
+    firstState: State<T>,
+    secondState: State<U>
+) : BasicState<Pair<T, U>>(firstState.get() to secondState.get()) {
+    private var removeFirstListener = firstState.onSetValue {
+        set(it to get().second)
+    }
+    private var removeSecondListener = secondState.onSetValue {
+        set(get().first to it)
+    }
 
-    init {
-        firstState.onSetValue {
-            firstCachedValue = it
+    fun rebindFirst(newState: State<T>) {
+        removeFirstListener()
+        removeFirstListener = newState.onSetValue {
+            set(it to get().second)
         }
-        secondState.onSetValue {
-            secondCachedValue = it
+        set(newState.get() to get().second)
+    }
+
+    fun rebindSecond(newState: State<U>) {
+        removeSecondListener()
+        removeSecondListener = newState.onSetValue {
+            set(get().first to it)
         }
-    }
-
-    override fun get(): Pair<T, U> = firstCachedValue to secondCachedValue
-}
-
-open class ListState<T>(private var list: List<T>) : State<List<T>>() {
-    override fun get() = list
-
-    override fun set(value: List<T>) {
-        this.list = value
-        super.set(value)
-    }
-
-    operator fun get(index: Int) = list[index]
-}
-
-class MutableListState<T>(private var list: MutableList<T>) : State<MutableList<T>>() {
-    override fun get() = list
-
-    override fun set(value: MutableList<T>) {
-        this.list = value
-        super.set(value)
-    }
-
-    operator fun get(index: Int) = list[index]
-
-    operator fun set(index: Int, value: T) {
-        list[index] = value
-        listeners.forEach { it(list) }
+        set(get().first to newState.get())
     }
 }
