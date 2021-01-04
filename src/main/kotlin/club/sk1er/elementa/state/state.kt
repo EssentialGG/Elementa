@@ -1,10 +1,7 @@
 package club.sk1er.elementa.state
 
-import java.lang.invoke.MethodHandles
 import java.util.function.Consumer
 import java.util.function.Function
-import kotlin.reflect.KProperty0
-import kotlin.reflect.jvm.javaField
 
 abstract class State<T> {
     protected val listeners = mutableListOf<(T) -> Unit>()
@@ -33,15 +30,6 @@ abstract class State<T> {
     fun <U> map(mapper: Function<T, U>): State<U> = map { mapper.apply(it) }
 
     fun <U> zip(otherState: State<U>): State<Pair<T, U>> = ZippedState(this, otherState)
-
-    companion object {
-        fun <U> setDelegate(property: KProperty0<*>, newState: State<U>) {
-            val delegate = MethodHandles.lookup().unreflectSetter(property.javaField.also {
-                it?.isAccessible = true
-            })
-            delegate(newState)
-        }
-    }
 }
 
 open class BasicState<T>(protected var valueBacker: T) : State<T>() {
