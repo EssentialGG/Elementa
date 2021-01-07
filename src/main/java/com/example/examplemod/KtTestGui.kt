@@ -234,6 +234,13 @@ class KtTestGui : WindowScreen() {
 //            height = RelativeConstraint(0.25f)
 //        } childOf window
 
+        UIWrappedText("This is some cool text I have, it would be a shame if it didnt work right").constrain {
+            x = CenterConstraint()
+            y = 0.pixels(alignOpposite = true)
+            width = 150.pixels()
+            textScale = 1.25.pixels()
+        } childOf window
+
         val inspector = Inspector(window).constrain {
             x = 20.pixels(alignOpposite = true)
             y = 20.pixels()

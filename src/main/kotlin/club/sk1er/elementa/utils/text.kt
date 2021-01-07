@@ -36,7 +36,7 @@ fun getStringSplitToWidth(
     processColorCodes: Boolean = true
 ): List<String> {
     val spaceWidth = ' '.width(textScale)
-    val maxLineWidthSpace = maxLineWidth * textScale - if (ensureSpaceAtEndOfLines) spaceWidth else 0f
+    val maxLineWidthSpace = maxLineWidth - if (ensureSpaceAtEndOfLines) spaceWidth else 0f
     val lineList = mutableListOf<String>()
     val currLine = StringBuilder()
     var currLineWidth = 0f
