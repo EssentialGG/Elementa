@@ -80,6 +80,7 @@ abstract class UIComponent : Observable() {
     private var nextTimerId = 0
 
     private var isInitialized = false
+    private var isFloating = false
 
     /**
      * Adds [component] to this component's children tree,
@@ -401,7 +402,9 @@ abstract class UIComponent : Observable() {
 
         val parentWindow = Window.of(this)
 
-        this.children.forEach { child ->
+        this.children.filterNot {
+            it.isFloating
+        }.forEach { child ->
             // If the child is outside the current viewport, don't waste time drawing
             if (!this.alwaysDrawChildren() && !parentWindow.isAreaVisible(
                     child.getLeft().toDouble(),
@@ -413,6 +416,9 @@ abstract class UIComponent : Observable() {
 
             child.draw()
         }
+
+        if (this is Window)
+            drawFloatingComponents()
 
         afterDraw()
     }
@@ -785,6 +791,8 @@ abstract class UIComponent : Observable() {
      */
 
     fun setFloating(floating: Boolean) {
+        isFloating = floating
+
         if (floating) {
             Window.of(this).addFloatingComponent(this)
         } else {
