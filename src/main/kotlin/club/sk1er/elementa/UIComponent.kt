@@ -75,6 +75,8 @@ abstract class UIComponent : Observable() {
 
     // Timer API
     private val activeTimers = mutableMapOf<Int, Timer>()
+    // We have to store stopped timers separately to avoid ConcurrentModificationException
+    private val stoppedTimers = mutableSetOf<Int>()
     private var nextTimerId = 0
 
     private var isInitialized = false
@@ -550,6 +552,9 @@ abstract class UIComponent : Observable() {
         // Process timers
         val timerIterator = activeTimers.iterator()
         timerIterator.forEachRemaining { (id, timer) ->
+            if (id in stoppedTimers)
+                return@forEachRemaining
+
             val time = System.currentTimeMillis()
             timer.timeLeft -= (time - timer.lastTime)
             timer.lastTime = time
@@ -564,6 +569,8 @@ abstract class UIComponent : Observable() {
                 timer.timeLeft += timer.interval
             }
         }
+
+        stoppedTimers.forEach { activeTimers.remove(it) }
     }
 
     open fun alwaysDrawChildren(): Boolean {
@@ -895,7 +902,7 @@ abstract class UIComponent : Observable() {
         return id
     }
 
-    fun stopTimer(id: Int): Boolean = activeTimers.remove(id) != null
+    fun stopTimer(id: Int) = stoppedTimers.add(id)
 
     fun timer(interval: Long, delay: Long = 0, callback: (Int) -> Unit): () -> Unit {
         val id = startTimer(interval, delay, callback)
