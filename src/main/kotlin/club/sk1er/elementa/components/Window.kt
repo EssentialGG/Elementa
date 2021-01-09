@@ -4,8 +4,11 @@ import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.constraints.resolution.ConstraintResolutionGui
 import club.sk1er.elementa.constraints.resolution.ConstraintResolver
 import club.sk1er.elementa.effects.ScissorEffect
+import club.sk1er.elementa.font.DefaultFonts
+import club.sk1er.elementa.font.FontRenderer
 import club.sk1er.mods.core.universal.*
 import org.lwjgl.opengl.GL11
+import java.awt.Color
 import java.util.concurrent.ConcurrentLinkedQueue
 
 /**
@@ -30,6 +33,8 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
 
     override fun afterInitialization() {
         enqueueRenderOperation {
+            DefaultFonts.load()
+            FontRenderer.initShaders()
             UICircle.initShaders()
             UIRoundedRectangle.initShaders()
         }
@@ -70,6 +75,8 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
 
             mouseMove(this)
             super.draw()
+            UIBlock.drawBlock(Color.BLACK, 5.0, 5.0, 500.0, 200.0)
+            DefaultFonts.MINECRAFT.drawString("ABCDEFGHIJKLMNOPQRSTUVWXYZ", Color.WHITE, 5f, 10f, 9f)
         } catch (e: Throwable) {
             cancelDrawing = true
 

@@ -1,198 +1,99 @@
 package club.sk1er.elementa.font
 
+import club.sk1er.elementa.font.data.Font
+import club.sk1er.elementa.font.data.Glyph
+import club.sk1er.elementa.shaders.*
+import club.sk1er.elementa.utils.Vector2f
+import club.sk1er.elementa.utils.Vector4f
 import club.sk1er.mods.core.universal.UGraphics
-import club.sk1er.mods.core.universal.UResolution
-import net.minecraft.client.Minecraft
-import net.minecraft.util.StringUtils
+import net.minecraft.client.renderer.GlStateManager
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats
 import org.lwjgl.opengl.GL11
-import org.newdawn.slick.UnicodeFont
-import org.newdawn.slick.font.effects.ColorEffect
+import org.lwjgl.opengl.GL13
 import java.awt.Color
-import java.awt.Font
-import java.util.*
-import java.util.regex.Pattern
 
-class FontRenderer private constructor(private val fontSize: Float) {
-    private val cachedStringWidth: MutableMap<String, Float> = HashMap()
-    private var unicodeFont: UnicodeFont? = null
-    private var prevScaleFactor = UResolution.scaleFactor.toInt()
-
-    constructor(font: Font, fontSize: Float) : this(fontSize) {
-        setUnicodeFont(font)
-    }
-
-    constructor(unicodeFont: UnicodeFont, fontSize: Float) : this(fontSize) {
-        setUnicodeFont(unicodeFont)
-    }
-
-    constructor(supportedFont: SupportedFont, fontSize: Float) : this(supportedFont.resourcePath, fontSize)
-
-    constructor(fontResourcePath: String, fontSize: Float) : this(fontSize) {
-        try {
-            setUnicodeFont(Font.createFont(Font.TRUETYPE_FONT, this.javaClass.getResourceAsStream(fontResourcePath)))
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
-
-    private fun setUnicodeFont(font: Font) {
-        setUnicodeFont(UnicodeFont(font.deriveFont(fontSize * prevScaleFactor / 2)))
-    }
-
-    private fun setUnicodeFont(unicodeFont: UnicodeFont?) {
-        this.unicodeFont = unicodeFont?.apply {
-            addAsciiGlyphs()
-            effects.add(ColorEffect(Color.WHITE))
-            loadGlyphs()
-        }
-    }
-
-    fun drawStringScaled(text: String, givenX: Int, givenY: Int, color: Int, givenScale: Double) {
-        UGraphics.pushMatrix()
-        UGraphics.translate(givenX.toDouble(), givenY.toDouble(), 0.0)
-        UGraphics.scale(givenScale, givenScale, givenScale)
-        drawString(text, 0f, 0f, color)
-        UGraphics.popMatrix()
-    }
-
-    @JvmOverloads
-    fun drawString(text: String, xPos: Float, yPos: Float, color: Int, shadow: Boolean = true) {
-        var x = xPos
-        var y = yPos
-
-        if (shadow)
-            drawString(StringUtils.stripControlCodes(text), x + 0.5f, y + 0.5f, 0x000000, false)
-
-        val scaleFactor = UResolution.scaleFactor.toInt()
-        try {
-            if (scaleFactor != prevScaleFactor) {
-                prevScaleFactor = scaleFactor
-                unicodeFont?.font?.deriveFont(fontSize * prevScaleFactor / 2)?.let(::setUnicodeFont)
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-        if (unicodeFont == null)
+class FontRenderer(private val font: Font) {
+    fun drawString(string: String, color: Color, x: Float, y: Float, pointSize: Float) {
+        if (!areShadersInitialized())
             return
 
-        UGraphics.pushMatrix()
-        UGraphics.scale(1f / prevScaleFactor, 1f / prevScaleFactor, 1f / prevScaleFactor)
+        val fontTexture = font.getTexture()
 
-        x *= prevScaleFactor
-        y *= prevScaleFactor
-        val originalX = x
+        GlStateManager.setActiveTexture(GL13.GL_TEXTURE0)
+        GlStateManager.bindTexture(fontTexture.glTextureId)
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR)
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR)
 
-        val red = (color shr 16 and 255).toFloat() / 255.0f
-        val green = (color shr 8 and 255).toFloat() / 255.0f
-        val blue = (color and 255).toFloat() / 255.0f
-        val alpha = (color shr 24 and 255).toFloat() / 255.0f
-        GL11.glColor4f(red, green, blue, alpha)
+        shader.bindIfUsable()
+        samplerUniform.setValue(0)
+        pxRangeUniform.setValue(font.fontInfo.atlas.distanceRange)
 
-        UGraphics.disableLighting()
-        UGraphics.enableBlend()
-        UGraphics.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO)
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA)
+        var currentX = x
 
-        val parts = COLOR_CODE_PATTERN.split(text)
-        var index = 0
-        var currentColor = color
-        val chars = text.toCharArray()
+        string.forEach { char ->
+            val glyph = font.fontInfo.glyphs[char.toInt()] ?: return@forEach
+            val planeBounds = glyph.planeBounds ?: return@forEach
 
-        parts.forEach { part ->
-            part.split("\n".toRegex()).forEach { newlinePart ->
-                newlinePart.split("\r".toRegex()).forEach { carriagePart ->
-                    unicodeFont!!.drawString(x, y, carriagePart, org.newdawn.slick.Color(currentColor))
-                    x += unicodeFont!!.getWidth(carriagePart).toFloat()
+            drawGlyph(
+                glyph,
+                color,
+                currentX,
+                y,
+                (planeBounds.right - planeBounds.left) * pointSize,
+                (planeBounds.top - planeBounds.bottom) * pointSize
+            )
 
-                    index += carriagePart.length
-                    if (index < chars.size && chars[index] == '\r') {
-                        x = originalX
-                        index++
-                    }
-                }
-
-                if (index < chars.size && chars[index] == '\n') {
-                    x = originalX
-                    y += getHeight(newlinePart) * 2
-                    index++
-                }
-            }
-
-            if (index + 1 < chars.size && chars[index] == '§') {
-                val colorChar = chars[index + 1]
-                val codeIndex = "0123456789abcdef".indexOf(colorChar)
-                currentColor = when {
-                    codeIndex != -1 -> colorCodes[codeIndex]
-                    colorChar != 'r' -> color
-                    else -> currentColor
-                }
-                index += 2
-            }
+            currentX += (glyph.advance * pointSize)
         }
 
-        GL11.glColor4f(1f, 1f, 1f, 1f)
-        UGraphics.bindTexture(0)
-        UGraphics.popMatrix()
+        shader.unbindIfUsable()
     }
 
-    fun drawCenteredString(text: String, x: Float, y: Float, color: Int) {
-        drawString(text, x - getWidth(text).toInt() / 2, y, color)
-    }
+    private fun drawGlyph(glyph: Glyph, color: Color, x: Float, y: Float, width: Float, height: Float) {
+        val atlasBounds = glyph.atlasBounds ?: return
+        val atlas = font.fontInfo.atlas
+        val textureTop = 1.0 - (atlasBounds.top / atlas.height)
+        val textureBottom = 1.0 - (atlasBounds.bottom / atlas.height)
+        val textureLeft = (atlasBounds.left / atlas.width).toDouble()
+        val textureRight = (atlasBounds.right / atlas.width).toDouble()
 
-    fun drawCenteredTextScaled(text: String, givenX: Int, givenY: Int, color: Int, givenScale: Double) {
-        UGraphics.pushMatrix()
-        UGraphics.translate(givenX.toDouble(), givenY.toDouble(), 0.0)
-        UGraphics.scale(givenScale, givenScale, givenScale)
-        drawCenteredString(text, 0f, 0f, color)
-        UGraphics.popMatrix()
-    }
+        fgColorUniform.setValue(Vector4f(color.red / 255f, color.green / 255f, color.blue / 255f, color.alpha / 255f))
+        glyphSizeUniform.setValue(
+            Vector2f(
+                atlasBounds.right - atlasBounds.left,
+                atlasBounds.top - atlasBounds.bottom
+            )
+        )
 
-    fun drawCenteredStringWithShadow(text: String, x: Float, y: Float, color: Int) {
-        drawCenteredString(StringUtils.stripControlCodes(text), x + 0.5f, y + 0.5f, color)
-        drawCenteredString(text, x, y, color)
-    }
-
-    fun getWidth(text: String): Float {
-        if (cachedStringWidth.size > 1000)
-            cachedStringWidth.clear()
-        return cachedStringWidth.computeIfAbsent(text) {
-            val stripped = Pattern.compile("(?i)§[0-9A-FK-OR]").matcher(text).replaceAll("")
-            unicodeFont!!.getWidth(stripped) / prevScaleFactor.toFloat()
-        }
-    }
-
-    fun getCharWidth(c: Char): Float {
-        return unicodeFont!!.getWidth(c.toString()).toFloat()
-    }
-
-    fun getHeight(s: String?): Float {
-        return unicodeFont!!.getHeight(s) / 2.0f
-    }
-
-    enum class SupportedFont(val resourcePath: String) {
-        FiraCode("/fonts/FiraMono-Regular.ttf")
+        val worldRenderer = UGraphics.getFromTessellator()
+        worldRenderer.begin(7, DefaultVertexFormats.POSITION_TEX)
+        val doubleX = x.toDouble()
+        val doubleY = y.toDouble()
+        worldRenderer.pos(doubleX, doubleY + height, 0.0).tex(textureLeft, textureBottom).endVertex()
+        worldRenderer.pos(doubleX + width, doubleY + height, 0.0).tex(textureRight, textureBottom).endVertex()
+        worldRenderer.pos(doubleX + width, doubleY, 0.0).tex(textureRight, textureTop).endVertex()
+        worldRenderer.pos(doubleX, doubleY, 0.0).tex(textureLeft, textureTop).endVertex()
+        UGraphics.draw()
     }
 
     companion object {
-        private val COLOR_CODE_PATTERN = Pattern.compile("§[0123456789abcdefklmnor]")
+        private lateinit var shader: Shader
+        private lateinit var samplerUniform: IntUniform
+        private lateinit var pxRangeUniform: FloatUniform
+        private lateinit var fgColorUniform: Vec4Uniform
+        private lateinit var glyphSizeUniform: Vec2Uniform
 
-        private val colorCodes = listOf(
-            0x000000,
-            0x0000AA,
-            0x00AA00,
-            0x00AAAA,
-            0xAA0000,
-            0xAA00AA,
-            0xFFAA00,
-            0xAAAAAA,
-            0x555555,
-            0x5555FF,
-            0x55FF55,
-            0x55FFFF,
-            0xFF5555,
-            0xFF55FF,
-            0xFFFF55,
-            0xFFFFFF
-        )
+        fun areShadersInitialized() = ::shader.isInitialized
+
+        fun initShaders() {
+            if (areShadersInitialized())
+                return
+
+            shader = Shader("font", "font")
+            samplerUniform = IntUniform(shader.getUniformLocation("msdf"))
+            pxRangeUniform = FloatUniform(shader.getUniformLocation("pxRange"))
+            fgColorUniform = Vec4Uniform(shader.getUniformLocation("fgColor"))
+            glyphSizeUniform = Vec2Uniform(shader.getUniformLocation("glyphSize"))
+        }
     }
 }

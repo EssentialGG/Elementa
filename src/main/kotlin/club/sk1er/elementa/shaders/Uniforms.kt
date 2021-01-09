@@ -16,6 +16,13 @@ class FloatUniform(location: Int) : ShaderUniform<Float>(location) {
     }
 }
 
+class IntUniform(location: Int) : ShaderUniform<Int>(location) {
+    override fun setValue(value: Int) {
+        if (Shaders.newShaders) GL20.glUniform1i(location, value)
+        else ARBShaderObjects.glUniform1iARB(location, value)
+    }
+}
+
 class Vec4Uniform(location: Int) : ShaderUniform<Vector4f>(location) {
     override fun setValue(value: Vector4f) {
         if (Shaders.newShaders) GL20.glUniform4f(location, value.x, value.y, value.z, value.w)

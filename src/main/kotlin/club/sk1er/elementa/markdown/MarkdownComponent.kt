@@ -9,7 +9,7 @@ import club.sk1er.elementa.constraints.FillConstraint
 import club.sk1er.elementa.constraints.RelativeConstraint
 import club.sk1er.elementa.dsl.*
 import club.sk1er.elementa.effects.ScissorEffect
-import club.sk1er.elementa.font.FontRenderer
+import club.sk1er.elementa.font.old.FontRenderer
 import java.awt.Color
 import java.util.concurrent.CompletableFuture
 
