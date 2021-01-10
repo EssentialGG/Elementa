@@ -6,11 +6,14 @@ import club.sk1er.elementa.shaders.*
 import club.sk1er.elementa.utils.Vector2f
 import club.sk1er.elementa.utils.Vector4f
 import club.sk1er.mods.core.universal.UGraphics
+import club.sk1er.mods.core.universal.UMinecraft
 import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats
 import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL13
 import java.awt.Color
+import kotlin.math.ceil
+import kotlin.math.roundToInt
 
 class FontRenderer(private val font: Font) {
     fun drawString(string: String, color: Color, x: Float, y: Float, pointSize: Float) {
@@ -28,8 +31,9 @@ class FontRenderer(private val font: Font) {
         samplerUniform.setValue(0)
         pxRangeUniform.setValue(font.fontInfo.atlas.distanceRange)
 
-        var currentX = x
+        val guiScale = UMinecraft.getMinecraft().gameSettings.guiScale
 
+        var currentX = x
         string.forEach { char ->
             val glyph = font.fontInfo.glyphs[char.toInt()] ?: return@forEach
             val planeBounds = glyph.planeBounds ?: return@forEach
@@ -44,6 +48,7 @@ class FontRenderer(private val font: Font) {
             )
 
             currentX += (glyph.advance * pointSize)
+            currentX = (currentX * guiScale).roundToInt().toFloat() / guiScale
         }
 
         shader.unbindIfUsable()

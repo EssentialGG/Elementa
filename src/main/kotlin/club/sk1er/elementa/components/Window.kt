@@ -76,7 +76,11 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
             mouseMove(this)
             super.draw()
             UIBlock.drawBlock(Color.BLACK, 5.0, 5.0, 500.0, 200.0)
-            DefaultFonts.MINECRAFT.drawString("ABCDEFGHIJKLMNOPQRSTUVWXYZ", Color.WHITE, 5f, 10f, 9f)
+            DefaultFonts.MINECRAFT.drawString("ABCDEFGHIJKLMNOPQRSTUVWXYZ", Color.WHITE, 5f, 10f, 10f)
+            UGraphics.drawString("ABCDEFGHIJKLMNOPQRSTUVWXYZ", 5f, 20f, Color.WHITE.rgb, false)
+            DefaultFonts.MINECRAFT.drawString("ABCDEFGHIJKLMNOPQRSTUVWXYZ", Color.WHITE, 5f, 30f, 9f)
+            DefaultFonts.MINECRAFT.drawString("ABCDEFGHIJKLMNOPQRSTUVWXYZ", Color.WHITE, 5f, 40f, 6f)
+            DefaultFonts.MINECRAFT.drawString("ABCDEFGHIJKLMNOPQRSTUVWXYZ", Color.WHITE, 5f, 50f, 14f)
         } catch (e: Throwable) {
             cancelDrawing = true
 
