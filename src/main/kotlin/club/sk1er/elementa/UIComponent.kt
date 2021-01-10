@@ -299,11 +299,15 @@ abstract class UIComponent : Observable() {
      * that are being hovered, it will NOT consider this component as hovered.
      */
     open fun isHovered(): Boolean {
+        val (mouseX, mouseY) = getMousePosition()
+        return isPointInside(mouseX, mouseY)
+    }
+
+    protected fun getMousePosition(): Pair<Float, Float> {
         val scaledHeight = UResolution.scaledHeight
         val mouseX = UMouse.getScaledX().toFloat()
         val mouseY = scaledHeight - UMouse.getTrueY().toFloat() * scaledHeight / UResolution.windowHeight - 1f
-
-        return isPointInside(mouseX, mouseY)
+        return mouseX to mouseY
     }
 
     open fun isPointInside(x: Float, y: Float): Boolean {
@@ -435,8 +439,10 @@ abstract class UIComponent : Observable() {
         effects.forEach { it.beforeChildrenDraw() }
     }
 
-    open fun mouseMove() {
-        val hovered = isHovered()
+    open fun mouseMove(window: Window) {
+        val hovered = isHovered() && window.hoveredFloatingComponent.let {
+            it == null || it == this || isComponentInParentChain(it)
+        }
 
         if (hovered && !currentlyHovered) {
             mouseEnterAction()
@@ -446,7 +452,7 @@ abstract class UIComponent : Observable() {
             currentlyHovered = false
         }
 
-        this.children.forEach { it.mouseMove() }
+        this.children.forEach { it.mouseMove(window) }
     }
 
     /**
@@ -898,6 +904,17 @@ abstract class UIComponent : Observable() {
             return false
         }
         return true
+    }
+
+    private fun isComponentInParentChain(target: UIComponent): Boolean {
+        var component: UIComponent = this
+        while (component.hasParent && component !is Window) {
+            component = component.parent
+            if (component == target)
+                return true
+        }
+
+        return false
     }
 
     /**

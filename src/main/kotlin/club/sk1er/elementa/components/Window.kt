@@ -18,6 +18,7 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
 
     private var floatingComponents = mutableListOf<UIComponent>()
 
+    var hoveredFloatingComponent: UIComponent? = null
     private var focusedComponent: UIComponent? = null
     private var componentRequestingFocus: UIComponent? = null
 
@@ -58,7 +59,16 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
                 this.systemTime += 1000 / animationFPS
             }
 
-            mouseMove()
+            hoveredFloatingComponent = null
+            val (mouseX, mouseY) = getMousePosition()
+            for (component in floatingComponents.reversed()) {
+                if (component.isPointInside(mouseX, mouseY)) {
+                    hoveredFloatingComponent = component
+                    break
+                }
+            }
+
+            mouseMove(this)
             super.draw()
         } catch (e: Throwable) {
             cancelDrawing = true
@@ -100,10 +110,22 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
         floatingComponents.forEach(UIComponent::draw)
     }
 
+    override fun mouseScroll(delta: Double) {
+        val (mouseX, mouseY) = getMousePosition()
+        for (floatingComponent in floatingComponents.reversed()) {
+            if (floatingComponent.isPointInside(mouseX, mouseY)) {
+                floatingComponent.mouseScroll(delta)
+                return
+            }
+        }
+
+        super.mouseScroll(delta)
+    }
+
     override fun mouseClick(mouseX: Double, mouseY: Double, button: Int) {
         currentMouseButton = button
 
-        for (floatingComponent in floatingComponents) {
+        for (floatingComponent in floatingComponents.reversed()) {
             if (floatingComponent.isPointInside(mouseX.toFloat(), mouseY.toFloat())) {
                 floatingComponent.mouseClick(mouseX, mouseY, button)
                 dealWithFocusRequests()
