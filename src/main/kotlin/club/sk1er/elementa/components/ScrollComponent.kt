@@ -18,7 +18,6 @@ import java.util.concurrent.CopyOnWriteArrayList
 import kotlin.math.abs
 import kotlin.math.max
 
-
 /**
  * Basic scroll component that will only draw what is currently visible.
  *
@@ -33,8 +32,11 @@ class ScrollComponent @JvmOverloads constructor(
     private val horizontalScrollOpposite: Boolean = false,
     private val verticalScrollOpposite: Boolean = false,
     private val pixelsPerScroll: Float = 15f,
+    private val scrollAcceleration: Float = 1.0f,
     customScissorBoundingBox: UIComponent? = null
 ) : UIContainer() {
+    private var animationFPS: Int? = null
+
     private val actualHolder = UIContainer().constrain {
         x = innerPadding.pixels()
         y = innerPadding.pixels()
@@ -73,6 +75,7 @@ class ScrollComponent @JvmOverloads constructor(
 
     private var isAutoScrolling = false
     private var autoScrollBegin: Pair<Float, Float> = -1f to -1f
+    private var currentScrollAcceleration: Float = 1.0f
 
     val allChildren = CopyOnWriteArrayList<UIComponent>()
 
@@ -144,6 +147,12 @@ class ScrollComponent @JvmOverloads constructor(
         }
 
         super.draw()
+    }
+
+    override fun afterInitialization() {
+        super.afterInitialization()
+
+        animationFPS = Window.of(this).animationFPS
     }
 
     /**
@@ -344,10 +353,12 @@ class ScrollComponent @JvmOverloads constructor(
 
     private fun onScroll(delta: Float, isHorizontal: Boolean) {
         if (isHorizontal) {
-            horizontalOffset += delta * pixelsPerScroll
+            horizontalOffset += delta * pixelsPerScroll * currentScrollAcceleration
         } else {
-            verticalOffset += delta * pixelsPerScroll
+            verticalOffset += delta * pixelsPerScroll * currentScrollAcceleration
         }
+
+        currentScrollAcceleration = (currentScrollAcceleration + (scrollAcceleration - 1.0f) * 0.15f).coerceIn(0f, scrollAcceleration)
 
         needsUpdate = true
     }
@@ -450,6 +461,9 @@ class ScrollComponent @JvmOverloads constructor(
 
     override fun animationFrame() {
         super.animationFrame()
+
+        currentScrollAcceleration = (currentScrollAcceleration - ((scrollAcceleration - 1.0f) / (animationFPS ?: 244).toFloat()))
+            .coerceAtLeast(1.0f)
 
         if (!isAutoScrolling) return
 

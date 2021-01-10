@@ -9,6 +9,7 @@ import club.sk1er.elementa.components.inspector.Inspector
 import club.sk1er.elementa.constraints.*
 import club.sk1er.elementa.constraints.animation.Animations
 import club.sk1er.elementa.dsl.*
+import club.sk1er.elementa.effects.OutlineEffect
 import club.sk1er.elementa.effects.ScissorEffect
 import java.awt.Color
 import java.net.URL
@@ -260,6 +261,35 @@ class KtTestGui : WindowScreen() {
                 height = 50.pixels()
             } childOf window
         }
+
+        fun makeScroller(accel: Float, color: Color): UIComponent {
+            val scroll = ScrollComponent(scrollAcceleration = accel).constrain {
+                width = 100.pixels()
+                height = 100.pixels()
+            } effect OutlineEffect(color, 2f, true)
+
+            for (i in 0 until 10) {
+                val c = (255f * (i / 10f)).toInt()
+                UIBlock(Color(c, c, c)).constrain {
+                    x = CenterConstraint()
+                    y = SiblingConstraint() + 10.percent()
+                    width = 80.percent()
+                    height = 80.percent()
+                } childOf scroll
+            }
+
+            return scroll
+        }
+
+        val scroll1 = makeScroller(1.0f, Color.RED).constrain {
+            x = 250.pixels(alignOpposite = true)
+            y = 100.pixels(alignOpposite = true)
+        } childOf window
+
+        val scroll2 = makeScroller(2.0f, Color.BLUE).constrain {
+            x = 100.pixels(alignOpposite = true)
+            y = 100.pixels(alignOpposite = true)
+        } childOf window
     }
 
     private fun animImgSmall(img: UIImage) {
