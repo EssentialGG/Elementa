@@ -3,6 +3,7 @@ package club.sk1er.elementa.dsl
 import club.sk1er.elementa.constraints.ConstantColorConstraint
 import club.sk1er.elementa.constraints.PixelConstraint
 import club.sk1er.elementa.constraints.RelativeConstraint
+import club.sk1er.elementa.constraints.RelativeWindowConstraint
 import club.sk1er.mods.core.universal.UGraphics
 import net.minecraft.client.Minecraft
 import java.awt.Color
@@ -21,5 +22,6 @@ fun Number.pixels(alignOpposite: Boolean = false, alignOutside: Boolean = false)
 fun Number.pixel(alignOpposite: Boolean = false, alignOutside: Boolean = false) = pixels(alignOpposite, alignOutside)
 
 fun Number.percent() = RelativeConstraint(this.toFloat() / 100f)
+fun Number.percentOfWindow() = RelativeWindowConstraint(this.toFloat() / 100f)
 
 fun Color.asConstraint() = ConstantColorConstraint(this)
