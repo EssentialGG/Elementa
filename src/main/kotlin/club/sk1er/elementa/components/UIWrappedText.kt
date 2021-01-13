@@ -4,17 +4,22 @@ import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.dsl.basicHeightConstraint
 import club.sk1er.elementa.dsl.pixels
 import club.sk1er.elementa.dsl.width
+import club.sk1er.elementa.state.BasicState
+import club.sk1er.elementa.state.State
+import club.sk1er.elementa.state.pixels
 import club.sk1er.elementa.utils.getStringSplitToWidth
 import club.sk1er.elementa.utils.getStringSplitToWidthTruncated
 import club.sk1er.mods.core.universal.UGraphics
+import java.awt.Color
 
 /**
  * Simple text component that draws its given [text] at the scale determined by
  * this component's width & height constrains.
  */
 open class UIWrappedText @JvmOverloads constructor(
-    private var text: String = "",
-    private var shadow: Boolean = true,
+    text: String = "",
+    shadow: Boolean = true,
+    shadowColor: Color? = null,
     private var centered: Boolean = false,
     /**
      * Keeps the rendered text without the bounds of the component,
@@ -22,12 +27,15 @@ open class UIWrappedText @JvmOverloads constructor(
      */
     private val trimText: Boolean = false
 ) : UIComponent() {
+    private var textState: State<String> = BasicState(text)
+    private var shadowState: State<Boolean> = BasicState(shadow)
+    private var shadowColorState: State<Color?> = BasicState(shadowColor)
+    private var textWidthState = this.textState.map { UGraphics.getStringWidth(it).toFloat() }
 
     private val charWidth = UGraphics.getCharWidth('x')
-    private var textWidth: Float = UGraphics.getStringWidth(text).toFloat()
 
     init {
-        setWidth(textWidth.pixels())
+        setWidth(textWidthState.pixels())
         setHeight(basicHeightConstraint {
             val lines = getStringSplitToWidth(text, getWidth(), getTextScale(), ensureSpaceAtEndOfLines = false)
 
@@ -35,19 +43,32 @@ open class UIWrappedText @JvmOverloads constructor(
         })
     }
 
-    fun getText() = text
-    fun setText(text: String) = apply {
-        this.text = text
-        textWidth = UGraphics.getStringWidth(text).toFloat()
+    fun bindText(newTextState: State<String>) = apply {
+        textState = newTextState
+        textWidthState.rebind(newTextState)
     }
 
-    fun getShadow() = shadow
-    fun setShadow(shadow: Boolean) = apply { this.shadow = shadow }
+    fun bindShadow(newShadowState: State<Boolean>) = apply {
+        this.shadowState = newShadowState
+    }
+
+    fun bindShadowColor(newShadowColorState: State<Color?>) = apply {
+        this.shadowColorState = newShadowColorState
+    }
+
+    fun getText() = textState.get()
+    fun setText(text: String) = apply { textState.set(text) }
+
+    fun getShadow() = shadowState.get()
+    fun setShadow(shadow: Boolean) = apply { shadowState.set(shadow) }
+
+    fun getShadowColor() = shadowColorState
+    fun setShadowColor(shadowColor: Color?) = apply { shadowColorState.set(shadowColor) }
 
     /**
      * Returns the text width if no scale is applied to the text
      */
-    fun getTextWidth() = textWidth
+    fun getTextWidth() = textWidthState.get()
 
     override fun draw() {
         beforeDraw()
@@ -76,14 +97,22 @@ open class UIWrappedText @JvmOverloads constructor(
         UGraphics.translate(x.toDouble(), y.toDouble(), 0.0)
 
         val lines = if (trimText) {
-            getStringSplitToWidthTruncated(text, width, textScale, (getHeight() / 9f / textScale).toInt(), ensureSpaceAtEndOfLines = false)
-        } else getStringSplitToWidth(text, width, textScale, ensureSpaceAtEndOfLines = false)
+            getStringSplitToWidthTruncated(textState.get(), width, textScale, (getHeight() / 9f / textScale).toInt(), ensureSpaceAtEndOfLines = false)
+        } else getStringSplitToWidth(textState.get(), width, textScale, ensureSpaceAtEndOfLines = false)
+
+        val shadow = shadowState.get()
+        val shadowColor = shadowColorState.get()
 
         lines.forEachIndexed { i, line ->
             val xOffset = if (centered) {
                 (scaledWidth - line.width(textScale)) / 2f
             } else 0f
-            UGraphics.drawString(line, xOffset, i * 9f, color.rgb, shadow)
+
+            if (shadow && shadowColor != null) {
+                UGraphics.drawString(line, xOffset, i * 9f, color.rgb, shadowColor.rgb)
+            } else {
+                UGraphics.drawString(line, xOffset, i * 9f, color.rgb, shadow)
+            }
         }
 
         UGraphics.translate(-x.toDouble(), -y.toDouble(), 0.0)
