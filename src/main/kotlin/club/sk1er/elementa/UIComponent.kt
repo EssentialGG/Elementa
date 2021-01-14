@@ -213,7 +213,11 @@ abstract class UIComponent : Observable() {
      * Enables a set of effects to be applied when this component draws.
      */
     fun enableEffects(vararg effects: Effect) = apply {
-        effects.forEach { it.bindComponent(this) }
+        effects.forEach {
+            it.bindComponent(this)
+            if (isInitialized)
+                it.setup()
+        }
         this.effects.addAll(effects)
     }
 
@@ -222,6 +226,8 @@ abstract class UIComponent : Observable() {
      */
     fun enableEffect(effect: Effect) = apply {
         effect.bindComponent(this)
+        if (isInitialized)
+            effect.setup()
         this.effects.add(effect)
     }
 
