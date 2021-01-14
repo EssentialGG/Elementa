@@ -206,7 +206,7 @@ class ConstraintResolutionGui(
                 } childOf this
             } else {
                 UIWrappedText("Unfortunately Elementa is unable to determine the constraints responsible. This is most likely due to the use of basicConstraints.").constrain {
-                    width = RelativeConstraint()
+                    width = 300.pixels()
                     color = Color(239, 83, 80).asConstraint()
                 } childOf this
             }
