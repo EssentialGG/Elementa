@@ -17,7 +17,6 @@ open class Shader(private val vertName: String, private val fragName: String) {
     fun bindIfUsable() {
         if (usable) {
             UGraphics.glUseProgram(program)
-            UGraphics.disableBlend()
         }
     }
 

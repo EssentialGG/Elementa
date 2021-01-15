@@ -1,6 +1,6 @@
-#version 130
+#version 110
 
-out vec2 f_Position;
+varying vec2 f_Position;
 
 void main() {
     f_Position = gl_Vertex.xy;

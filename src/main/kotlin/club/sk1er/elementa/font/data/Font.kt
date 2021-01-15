@@ -20,7 +20,7 @@ class Font(
     }
 
     companion object {
-        fun fromPath(path: String): Font {
+        fun fromResource(path: String): Font {
             val json = this::class.java.getResourceAsStream("$path.json")
             val fontInfo = FontInfo.fromJson(JsonParser().parse(json.reader()).asJsonObject)
 
