@@ -1,6 +1,7 @@
 package club.sk1er.elementa.effects
 
 import club.sk1er.elementa.components.UIBlock
+import club.sk1er.elementa.utils.guiHint
 import java.awt.Color
 
 /**
@@ -31,7 +32,7 @@ class OutlineEffect @JvmOverloads constructor(
     fun addSide(side: Side) = apply {
         sides = sides + side
     }
-    
+
     fun removeSide(side: Side) = apply {
         sides = sides - side
     }
@@ -52,36 +53,46 @@ class OutlineEffect @JvmOverloads constructor(
         val top = boundComponent.getTop().toDouble()
         val bottom = boundComponent.getBottom().toDouble()
 
+        val leftHinted = left.guiHint()
+        val rightHinted = right.guiHint()
+        val topHinted = top.guiHint()
+        val bottomHinted = bottom.guiHint()
+
+        val leftWidthHinted = (left - width).guiHint()
+        val rightWidthHinted = (right + width).guiHint()
+        val topWidthHinted = (top - width).guiHint()
+        val bottomWidthHinted = (bottom + width).guiHint()
+
         // Left outline block
         if (hasLeft)
-            UIBlock.drawBlock(color, left - width, top, left, bottom)
+            UIBlock.drawBlock(color, leftWidthHinted, topHinted, leftHinted, bottomHinted)
 
         // Top outline block
         if (hasTop)
-            UIBlock.drawBlock(color, left, top - width, right, top)
+            UIBlock.drawBlock(color, leftHinted, topWidthHinted, rightHinted, topHinted)
 
         // Right outline block
         if (hasRight)
-            UIBlock.drawBlock(color, right, top, right + width, bottom)
+            UIBlock.drawBlock(color, rightHinted, topHinted, rightWidthHinted, bottomHinted)
 
         // Bottom outline block
         if (hasBottom)
-            UIBlock.drawBlock(color, left, bottom, right, bottom + width)
+            UIBlock.drawBlock(color, leftHinted, bottomHinted, rightHinted, bottomWidthHinted)
 
         // Top left square
         if (hasLeft && hasTop)
-            UIBlock.drawBlock(color, left - width, top - width, left, top)
+            UIBlock.drawBlock(color, leftWidthHinted, topWidthHinted, leftHinted, topHinted)
 
         // Top right square
         if (hasRight && hasTop)
-            UIBlock.drawBlock(color, right, top - width, right + width, top)
+            UIBlock.drawBlock(color, rightHinted, topWidthHinted, rightWidthHinted, topHinted)
 
         // Bottom right square
         if (hasRight && hasBottom)
-            UIBlock.drawBlock(color, right, bottom, right + width, bottom + width)
+            UIBlock.drawBlock(color, rightHinted, bottomHinted, rightWidthHinted, bottomWidthHinted)
 
         if (hasBottom && hasLeft)
-            UIBlock.drawBlock(color, left - width, bottom, left, bottom + width)
+            UIBlock.drawBlock(color, leftWidthHinted, bottomHinted, leftHinted, bottomWidthHinted)
     }
 
     enum class Side {

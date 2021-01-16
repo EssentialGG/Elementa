@@ -21,6 +21,8 @@ import java.util.concurrent.CopyOnWriteArrayList
 import java.util.function.BiConsumer
 import java.util.function.Consumer
 import kotlin.math.PI
+import kotlin.math.round
+import kotlin.math.roundToInt
 import kotlin.math.sin
 import kotlin.reflect.KMutableProperty0
 
@@ -982,6 +984,22 @@ abstract class UIComponent : Observable() {
             val green = ((sin(step + 2 * Math.PI / 3) + 0.75) * 170).toInt().coerceIn(0..255)
             val blue = ((sin(step + 4 * Math.PI / 3) + 0.75) * 170).toInt().coerceIn(0..255)
             return Color(red, green, blue, 255)
+        }
+
+        /**
+         * Hints a number with respect to the current GUI scale.
+         */
+        fun guiHint(number: Float): Float {
+            val factor = UResolution.scaleFactor.toFloat()
+            return round(number * factor) / factor
+        }
+
+        /**
+         * Hints a number with respect to the current GUI scale.
+         */
+        fun guiHint(number: Double): Double {
+            val factor = UResolution.scaleFactor
+            return round(number * factor) / factor
         }
     }
 }
