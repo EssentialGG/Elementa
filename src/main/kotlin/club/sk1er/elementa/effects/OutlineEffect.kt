@@ -1,6 +1,5 @@
 package club.sk1er.elementa.effects
 
-import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.components.UIBlock
 import java.awt.Color
 
@@ -10,15 +9,32 @@ import java.awt.Color
  * so all children will render above the outline.
  */
 class OutlineEffect @JvmOverloads constructor(
-    private val color: Color,
-    private val width: Float,
-    private val drawAfterChildren: Boolean = false,
+    var color: Color,
+    var width: Float,
+    var drawAfterChildren: Boolean = false,
     sides: Set<Side> = setOf(Side.Left, Side.Top, Side.Right, Side.Bottom)
 ) : Effect() {
-    private val hasLeft = Side.Left in sides
-    private val hasTop = Side.Top in sides
-    private val hasRight = Side.Right in sides
-    private val hasBottom = Side.Bottom in sides
+    private var hasLeft = Side.Left in sides
+    private var hasTop = Side.Top in sides
+    private var hasRight = Side.Right in sides
+    private var hasBottom = Side.Bottom in sides
+
+    var sides = sides
+        set(value) {
+            field = value
+            hasLeft = Side.Left in sides
+            hasTop = Side.Top in sides
+            hasRight = Side.Right in sides
+            hasBottom = Side.Bottom in sides
+        }
+
+    fun addSide(side: Side) = apply {
+        sides = sides + side
+    }
+    
+    fun removeSide(side: Side) = apply {
+        sides = sides - side
+    }
 
     override fun beforeChildrenDraw() {
         if (!drawAfterChildren)
