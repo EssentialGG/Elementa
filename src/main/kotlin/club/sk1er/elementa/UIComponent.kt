@@ -22,7 +22,6 @@ import java.util.function.BiConsumer
 import java.util.function.Consumer
 import kotlin.math.PI
 import kotlin.math.round
-import kotlin.math.roundToInt
 import kotlin.math.sin
 import kotlin.reflect.KMutableProperty0
 
@@ -584,7 +583,7 @@ abstract class UIComponent : Observable() {
                 timer.timeLeft += timer.interval
             }
 
-            while (timer.timeLeft <= 0L) {
+            while (timer.timeLeft <= 0L && id !in stoppedTimers) {
                 timer.callback(id)
                 timer.timeLeft += timer.interval
             }
@@ -956,7 +955,7 @@ abstract class UIComponent : Observable() {
         return { stopDelay(id) }
     }
 
-    private class Timer(val delay: Long, val interval: Long, val callback: (Int) -> Unit) {
+    private class Timer(delay: Long, val interval: Long, val callback: (Int) -> Unit) {
         var hasDelayed = false
         var timeLeft = delay
         var lastTime = System.currentTimeMillis()
