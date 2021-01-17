@@ -30,7 +30,6 @@ import kotlin.reflect.KMutableProperty0
  * UIComponent is the base of all drawing, meaning
  * everything visible on the screen is a UIComponent.
  */
-@Suppress("MemberVisibilityCanBePrivate")
 abstract class UIComponent : Observable() {
     var componentName: String = this.javaClass.simpleName
     open val children = CopyOnWriteArrayList<UIComponent>().observable()
@@ -78,6 +77,8 @@ abstract class UIComponent : Observable() {
 
     // Timer API
     private val activeTimers = mutableMapOf<Int, Timer>()
+    // We have to store stopped timers separately to avoid ConcurrentModificationException
+    private val stoppedTimers = mutableSetOf<Int>()
     private var nextTimerId = 0
 
     private var isInitialized = false
@@ -571,7 +572,7 @@ abstract class UIComponent : Observable() {
         // Process timers
         val timerIterator = activeTimers.iterator()
         timerIterator.forEachRemaining { (id, timer) ->
-            if (timer.stopped)
+            if (id in stoppedTimers)
                 return@forEachRemaining
 
             val time = System.currentTimeMillis()
@@ -583,14 +584,13 @@ abstract class UIComponent : Observable() {
                 timer.timeLeft += timer.interval
             }
 
-            while (timer.timeLeft <= 0L && !timer.stopped) {
+            while (timer.timeLeft <= 0L) {
                 timer.callback(id)
                 timer.timeLeft += timer.interval
             }
-
-            if (timer.stopped)
-                timerIterator.remove()
         }
+
+        stoppedTimers.forEach { activeTimers.remove(it) }
     }
 
     open fun alwaysDrawChildren(): Boolean {
@@ -935,9 +935,7 @@ abstract class UIComponent : Observable() {
         return id
     }
 
-    fun stopTimer(id: Int) {
-        activeTimers[id]?.stopped = true
-    }
+    fun stopTimer(id: Int) = stoppedTimers.add(id)
 
     fun timer(interval: Long, delay: Long = 0, callback: (Int) -> Unit): () -> Unit {
         val id = startTimer(interval, delay, callback)
@@ -958,11 +956,10 @@ abstract class UIComponent : Observable() {
         return { stopDelay(id) }
     }
 
-    private class Timer(delay: Long, val interval: Long, val callback: (Int) -> Unit) {
+    private class Timer(val delay: Long, val interval: Long, val callback: (Int) -> Unit) {
         var hasDelayed = false
         var timeLeft = delay
         var lastTime = System.currentTimeMillis()
-        var stopped = false
 
         init {
             if (delay == 0L) {
