@@ -47,23 +47,23 @@ abstract class UIComponent : Observable() {
         }
 
     /* Bubbling Events */
+    var mouseScrollListeners = mutableListOf<UIComponent.(UIScrollEvent) -> Unit>()
     val mouseClickListeners = mutableListOf<UIComponent.(UIClickEvent) -> Unit>()
     private var lastClickTime = System.currentTimeMillis()
     private var lastClickCount = 0
-    var mouseScrollListeners = mutableListOf<UIComponent.(UIScrollEvent) -> Unit>()
 
     /* Non-Bubbling Events */
-    var mouseReleaseAction: UIComponent.() -> Unit = {}
-    var mouseEnterAction: UIComponent.() -> Unit = {}
-    var mouseLeaveAction: UIComponent.() -> Unit = {}
-    var mouseDragAction: UIComponent.(mouseX: Float, mouseY: Float, button: Int) -> Unit = { _, _, _ -> }
-    var keyTypeAction: UIComponent.(typedChar: Char, keyCode: Int) -> Unit = { _, _ -> }
+    val mouseReleaseListeners = mutableListOf<UIComponent.() -> Unit>()
+    val mouseEnterListeners = mutableListOf<UIComponent.() -> Unit>()
+    val mouseLeaveListeners = mutableListOf<UIComponent.() -> Unit>()
+    val mouseDragListeners = mutableListOf<UIComponent.(mouseX: Float, mouseY: Float, button: Int) -> Unit>()
+    val keyTypedListeners = mutableListOf<UIComponent.(typedChar: Char, keyCode: Int) -> Unit>()
 
     private var currentlyHovered = false
-    private var beforeHideAnimation: AnimatingConstraints.() -> Unit = { }
-    private var afterUnhideAnimation: AnimatingConstraints.() -> Unit = { }
-    private var onFocus: (UIComponent.() -> Unit)? = null
-    private var onFocusLost: (UIComponent.() -> Unit)? = null
+    private val beforeHideAnimations = mutableListOf<AnimatingConstraints.() -> Unit>()
+    private val afterUnhideAnimations = mutableListOf<AnimatingConstraints.() -> Unit>()
+    private val onFocusActions = mutableListOf<UIComponent.() -> Unit>()
+    private val onFocusLostActions = mutableListOf<UIComponent.() -> Unit>()
 
     /**
      * Required for [unhide] so it can insert this component
@@ -452,10 +452,12 @@ abstract class UIComponent : Observable() {
         }
 
         if (hovered && !currentlyHovered) {
-            mouseEnterAction()
+            for (listener in mouseEnterListeners)
+                this.listener()
             currentlyHovered = true
         } else if (!hovered && currentlyHovered) {
-            mouseLeaveAction()
+            for (listener in mouseLeaveListeners)
+                this.listener()
             currentlyHovered = false
         }
 
@@ -494,7 +496,8 @@ abstract class UIComponent : Observable() {
      * Most common use is on the [Window] object.
      */
     open fun mouseRelease() {
-        mouseReleaseAction()
+        for (listener in mouseReleaseListeners)
+            this.listener()
 
         this.children.forEach { it.mouseRelease() }
     }
@@ -545,13 +548,18 @@ abstract class UIComponent : Observable() {
      * Most common use is on the [Window] object.
      */
     open fun dragMouse(mouseX: Int, mouseY: Int, button: Int) {
-        mouseDragAction(mouseX - getLeft(), mouseY - getTop(), button)
+        val relativeX = mouseX - getLeft()
+        val relativeY = mouseY - getTop()
+
+        for (listener in mouseDragListeners)
+            this.listener(relativeX, relativeY, button)
 
         children.forEach { it.dragMouse(mouseX, mouseY, button) }
     }
 
     open fun keyType(typedChar: Char, keyCode: Int) {
-        keyTypeAction(typedChar, keyCode)
+        for (listener in keyTypedListeners)
+            this.listener(typedChar, keyCode)
     }
 
     open fun animationFrame() {
@@ -629,14 +637,14 @@ abstract class UIComponent : Observable() {
      * Adds a method to be run when mouse is released within the component.
      */
     fun onMouseRelease(method: UIComponent.() -> Unit) = apply {
-        mouseReleaseAction = method
+        mouseReleaseListeners.add(method)
     }
 
     /**
      * Adds a method to be run when mouse is released within the component.
      */
     fun onMouseReleaseRunnable(method: Runnable) = apply {
-        mouseReleaseAction = { method.run() }
+        mouseReleaseListeners.add { method.run() }
     }
 
     /**
@@ -644,7 +652,7 @@ abstract class UIComponent : Observable() {
      * This does not check if mouse is in component.
      */
     fun onMouseDrag(method: UIComponent.(mouseX: Float, mouseY: Float, mouseButton: Int) -> Unit) = apply {
-        mouseDragAction = method
+        mouseDragListeners.add(method)
     }
 
     /**
@@ -652,35 +660,35 @@ abstract class UIComponent : Observable() {
      * This does not check if mouse is in component.
      */
     fun onMouseDragConsumer(method: TriConsumer<Float, Float, Int>) = apply {
-        mouseDragAction = { t: Float, u: Float, v: Int -> method.accept(t, u, v) }
+        mouseDragListeners.add { t: Float, u: Float, v: Int -> method.accept(t, u, v) }
     }
 
     /**
      * Adds a method to be run when mouse enters the component.
      */
     fun onMouseEnter(method: UIComponent.() -> Unit) = apply {
-        mouseEnterAction = method
+        mouseEnterListeners.add(method)
     }
 
     /**
      * Adds a method to be run when mouse enters the component.
      */
     fun onMouseEnterRunnable(method: Runnable) = apply {
-        mouseEnterAction = { method.run() }
+        mouseEnterListeners.add { method.run() }
     }
 
     /**
      * Adds a method to be run when mouse leaves the component.
      */
     fun onMouseLeave(method: UIComponent.() -> Unit) = apply {
-        mouseLeaveAction = method
+        mouseLeaveListeners.add(method)
     }
 
     /**
      * Adds a method to be run when mouse leaves the component.
      */
     fun onMouseLeaveRunnable(method: Runnable) = apply {
-        mouseLeaveAction = { method.run() }
+        mouseLeaveListeners.add { method.run() }
     }
 
     /**
@@ -698,11 +706,11 @@ abstract class UIComponent : Observable() {
     }
 
     fun onKeyType(method: UIComponent.(typedChar: Char, keyCode: Int) -> Unit) = apply {
-        keyTypeAction = method
+        keyTypedListeners.add(method)
     }
 
     fun onKeyTypeConsumer(method: BiConsumer<Char, Int>) {
-        keyTypeAction = { t: Char, u: Int -> method.accept(t, u) }
+        keyTypedListeners.add { t: Char, u: Int -> method.accept(t, u) }
     }
 
     /*
@@ -731,7 +739,8 @@ abstract class UIComponent : Observable() {
         }
 
         animate {
-            this.beforeHideAnimation()
+            for (animation in beforeHideAnimations)
+                this.animation()
 
             val comp = this.completeAction
             onComplete {
@@ -759,16 +768,17 @@ abstract class UIComponent : Observable() {
         }
 
         animate {
-            this.afterUnhideAnimation()
+            for (animation in afterUnhideAnimations)
+                this.animation()
         }
     }
 
     fun animateBeforeHide(animation: AnimatingConstraints.() -> Unit) = apply {
-        beforeHideAnimation = animation
+        beforeHideAnimations.add(animation)
     }
 
     fun animateAfterUnhide(animation: AnimatingConstraints.() -> Unit) = apply {
-        afterUnhideAnimation = animation
+        afterUnhideAnimations.add(animation)
     }
 
     /**
@@ -780,11 +790,12 @@ abstract class UIComponent : Observable() {
     }
 
     fun onFocus(listener: UIComponent.() -> Unit) = apply {
-        onFocus = listener
+        onFocusActions.add(listener)
     }
 
     fun focus() {
-        onFocus?.invoke(this)
+        for (listener in onFocusActions)
+            this.listener()
     }
 
     fun releaseWindowFocus() {
@@ -792,11 +803,12 @@ abstract class UIComponent : Observable() {
     }
 
     fun onFocusLost(listener: UIComponent.() -> Unit) = apply {
-        onFocusLost = listener
+        onFocusLostActions.add(listener)
     }
 
     fun loseFocus() {
-        onFocusLost?.invoke(this)
+        for (listener in onFocusLostActions)
+            this.listener()
     }
 
     /**
