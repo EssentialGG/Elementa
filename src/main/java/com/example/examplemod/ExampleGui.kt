@@ -7,8 +7,6 @@ import club.sk1er.elementa.constraints.*
 import club.sk1er.elementa.constraints.animation.Animations
 import club.sk1er.elementa.dsl.*
 import club.sk1er.elementa.effects.ScissorEffect
-import club.sk1er.mods.core.universal.UKeyboard
-import club.sk1er.mods.core.universal.UScreen
 import java.awt.Color
 
 /**
@@ -114,7 +112,7 @@ class ExampleGui : WindowScreen() {
                     // Third, we need to specify what our target constraint is.
                     // In our case, its just a darker color. This parameter can be any constraint
                     // that would be valid to have specified in the [constraint] block.
-                    Color(120, 120, 100).asConstraint(),
+                    Color(120, 120, 100).toConstraint(),
                     // And finally, the delay in seconds before this animation should begin.
                     // Note that this parameter is optional, and defaults to 0, but
                     // it has been explicitly passed in this example so the reader
@@ -136,7 +134,7 @@ class ExampleGui : WindowScreen() {
                     Animations.OUT_EXP,
                     0.5f,
                     // All parameters are the same, except for the target color.
-                    Color(207, 207, 196).asConstraint()
+                    Color(207, 207, 196).toConstraint()
                 )
             }
         } childOf window
@@ -178,9 +176,9 @@ class ExampleGui : WindowScreen() {
 
             // On the same train of thought, we also want to color this text a little.
             // A darker green color should suffice.
-            // The [asConstraint] extension function is simply a convenient helper for
+            // The [toConstraint] extension function is simply a convenient helper for
             // constructing an instance of [ConstantColorConstraint].
-            color = Color.GREEN.darker().asConstraint()
+            color = Color.GREEN.darker().toConstraint()
         } childOf createNoteButton
     }
 
@@ -324,7 +322,7 @@ class ExampleGui : WindowScreen() {
                 y = CenterConstraint()
 
                 // We'll default our color to black.
-                color = Color.BLACK.asConstraint()
+                color = Color.BLACK.toConstraint()
 
                 // We also want to make this an easily recognizable button, so we'll scale our text
                 // by two.
@@ -333,12 +331,12 @@ class ExampleGui : WindowScreen() {
                 animate {
                     // When we hover this button, we'll make the text fully red to show that this is
                     // destructive.
-                    setColorAnimation(Animations.OUT_EXP, 0.5f, Color.RED.asConstraint())
+                    setColorAnimation(Animations.OUT_EXP, 0.5f, Color.RED.toConstraint())
                 }
             }.onMouseLeave {
                 animate {
                     // And when we unhover this button, we'll move the text back to its original black color.
-                    setColorAnimation(Animations.OUT_EXP, 0.5f, Color.BLACK.asConstraint())
+                    setColorAnimation(Animations.OUT_EXP, 0.5f, Color.BLACK.toConstraint())
                 }
             }.onMouseClick { event ->
                 // When we click the delete button, we want to remove the sticky note in its

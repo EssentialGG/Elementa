@@ -12,4 +12,4 @@ fun State<Float>.pixels(
 
 fun State<Float>.percent() = RelativeConstraint().bindValue(this)
 
-fun State<Color>.asConstraint() = ConstantColorConstraint(Color.WHITE).bindColor(this)
+fun State<Color>.toConstraint() = ConstantColorConstraint(Color.WHITE).bindColor(this)

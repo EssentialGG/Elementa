@@ -133,7 +133,7 @@ class KtTestGui : WindowScreen() {
 
         blocky.animate {
             setWidthAnimation(Animations.OUT_CIRCULAR, 3f, ChildBasedSizeConstraint())
-            setColorAnimation(Animations.IN_EXP, 3f, Color.PINK.asConstraint())
+            setColorAnimation(Animations.IN_EXP, 3f, Color.PINK.toConstraint())
             onComplete {
                 window.removeChild(blocky)
             }
@@ -420,7 +420,7 @@ class KtTestGui : WindowScreen() {
                 if (clicked) return@onMouseEnter
                 timerAnimation.width.pauseIfSupported()
                 glow.animate {
-                    setColorAnimation(Animations.OUT_EXP, 1f, Color(255, 255, 255, 50).asConstraint())
+                    setColorAnimation(Animations.OUT_EXP, 1f, Color(255, 255, 255, 50).toConstraint())
                 }
                 glow.getVertices()[1].animate {
                     setXAnimation(Animations.OUT_EXP, 1f, 20.pixels(true))
@@ -432,7 +432,7 @@ class KtTestGui : WindowScreen() {
                 if (clicked) return@onMouseLeave
                 timerAnimation.width.resumeIfSupported()
                 glow.animate {
-                    setColorAnimation(Animations.OUT_EXP, 1f, Color(255, 255, 255, 30).asConstraint())
+                    setColorAnimation(Animations.OUT_EXP, 1f, Color(255, 255, 255, 30).toConstraint())
                 }
                 glow.getVertices()[1].animate {
                     setXAnimation(Animations.OUT_EXP, 1f, 10.pixels(true))
@@ -443,7 +443,7 @@ class KtTestGui : WindowScreen() {
             }.onMouseClick {
                 clicked = true
                 glow.animate {
-                    setColorAnimation(Animations.OUT_EXP, 0.5f, Color(100, 100, 100, 255).asConstraint())
+                    setColorAnimation(Animations.OUT_EXP, 0.5f, Color(100, 100, 100, 255).toConstraint())
                 }
                 glow.getVertices()[1].animate {
                     setXAnimation(Animations.OUT_EXP, 0.5f, 0.pixels())

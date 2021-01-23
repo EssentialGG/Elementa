@@ -12,7 +12,7 @@ val textState = BasicState("foo")
 val colorState = BasicState(Color.RED)
 
 val textComponent = UIText().bindText(textState).constrain {
-    color = colorState.asConstraint()
+    color = colorState.toConstraint()
 }
 ```
 
@@ -32,7 +32,7 @@ we set the `UIText`'s text state to the state we pass in. That way, when we chan
 it is reflected in our GUI. 
 
 Second, the reason that `colorState` can be used as a constraint is due to the 
-`State<Color>.asConstraint()` extension method. There is a similar extension method for 
+`State<Color>.toConstraint()` extension method. There is a similar extension method for 
 `State<Float>.pixels()`, as well as `State<Float>.percent()`. This is possible because
 `ConstantColorConstraint`, `PixelConstraint`, and `RelativeConstraint` all use `State` objects
 internally, similar to `UIText`.
@@ -54,7 +54,7 @@ val baseNumber = BasicState(0)
 for (i in 0 until 10) {
     UIText().bindText(baseNumber.map { (it + i).toString() }).constrain {
         // ...
-        color = textColor.asConstraint()
+        color = textColor.toConstraint()
     } childOf myTextContainer
 }
 ```

@@ -52,7 +52,7 @@ class ConstraintResolutionGui(
         val titleText = UIText("Cyclic Constraint Tree Detected").constrain {
             x = CenterConstraint()
             textScale = 2.pixels()
-            color = Color(239, 83, 80).asConstraint()
+            color = Color(239, 83, 80).toConstraint()
         } childOf titleContent
 
         val tabContainer = UIContainer().constrain {
@@ -73,8 +73,8 @@ class ConstraintResolutionGui(
             height = 2.pixels()
         } childOf tabContent
 
-        val inactiveText = Color(187, 187, 187).asConstraint()
-        val activeText = Color.WHITE.asConstraint()
+        val inactiveText = Color(187, 187, 187).toConstraint()
+        val activeText = Color.WHITE.toConstraint()
 
         val listTab = UIContainer().constrain {
             width = RelativeConstraint(0.5f)
@@ -207,7 +207,7 @@ class ConstraintResolutionGui(
             } else {
                 UIWrappedText("Unfortunately Elementa is unable to determine the constraints responsible. This is most likely due to the use of basicConstraints.").constrain {
                     width = 300.pixels()
-                    color = Color(239, 83, 80).asConstraint()
+                    color = Color(239, 83, 80).toConstraint()
                 } childOf this
             }
         }

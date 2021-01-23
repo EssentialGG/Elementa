@@ -53,7 +53,7 @@ class ScrollComponent @JvmOverloads constructor(
         width = 24.pixels()
         height = 24.pixels()
 
-        color = scrollIconColor.asConstraint()
+        color = scrollIconColor.toConstraint()
     }
 
     var horizontalOffset = innerPadding

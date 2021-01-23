@@ -58,17 +58,17 @@ class InfoBlock(private val inspector: Inspector) : UIContainer() {
             x = 5.pixels()
             y = 5.pixels()
             width = TextAspectConstraint()
-            color = Color.WHITE.asConstraint()
+            color = Color.WHITE.toConstraint()
         }.onMouseEnter {
             if (!constraintsSelected) {
                 constraintsText.animate {
-                    setColorAnimation(Animations.OUT_EXP, 0.5f, Color.WHITE.asConstraint())
+                    setColorAnimation(Animations.OUT_EXP, 0.5f, Color.WHITE.toConstraint())
                 }
             }
         }.onMouseLeave {
             if (!constraintsSelected) {
                 constraintsText.animate {
-                    setColorAnimation(Animations.OUT_EXP, 0.5f, Color(255, 255, 255, 102).asConstraint())
+                    setColorAnimation(Animations.OUT_EXP, 0.5f, Color(255, 255, 255, 102).toConstraint())
                 }
             }
         }.onMouseClick {
@@ -77,7 +77,7 @@ class InfoBlock(private val inspector: Inspector) : UIContainer() {
                 contentContainer.removeChild(valuesContent)
                 contentContainer.addChild(constraintsContent)
                 valuesText.animate {
-                    setColorAnimation(Animations.OUT_EXP, 0.5f, Color(255, 255, 255, 102).asConstraint())
+                    setColorAnimation(Animations.OUT_EXP, 0.5f, Color(255, 255, 255, 102).toConstraint())
                 }
             }
         } as UIText childOf tabContainer
@@ -86,17 +86,17 @@ class InfoBlock(private val inspector: Inspector) : UIContainer() {
             x = SiblingConstraint(10f)
             y = 5.pixels()
             width = TextAspectConstraint()
-            color = Color(255, 255, 255, 102).asConstraint()
+            color = Color(255, 255, 255, 102).toConstraint()
         }.onMouseEnter {
             if (constraintsSelected) {
                 valuesText.animate {
-                    setColorAnimation(Animations.OUT_EXP, 0.5f, Color.WHITE.asConstraint())
+                    setColorAnimation(Animations.OUT_EXP, 0.5f, Color.WHITE.toConstraint())
                 }
             }
         }.onMouseLeave {
             if (constraintsSelected) {
                 valuesText.animate {
-                    setColorAnimation(Animations.OUT_EXP, 0.5f, Color(255, 255, 255, 102).asConstraint())
+                    setColorAnimation(Animations.OUT_EXP, 0.5f, Color(255, 255, 255, 102).toConstraint())
                 }
             }
         }.onMouseClick {
@@ -105,7 +105,7 @@ class InfoBlock(private val inspector: Inspector) : UIContainer() {
                 contentContainer.removeChild(constraintsContent)
                 contentContainer.addChild(valuesContent)
                 constraintsText.animate {
-                    setColorAnimation(Animations.OUT_EXP, 0.5f, Color(255, 255, 255, 102).asConstraint())
+                    setColorAnimation(Animations.OUT_EXP, 0.5f, Color(255, 255, 255, 102).toConstraint())
                 }
             }
         } as UIText childOf tabContainer

@@ -24,7 +24,7 @@ fun Number.pixel(alignOpposite: Boolean = false, alignOutside: Boolean = false) 
 fun Number.percent() = RelativeConstraint(this.toFloat() / 100f)
 fun Number.percentOfWindow() = RelativeWindowConstraint(this.toFloat() / 100f)
 
-fun Color.asConstraint() = ConstantColorConstraint(this)
+fun Color.toConstraint() = ConstantColorConstraint(this)
 
 operator fun Color.component1() = red
 operator fun Color.component2() = green

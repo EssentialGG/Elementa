@@ -1,7 +1,7 @@
 package club.sk1er.elementa
 
 import club.sk1er.elementa.constraints.*
-import club.sk1er.elementa.dsl.asConstraint
+import club.sk1er.elementa.dsl.toConstraint
 import club.sk1er.elementa.dsl.pixel
 import club.sk1er.elementa.dsl.pixels
 import java.awt.Color
@@ -38,7 +38,7 @@ open class UIConstraints(protected val component: UIComponent) : Observable() {
             field = value
             update(ConstraintType.TEXT_SCALE)
         }
-    var color: ColorConstraint = Color.WHITE.asConstraint()
+    var color: ColorConstraint = Color.WHITE.toConstraint()
         set(value) {
             field = value
             update(ConstraintType.COLOR)

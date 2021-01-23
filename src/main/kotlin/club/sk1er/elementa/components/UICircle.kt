@@ -1,7 +1,7 @@
 package club.sk1er.elementa.components
 
 import club.sk1er.elementa.UIComponent
-import club.sk1er.elementa.dsl.asConstraint
+import club.sk1er.elementa.dsl.toConstraint
 import club.sk1er.elementa.dsl.pixels
 import club.sk1er.elementa.shaders.FloatUniform
 import club.sk1er.elementa.shaders.Shader
@@ -13,7 +13,7 @@ import java.awt.Color
 class UICircle @JvmOverloads constructor(radius: Float = 0f, color: Color = Color.WHITE, var steps: Int = 40) :
     UIComponent() {
     init {
-        setColor(color.asConstraint())
+        setColor(color.toConstraint())
         setRadius(radius.pixels())
     }
 

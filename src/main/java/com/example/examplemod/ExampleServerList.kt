@@ -89,7 +89,7 @@ class ExampleServerList : WindowScreen() {
 //                    setWidthAnimation(Animations.OUT_EXP, 0.5f, RelativeConstraint() + 20.pixels())
 //                }
 //                glow.animate {
-//                    setColorAnimation(Animations.OUT_EXP, 0.5f, Color(255, 255, 255, 75).asConstraint())
+//                    setColorAnimation(Animations.OUT_EXP, 0.5f, Color(255, 255, 255, 75).toConstraint())
 //                }
 //                glow.getVertices()[1].animate {
 //                    setXAnimation(Animations.OUT_EXP, 0.5f, 60.pixels(true))
@@ -103,7 +103,7 @@ class ExampleServerList : WindowScreen() {
 //                    setWidthAnimation(Animations.OUT_EXP, 1f, RelativeConstraint())
 //                }
 //                glow.animate {
-//                    setColorAnimation(Animations.OUT_EXP, 1f, Color(255, 255, 255, 30).asConstraint())
+//                    setColorAnimation(Animations.OUT_EXP, 1f, Color(255, 255, 255, 30).toConstraint())
 //                }
 //                glow.getVertices()[1].animate {
 //                    setXAnimation(Animations.OUT_EXP, 2f, 20.pixels(true))

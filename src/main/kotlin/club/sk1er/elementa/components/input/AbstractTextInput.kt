@@ -326,11 +326,11 @@ abstract class AbstractTextInput(
         }
 
         cursorComponent.animateAfterUnhide {
-            setColorAnimation(Animations.OUT_CIRCULAR, 0.5f, Color.WHITE.asConstraint())
+            setColorAnimation(Animations.OUT_CIRCULAR, 0.5f, Color.WHITE.toConstraint())
             onComplete {
                 if (!active) return@onComplete
                 cursorComponent.animate {
-                    setColorAnimation(Animations.IN_CIRCULAR, 0.5f, Color(255, 255, 255, 0).asConstraint())
+                    setColorAnimation(Animations.IN_CIRCULAR, 0.5f, Color(255, 255, 255, 0).toConstraint())
                     onComplete {
                         if (active) animateCursor()
                     }
@@ -368,7 +368,7 @@ abstract class AbstractTextInput(
             cursorComponent.unhide()
             animateCursor()
         } else {
-            cursorComponent.setColor(Color(255, 255, 255, 0).asConstraint())
+            cursorComponent.setColor(Color(255, 255, 255, 0).toConstraint())
             if (hasText() && (!allowInactiveSelection || !hasSelection())) {
                 setCursorPosition(LinePosition(visualLines.lastIndex, visualLines.last().length, isVisual = true))
             }
@@ -656,11 +656,11 @@ abstract class AbstractTextInput(
         if (!active) return
 
         cursorComponent.animate {
-            setColorAnimation(Animations.OUT_CIRCULAR, 0.5f, Color.WHITE.asConstraint())
+            setColorAnimation(Animations.OUT_CIRCULAR, 0.5f, Color.WHITE.toConstraint())
             onComplete {
                 if (!active) return@onComplete
                 cursorComponent.animate {
-                    setColorAnimation(Animations.IN_CIRCULAR, 0.5f, Color(255, 255, 255, 0).asConstraint())
+                    setColorAnimation(Animations.IN_CIRCULAR, 0.5f, Color(255, 255, 255, 0).toConstraint())
                     onComplete {
                         if (active) animateCursor()
                     }

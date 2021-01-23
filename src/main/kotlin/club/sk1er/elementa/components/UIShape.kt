@@ -1,7 +1,7 @@
 package club.sk1er.elementa.components
 
 import club.sk1er.elementa.UIComponent
-import club.sk1er.elementa.dsl.asConstraint
+import club.sk1er.elementa.dsl.toConstraint
 import club.sk1er.mods.core.universal.UGraphics
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats
 import org.lwjgl.opengl.GL11
@@ -13,7 +13,7 @@ open class UIShape @JvmOverloads constructor(color: Color = Color.WHITE) : UICom
     var drawMode = GL11.GL_POLYGON
 
     init {
-        setColor(color.asConstraint())
+        setColor(color.toConstraint())
     }
 
     fun addVertex(point: UIPoint) = apply {

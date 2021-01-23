@@ -81,7 +81,7 @@ class PlotComponent(
                     y = RelativeConstraint(percentage) - (percentage * 3f).pixels()
                     width = TextAspectConstraint()
                     height = 6.pixels()
-                    color = yBounds.labelColor.asConstraint()
+                    color = yBounds.labelColor.toConstraint()
                 } childOf yLabelContainer
             }
         }
@@ -100,7 +100,7 @@ class PlotComponent(
                     }
                     width = TextAspectConstraint()
                     height = 6.pixels()
-                    color = xBounds.labelColor.asConstraint()
+                    color = xBounds.labelColor.toConstraint()
                 } childOf xLabelContainer
             }
         }
