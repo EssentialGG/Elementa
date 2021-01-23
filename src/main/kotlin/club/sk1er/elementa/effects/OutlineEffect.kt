@@ -15,6 +15,7 @@ class OutlineEffect @JvmOverloads constructor(
     color: Color,
     width: Float,
     var drawAfterChildren: Boolean = false,
+    var drawInsideChildren: Boolean = false,
     sides: Set<Side> = setOf(Side.Left, Side.Top, Side.Right, Side.Bottom)
 ) : Effect() {
     private var hasLeft = Side.Left in sides
@@ -86,41 +87,55 @@ class OutlineEffect @JvmOverloads constructor(
         val topHinted = top.guiHint()
         val bottomHinted = bottom.guiHint()
 
-        val leftWidthHinted = (left - width).guiHint()
-        val rightWidthHinted = (right + width).guiHint()
-        val topWidthHinted = (top - width).guiHint()
-        val bottomWidthHinted = (bottom + width).guiHint()
+        val leftBounds = if (drawInsideChildren) {
+            leftHinted to (left + width).guiHint()
+        } else (left - width).guiHint() to leftHinted
+
+        val topBounds = if (drawInsideChildren) {
+            topHinted to (top + width).guiHint()
+        } else (top - width).guiHint() to topHinted
+
+        val rightBounds = if (drawInsideChildren) {
+            (right - width).guiHint() to rightHinted
+        } else rightHinted to (right + width).guiHint()
+
+        val bottomBounds = if (drawInsideChildren) {
+            (bottom - width).guiHint() to bottomHinted
+        } else bottomHinted to (bottom + width).guiHint()
 
         // Left outline block
         if (hasLeft)
-            UIBlock.drawBlock(color, leftWidthHinted, topHinted, leftHinted, bottomHinted)
+            UIBlock.drawBlock(color, leftBounds.first, topHinted, leftBounds.second, bottomHinted)
 
         // Top outline block
         if (hasTop)
-            UIBlock.drawBlock(color, leftHinted, topWidthHinted, rightHinted, topHinted)
+            UIBlock.drawBlock(color, leftHinted, topBounds.first, rightHinted, topBounds.second)
 
         // Right outline block
         if (hasRight)
-            UIBlock.drawBlock(color, rightHinted, topHinted, rightWidthHinted, bottomHinted)
+            UIBlock.drawBlock(color, rightBounds.first, topHinted, rightBounds.second, bottomHinted)
 
         // Bottom outline block
         if (hasBottom)
-            UIBlock.drawBlock(color, leftHinted, bottomHinted, rightHinted, bottomWidthHinted)
+            UIBlock.drawBlock(color, leftHinted, bottomBounds.first, rightHinted, bottomBounds.second)
 
-        // Top left square
-        if (hasLeft && hasTop)
-            UIBlock.drawBlock(color, leftWidthHinted, topWidthHinted, leftHinted, topHinted)
+        if (!drawInsideChildren) {
+            // Top left square
+            if (hasLeft && hasTop)
+                UIBlock.drawBlock(color, leftBounds.first, topBounds.first, leftHinted, topHinted)
 
-        // Top right square
-        if (hasRight && hasTop)
-            UIBlock.drawBlock(color, rightHinted, topWidthHinted, rightWidthHinted, topHinted)
+            // Top right square
+            if (hasRight && hasTop)
+                UIBlock.drawBlock(color, rightHinted, topBounds.first, rightBounds.second, topHinted)
 
-        // Bottom right square
-        if (hasRight && hasBottom)
-            UIBlock.drawBlock(color, rightHinted, bottomHinted, rightWidthHinted, bottomWidthHinted)
+            // Bottom right square
+            if (hasRight && hasBottom)
+                UIBlock.drawBlock(color, rightHinted, bottomHinted, rightBounds.second, bottomBounds.second)
 
-        if (hasBottom && hasLeft)
-            UIBlock.drawBlock(color, leftWidthHinted, bottomHinted, leftHinted, bottomWidthHinted)
+            // Bottom left square
+            if (hasBottom && hasLeft)
+                UIBlock.drawBlock(color, leftBounds.first, bottomHinted, leftHinted, bottomBounds.second)
+        }
     }
 
     enum class Side {

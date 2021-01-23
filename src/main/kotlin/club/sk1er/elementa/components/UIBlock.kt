@@ -15,7 +15,7 @@ import java.awt.Color
  */
 open class UIBlock(colorConstraint: ColorConstraint = Color.WHITE.asConstraint()) : UIComponent() {
     constructor(color: Color) : this(color.asConstraint())
-    
+
     constructor(colorState: State<Color>) : this(colorState.asConstraint())
 
     init {
