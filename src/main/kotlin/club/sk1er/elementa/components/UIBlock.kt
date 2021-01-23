@@ -3,6 +3,8 @@ package club.sk1er.elementa.components
 import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.constraints.ColorConstraint
 import club.sk1er.elementa.dsl.asConstraint
+import club.sk1er.elementa.state.State
+import club.sk1er.elementa.state.asConstraint
 import club.sk1er.mods.core.universal.UGraphics
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats
 import org.lwjgl.opengl.GL11
@@ -13,6 +15,8 @@ import java.awt.Color
  */
 open class UIBlock(colorConstraint: ColorConstraint = Color.WHITE.asConstraint()) : UIComponent() {
     constructor(color: Color) : this(color.asConstraint())
+    
+    constructor(colorState: State<Color>) : this(colorState.asConstraint())
 
     init {
         setColor(colorConstraint)
@@ -27,7 +31,8 @@ open class UIBlock(colorConstraint: ColorConstraint = Color.WHITE.asConstraint()
         val y2 = this.getBottom().toDouble()
 
         val color = getColor()
-        if (color.alpha == 0) return super.draw()
+        if (color.alpha == 0)
+            return super.draw()
 
         UGraphics.pushMatrix()
 
