@@ -85,7 +85,7 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
                 } else {
                     UMinecraft.getMinecraft().displayGuiScreen(null)
 
-                    UChat.chat("Elementa encountered an error while drawing a GUI. Check your logs for more information.");
+                    UChat.chat("Elementa encountered an error while drawing a GUI. Check your logs for more information.")
                     println("Elementa: Cyclic constraint structure detected!")
                     println("If you are a developer, set the environment variable \"elementa.dev=true\" to assist in debugging the issue.")
                     println("Gui name: $guiName")

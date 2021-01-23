@@ -7,25 +7,25 @@ import net.minecraft.server.MinecraftServer
 
 class ComponentsCommand : CommandBase() {
     //#if MC<=10809
-    override fun getCommandName() = "components"
-
-    override fun getCommandUsage(sender: ICommandSender?) = "/example - open example gui"
-
-    override fun getRequiredPermissionLevel() = 0
-
-    override fun processCommand(sender: ICommandSender?, args: Array<String>) {
-       ExampleMod.gui = ComponentsGui()
-    }
-    //#else
-    //$$ override fun getName() = "components"
+    //$$ override fun getCommandName() = "components"
     //$$
-    //$$ override fun getUsage(sender: ICommandSender) = "/example - open example gui"
+    //$$ override fun getCommandUsage(sender: ICommandSender?) = "/components - open the component's demo GUI"
     //$$
     //$$ override fun getRequiredPermissionLevel() = 0
     //$$
-    //$$ override fun execute(server: MinecraftServer, sender: ICommandSender, args: Array<String>) {
-    //$$     ExampleMod.gui = ComponentsGui()
+    //$$ override fun processCommand(sender: ICommandSender?, args: Array<String>) {
+    //$$    ExampleMod.gui = ComponentsGui()
     //$$ }
+    //#else
+    override fun getName() = "components"
+
+    override fun getUsage(sender: ICommandSender) = "/components - open the component's demo GUI"
+
+    override fun getRequiredPermissionLevel() = 0
+
+    override fun execute(server: MinecraftServer, sender: ICommandSender, args: Array<String>) {
+        ExampleMod.gui = ComponentsGui()
+    }
     //#endif
 }
 //#else
