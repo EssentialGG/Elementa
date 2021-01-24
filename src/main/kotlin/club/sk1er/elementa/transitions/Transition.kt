@@ -55,6 +55,7 @@ abstract class Transition {
      *                 has finished. This will be ran after all chained
      *                 transitions have completed
      */
+    @JvmOverloads
     fun transition(component: UIComponent, callback: (() -> Unit)? = null) {
         beforeTransition(component)
         parallelTransitions.forEach {
@@ -91,8 +92,8 @@ abstract class Transition {
      *                 has finished. This will be ran after all chained
      *                 transitions have completed
      */
-    fun transition(component: UIComponent, callback: Runnable? = null) {
-        transition(component) { callback?.run() }
+    fun transition(component: UIComponent, callback: Runnable) {
+        transition(component) { callback.run() }
     }
 
     /**
