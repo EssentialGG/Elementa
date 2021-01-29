@@ -37,10 +37,10 @@ class ScissorEffect @JvmOverloads constructor(
         var width = boundingBox.getWidth().toInt() * scaleFactor
         var height = boundingBox.getHeight().toInt() * scaleFactor
 
-        val x2 = x + width
-        val y2 = y + height
-
         if (state != null && scissorIntersection) {
+            val x2 = x + width
+            val y2 = y + height
+
             val oldX = state.x
             val oldY = state.y
             val oldX2 = state.x + state.width

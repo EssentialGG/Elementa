@@ -3,8 +3,8 @@ package club.sk1er.elementa.utils
 import club.sk1er.elementa.UIComponent
 import java.awt.Color
 
-fun Float.guiHint() = UIComponent.guiHint(this)
-fun Double.guiHint() = UIComponent.guiHint(this)
+fun Float.guiHint(roundDown: Boolean) = UIComponent.guiHint(this, roundDown)
+fun Double.guiHint(roundDown: Boolean) = UIComponent.guiHint(this, roundDown)
 
 fun Color.withAlpha(alpha: Int) = Color(this.red, this.green, this.blue, alpha)
 fun Color.withAlpha(alpha: Float) = Color(this.red, this.green, this.blue, (alpha * 255).toInt())

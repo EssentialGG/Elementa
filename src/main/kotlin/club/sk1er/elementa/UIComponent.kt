@@ -20,9 +20,7 @@ import java.util.concurrent.ConcurrentLinkedDeque
 import java.util.concurrent.CopyOnWriteArrayList
 import java.util.function.BiConsumer
 import java.util.function.Consumer
-import kotlin.math.PI
-import kotlin.math.round
-import kotlin.math.sin
+import kotlin.math.*
 import kotlin.reflect.KMutableProperty0
 
 /**
@@ -997,17 +995,21 @@ abstract class UIComponent : Observable() {
         /**
          * Hints a number with respect to the current GUI scale.
          */
-        fun guiHint(number: Float): Float {
+        fun guiHint(number: Float, roundDown: Boolean): Float {
             val factor = UResolution.scaleFactor.toFloat()
-            return round(number * factor) / factor
+            return (number * factor).let {
+                if (roundDown) floor(it) else ceil(it)
+            } / factor
         }
 
         /**
          * Hints a number with respect to the current GUI scale.
          */
-        fun guiHint(number: Double): Double {
+        fun guiHint(number: Double, roundDown: Boolean): Double {
             val factor = UResolution.scaleFactor
-            return round(number * factor) / factor
+            return (number * factor).let {
+                if (roundDown) floor(it) else ceil(it)
+            } / factor
         }
     }
 }

@@ -82,26 +82,26 @@ class OutlineEffect @JvmOverloads constructor(
         val top = boundComponent.getTop().toDouble()
         val bottom = boundComponent.getBottom().toDouble()
 
-        val leftHinted = left.guiHint()
-        val rightHinted = right.guiHint()
-        val topHinted = top.guiHint()
-        val bottomHinted = bottom.guiHint()
+        val leftHinted = left.guiHint(true)
+        val rightHinted = right.guiHint(false)
+        val topHinted = top.guiHint(true)
+        val bottomHinted = bottom.guiHint(false)
 
         val leftBounds = if (drawInsideChildren) {
-            leftHinted to (left + width).guiHint()
-        } else (left - width).guiHint() to leftHinted
+            leftHinted to (left + width).guiHint(true)
+        } else (left - width).guiHint(true) to leftHinted
 
         val topBounds = if (drawInsideChildren) {
-            topHinted to (top + width).guiHint()
-        } else (top - width).guiHint() to topHinted
+            topHinted to (top + width).guiHint(true)
+        } else (top - width).guiHint(true) to topHinted
 
         val rightBounds = if (drawInsideChildren) {
-            (right - width).guiHint() to rightHinted
-        } else rightHinted to (right + width).guiHint()
+            (right - width).guiHint(false) to rightHinted
+        } else rightHinted to (right + width).guiHint(false)
 
         val bottomBounds = if (drawInsideChildren) {
-            (bottom - width).guiHint() to bottomHinted
-        } else bottomHinted to (bottom + width).guiHint()
+            (bottom - width).guiHint(false) to bottomHinted
+        } else bottomHinted to (bottom + width).guiHint(false)
 
         // Left outline block
         if (hasLeft)
