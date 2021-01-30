@@ -9,7 +9,8 @@ import club.sk1er.elementa.constraints.FillConstraint
 import club.sk1er.elementa.constraints.RelativeConstraint
 import club.sk1er.elementa.dsl.*
 import club.sk1er.elementa.effects.ScissorEffect
-import club.sk1er.elementa.font.old.FontRenderer
+import club.sk1er.elementa.font.DefaultFonts
+import club.sk1er.elementa.font.FontRenderer
 import java.awt.Color
 import java.util.concurrent.CompletableFuture
 
@@ -24,7 +25,8 @@ import java.util.concurrent.CompletableFuture
 class MarkdownComponent @JvmOverloads constructor(
     text: String,
     private val config: MarkdownConfig = MarkdownConfig(),
-    private val codeFontRenderer: FontRenderer = defaultCodeFontRenderer
+    private val codeFontRenderer: FontRenderer = DefaultFonts.JETBRAINS_MONO,
+    private val codeFontPointSize: Float = 10f
 ) : UIComponent() {
     private val documentFuture = CompletableFuture.supplyAsync {
         Document.fromString(text, config)
@@ -81,6 +83,7 @@ class MarkdownComponent @JvmOverloads constructor(
 
         val state = MarkdownState(
             codeFontRenderer,
+            codeFontPointSize,
             getLeft(),
             scrollChild.getTop(),
             scrollChild.getWidth(),
@@ -92,10 +95,5 @@ class MarkdownComponent @JvmOverloads constructor(
         scrollChild.setHeight(state.y.pixels())
 
         scissor.afterDraw()
-    }
-
-    companion object {
-        @JvmStatic
-        val defaultCodeFontRenderer = FontRenderer(FontRenderer.SupportedFont.FiraCode, 18f)
     }
 }

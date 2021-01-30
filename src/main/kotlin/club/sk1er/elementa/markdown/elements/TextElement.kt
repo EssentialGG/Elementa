@@ -100,12 +100,12 @@ class TextElement internal constructor(internal val spans: List<Span>) : Element
             }
 
             fun textWidth(text: String) = if (span.style.code) {
-                state.codeFontRenderer.getWidth(text) * state.textScaleModifier +
+                state.codeFontRenderer.getStringWidth(text, state.codeFontPointSize) * state.textScaleModifier +
                     state.inlineCodeConfig.leftPadding + state.inlineCodeConfig.rightPadding
             } else text.width(state.textScaleModifier)
 
             fun textHeight(text: String) = if (span.style.code) {
-                state.codeFontRenderer.getHeight(text) * state.textScaleModifier
+                state.codeFontRenderer.getStringHeight(text, state.codeFontPointSize) * state.textScaleModifier
             } else 9f * state.textScaleModifier
 
             var text = span.styledText
@@ -200,12 +200,13 @@ class TextElement internal constructor(internal val spans: List<Span>) : Element
                 } else color
 
                 if (span.style.code) {
+                    // TODO: shadow
                     state.codeFontRenderer.drawString(
                         text,
+                        actualColor,
                         x + state.inlineCodeConfig.leftPadding,
                         y - 1.5f,
-                        actualColor.rgb,
-                        shadow
+                        state.codeFontPointSize
                     )
                 } else {
                     UGraphics.drawString(text, x, y, actualColor.rgb, shadow)

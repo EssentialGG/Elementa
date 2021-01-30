@@ -4,12 +4,9 @@ import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.constraints.resolution.ConstraintResolutionGui
 import club.sk1er.elementa.constraints.resolution.ConstraintResolver
 import club.sk1er.elementa.effects.ScissorEffect
-import club.sk1er.elementa.font.DefaultFonts
 import club.sk1er.elementa.font.FontRenderer
 import club.sk1er.mods.core.universal.*
-import net.minecraft.client.renderer.GlStateManager
 import org.lwjgl.opengl.GL11
-import java.awt.Color
 import java.util.concurrent.ConcurrentLinkedQueue
 
 /**
@@ -34,7 +31,6 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
 
     override fun afterInitialization() {
         enqueueRenderOperation {
-            DefaultFonts.load()
             FontRenderer.initShaders()
             UICircle.initShaders()
             UIRoundedRectangle.initShaders()
@@ -76,27 +72,6 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
 
             mouseMove(this)
             super.draw()
-            UIBlock.drawBlock(Color.BLACK, 5.0, 5.0, 500.0, 200.0)
-            DefaultFonts.MINECRAFT.drawString("abcdefghijklmnopqrstuvwxyz", Color.WHITE, 5f, 10f, 10f)
-            // UGraphics.drawString("abcdefghijklmnopqrstuvwxyz", 5f, 20f, Color.WHITE.rgb, false)
-            DefaultFonts.MINECRAFT.drawString("ABCDEFGHIJKLMNOPQRSTUVWXYZ", Color.WHITE, 5f, 30f, 9f)
-            DefaultFonts.MINECRAFT.drawString("ABCDEFGHIJKLMNOPQRSTUVWXYZ", Color.WHITE, 5f, 40f, 6f)
-            GlStateManager.scale(1.25f, 1.25f, 1f)
-            // UGraphics.drawString("ABCDEFGHIJKLMNOPQRSTUVWXYZ", 5f / 1.25f, 48f / 1.25f, Color.WHITE.rgb, false)
-            DefaultFonts.MINECRAFT.drawString("ABCDEFGHIJKLMNOPQRSTUVWXYZ", Color.WHITE, 5f / 1.25f, 60f / 1.25f, 10f)
-            GlStateManager.scale(1 / 1.25f, 1 / 1.25f, 1f)
-            GlStateManager.scale(.6f, .6f, 1f)
-            DefaultFonts.MINECRAFT.drawString("ABCDEFGHIJKLMNOPQRSTUVWXYZ", Color.WHITE, 5f / .6f, 73f / .6f, 10f)
-            // UGraphics.drawString("ABCDEFGHIJKLMNOPQRSTUVWXYZ", 5f / .6f, 80f / .6f, Color.WHITE.rgb, false)
-            GlStateManager.scale(1 / .6f, 1 / .6f, 1f)
-            DefaultFonts.MINECRAFT.drawString("ABCDEFGHIJKLMNOPQRSTUVWXYZ", Color.WHITE, 5f, 90f, 30f)
-            GlStateManager.scale(3f, 3f, 1f)
-            // UGraphics.drawString("ABCDEFGHIJKLMNOPQRSTUVWXYZ", 5f / 3f, 115f / 3f, Color.WHITE.rgb, false)
-            GlStateManager.scale(1 / 3f, 1 / 3f, 1f)
-            DefaultFonts.FIRA_MONO.drawString("ABCDEFGHIJKLMNOPQRSTUVWXYZ", Color.WHITE, 5f, 140f, 10f)
-            DefaultFonts.JETBRAINS_MONO.drawString("ABCDEFGHIJKLMNOPQRSTUVWXYZ", Color.WHITE, 5f, 120f, 25f)
-            // DefaultFonts.FIRA_MONO.drawString("A", Color.WHITE, 5f, 180f, 256f)
-            // DefaultFonts.FIRA_MONO_A.drawString("A", Color.WHITE, 250f, 165f, 512f)
 
 
         } catch (e: Throwable) {
@@ -251,9 +226,9 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
         val realHeight = currentScissor.height / sf
 
         return right > realX &&
-                left < realX + realWidth &&
-                bottom >= bottomY - realHeight &&
-                top <= bottomY
+            left < realX + realWidth &&
+            bottom >= bottomY - realHeight &&
+            top <= bottomY
     }
 
     /*
