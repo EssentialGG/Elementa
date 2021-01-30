@@ -102,6 +102,9 @@ open class BasicState<T>(protected var valueBacker: T) : State<T>() {
     override fun get() = valueBacker
 
     override fun set(value: T) {
+        if (value == valueBacker)
+            return
+
         valueBacker = value
         super.set(value)
     }
