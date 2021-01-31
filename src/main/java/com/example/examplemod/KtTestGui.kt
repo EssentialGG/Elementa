@@ -11,12 +11,14 @@ import club.sk1er.elementa.constraints.animation.Animations
 import club.sk1er.elementa.dsl.*
 import club.sk1er.elementa.effects.OutlineEffect
 import club.sk1er.elementa.effects.ScissorEffect
+import club.sk1er.elementa.font.DefaultFonts
 import club.sk1er.elementa.state.BasicState
 import club.sk1er.elementa.state.pixels
 import java.awt.Color
 import java.net.URL
 import kotlin.concurrent.thread
 import kotlin.concurrent.timer
+import kotlin.random.Random
 
 class KtTestGui : WindowScreen() {
     private val myTextBox = UIBlock(Color(0, 0, 0, 255))
@@ -304,6 +306,21 @@ class KtTestGui : WindowScreen() {
             x = 100.pixels(alignOpposite = true)
             y = 100.pixels(alignOpposite = true)
         } childOf window
+    }
+
+    override fun onDrawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
+        super.onDrawScreen(mouseX, mouseY, partialTicks)
+
+        UIBlock.drawBlock(Color.BLACK, 10.0, 10.0, 500.0, 600.0)
+
+        val random = Random(1)
+
+        var y = 0
+        for (i in 4..20) {
+            DefaultFonts.JETBRAINS_MONO.drawString("This is a TEST String!", Color.WHITE, 20.0f,
+                    10.0f + y, i.toFloat() + random.nextFloat())
+            y += i + 1
+        }
     }
 
     private fun animImgSmall(img: UIImage) {

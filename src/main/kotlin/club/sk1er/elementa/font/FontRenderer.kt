@@ -1,19 +1,20 @@
 package club.sk1er.elementa.font
 
+import club.sk1er.elementa.components.UIBlock
 import club.sk1er.elementa.font.data.Font
 import club.sk1er.elementa.font.data.Glyph
-import club.sk1er.elementa.shaders.FloatUniform
-import club.sk1er.elementa.shaders.IntUniform
-import club.sk1er.elementa.shaders.Shader
-import club.sk1er.elementa.shaders.Vec4Uniform
+import club.sk1er.elementa.shaders.*
+import club.sk1er.elementa.utils.Vector2f
 import club.sk1er.elementa.utils.Vector4f
 import club.sk1er.mods.core.universal.UGraphics
 import club.sk1er.mods.core.universal.UMinecraft
+import net.minecraft.client.gui.Gui
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats
 import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL13
 import java.awt.Color
-import kotlin.math.roundToInt
+import kotlin.math.ceil
+import kotlin.math.floor
 
 class FontRenderer(private val font: Font) {
     fun getStringWidth(string: String, pointSize: Float): Float {
@@ -58,12 +59,20 @@ class FontRenderer(private val font: Font) {
 
         shader.bindIfUsable()
         samplerUniform.setValue(0)
-        shadowColorUniform.setValue(Vector4f(0.1f, 0.1f, 0.1f, 1f))
+        //shadowColorUniform.setValue(Vector4f(0.1f, 0.1f, 0.1f, 1f))
+        sdfTexel.setValue(Vector2f(1f/font.fontInfo.atlas.width, 1f/font.fontInfo.atlas.height))
+
+        hintAmountUniform.setValue(1f)
+        subpixelAmountUniform.setValue(1f)
 
         val guiScale = UMinecraft.getMinecraft().gameSettings.guiScale
 
         val metrics = font.fontInfo.metrics
         val baseline = y + ((metrics.lineHeight + metrics.descender) * pointSize)
+
+        doffsetUniform.setValue(3.5f / pointSize)
+
+        val hintedBaseline = floor(baseline * guiScale) / guiScale
 
         var currentX = x
         string.forEach { char ->
@@ -73,8 +82,9 @@ class FontRenderer(private val font: Font) {
             if (planeBounds != null) {
                 val width = (planeBounds.right - planeBounds.left) * pointSize
                 val height = (planeBounds.top - planeBounds.bottom) * pointSize
-                val adjustedY = baseline - (planeBounds.top * pointSize)
-                val hintedY = (adjustedY * guiScale).toInt().toFloat() / guiScale
+
+                val hintedHeight = ceil(height * guiScale) / guiScale
+                val hintedY = hintedBaseline - ceil(planeBounds.top * pointSize * guiScale) / guiScale
 
                 drawGlyph(
                     glyph,
@@ -82,12 +92,11 @@ class FontRenderer(private val font: Font) {
                     currentX,
                     hintedY,
                     width,
-                    height
+                    hintedHeight
                 )
             }
 
             currentX += (glyph.advance * pointSize)
-            currentX = (currentX * guiScale).roundToInt().toFloat() / guiScale
         }
 
         shader.unbindIfUsable()
@@ -102,9 +111,6 @@ class FontRenderer(private val font: Font) {
         val textureRight = (atlasBounds.right / atlas.width).toDouble()
 
         fgColorUniform.setValue(Vector4f(color.red / 255f, color.green / 255f, color.blue / 255f, color.alpha / 255f))
-        val atlasWidth = (atlasBounds.right - atlasBounds.left)
-        val distanceFactor = font.fontInfo.atlas.distanceRange * (width / atlasWidth)
-        distanceFactorUniform.setValue((distanceFactor * 1.2f).coerceAtLeast(5f))
 
         val worldRenderer = UGraphics.getFromTessellator()
         worldRenderer.begin(7, DefaultVertexFormats.POSITION_TEX)
@@ -120,9 +126,12 @@ class FontRenderer(private val font: Font) {
     companion object {
         private lateinit var shader: Shader
         private lateinit var samplerUniform: IntUniform
-        private lateinit var distanceFactorUniform: FloatUniform
+        private lateinit var doffsetUniform: FloatUniform
+        private lateinit var hintAmountUniform: FloatUniform
+        private lateinit var subpixelAmountUniform: FloatUniform
+        private lateinit var sdfTexel: Vec2Uniform
         private lateinit var fgColorUniform: Vec4Uniform
-        private lateinit var shadowColorUniform: Vec4Uniform
+        //private lateinit var shadowColorUniform: Vec4Uniform
 
         fun areShadersInitialized() = ::shader.isInitialized
 
@@ -132,9 +141,12 @@ class FontRenderer(private val font: Font) {
 
             shader = Shader("font", "font")
             samplerUniform = IntUniform(shader.getUniformLocation("msdf"))
-            distanceFactorUniform = FloatUniform(shader.getUniformLocation("distanceFactor"))
+            doffsetUniform = FloatUniform(shader.getUniformLocation("doffset"))
+            hintAmountUniform = FloatUniform(shader.getUniformLocation("hint_amount"))
+            subpixelAmountUniform = FloatUniform(shader.getUniformLocation("subpixel_amount"))
+            sdfTexel = Vec2Uniform(shader.getUniformLocation("sdf_texel"))
             fgColorUniform = Vec4Uniform(shader.getUniformLocation("fgColor"))
-            shadowColorUniform = Vec4Uniform(shader.getUniformLocation("shadowColor"))
+            //shadowColorUniform = Vec4Uniform(shader.getUniformLocation("shadowColor"))
         }
     }
 }
