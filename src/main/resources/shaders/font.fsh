@@ -39,9 +39,9 @@ vec3 subpixel( float v, float a ) {
 
 void main() {
     // Sampling the texture, L pattern
-    float sdf       = distanceFactor * getDistanceFromSDF( msdf, pos );
-    float sdf_north = distanceFactor * getDistanceFromSDF( msdf, pos + vec2( 0.0, sdf_texel.y ) );
-    float sdf_east  = distanceFactor * getDistanceFromSDF( msdf, pos + vec2( sdf_texel.x, 0.0 ) );
+    float sdf       = getDistanceFromSDF( msdf, pos );
+    float sdf_north = getDistanceFromSDF( msdf, pos + vec2( 0.0, sdf_texel.y ) );
+    float sdf_east  = getDistanceFromSDF( msdf, pos + vec2( sdf_texel.x, 0.0 ) );
 
     // Estimating stroke direction by the distance field gradient vector
     vec2  sgrad     = vec2( sdf_east - sdf, sdf_north - sdf );
@@ -62,5 +62,5 @@ void main() {
     if ( alpha < 20.0 / 256.0 ) discard;
 
     vec3 channels = subpixel( grad.x * 0.5 * subpixel_amount, alpha );
-    gl_FragColor = vec4(channels, 1.0 );
+    gl_FragColor = fgColor * vec4(channels, 1.0 );
 }

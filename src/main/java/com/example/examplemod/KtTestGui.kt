@@ -317,8 +317,9 @@ class KtTestGui : WindowScreen() {
 
         var y = 0
         for (i in 4..20) {
-            DefaultFonts.JETBRAINS_MONO.drawString("This is a TEST String!", Color.WHITE, 20.0f,
-                    10.0f + y, i.toFloat() + random.nextFloat())
+            (if (i % 2 == 0) DefaultFonts.JETBRAINS_MONO else DefaultFonts.MINECRAFT)
+                .drawString("This \u00a7cis \u00a7aa \u00a7kTEST \u00a7rString!",
+                    Color.BLUE, 20.0f, 10.0f + y, i.toFloat() + random.nextFloat())
             y += i + 1
         }
     }

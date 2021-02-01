@@ -8,7 +8,6 @@ import club.sk1er.elementa.utils.Vector2f
 import club.sk1er.elementa.utils.Vector4f
 import club.sk1er.mods.core.universal.UGraphics
 import club.sk1er.mods.core.universal.UMinecraft
-import net.minecraft.client.gui.Gui
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats
 import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL13
@@ -17,6 +16,14 @@ import kotlin.math.ceil
 import kotlin.math.floor
 
 class FontRenderer(private val font: Font) {
+    private var underline: Boolean = false
+    private var strikethrough: Boolean = false
+    private var bold: Boolean = false
+    private var italics: Boolean = false
+    private var obfuscated: Boolean = false
+    private var textColor: Color? = null
+    private var shadowColor: Color? = null
+
     fun getStringWidth(string: String, pointSize: Float): Float {
         var width = 0f
         string.forEach { char ->
@@ -75,8 +82,56 @@ class FontRenderer(private val font: Font) {
         val hintedBaseline = floor(baseline * guiScale) / guiScale
 
         var currentX = x
-        string.forEach { char ->
-            val glyph = font.fontInfo.glyphs[char.toInt()] ?: return@forEach
+        var i = 0
+        while (i < string.length) {
+        //for (i in string.indices) {
+        //string.forEach { char ->
+            val char = string[i]
+
+            // parse formatting codes
+            if (char == '\u00a7' && i + 1 < string.length) {
+                val j = "0123456789abcdefklmnor".indexOf(string[i + 1])
+                when {
+                    j < 16 -> {
+                        obfuscated = false
+                        bold = false
+                        italics = false
+                        strikethrough = false
+                        underline = false
+                        if (j < 0) {
+                            textColor = colors[15]
+                            shadowColor = colors[31]
+                        } else {
+                            textColor = colors[j]
+                            shadowColor = colors[j + 16]
+                        }
+                    }
+                    j == 16 -> obfuscated = true
+                    j == 17 -> bold = true
+                    j == 18 -> strikethrough = true
+                    j == 19 -> underline = true
+                    j == 20 -> italics = true
+                    else -> {
+                        obfuscated = false
+                        bold = false
+                        italics = false
+                        strikethrough = false
+                        underline = false
+                        textColor = null
+                        shadowColor = null
+                    }
+                }
+                i += 2
+                continue
+            }
+
+            val c = if (obfuscated && char != ' ') "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".random() else char
+
+            val glyph = font.fontInfo.glyphs[c.toInt()]
+            if (glyph == null) {
+                i++
+                continue
+            }
             val planeBounds = glyph.planeBounds
 
             if (planeBounds != null) {
@@ -97,6 +152,7 @@ class FontRenderer(private val font: Font) {
             }
 
             currentX += (glyph.advance * pointSize)
+            i++
         }
 
         shader.unbindIfUsable()
@@ -110,7 +166,8 @@ class FontRenderer(private val font: Font) {
         val textureLeft = (atlasBounds.left / atlas.width).toDouble()
         val textureRight = (atlasBounds.right / atlas.width).toDouble()
 
-        fgColorUniform.setValue(Vector4f(color.red / 255f, color.green / 255f, color.blue / 255f, color.alpha / 255f))
+        val drawColor = textColor ?: color
+        fgColorUniform.setValue(Vector4f(drawColor.red / 255f, drawColor.green / 255f, drawColor.blue / 255f, drawColor.alpha / 255f))
 
         val worldRenderer = UGraphics.getFromTessellator()
         worldRenderer.begin(7, DefaultVertexFormats.POSITION_TEX)
@@ -121,9 +178,60 @@ class FontRenderer(private val font: Font) {
         worldRenderer.pos(doubleX + width, doubleY, 0.0).tex(textureRight, textureTop).endVertex()
         worldRenderer.pos(doubleX, doubleY, 0.0).tex(textureLeft, textureTop).endVertex()
         UGraphics.draw()
+
+        // TODO: all of these
+        if (strikethrough) {
+            TODO()
+        }
+        if (underline) {
+            TODO()
+        }
+        if (bold) {
+            TODO()
+        }
+        if (italics) {
+            TODO()
+        }
     }
 
     companion object {
+        // trusting these are right... thank you minecraft wiki
+        private val colors: Map<Int, Color> = mapOf(
+            0 to Color.BLACK,
+            1 to Color(0, 0, 170),
+            2 to Color(0, 170, 0),
+            3 to Color(0, 170, 170),
+            4 to Color(170, 0 ,0),
+            5 to Color(170, 0, 170),
+            6 to Color(255, 170, 0),
+            7 to Color(170, 170, 170),
+            8 to Color(85, 85, 85),
+            9 to Color(85, 85, 255),
+            10 to Color(85, 255, 85),
+            11 to Color(85, 255, 255),
+            12 to Color(255, 85, 85),
+            13 to Color(255, 85, 255),
+            14 to Color(255, 255, 85),
+            15 to Color(255, 255, 255),
+            // shadows for (i - 16)
+            16 to Color.BLACK,
+            17 to Color(0, 0, 42),
+            18 to Color(0, 42, 0),
+            19 to Color(0, 42, 42),
+            20 to Color(42, 0, 0),
+            21 to Color(42, 0, 42),
+            22 to Color(42, 42, 0),
+            23 to Color(42, 42, 42),
+            24 to Color(21, 21, 21),
+            25 to Color(21, 21, 63),
+            26 to Color(21, 63, 21),
+            27 to Color(21, 63, 63),
+            28 to Color(63, 21, 21),
+            29 to Color(63, 21, 63),
+            30 to Color(63, 63, 21),
+            31 to Color(63, 63, 63)
+        )
+
         private lateinit var shader: Shader
         private lateinit var samplerUniform: IntUniform
         private lateinit var doffsetUniform: FloatUniform

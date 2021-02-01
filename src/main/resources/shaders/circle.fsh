@@ -3,7 +3,7 @@
 uniform float u_Radius;
 uniform vec2 u_CenterPos;
 
-in vec2 f_Position;
+varying vec2 f_Position;
 
 //out vec4 fragColor;
 
