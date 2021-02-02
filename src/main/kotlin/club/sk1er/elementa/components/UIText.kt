@@ -63,6 +63,10 @@ open class UIText @JvmOverloads constructor(
     }
 
     override fun draw() {
+        val text = textState.get()
+        if (text.isEmpty())
+            return
+
         beforeDraw()
 
         val x = getLeft()
@@ -82,9 +86,9 @@ open class UIText @JvmOverloads constructor(
         val shadow = shadowState.get()
         val shadowColor = shadowColorState.get()
         if (shadow && shadowColor != null) {
-            UGraphics.drawString(textState.get(), x / width, y / height, color.rgb, shadowColor.rgb)
+            UGraphics.drawString(text, x / width, y / height, color.rgb, shadowColor.rgb)
         } else {
-            UGraphics.drawString(textState.get(), x / width, y / height, color.rgb, shadow)
+            UGraphics.drawString(text, x / width, y / height, color.rgb, shadow)
         }
         UGraphics.scale(1 / width.toDouble(), 1 / height.toDouble(), 1.0)
 
