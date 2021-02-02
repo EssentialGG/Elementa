@@ -6,39 +6,94 @@ import club.sk1er.elementa.constraints.resolution.ConstraintVisitor
 /**
  * Tries to expand to fill all of the remaining width/height available in this component's
  * parent.
+ *
+ * When [useSiblings] is true, this constraint will have a size equal to the difference
+ * between the parent's size and the sum of the sibling's size. When [useSiblings] is false,
+ * it will only consider the position of this component and fill the rest of the space.
  */
-class FillConstraint : SizeConstraint {
+class FillConstraint @JvmOverloads constructor(private val useSiblings: Boolean = true) : SizeConstraint {
     override var cachedValue = 0f
     override var recalculate = true
     override var constrainTo: UIComponent? = null
 
     override fun getWidthImpl(component: UIComponent): Float {
-        return (constrainTo ?: component.parent).getRight() - component.getLeft()
+        val target = constrainTo ?: component.parent
+
+        return if (useSiblings) {
+            target.getWidth() - target.children.filter { it != component }.sumByDouble {
+                it.getWidth().toDouble()
+            }.toFloat()
+        } else target.getRight() - component.getLeft()
     }
 
     override fun getHeightImpl(component: UIComponent): Float {
-        return (constrainTo ?: component.parent).getBottom() - component.getTop()
+        val target = constrainTo ?: component.parent
+
+        return if (useSiblings) {
+            target.getHeight() - target.children.filter { it != component }.sumByDouble {
+                it.getHeight().toDouble()
+            }.toFloat()
+        } else target.getBottom() - component.getTop()
     }
 
     override fun getRadiusImpl(component: UIComponent): Float {
-        return ((constrainTo ?: component.parent).getRadius() - component.getLeft()) / 2f
+        val target = constrainTo ?: component.parent
+
+        return if (useSiblings) {
+            target.getRadius() - target.children.filter { it != component }.sumByDouble {
+                it.getRadius().toDouble()
+            }.toFloat()
+        } else (target.getRadius() - component.getLeft()) / 2f
     }
 
     override fun visitImpl(visitor: ConstraintVisitor, type: ConstraintType) {
         when (type) {
             ConstraintType.WIDTH -> {
-                visitor.visitParent(ConstraintType.X)
                 visitor.visitParent(ConstraintType.WIDTH)
-                visitor.visitSelf(ConstraintType.X)
+
+                if (useSiblings) {
+                    val indexInParent = visitor.component.let { it.parent.children.indexOf(it) }
+                    val numParentChildren = visitor.component.parent.children.size
+
+                    for (i in 0 until numParentChildren) {
+                        if (indexInParent != i)
+                            visitor.visitSibling(ConstraintType.WIDTH, i)
+                    }
+                } else {
+                    visitor.visitParent(ConstraintType.X)
+                    visitor.visitSelf(ConstraintType.X)
+                }
             }
             ConstraintType.HEIGHT -> {
-                visitor.visitParent(ConstraintType.Y)
                 visitor.visitParent(ConstraintType.HEIGHT)
-                visitor.visitSelf(ConstraintType.Y)
+
+                if (useSiblings) {
+                    val indexInParent = visitor.component.let { it.parent.children.indexOf(it) }
+                    val numParentChildren = visitor.component.parent.children.size
+
+                    for (i in 0 until numParentChildren) {
+                        if (indexInParent != i)
+                            visitor.visitSibling(ConstraintType.HEIGHT, i)
+                    }
+                } else {
+                    visitor.visitParent(ConstraintType.Y)
+                    visitor.visitSelf(ConstraintType.Y)
+                }
             }
             ConstraintType.RADIUS -> {
-                visitor.visitSelf(ConstraintType.X)
-                // TODO: Radius dependency?
+                visitor.visitParent(ConstraintType.RADIUS)
+
+                if (useSiblings) {
+                    val indexInParent = visitor.component.let { it.parent.children.indexOf(it) }
+                    val numParentChildren = visitor.component.parent.children.size
+
+                    for (i in 0 until numParentChildren) {
+                        if (indexInParent != i)
+                            visitor.visitSibling(ConstraintType.RADIUS, i)
+                    }
+                } else {
+                    visitor.visitSelf(ConstraintType.X)
+                }
             }
             else -> throw IllegalArgumentException(type.prettyName)
         }
