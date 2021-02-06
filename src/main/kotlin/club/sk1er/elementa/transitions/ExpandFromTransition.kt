@@ -1,5 +1,6 @@
 package club.sk1er.elementa.transitions
 
+import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.constraints.*
 import club.sk1er.elementa.constraints.animation.AnimatingConstraints
 import club.sk1er.elementa.constraints.animation.Animations
@@ -19,20 +20,21 @@ object ExpandFromTransition {
     class Left @JvmOverloads constructor(
         private val time: Float = 1f,
         private val animationType: Animations = Animations.OUT_EXP
-    ) : BoundTransition() {
-        private lateinit var widthConstraint: WidthConstraint
+    ) : Transition() {
+        private val widthConstraints = mutableMapOf<UIComponent, WidthConstraint>()
 
-        override fun beforeTransition() {
-            widthConstraint = boundComponent.constraints.width
-            boundComponent.setWidth(0.pixels())
+        override fun beforeTransition(component: UIComponent) {
+            widthConstraints[component] = component.constraints.width
+            component.setWidth(0.pixels())
         }
 
-        override fun doTransition(constraints: AnimatingConstraints) {
-            constraints.setWidthAnimation(animationType, time, widthConstraint)
+        override fun doTransition(component: UIComponent, constraints: AnimatingConstraints) {
+            constraints.setWidthAnimation(animationType, time, widthConstraints[component]!!)
         }
 
-        override fun afterTransition() {
-            boundComponent.setWidth(widthConstraint)
+        override fun afterTransition(component: UIComponent) {
+            component.setWidth(widthConstraints[component]!!)
+            widthConstraints.remove(component)
         }
     }
 
@@ -43,20 +45,21 @@ object ExpandFromTransition {
     class Top @JvmOverloads constructor(
         private val time: Float = 1f,
         private val animationType: Animations = Animations.OUT_EXP
-    ) : BoundTransition() {
-        private lateinit var heightConstraint: HeightConstraint
+    ) : Transition() {
+        private val heightConstraints = mutableMapOf<UIComponent, HeightConstraint>()
 
-        override fun beforeTransition() {
-            heightConstraint = boundComponent.constraints.height
-            boundComponent.setHeight(0.pixels())
+        override fun beforeTransition(component: UIComponent) {
+            heightConstraints[component] = component.constraints.height
+            component.setHeight(0.pixels())
         }
 
-        override fun doTransition(constraints: AnimatingConstraints) {
-            constraints.setHeightAnimation(animationType, time, heightConstraint)
+        override fun doTransition(component: UIComponent, constraints: AnimatingConstraints) {
+            constraints.setHeightAnimation(animationType, time, heightConstraints[component]!!)
         }
 
-        override fun afterTransition() {
-            boundComponent.setHeight(heightConstraint)
+        override fun afterTransition(component: UIComponent) {
+            component.setHeight(heightConstraints[component]!!)
+            heightConstraints.remove(component)
         }
     }
 
@@ -67,25 +70,27 @@ object ExpandFromTransition {
     class Right @JvmOverloads constructor(
         private val time: Float = 1f,
         private val animationType: Animations = Animations.OUT_EXP
-    ) : BoundTransition() {
-        private lateinit var xConstraint: XConstraint
-        private lateinit var widthConstraint: WidthConstraint
+    ) : Transition() {
+        private val xConstraints = mutableMapOf<UIComponent, XConstraint>()
+        private val widthConstraints = mutableMapOf<UIComponent, WidthConstraint>()
 
-        override fun beforeTransition() {
-            xConstraint = boundComponent.constraints.x
-            widthConstraint = boundComponent.constraints.width
-            boundComponent.setX(xConstraint + boundComponent.getWidth().pixels())
-            boundComponent.setWidth(0.pixels())
+        override fun beforeTransition(component: UIComponent) {
+            xConstraints[component] = component.constraints.x
+            widthConstraints[component] = component.constraints.width
+            component.setX(component.constraints.x + component.getWidth().pixels())
+            component.setWidth(0.pixels())
         }
 
-        override fun doTransition(constraints: AnimatingConstraints) {
-            constraints.setXAnimation(animationType, time, xConstraint)
-            constraints.setWidthAnimation(animationType, time, widthConstraint)
+        override fun doTransition(component: UIComponent, constraints: AnimatingConstraints) {
+            constraints.setXAnimation(animationType, time, xConstraints[component]!!)
+            constraints.setWidthAnimation(animationType, time, widthConstraints[component]!!)
         }
 
-        override fun afterTransition() {
-            boundComponent.setX(xConstraint)
-            boundComponent.setWidth(widthConstraint)
+        override fun afterTransition(component: UIComponent) {
+            component.setX(xConstraints[component]!!)
+            component.setWidth(widthConstraints[component]!!)
+            xConstraints.remove(component)
+            widthConstraints.remove(component)
         }
     }
 
@@ -96,25 +101,27 @@ object ExpandFromTransition {
     class Bottom @JvmOverloads constructor(
         private val time: Float = 1f,
         private val animationType: Animations = Animations.OUT_EXP
-    ) : BoundTransition() {
-        private lateinit var yConstraint: YConstraint
-        private lateinit var heightConstraint: HeightConstraint
+    ) : Transition() {
+        private val yConstraints = mutableMapOf<UIComponent, YConstraint>()
+        private val heightConstraints = mutableMapOf<UIComponent, HeightConstraint>()
 
-        override fun beforeTransition() {
-            yConstraint = boundComponent.constraints.y
-            heightConstraint = boundComponent.constraints.height
-            boundComponent.setY(yConstraint + boundComponent.getHeight().pixels())
-            boundComponent.setHeight(0.pixels())
+        override fun beforeTransition(component: UIComponent) {
+            yConstraints[component] = component.constraints.y
+            heightConstraints[component] = component.constraints.height
+            component.setY(component.constraints.y + component.getHeight().pixels())
+            component.setHeight(0.pixels())
         }
 
-        override fun doTransition(constraints: AnimatingConstraints) {
-            constraints.setYAnimation(animationType, time, yConstraint)
-            constraints.setHeightAnimation(animationType, time, heightConstraint)
+        override fun doTransition(component: UIComponent, constraints: AnimatingConstraints) {
+            constraints.setYAnimation(animationType, time, yConstraints[component]!!)
+            constraints.setHeightAnimation(animationType, time, heightConstraints[component]!!)
         }
 
-        override fun afterTransition() {
-            boundComponent.setY(yConstraint)
-            boundComponent.setHeight(heightConstraint)
+        override fun afterTransition(component: UIComponent) {
+            component.setY(yConstraints[component]!!)
+            component.setHeight(heightConstraints[component]!!)
+            yConstraints.remove(component)
+            heightConstraints.remove(component)
         }
     }
 }

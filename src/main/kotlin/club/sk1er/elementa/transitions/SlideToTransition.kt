@@ -1,5 +1,6 @@
 package club.sk1er.elementa.transitions
 
+import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.constraints.XConstraint
 import club.sk1er.elementa.constraints.YConstraint
 import club.sk1er.elementa.constraints.animation.AnimatingConstraints
@@ -18,20 +19,21 @@ object SlideToTransition {
         private val time: Float = 1f,
         private val animationType: Animations = Animations.OUT_EXP,
         private val restoreConstraints: Boolean = false
-    ) : BoundTransition() {
-        private lateinit var xConstraint: XConstraint
+    ) : Transition() {
+        private val xConstraints = mutableMapOf<UIComponent, XConstraint>()
 
-        override fun beforeTransition() {
-            xConstraint = boundComponent.constraints.x
+        override fun beforeTransition(component: UIComponent) {
+            xConstraints[component] = component.constraints.x
         }
 
-        override fun doTransition(constraints: AnimatingConstraints) {
-            constraints.setXAnimation(animationType, time, xConstraint - boundComponent.getWidth().pixels())
+        override fun doTransition(component: UIComponent, constraints: AnimatingConstraints) {
+            constraints.setXAnimation(animationType, time, xConstraints[component]!! - component.getWidth().pixels())
         }
 
-        override fun afterTransition() {
+        override fun afterTransition(component: UIComponent) {
             if (restoreConstraints)
-                boundComponent.setX(xConstraint)
+                component.setX(xConstraints[component]!!)
+            xConstraints.remove(component)
         }
     }
 
@@ -39,20 +41,21 @@ object SlideToTransition {
         private val time: Float = 1f,
         private val animationType: Animations = Animations.OUT_EXP,
         private val restoreConstraints: Boolean = false
-    ) : BoundTransition() {
-        private lateinit var yConstraint: YConstraint
+    ) : Transition() {
+        private val yConstraints = mutableMapOf<UIComponent, YConstraint>()
 
-        override fun beforeTransition() {
-            yConstraint = boundComponent.constraints.y
+        override fun beforeTransition(component: UIComponent) {
+            yConstraints[component] = component.constraints.y
         }
 
-        override fun doTransition(constraints: AnimatingConstraints) {
-            constraints.setYAnimation(animationType, time, yConstraint - boundComponent.getHeight().pixels())
+        override fun doTransition(component: UIComponent, constraints: AnimatingConstraints) {
+            constraints.setYAnimation(animationType, time, yConstraints[component]!! - component.getHeight().pixels())
         }
 
-        override fun afterTransition() {
+        override fun afterTransition(component: UIComponent) {
             if (restoreConstraints)
-                boundComponent.setY(yConstraint)
+                component.setY(yConstraints[component]!!)
+            yConstraints.remove(component)
         }
     }
 
@@ -60,20 +63,21 @@ object SlideToTransition {
         private val time: Float = 1f,
         private val animationType: Animations = Animations.OUT_EXP,
         private val restoreConstraints: Boolean = false
-    ) : BoundTransition() {
-        private lateinit var xConstraint: XConstraint
+    ) : Transition() {
+        private val xConstraints = mutableMapOf<UIComponent, XConstraint>()
 
-        override fun beforeTransition() {
-            xConstraint = boundComponent.constraints.x
+        override fun beforeTransition(component: UIComponent) {
+            xConstraints[component] = component.constraints.x
         }
 
-        override fun doTransition(constraints: AnimatingConstraints) {
-            constraints.setXAnimation(animationType, time, xConstraint + boundComponent.getWidth().pixels())
+        override fun doTransition(component: UIComponent, constraints: AnimatingConstraints) {
+            constraints.setXAnimation(animationType, time, xConstraints[component]!! + component.getWidth().pixels())
         }
 
-        override fun afterTransition() {
+        override fun afterTransition(component: UIComponent) {
             if (restoreConstraints)
-                boundComponent.setX(xConstraint)
+                component.setX(xConstraints[component]!!)
+            xConstraints.remove(component)
         }
     }
 
@@ -81,20 +85,21 @@ object SlideToTransition {
         private val time: Float = 1f,
         private val animationType: Animations = Animations.OUT_EXP,
         private val restoreConstraints: Boolean = false
-    ) : BoundTransition() {
-        private lateinit var yConstraint: YConstraint
+    ) : Transition() {
+        private val yConstraints = mutableMapOf<UIComponent, YConstraint>()
 
-        override fun beforeTransition() {
-            yConstraint = boundComponent.constraints.y
+        override fun beforeTransition(component: UIComponent) {
+            yConstraints[component] = component.constraints.y
         }
 
-        override fun doTransition(constraints: AnimatingConstraints) {
-            constraints.setYAnimation(animationType, time, yConstraint + boundComponent.getHeight().pixels())
+        override fun doTransition(component: UIComponent, constraints: AnimatingConstraints) {
+            constraints.setYAnimation(animationType, time, yConstraints[component]!! + component.getHeight().pixels())
         }
 
-        override fun afterTransition() {
+        override fun afterTransition(component: UIComponent) {
             if (restoreConstraints)
-                boundComponent.setY(yConstraint)
+                component.setY(yConstraints[component]!!)
+            yConstraints.remove(component)
         }
     }
 }
