@@ -47,7 +47,7 @@ class MarkdownComponent @JvmOverloads constructor(
         val scrollBar = UIContainer().constrain {
             x = 2.pixels(alignOpposite = true)
             width = 10.pixels()
-            height = FillConstraint()
+            height = 100.percent()
         } childOf this
 
         val scrollBarContainer = UIContainer().constrain {

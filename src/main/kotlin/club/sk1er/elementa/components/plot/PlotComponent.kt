@@ -38,8 +38,8 @@ class PlotComponent(
             throw IllegalArgumentException("yBounds.numberOfGridLines lines must be either 0 or >= 2")
 
         constrain {
-            width = FillConstraint()
-            height = FillConstraint()
+            width = 100.percent()
+            height = 100.percent()
         }
 
         when {

@@ -633,7 +633,7 @@ class ScrollComponent @JvmOverloads constructor(
             if (isHorizontal) {
                 constrain {
                     y = 2.pixels(alignOpposite = true)
-                    width = FillConstraint()
+                    width = 100.percent()
                     height = 10.pixels()
                 }
 
@@ -654,7 +654,7 @@ class ScrollComponent @JvmOverloads constructor(
                 constrain {
                     x = 2.pixels(alignOpposite = true)
                     width = 10.pixels()
-                    height = FillConstraint()
+                    height = 100.percent()
                 }
 
                 val container = UIContainer().constrain {
