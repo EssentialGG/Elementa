@@ -104,9 +104,14 @@ The function `UIShape#addVertex` now returns the `this` instance of `UIShape`.
 
 ## Constraints
 
-The `.max` and `.min` DSL functions have been renamed to `.coerceAtMost` and `.coerceAtLeast`, which nicely matches the
-Kotlin stdlib naming. 
+`FillConstraint` has had its behavior reworked to more closely match its name. Previously, it would only consider
+the previous sibling's position, and fill to the rest of the parent. It now takes the different between the
+parents' width/height and the sum of all its siblings' width/height. It also accepts a boolean parameter to
+restore the old behavior, but the new behavior is the default.
 
-## Kotlin Extension Methods
+## Kotlin Extension Functions
+
+The `.max` and `.min` DSL functions have been renamed to `.coerceAtMost` and `.coerceAtLeast`, which nicely matches the
+Kotlin stdlib naming.
 
 `asConstraint` have been renamed to `toConstraint`
