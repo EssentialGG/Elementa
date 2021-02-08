@@ -17,35 +17,35 @@ class ConstraintResolutionGui(
 ) : WindowScreen() {
     init {
         UIBlock(Color(22, 22, 24)).constrain {
-            width = FillConstraint()
-            height = FillConstraint()
+            width = 100.percent()
+            height = 100.percent()
         } childOf window
 
         UIBlock(Color(80, 80, 80)).constrain {
-            x = RelativeConstraint(0.1f)
-            y = RelativeConstraint(0.1f)
+            x = 10.percent()
+            y = 10.percent()
             width = 1.pixel()
-            height = RelativeConstraint(0.8f)
+            height = 80.percent()
         } childOf window
 
         val container = UIContainer().constrain {
             x = SiblingConstraint()
-            y = RelativeConstraint(0.1f)
-            width = RelativeConstraint(0.8f) - 2.pixels()
-            height = RelativeConstraint(0.8f)
+            y = 10.percent()
+            width = 80.percent() - 2.pixels()
+            height = 80.percent()
         } effect ScissorEffect() childOf window
 
         UIBlock(Color(80, 80, 80)).constrain {
             x = SiblingConstraint()
-            y = RelativeConstraint(0.1f)
+            y = 10.percent()
             width = 1.pixel()
-            height = RelativeConstraint()
-            height = RelativeConstraint(0.8f)
+            height = 100.percent()
+            height = 80.percent()
         } childOf window
 
         val titleContent = UIContainer().constrain {
             x = 1.pixel()
-            width = RelativeConstraint() - 2.pixels()
+            width = 100.percent() - 2.pixels()
             height = ChildBasedSizeConstraint()
         } childOf container
 
@@ -57,19 +57,19 @@ class ConstraintResolutionGui(
 
         val tabContainer = UIContainer().constrain {
             y = SiblingConstraint(10f) boundTo titleContent
-            width = RelativeConstraint()
+            width = 100.percent()
             height = ChildBasedSizeConstraint()
         } childOf container
 
         val tabContent = UIContainer().constrain {
             x = CenterConstraint()
-            width = RelativeConstraint(0.5f)
+            width = 50.percent()
             height = ChildBasedMaxSizeConstraint() + 2.pixels()
         } childOf tabContainer
 
         val tabHighlight = UIBlock(Color(200, 200, 200)).constrain {
             y = (-2).pixels(alignOpposite = true)
-            width = RelativeConstraint(0.5f) boundTo tabContent
+            width = 50.percent() boundTo tabContent
             height = 2.pixels()
         } childOf tabContent
 
@@ -77,7 +77,7 @@ class ConstraintResolutionGui(
         val activeText = Color.WHITE.toConstraint()
 
         val listTab = UIContainer().constrain {
-            width = RelativeConstraint(0.5f)
+            width = 50.percent()
             height = ChildBasedSizeConstraint() + 10.pixels()
         } childOf tabContent
 
@@ -89,7 +89,7 @@ class ConstraintResolutionGui(
 
         val treeTab = UIContainer().constrain {
             x = SiblingConstraint()
-            width = RelativeConstraint(0.5f)
+            width = 50.percent()
             height = ChildBasedSizeConstraint() + 10.pixels()
         } childOf tabContent
 
@@ -102,8 +102,8 @@ class ConstraintResolutionGui(
         val displayContent = UIContainer().constrain {
             x = 1.pixel()
             y = SiblingConstraint(30f)
-            width = RelativeConstraint() - 2.pixels()
-            height = FillConstraint()
+            width = 100.percent() - 2.pixels()
+            height = 100.percent()
         } childOf container
 
         val listView = ListView().constrain {
@@ -111,8 +111,8 @@ class ConstraintResolutionGui(
         } childOf displayContent
 
         val treeView = TreeView(gui).constrain {
-            width = RelativeConstraint()
-            height = RelativeConstraint()
+            width = 100.percent()
+            height = 100.percent()
         }
 
         var listSelected = true
@@ -178,7 +178,7 @@ class ConstraintResolutionGui(
         UIBlock(Color(80, 80, 80)).constrain {
             x = (-1).pixels(alignOpposite = true)
             width = 1.pixel()
-            height = RelativeConstraint()
+            height = 100.percent()
         } childOf container
     }
 
@@ -186,7 +186,7 @@ class ConstraintResolutionGui(
         init {
             constrain {
                 width = ChildBasedMaxSizeConstraint()
-                height = FillConstraint()
+                height = 100.percent()
             }
 
             UIText("Open Screen name: $guiName").constrain {
@@ -202,7 +202,7 @@ class ConstraintResolutionGui(
 
                 ConstraintPathComponent().constrain {
                     y = SiblingConstraint(10f)
-                    height = FillConstraint()
+                    height = 100.percent()
                 } childOf this
             } else {
                 UIWrappedText("Unfortunately Elementa is unable to determine the constraints responsible. This is most likely due to the use of basicConstraints.").constrain {
@@ -231,7 +231,7 @@ class ConstraintResolutionGui(
                 width = basicWidthConstraint {
                     pathItems.map { it.getWidth() }.max()!!
                 }
-                height = RelativeConstraint()
+                height = 100.percent()
             }
         }
     }
@@ -285,9 +285,9 @@ class ConstraintResolutionGui(
             val rootNode = componentToNode(rootComponent)
 
             TreeGraphComponent(rootNode, TreeGraphStyle().copy(isHorizontal = true, heightBetweenRows = 20f)).constrain {
-                x = RelativeConstraint(0.05f)
-                width = RelativeConstraint(0.9f)
-                height = RelativeConstraint()
+                x = 5.percent()
+                width = 90.percent()
+                height = 100.percent()
             } childOf this
         }
 
