@@ -107,7 +107,15 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
     }
 
     fun drawFloatingComponents() {
-        floatingComponents.forEach(UIComponent::draw)
+        val it = floatingComponents.iterator()
+        while (it.hasNext()) {
+            val component = it.next()
+            if (ofOrNull(component) == null) {
+                it.remove()
+                continue
+            }
+            component.draw()
+        }
     }
 
     override fun mouseScroll(delta: Double) {
@@ -277,13 +285,18 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
         }
 
         fun of(component: UIComponent): Window {
+            return ofOrNull(component) ?: throw IllegalStateException(
+                "No window parent? It's possible you haven't called Window.addChild() at this point in time."
+            )
+        }
+
+        fun ofOrNull(component: UIComponent): Window? {
             var current = component
 
             while (current !is Window && current.hasParent && current.parent != current)
                 current = current.parent
 
             return current as? Window
-                ?: throw IllegalStateException("No window parent? It's possible you haven't called Window.addChild() at this point in time.")
         }
     }
 }
