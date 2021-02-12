@@ -6,6 +6,8 @@ import club.sk1er.elementa.constraints.CenterConstraint
 import club.sk1er.elementa.constraints.animation.Animations
 import club.sk1er.elementa.dsl.*
 import club.sk1er.elementa.effects.ScissorEffect
+import club.sk1er.elementa.font.DefaultFonts
+import club.sk1er.elementa.font.FontRenderer
 import club.sk1er.elementa.utils.getStringSplitToWidth
 import club.sk1er.mods.core.universal.UGraphics
 import club.sk1er.mods.core.universal.UKeyboard
@@ -23,7 +25,8 @@ abstract class AbstractTextInput(
     protected val selectionForegroundColor: Color,
     protected val allowInactiveSelection: Boolean,
     protected val inactiveSelectionBackgroundColor: Color,
-    protected val inactiveSelectionForegroundColor: Color
+    protected val inactiveSelectionForegroundColor: Color,
+    protected val fontRenderer: FontRenderer = DefaultFonts.MINECRAFT
 ) : UIComponent() {
     protected var active = false
 
@@ -672,12 +675,14 @@ abstract class AbstractTextInput(
     protected open fun hasText() = textualLines.size > 1 || textualLines[0].text.isNotEmpty()
 
     protected open fun drawUnselectedText(text: String, left: Float, row: Int) {
-        UGraphics.drawString(
+        // TODO: Shadow color
+        fontRenderer.drawString(
             text,
+            getColor(),
             left - horizontalScrollingOffset,
             getTop() + (9 * row) + verticalScrollingOffset,
-            getColor().rgb,
-            shadow
+            getHeight() * 10f / 9f,
+            shadow = false
         )
     }
 
@@ -690,12 +695,13 @@ abstract class AbstractTextInput(
             getTop().toDouble() + (9 * (row + 1)) + verticalScrollingOffset
         )
         if (text.isNotEmpty()) {
-            UGraphics.drawString(
+            fontRenderer.drawString(
                 text,
+                if (active) selectionForegroundColor else inactiveSelectionForegroundColor,
                 left - horizontalScrollingOffset,
                 getTop() + (9 * row) + verticalScrollingOffset,
-                if (active) selectionForegroundColor.rgb else inactiveSelectionForegroundColor.rgb,
-                false
+                getHeight() * 10f / 9f,
+                shadow = false
             )
         }
     }

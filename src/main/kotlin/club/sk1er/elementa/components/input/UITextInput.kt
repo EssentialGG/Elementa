@@ -4,6 +4,8 @@ import club.sk1er.elementa.constraints.WidthConstraint
 import club.sk1er.elementa.dsl.coerceIn
 import club.sk1er.elementa.dsl.pixels
 import club.sk1er.elementa.dsl.width
+import club.sk1er.elementa.font.DefaultFonts
+import club.sk1er.elementa.font.FontRenderer
 import club.sk1er.mods.core.universal.UGraphics
 import java.awt.Color
 
@@ -14,7 +16,8 @@ open class UITextInput @JvmOverloads constructor(
     selectionForegroundColor: Color = Color(64, 139, 229),
     allowInactiveSelection: Boolean = false,
     inactiveSelectionBackgroundColor: Color = Color(176, 176, 176),
-    inactiveSelectionForegroundColor: Color = Color.WHITE
+    inactiveSelectionForegroundColor: Color = Color.WHITE,
+    fontRenderer: FontRenderer = DefaultFonts.MINECRAFT
 ) : AbstractTextInput(
     placeholder,
     shadow,
@@ -22,7 +25,8 @@ open class UITextInput @JvmOverloads constructor(
     selectionForegroundColor,
     allowInactiveSelection,
     inactiveSelectionBackgroundColor,
-    inactiveSelectionForegroundColor
+    inactiveSelectionForegroundColor,
+    fontRenderer
 ) {
     private var minWidth: WidthConstraint? = null
     private var maxWidth: WidthConstraint? = null
@@ -98,7 +102,7 @@ open class UITextInput @JvmOverloads constructor(
         beforeDraw()
 
         if (!active && !hasText()) {
-            UGraphics.drawString(placeholder, getLeft(), getTop(), getColor().rgb, shadow)
+            fontRenderer.drawString(placeholder, getColor(), getLeft(), getTop(), getHeight() * 10f / 9f)
             return super.draw()
         }
 

@@ -67,7 +67,7 @@ class FontRenderer(private val font: Font) {
         shader.bindIfUsable()
         samplerUniform.setValue(0)
         //shadowColorUniform.setValue(Vector4f(0.1f, 0.1f, 0.1f, 1f))
-        sdfTexel.setValue(Vector2f(1f/font.fontInfo.atlas.width, 1f/font.fontInfo.atlas.height))
+        sdfTexel.setValue(Vector2f(1f / font.fontInfo.atlas.width, 1f / font.fontInfo.atlas.height))
 
         hintAmountUniform.setValue(1f)
         subpixelAmountUniform.setValue(1f)

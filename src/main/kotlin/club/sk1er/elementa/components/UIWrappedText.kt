@@ -4,6 +4,8 @@ import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.dsl.basicHeightConstraint
 import club.sk1er.elementa.dsl.pixels
 import club.sk1er.elementa.dsl.width
+import club.sk1er.elementa.font.DefaultFonts
+import club.sk1er.elementa.font.FontRenderer
 import club.sk1er.elementa.state.BasicState
 import club.sk1er.elementa.state.State
 import club.sk1er.elementa.state.pixels
@@ -25,7 +27,8 @@ open class UIWrappedText @JvmOverloads constructor(
      * Keeps the rendered text without the bounds of the component,
      * inserting an ellipsis ("...") if text is trimmed
      */
-    private val trimText: Boolean = false
+    private val trimText: Boolean = false,
+    private val fontRenderer: FontRenderer = DefaultFonts.MINECRAFT
 ) : UIComponent() {
     private var textState: State<String> = BasicState(text)
     private var shadowState: State<Boolean> = BasicState(shadow)
@@ -108,11 +111,8 @@ open class UIWrappedText @JvmOverloads constructor(
                 (scaledWidth - line.width(textScale)) / 2f
             } else 0f
 
-            if (shadow && shadowColor != null) {
-                UGraphics.drawString(line, xOffset, i * 9f, color.rgb, shadowColor.rgb)
-            } else {
-                UGraphics.drawString(line, xOffset, i * 9f, color.rgb, shadow)
-            }
+            // TODO: Shadow color
+            fontRenderer.drawString(line, color, xOffset, i * 9f, getHeight(), shadow = false)
         }
 
         UGraphics.translate(-x.toDouble(), -y.toDouble(), 0.0)
