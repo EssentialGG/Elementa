@@ -1,17 +1,10 @@
 package club.sk1er.elementa.markdown
 
 import club.sk1er.elementa.UIComponent
-import club.sk1er.elementa.components.ScrollComponent
-import club.sk1er.elementa.components.UIBlock
-import club.sk1er.elementa.components.UIContainer
-import club.sk1er.elementa.constraints.CenterConstraint
-import club.sk1er.elementa.constraints.FillConstraint
-import club.sk1er.elementa.constraints.RelativeConstraint
-import club.sk1er.elementa.dsl.*
-import club.sk1er.elementa.effects.ScissorEffect
-import club.sk1er.elementa.font.FontRenderer
+import club.sk1er.elementa.markdown.drawables.Drawable
+import club.sk1er.elementa.state.BasicState
+import club.sk1er.elementa.state.State
 import java.awt.Color
-import java.util.concurrent.CompletableFuture
 
 /**
  * Component that parses a string as Markdown and renders it.
@@ -23,79 +16,84 @@ import java.util.concurrent.CompletableFuture
  */
 class MarkdownComponent @JvmOverloads constructor(
     text: String,
-    private val config: MarkdownConfig = MarkdownConfig(),
-    private val codeFontRenderer: FontRenderer = defaultCodeFontRenderer
+    private val config: MarkdownConfig = MarkdownConfig()
 ) : UIComponent() {
-    private val documentFuture = CompletableFuture.supplyAsync {
-        Document.fromString(text, config)
+    private var textState: State<String> = BasicState(text)
+    private var removeListener = textState.onSetValue {
+        reparse()
+        layout()
     }
-    private var document: Document? = null
 
-    private val scrollComponent = ScrollComponent().constrain {
-        width = RelativeConstraint() - 15.pixels()
-        height = RelativeConstraint()
-    } childOf this
+    private lateinit var drawables: List<Drawable>
+    private lateinit var lastValues: ConstraintValues
 
-    private val scrollChild = UIContainer().constrain {
-        width = RelativeConstraint()
-        height = 0.pixels()
-    } childOf scrollComponent
+    fun bindText(state: State<String>) = apply {
+        removeListener()
+        textState = state
+        reparse()
+        layout()
 
-    private val scissor = ScissorEffect(scrollComponent)
-
-    init {
-        val scrollBar = UIContainer().constrain {
-            x = 2.pixels(alignOpposite = true)
-            width = 10.pixels()
-            height = 100.percent()
-        } childOf this
-
-        val scrollBarContainer = UIContainer().constrain {
-            x = CenterConstraint()
-            y = 2.pixels()
-            width = 3.pixels()
-            height = RelativeConstraint() - 4.pixels()
-        } childOf scrollBar
-
-        val scrollBarGrip = UIBlock(Color(180, 180, 180, 180)).constrain {
-            x = CenterConstraint()
-            y = 0.pixels()
-            width = RelativeConstraint()
-            height = 30.pixels()
-        } childOf scrollBarContainer
-
-        scrollComponent.setVerticalScrollBarComponent(scrollBarGrip, hideWhenUseless = true)
-
-        onMouseClick { event ->
-            document?.onClick(event.absoluteX, event.absoluteY)
+        removeListener = textState.onSetValue {
+            reparse()
+            layout()
         }
     }
 
+    private fun reparse() {
+        drawables = MarkdownRenderer(textState.get(), config).render()
+    }
+
+    private fun layout() {
+        val x = getLeft()
+        var y = getTop()
+        val width = getWidth()
+
+        drawables.forEach {
+            y += it.layout(x, y, width)
+        }
+    }
+
+    override fun afterInitialization() {
+        reparse()
+        layout()
+        lastValues = constraintValues()
+    }
+
     override fun draw() {
-        super.draw()
+        if (!isInitialized) {
+            isInitialized = true
+            afterInitialization()
+        }
 
-        scissor.beforeDraw()
+        beforeChildrenDraw()
 
-        if (document == null && documentFuture.isDone && !documentFuture.isCompletedExceptionally)
-            document = documentFuture.get()
+        val currentValues = constraintValues()
+        if (currentValues != lastValues)
+            layout()
+        lastValues = currentValues
 
-        val state = MarkdownState(
-            codeFontRenderer,
-            getLeft(),
-            scrollChild.getTop(),
-            scrollChild.getWidth(),
-            getHeight(),
-            config = config
-        )
+        drawables.forEach(Drawable::draw)
 
-        document?.draw(state)
-        scrollChild.setHeight(state.y.pixels())
-
-        scissor.afterDraw()
+        afterDraw()
     }
 
-    companion object {
-        @JvmStatic
-        val defaultCodeFontRenderer = FontRenderer(FontRenderer.SupportedFont.FiraCode, 18f)
-    }
+    private fun constraintValues() = ConstraintValues(
+        getLeft(),
+        getTop(),
+        getWidth(),
+        getHeight(),
+        getRadius(),
+        getTextScale(),
+        getColor()
+    )
+
+    data class ConstraintValues(
+        val x: Float,
+        val y: Float,
+        val width: Float,
+        val height: Float,
+        val radius: Float,
+        val textScale: Float,
+        val color: Color
+    )
 }

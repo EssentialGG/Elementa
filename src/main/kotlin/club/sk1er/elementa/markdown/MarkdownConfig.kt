@@ -5,7 +5,7 @@ import java.awt.Color
 data class MarkdownConfig @JvmOverloads constructor(
     val headerConfig: HeaderConfig = HeaderConfig(),
     val listConfig: ListConfig = ListConfig(),
-    val textConfig: TextConfig = TextConfig(),
+    val paragraphConfig: ParagraphConfig = ParagraphConfig(),
     val blockquoteConfig: BlockquoteConfig = BlockquoteConfig(),
     val inlineCodeConfig: InlineCodeConfig = InlineCodeConfig(),
     val codeblockConfig: CodeblockConfig = CodeblockConfig(),
@@ -26,11 +26,12 @@ data class HeaderConfig @JvmOverloads constructor(
 data class HeaderLevelConfig @JvmOverloads constructor(
     val fontColor: Color,
     val textScale: Float,
-    val spaceBefore: Float,
-    val spaceAfter: Float,
+    val verticalSpaceBefore: Float,
+    val verticalSpaceAfter: Float,
     val hasDivider: Boolean = false,
     val dividerColor: Color = Color(80, 80, 80),
-    val dividerWidth: Float = 2f
+    val dividerWidth: Float = 2f,
+    val spaceBeforeDivider: Float = 5f
 )
 
 data class ListConfig @JvmOverloads constructor(
@@ -43,10 +44,14 @@ data class ListConfig @JvmOverloads constructor(
     val enabled: Boolean = true
 )
 
-data class TextConfig @JvmOverloads constructor(
+data class ParagraphConfig @JvmOverloads constructor(
     val color: Color = Color.WHITE,
-    val shadow: Boolean = true,
-    val spaceBetweenLines: Float = 4f
+    val hasShadow: Boolean = true,
+    val shadowColor: Color = Color(0x3f, 0x3f, 0x3f),
+    val spaceBetweenLines: Float = 4f,
+    val spaceBefore: Float = 0f,
+    val spaceAfter: Float = 10f,
+    val centered: Boolean = false
 )
 
 data class InlineCodeConfig @JvmOverloads constructor(

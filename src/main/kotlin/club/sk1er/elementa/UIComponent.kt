@@ -81,7 +81,7 @@ abstract class UIComponent : Observable() {
     private val stoppedTimers = mutableSetOf<Int>()
     private var nextTimerId = 0
 
-    private var isInitialized = false
+    protected var isInitialized = false
     private var isFloating = false
 
     /**
