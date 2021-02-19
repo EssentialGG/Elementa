@@ -64,14 +64,46 @@ class MarkdownRenderer(private val text: String, private val config: MarkdownCon
         drawables.add(ParagraphDrawable(config, unmarkAndCollect()))
     }
 
-    override fun visit(blockQuote: BlockQuote?) {
+    override fun visit(blockQuote: BlockQuote) {
         mark()
         super.visit(blockQuote)
         drawables.add(BlockquoteDrawable(config, unmarkAndCollect()))
     }
 
-    override fun visit(bulletList: BulletList?) {
-        TODO("Not yet implemented")
+    override fun visit(bulletList: BulletList) {
+        mark()
+        super.visit(bulletList)
+        val children = unmarkAndCollect()
+        if (children.any { it !is DrawableList && it !is ListDrawable })
+            TODO()
+
+        drawables.add(ListDrawable(
+            config,
+            children,
+            isOrdered = false,
+            isLoose = !bulletList.isTight
+        ))
+    }
+
+    override fun visit(listItem: ListItem) {
+        mark()
+        super.visit(listItem)
+        drawables.add(DrawableList(config, unmarkAndCollect()))
+    }
+
+    override fun visit(orderedList: OrderedList) {
+        mark()
+        super.visit(orderedList)
+        val children = unmarkAndCollect()
+        if (children.any { it !is DrawableList && it !is ListDrawable })
+            TODO()
+
+        drawables.add(ListDrawable(
+            config,
+            children,
+            isOrdered = true,
+            isLoose = !orderedList.isTight
+        ))
     }
 
     override fun visit(code: Code?) {
@@ -116,14 +148,6 @@ class MarkdownRenderer(private val text: String, private val config: MarkdownCon
     }
 
     override fun visit(link: Link?) {
-        TODO("Not yet implemented")
-    }
-
-    override fun visit(listItem: ListItem?) {
-        TODO("Not yet implemented")
-    }
-
-    override fun visit(orderedList: OrderedList?) {
         TODO("Not yet implemented")
     }
 

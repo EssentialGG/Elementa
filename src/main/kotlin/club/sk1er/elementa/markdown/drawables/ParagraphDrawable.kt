@@ -23,7 +23,7 @@ class ParagraphDrawable(
 
     override fun layoutImpl(): Height {
         var x = this.x
-        var y = this.y + config.paragraphConfig.spaceBefore
+        var y = this.y + if (insertSpaceBefore) config.paragraphConfig.spaceBefore else 0f
         var widthRemaining = this.width
         val centered = config.paragraphConfig.centered
         var startOfLine = true
@@ -141,7 +141,9 @@ class ParagraphDrawable(
 
         texts = lines.flatten().toMutableList()
 
-        return y - this.y + 9f * scaleModifier + config.paragraphConfig.spaceAfter
+        return y - this.y + 9f * scaleModifier + if (insertSpaceAfter) {
+            config.paragraphConfig.spaceAfter
+        } else 0f
     }
 
     override fun draw() {

@@ -37,10 +37,12 @@ data class HeaderLevelConfig @JvmOverloads constructor(
 data class ListConfig @JvmOverloads constructor(
     val fontColor: Color = Color.WHITE,
     val indentation: Float = 10f,
-    val elementSpacing: Float = 5f,
+    val elementSpacingTight: Float = 5f,
+    val elementSpacingLoose: Float = 10f,
     val spaceBeforeText: Float = 4f,
     val spaceBeforeList: Float = 5f,
     val spaceAfterList: Float = 5f,
+    val unorderedSymbols: String = "●◯■□",
     val enabled: Boolean = true
 )
 
@@ -49,8 +51,8 @@ data class ParagraphConfig @JvmOverloads constructor(
     val hasShadow: Boolean = true,
     val shadowColor: Color = Color(0x3f, 0x3f, 0x3f),
     val spaceBetweenLines: Float = 4f,
-    val spaceBefore: Float = 0f,
-    val spaceAfter: Float = 10f,
+    val spaceBefore: Float = 5f,
+    val spaceAfter: Float = 5f,
     val centered: Boolean = false
 )
 

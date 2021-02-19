@@ -19,16 +19,19 @@ class HeaderDrawable(
     }
 
     private var textHeight: Height = -1f
+    private var spaceBefore: Height = -1f
 
     init {
         paragraph.scaleModifier = headerConfig.textScale
+        trim(paragraph)
     }
 
     override fun layoutImpl(): Height {
-        textHeight = paragraph.layout(this.x, this.y + headerConfig.verticalSpaceBefore, this.width) -
-            config.paragraphConfig.spaceAfter // Ignore this paragraph config here
+        spaceBefore = if (insertSpaceBefore) headerConfig.verticalSpaceBefore else 0f
+        val spaceAfter = if (insertSpaceAfter) headerConfig.verticalSpaceAfter else 0f
+        textHeight = paragraph.layout(this.x, this.y + spaceBefore, this.width)
 
-        return headerConfig.verticalSpaceBefore + textHeight + headerConfig.verticalSpaceAfter + if (headerConfig.hasDivider) {
+        return spaceBefore + textHeight + spaceAfter + if (headerConfig.hasDivider) {
             headerConfig.spaceBeforeDivider + headerConfig.dividerWidth
         } else 0f
     }
@@ -37,7 +40,7 @@ class HeaderDrawable(
         paragraph.draw()
 
         if (headerConfig.hasDivider) {
-            val y = this.y + headerConfig.verticalSpaceBefore + textHeight + headerConfig.spaceBeforeDivider
+            val y = this.y + spaceBefore + textHeight + headerConfig.spaceBeforeDivider
             UIBlock.drawBlockSized(
                 headerConfig.dividerColor, 
                 this.x.toDouble(),

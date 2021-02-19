@@ -9,6 +9,10 @@ abstract class Drawable(val config: MarkdownConfig) {
     var y = -1f
     var width = -1f
 
+    // Used to disable top and bottom padding in some elements
+    var insertSpaceBefore = true
+    var insertSpaceAfter = true
+
     fun layout(x: Float, y: Float, width: Float): Height {
         this.x = x
         this.y = y
@@ -19,4 +23,24 @@ abstract class Drawable(val config: MarkdownConfig) {
     abstract fun layoutImpl(): Height
 
     abstract fun draw()
+
+    companion object {
+        fun trim(drawables: List<Drawable>) {
+            drawables.firstOrNull()?.also {
+                it.insertSpaceBefore = false
+            }
+            drawables.lastOrNull()?.also {
+                it.insertSpaceAfter = false
+            }
+        }
+
+        fun trim(drawable: Drawable) {
+            if (drawable is DrawableList) {
+                trim(drawable.drawables)
+            } else {
+                drawable.insertSpaceBefore = false
+                drawable.insertSpaceAfter = false
+            }
+        }
+    }
 }

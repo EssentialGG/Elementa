@@ -8,23 +8,27 @@ class BlockquoteDrawable(config: MarkdownConfig, val drawables: List<Drawable>) 
 
     override fun layoutImpl(): Height {
         val config = config.blockquoteConfig
-        val padding = config.spaceBeforeDivider + config.dividerWidth + config.spaceAfterDivider
+        val padding = config.spaceBeforeDivider + config.dividerWidth + if (insertSpaceAfter) {
+            config.spaceAfterDivider
+        } else 0f
         var y = this.y
         y += config.spaceBeforeBlockquote
         val dividerStart = y
         y += config.dividerPaddingTop
 
+        drawables.last().also {
+            if (it is ParagraphDrawable)
+                it.insertSpaceAfter = false
+        }
+
         drawables.forEach {
             y += it.layout(this.x + padding, y, this.width)
         }
 
-        // Remove trailing empty space
-        if (drawables.last() is ParagraphDrawable)
-            y -= this.config.paragraphConfig.spaceAfter
-
         y += config.dividerPaddingBottom
         dividerHeight = y - dividerStart
-        y += config.spaceAfterBlockquote
+        if (insertSpaceAfter)
+            y += config.spaceAfterBlockquote
 
         return y - this.y
     }

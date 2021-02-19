@@ -68,27 +68,31 @@ class TextDrawable(
 
     override fun draw() {
         UGraphics.scale(scaleModifier, scaleModifier, 1f)
-
-        if (config.paragraphConfig.hasShadow) {
-            UGraphics.drawString(
-                formattedText,
-                x / scaleModifier,
-                y / scaleModifier,
-                config.paragraphConfig.color.rgb,
-                config.paragraphConfig.shadowColor.rgb
-            )
-        } else {
-            UGraphics.drawString(
-                formattedText,
-                x / scaleModifier,
-                y / scaleModifier,
-                config.paragraphConfig.color.rgb,
-                false
-            )
-        }
-
+        drawString(config, formattedText, x / scaleModifier, y / scaleModifier)
         UGraphics.scale(1f / scaleModifier, 1f / scaleModifier, 1f)
     }
 
     override fun toString() = formattedText
+
+    companion object {
+        fun drawString(config: MarkdownConfig, string: String, x: Float, y: Float) {
+            if (config.paragraphConfig.hasShadow) {
+                UGraphics.drawString(
+                    string,
+                    x,
+                    y,
+                    config.paragraphConfig.color.rgb,
+                    config.paragraphConfig.shadowColor.rgb
+                )
+            } else {
+                UGraphics.drawString(
+                    string,
+                    x,
+                    y,
+                    config.paragraphConfig.color.rgb,
+                    false
+                )
+            }
+        }
+    }
 }
