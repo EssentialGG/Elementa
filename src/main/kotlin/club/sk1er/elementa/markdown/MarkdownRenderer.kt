@@ -92,9 +92,7 @@ class MarkdownRenderer(private val text: String, private val config: MarkdownCon
         mark()
         super.visit(heading)
         val children = unmarkAndCollect()
-        if (children.size != 1 || children[0] !is ParagraphDrawable)
-            TODO()
-        drawables.add(HeaderDrawable(config, heading.level, children[0] as ParagraphDrawable))
+        drawables.add(HeaderDrawable(config, heading.level, ParagraphDrawable(config, children)))
     }
 
     override fun visit(thematicBreak: ThematicBreak?) {

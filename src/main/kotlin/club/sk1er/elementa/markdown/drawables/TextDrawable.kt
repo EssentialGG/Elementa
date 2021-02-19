@@ -38,9 +38,14 @@ class TextDrawable(
         val styleChars = styleChars()
         val plainText = formattedText.drop(styleChars)
 
-        var splitPoint = formattedText.indices.drop(styleChars).first {
-            formattedText.substring(0, it).width(scaleModifier) > maxWidth
-        } - 1 - styleChars
+        var splitPoint = formattedText.indices.drop(styleChars).firstOrNull {
+            formattedText.substring(0, it + 1).width(scaleModifier) > maxWidth
+        }
+
+        if (splitPoint == null)
+            TODO()
+
+        splitPoint = splitPoint - 1 - styleChars
 
         if (!breakWords) {
             while (splitPoint > styleChars && formattedText[splitPoint - 1] != ' ')
@@ -52,6 +57,8 @@ class TextDrawable(
 
         val first = TextDrawable(config, plainText.substring(0, splitPoint), isBold, isItalic)
         val second = TextDrawable(config, plainText.substring(splitPoint, plainText.length), isBold, isItalic)
+        first.scaleModifier = scaleModifier
+        second.scaleModifier = scaleModifier
         return first to second
     }
 
@@ -60,14 +67,27 @@ class TextDrawable(
     }
 
     override fun draw() {
-        UGraphics.pushMatrix()
         UGraphics.scale(scaleModifier, scaleModifier, 1f)
+
         if (config.paragraphConfig.hasShadow) {
-            UGraphics.drawString(formattedText, x, y, config.paragraphConfig.color.rgb, config.paragraphConfig.shadowColor.rgb)
+            UGraphics.drawString(
+                formattedText,
+                x / scaleModifier,
+                y / scaleModifier,
+                config.paragraphConfig.color.rgb,
+                config.paragraphConfig.shadowColor.rgb
+            )
         } else {
-            UGraphics.drawString(formattedText, x, y, config.paragraphConfig.color.rgb, false)
+            UGraphics.drawString(
+                formattedText,
+                x / scaleModifier,
+                y / scaleModifier,
+                config.paragraphConfig.color.rgb,
+                false
+            )
         }
-        UGraphics.popMatrix()
+
+        UGraphics.scale(1f / scaleModifier, 1f / scaleModifier, 1f)
     }
 
     override fun toString() = formattedText

@@ -8,26 +8,26 @@ data class MarkdownConfig @JvmOverloads constructor(
     val paragraphConfig: ParagraphConfig = ParagraphConfig(),
     val blockquoteConfig: BlockquoteConfig = BlockquoteConfig(),
     val inlineCodeConfig: InlineCodeConfig = InlineCodeConfig(),
-    val codeblockConfig: CodeblockConfig = CodeblockConfig(),
+    val codeBlockConfig: CodeBlockConfig = CodeBlockConfig(),
     val urlConfig: URLConfig = URLConfig()
 )
 
 data class HeaderConfig @JvmOverloads constructor(
     val fontColor: Color = Color.WHITE,
-    val level1: HeaderLevelConfig = HeaderLevelConfig(fontColor, 2.0f, 12f, 6f, hasDivider = true),
-    val level2: HeaderLevelConfig = HeaderLevelConfig(fontColor, 1.66f, 10f, 5f, hasDivider = true),
-    val level3: HeaderLevelConfig = HeaderLevelConfig(fontColor, 1.33f, 8f, 4f),
-    val level4: HeaderLevelConfig = HeaderLevelConfig(fontColor, 1.0f, 6f, 3f),
-    val level5: HeaderLevelConfig = HeaderLevelConfig(fontColor, 0.7f, 4f, 2f),
-    val level6: HeaderLevelConfig = HeaderLevelConfig(Color(155, 155, 155), 0.7f, 4f, 2f),
+    val level1: HeaderLevelConfig = HeaderLevelConfig(fontColor, 2.0f, 12f, 12f, hasDivider = true),
+    val level2: HeaderLevelConfig = HeaderLevelConfig(fontColor, 1.66f, 10f, 10f, hasDivider = true),
+    val level3: HeaderLevelConfig = HeaderLevelConfig(fontColor, 1.33f, 8f, 8f),
+    val level4: HeaderLevelConfig = HeaderLevelConfig(fontColor, 1.0f, 6f, 6f),
+    val level5: HeaderLevelConfig = HeaderLevelConfig(fontColor, 0.7f, 4f, 4f),
+    val level6: HeaderLevelConfig = HeaderLevelConfig(Color(155, 155, 155), 0.7f, 4f, 4f),
     val enabled: Boolean = true
 )
 
 data class HeaderLevelConfig @JvmOverloads constructor(
-    val fontColor: Color,
-    val textScale: Float,
-    val verticalSpaceBefore: Float,
-    val verticalSpaceAfter: Float,
+    val fontColor: Color =  Color.WHITE,
+    val textScale: Float = 1f,
+    val verticalSpaceBefore: Float = 0f,
+    val verticalSpaceAfter: Float = 5f,
     val hasDivider: Boolean = false,
     val dividerColor: Color = Color(80, 80, 80),
     val dividerWidth: Float = 2f,
@@ -68,7 +68,7 @@ data class InlineCodeConfig @JvmOverloads constructor(
     val enabled: Boolean = true
 )
 
-data class CodeblockConfig @JvmOverloads constructor(
+data class CodeBlockConfig @JvmOverloads constructor(
     val fontColor: Color = Color.WHITE,
     val backgroundColor: Color = Color(40, 40, 40, 255),
     val outlineColor: Color = Color(120, 120, 120, 255),

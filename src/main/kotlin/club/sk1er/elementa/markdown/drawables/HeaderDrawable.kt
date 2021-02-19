@@ -25,7 +25,8 @@ class HeaderDrawable(
     }
 
     override fun layoutImpl(): Height {
-        textHeight = paragraph.layout(this.x, this.y + headerConfig.verticalSpaceBefore, this.width)
+        textHeight = paragraph.layout(this.x, this.y + headerConfig.verticalSpaceBefore, this.width) -
+            config.paragraphConfig.spaceAfter // Ignore this paragraph config here
 
         return headerConfig.verticalSpaceBefore + textHeight + headerConfig.verticalSpaceAfter + if (headerConfig.hasDivider) {
             headerConfig.spaceBeforeDivider + headerConfig.dividerWidth
