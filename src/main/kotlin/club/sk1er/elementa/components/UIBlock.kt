@@ -67,5 +67,9 @@ open class UIBlock(colorConstraint: ColorConstraint = Color.WHITE.toConstraint()
             UGraphics.enableTexture2D()
             UGraphics.disableBlend()
         }
+
+        fun drawBlockSized(color: Color, x: Double, y: Double, width: Double, height: Double) {
+            drawBlock(color, x, y, x + width, y + height)
+        }
     }
 }
