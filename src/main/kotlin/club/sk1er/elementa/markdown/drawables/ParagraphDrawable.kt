@@ -73,7 +73,7 @@ class ParagraphDrawable(
             var target: TextDrawable = text
 
             while (true) {
-                val targetWidth = text.width()
+                val targetWidth = target.width()
                 if (targetWidth <= widthRemaining) {
                     layout(target, targetWidth)
                     if (widthRemaining <= 0)

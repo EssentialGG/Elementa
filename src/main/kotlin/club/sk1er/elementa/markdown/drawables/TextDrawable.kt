@@ -7,8 +7,8 @@ import club.sk1er.mods.core.universal.UGraphics
 class TextDrawable(
     config: MarkdownConfig,
     text: String,
-    val isBold: Boolean,
-    val isItalic: Boolean
+    private val isBold: Boolean,
+    private val isItalic: Boolean
 ) : Drawable(config) {
     // Used by HeaderDrawable
     var scaleModifier = 1f
@@ -43,7 +43,7 @@ class TextDrawable(
         }
 
         if (splitPoint == null)
-            TODO()
+            throw IllegalStateException("TextDrawable#split called when it should not have been called")
 
         splitPoint = splitPoint - 1 - styleChars
 
