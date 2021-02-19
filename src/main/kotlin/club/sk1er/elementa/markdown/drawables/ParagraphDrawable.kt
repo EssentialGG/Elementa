@@ -1,7 +1,10 @@
 package club.sk1er.elementa.markdown.drawables
 
+import club.sk1er.elementa.components.UIBlock
 import club.sk1er.elementa.dsl.width
 import club.sk1er.elementa.markdown.MarkdownConfig
+import club.sk1er.elementa.utils.withAlpha
+import java.awt.Color
 
 class ParagraphDrawable(
     config: MarkdownConfig,

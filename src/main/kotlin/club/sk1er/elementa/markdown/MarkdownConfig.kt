@@ -94,10 +94,11 @@ data class URLConfig @JvmOverloads constructor(
 
 data class BlockquoteConfig @JvmOverloads constructor(
     val spaceBeforeDivider: Float = 3f,
-    val spaceAfterDivider: Float = 6f,
+    val spaceAfterDivider: Float = 12f,
     val spaceBeforeBlockquote: Float = 7f,
     val spaceAfterBlockquote: Float = 7f,
-    val spaceBetweenLines: Float = 2f,
+    val dividerPaddingTop: Float = 3f,
+    val dividerPaddingBottom: Float = 3f,
     val dividerColor: Color = Color(80, 80, 80),
     val dividerWidth: Float = 2f,
     val enabled: Boolean = true
