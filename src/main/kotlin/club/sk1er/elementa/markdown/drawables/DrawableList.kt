@@ -2,9 +2,19 @@ package club.sk1er.elementa.markdown.drawables
 
 import club.sk1er.elementa.markdown.MarkdownConfig
 
-class DrawableList(config: MarkdownConfig, val drawables: List<Drawable>) : Drawable(config) {
+class DrawableList(
+    config: MarkdownConfig,
+    val drawables: List<Drawable>
+) : Drawable(config), List<Drawable> by drawables {
     init {
         trim(drawables)
+
+        drawables.forEachIndexed { index, drawable ->
+            if (index > 0)
+                drawable.previous = drawables[index - 1]
+            if (index != drawables.lastIndex)
+                drawable.next = drawables[index + 1]
+        }
     }
 
     override fun layoutImpl(): Height {

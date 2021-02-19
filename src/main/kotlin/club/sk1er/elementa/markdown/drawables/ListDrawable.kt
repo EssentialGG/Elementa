@@ -5,7 +5,7 @@ import club.sk1er.elementa.markdown.MarkdownConfig
 
 class ListDrawable(
     config: MarkdownConfig,
-    private val drawables: List<Drawable>,
+    private val drawables: DrawableList,
     private val isOrdered: Boolean,
     isLoose: Boolean
 ) : Drawable(config) {

@@ -8,7 +8,7 @@ import java.awt.Color
 
 class ParagraphDrawable(
     config: MarkdownConfig,
-    texts: List<Drawable>
+    texts: DrawableList
 ) : Drawable(config) {
     private var texts = texts.toMutableList()
 

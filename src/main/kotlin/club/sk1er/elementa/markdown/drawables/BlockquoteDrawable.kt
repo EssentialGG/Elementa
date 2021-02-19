@@ -3,7 +3,7 @@ package club.sk1er.elementa.markdown.drawables
 import club.sk1er.elementa.components.UIBlock
 import club.sk1er.elementa.markdown.MarkdownConfig
 
-class BlockquoteDrawable(config: MarkdownConfig, val drawables: List<Drawable>) : Drawable(config) {
+class BlockquoteDrawable(config: MarkdownConfig, val drawables: DrawableList) : Drawable(config) {
     private var dividerHeight: Height = -1f
 
     override fun layoutImpl(): Height {

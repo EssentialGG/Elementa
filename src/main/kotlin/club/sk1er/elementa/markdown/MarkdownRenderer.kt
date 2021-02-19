@@ -25,19 +25,19 @@ class MarkdownRenderer(private val text: String, private val config: MarkdownCon
         marks.add(drawables.size)
     }
 
-    fun render(): List<Drawable> {
+    fun render(): DrawableList {
         val document = Parser.builder().build().parse(text)
         document.accept(this)
-        return drawables
+        return DrawableList(config, drawables)
     }
 
-    private fun unmarkAndCollect(): List<Drawable> {
+    private fun unmarkAndCollect(): DrawableList {
         val lastMark = marks.removeAt(marks.lastIndex)
         val slice = drawables.subList(lastMark, drawables.size).toList()
         repeat(slice.size) {
             drawables.removeAt(drawables.lastIndex)
         }
-        return slice
+        return DrawableList(config, slice)
     }
 
     override fun visit(emphasis: Emphasis) {
