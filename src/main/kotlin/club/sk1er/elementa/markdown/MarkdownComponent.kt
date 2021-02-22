@@ -4,8 +4,9 @@ import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.constraints.HeightConstraint
 import club.sk1er.elementa.dsl.pixels
 import club.sk1er.elementa.effects.OutlineEffect
-import club.sk1er.elementa.markdown.cursor.MarkdownCursor
+import club.sk1er.elementa.markdown.cursor.DrawableListCursor
 import club.sk1er.elementa.markdown.drawables.Drawable
+import club.sk1er.elementa.markdown.drawables.DrawableList
 import club.sk1er.elementa.state.BasicState
 import club.sk1er.elementa.state.State
 import java.awt.Color
@@ -28,13 +29,13 @@ class MarkdownComponent @JvmOverloads constructor(
         layout()
     }
 
-    lateinit var drawables: List<Drawable>
+    val drawables = DrawableList(config, emptyList())
 
     private var baseX: Float = -1f
     private var baseY: Float = -1f
     private lateinit var lastValues: ConstraintValues
     private var maxHeight: HeightConstraint = Int.MAX_VALUE.pixels()
-    private val cursor = MarkdownCursor(this)
+    private val cursor = DrawableListCursor(drawables)
 
     init {
         onMouseClick {
@@ -68,7 +69,7 @@ class MarkdownComponent @JvmOverloads constructor(
      * by a call to layout().
      */
     private fun reparse() {
-        drawables = MarkdownRenderer(textState.get(), config).render()
+        drawables.setDrawables(MarkdownRenderer(textState.get(), config).render())
     }
 
     /**

@@ -84,7 +84,8 @@ abstract class Drawable(val config: MarkdownConfig) {
 
         fun trim(drawable: Drawable) {
             if (drawable is DrawableList) {
-                trim(drawable.drawables)
+                drawable.first().insertSpaceBefore = false
+                drawable.last().insertSpaceAfter = false
             } else {
                 drawable.insertSpaceBefore = false
                 drawable.insertSpaceAfter = false

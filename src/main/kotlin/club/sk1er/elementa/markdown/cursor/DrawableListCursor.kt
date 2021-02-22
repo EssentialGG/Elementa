@@ -3,22 +3,24 @@ package club.sk1er.elementa.markdown.cursor
 import club.sk1er.elementa.markdown.DrawState
 import club.sk1er.elementa.markdown.MarkdownComponent
 import club.sk1er.elementa.markdown.drawables.Drawable
+import club.sk1er.elementa.markdown.drawables.DrawableList
+import club.sk1er.elementa.markdown.drawables.ListDrawable
 import club.sk1er.elementa.markdown.drawables.ParagraphDrawable
 
-class MarkdownCursor(val markdown: MarkdownComponent) : DrawableCursor() {
+class DrawableListCursor(val drawables: DrawableList) : DrawableCursor() {
     private var impl: DrawableCursor? = null
 
     override val target: Drawable
         get() = impl!!.target
 
     override fun moveToStart() {
-        impl = forDrawable(markdown.drawables.first()).apply {
+        impl = forDrawable(drawables.first()).apply {
             moveToStart()
         }
     }
 
     override fun moveToEnd() {
-        impl = forDrawable(markdown.drawables.last()).apply {
+        impl = forDrawable(drawables.last()).apply {
             moveToEnd()
         }
     }
@@ -35,7 +37,7 @@ class MarkdownCursor(val markdown: MarkdownComponent) : DrawableCursor() {
         var closestDistance = Float.MAX_VALUE
         var direction: Direction? = null
 
-        for (drawable in markdown.drawables) {
+        for (drawable in drawables) {
             if (drawable.isHovered(mouseX, mouseY)) {
                 impl = forDrawable(drawable).apply {
                     moveTo(mouseX, mouseY)
@@ -83,12 +85,5 @@ class MarkdownCursor(val markdown: MarkdownComponent) : DrawableCursor() {
 
     override fun draw(state: DrawState) {
         impl?.draw(state)
-    }
-
-    companion object {
-        private fun forDrawable(drawable: Drawable) = when (drawable) {
-            is ParagraphDrawable -> ParagraphCursor(drawable)
-            else -> TODO()
-        }
     }
 }

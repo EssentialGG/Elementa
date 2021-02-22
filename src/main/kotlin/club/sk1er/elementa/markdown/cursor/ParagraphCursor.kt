@@ -98,29 +98,34 @@ class ParagraphCursor(override val target: ParagraphDrawable) : DrawableCursor()
         // Step 3: Get the string offset position in the current text
 
         if (positionInTextComponent) {
-            stringOffset = currentText.styleChars()
-            var cachedWidth = 0f
+            cursorX = if (mouseX > currentText.layout.right) {
+                stringOffset = currentText.formattedText.length
+                currentText.layout.right
+            } else {
+                stringOffset = currentText.styleChars()
+                var cachedWidth = 0f
 
-            while (stringOffset < currentText.formattedText.lastIndex) {
-                stringOffset++
-                val newWidth = currentText.formattedText.substring(0, stringOffset).width(currentText.scaleModifier)
-                if (currentText.x + newWidth > mouseX) {
-                    // Chose the closer side
-                    val newDiff = abs(currentText.x + newWidth - mouseX)
-                    val oldDiff = abs(currentText.x + cachedWidth - mouseX)
+                while (stringOffset < currentText.formattedText.lastIndex) {
+                    stringOffset++
+                    val newWidth = currentText.formattedText.substring(0, stringOffset).width(currentText.scaleModifier)
+                    if (currentText.x + newWidth > mouseX) {
+                        // Chose the closer side
+                        val newDiff = abs(currentText.x + newWidth - mouseX)
+                        val oldDiff = abs(currentText.x + cachedWidth - mouseX)
 
-                    if (newDiff < oldDiff) {
-                        cachedWidth = newWidth
-                    } else {
-                        stringOffset--
+                        if (newDiff < oldDiff) {
+                            cachedWidth = newWidth
+                        } else {
+                            stringOffset--
+                        }
+                        break
                     }
-                    break
+
+                    cachedWidth = newWidth
                 }
 
-                cachedWidth = newWidth
+                currentText.x + cachedWidth
             }
-
-            cursorX = currentText.x + cachedWidth
         } else {
             cursorX = currentText.x + currentText.formattedText.substring(0, stringOffset).width(currentText.scaleModifier)
         }

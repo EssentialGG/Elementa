@@ -10,7 +10,7 @@ class ListDrawable(
     private val isOrdered: Boolean,
     isLoose: Boolean
 ) : Drawable(config) {
-    private val listItems = mutableListOf<ListEntry>()
+    val listItems = mutableListOf<ListEntry>()
 
     private var isLoose: Boolean = isLoose
         set(value) {
@@ -82,9 +82,9 @@ class ListDrawable(
                 drawable.indentLevel = indentLevel + 1
             if (drawable is DrawableList) {
                 // Pull out any trailing ListDrawables into their own ListElement
-                val last = drawable.drawables.last()
+                val last = drawable.last()
                 if (last is ListDrawable) {
-                    drawable = DrawableList(config, drawable.drawables.dropLast(1))
+                    drawable = DrawableList(config, drawable.dropLast(1))
                     addItem(drawable)
                     index++
                     orderedListShift++
@@ -116,11 +116,11 @@ class ListDrawable(
     }
 
     // A mostly organized and ready-to-render list item
-    private class ListEntry(
+    class ListEntry(
         config: MarkdownConfig,
-        val symbol: String,
-        val symbolWidth: Float,
-        val symbolPaddingRight: Float,
+        private val symbol: String,
+        private val symbolWidth: Float,
+        private val symbolPaddingRight: Float,
         val drawable: Drawable
     ) : Drawable(config) {
         private val actualSymbolWidth = symbol.width()
@@ -130,12 +130,12 @@ class ListDrawable(
 
             // trim any space around list elements
             if (drawable is DrawableList) {
-                for ((index, item) in drawable.drawables.withIndex()) {
+                for ((index, item) in drawable.withIndex()) {
                     if (item is ListDrawable) {
                         if (index != 0)
-                            trim(drawable.drawables[index - 1])
-                        if (index != drawable.drawables.lastIndex)
-                            trim(drawable.drawables[index + 1])
+                            trim(drawable[index - 1])
+                        if (index != drawable.lastIndex)
+                            trim(drawable[index + 1])
                     }
                 }
             }
