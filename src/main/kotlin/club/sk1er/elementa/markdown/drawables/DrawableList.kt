@@ -17,12 +17,13 @@ class DrawableList(
         }
     }
 
-    override fun layoutImpl(): Height {
-        var y = this.y
+    override fun layoutImpl(x: Float, y: Float, width: Float): Layout {
+        var currY = y
         drawables.forEach {
-            y += it.layout(x, y, width)
+            currY += it.layout(x, currY, width).height
         }
-        return y - this.y
+        val height = currY - y
+        return Layout(x, currY, width, height)
     }
 
     override fun draw() {

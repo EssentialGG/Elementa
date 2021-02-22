@@ -62,8 +62,8 @@ class TextDrawable(
         return first to second
     }
 
-    override fun layoutImpl(): Height {
-        return 9f * scaleModifier
+    override fun layoutImpl(x: Float, y: Float, width: Float): Layout {
+        return Layout(x, y, width, 9f * scaleModifier)
     }
 
     override fun draw() {

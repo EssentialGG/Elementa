@@ -1,10 +1,7 @@
 package club.sk1er.elementa.markdown.drawables
 
-import club.sk1er.elementa.components.UIBlock
 import club.sk1er.elementa.dsl.width
 import club.sk1er.elementa.markdown.MarkdownConfig
-import club.sk1er.elementa.utils.withAlpha
-import java.awt.Color
 
 class ParagraphDrawable(
     config: MarkdownConfig,
@@ -21,10 +18,13 @@ class ParagraphDrawable(
             }
         }
 
-    override fun layoutImpl(): Height {
-        var x = this.x
-        var y = this.y + if (insertSpaceBefore) config.paragraphConfig.spaceBefore else 0f
-        var widthRemaining = this.width
+    override fun layoutImpl(x: Float, y: Float, width: Float): Layout {
+        val marginTop = if (insertSpaceBefore) config.paragraphConfig.spaceBefore else 0f
+        val marginBottom = if (insertSpaceAfter) config.paragraphConfig.spaceAfter else 0f
+
+        var currX = x
+        var currY = y + marginTop
+        var widthRemaining = width
         val centered = config.paragraphConfig.centered
         var startOfLine = true
 
@@ -32,9 +32,9 @@ class ParagraphDrawable(
         val currentLine = mutableListOf<TextDrawable>()
 
         fun gotoNextLine() {
-            x = this.x
-            y += 9f * scaleModifier + config.paragraphConfig.spaceBetweenLines
-            widthRemaining = this.width
+            currX = x
+            currY += 9f * scaleModifier + config.paragraphConfig.spaceBetweenLines
+            widthRemaining = width
             lines.add(currentLine.toList())
             currentLine.clear()
             startOfLine = true
@@ -45,9 +45,9 @@ class ParagraphDrawable(
                 text.ensureTrimmed()
                 text.width()
             } else width
-            text.layout(x, y, newWidth)
+            text.layout(currX, currY, newWidth)
             widthRemaining -= newWidth
-            x += newWidth
+            currX += newWidth
             startOfLine = false
             currentLine.add(text)
         }
@@ -56,7 +56,7 @@ class ParagraphDrawable(
             if (text is SoftBreakDrawable) {
                 val spaceWidth = ' '.width(scaleModifier)
                 widthRemaining -= spaceWidth
-                x += spaceWidth
+                currX += spaceWidth
                 if (widthRemaining <= 0)
                     gotoNextLine()
                 continue
@@ -97,8 +97,8 @@ class ParagraphDrawable(
                 // continue this splitting loop
                 gotoNextLine()
 
-                if (targetWidth > this.width) {
-                    val splitResult2 = target.split(this.width)
+                if (targetWidth > width) {
+                    val splitResult2 = target.split(width)
 
                     if (splitResult2 == null) {
                         // Edge case where the width of the MarkdownComponent is
@@ -106,7 +106,7 @@ class ParagraphDrawable(
                         // boundary. In this case we opt to split again, breaking
                         // words if we have to. We run split twice here, but as
                         // this is a rare edge case, it's not a problem.
-                        val splitResult3 = target.split(this.width, breakWords = true)
+                        val splitResult3 = target.split(width, breakWords = true)
                             ?: throw IllegalStateException("not possible")
 
                         layout(splitResult3.first, splitResult3.first.width())
@@ -132,7 +132,7 @@ class ParagraphDrawable(
         if (centered) {
             for (line in lines) {
                 val totalWidth = line.sumByDouble { it.width().toDouble() }.toFloat()
-                val shift = (this.width - totalWidth) / 2f
+                val shift = (width - totalWidth) / 2f
                 for (text in line) {
                     text.x += shift
                 }
@@ -141,9 +141,17 @@ class ParagraphDrawable(
 
         texts = lines.flatten().toMutableList()
 
-        return y - this.y + 9f * scaleModifier + if (insertSpaceAfter) {
+        val height = currY - y + 9f * scaleModifier + if (insertSpaceAfter) {
             config.paragraphConfig.spaceAfter
         } else 0f
+
+        return Layout(
+            x,
+            y,
+            width,
+            height,
+            Margin(0f, marginTop, 0f, marginBottom)
+        )
     }
 
     override fun draw() {

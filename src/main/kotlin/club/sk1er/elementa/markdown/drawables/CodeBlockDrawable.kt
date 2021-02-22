@@ -2,8 +2,8 @@ package club.sk1er.elementa.markdown.drawables
 
 import club.sk1er.elementa.markdown.MarkdownConfig
 
-class CodeblockDrawable(config: MarkdownConfig) : Drawable(config) {
-    override fun layoutImpl(): Height {
+class CodeBlockDrawable(config: MarkdownConfig) : Drawable(config) {
+    override fun layoutImpl(x: Float, y: Float, width: Float): Layout {
         TODO("Not yet implemented")
     }
 

@@ -49,7 +49,7 @@ class MarkdownComponent @JvmOverloads constructor(
         val width = getWidth()
 
         drawables.forEach {
-            y += it.layout(x, y, width)
+            y += it.layout(x, y, width).height
         }
     }
 

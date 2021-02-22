@@ -29,9 +29,11 @@ class ListDrawable(
         trim(drawables)
     }
 
-    override fun layoutImpl(): Height {
+    override fun layoutImpl(x: Float, y: Float, width: Float): Layout {
         listItems.clear()
-        var y = this.y + if (insertSpaceBefore) config.listConfig.spaceBeforeList else 0f
+        val marginTop = if (insertSpaceBefore) config.listConfig.spaceBeforeList else 0f
+        val marginBottom = if (insertSpaceAfter) config.listConfig.spaceAfterList else 0f
+        var currY = y + marginTop
         val spaceAfterSymbol = config.listConfig.spaceBeforeText
         val indentation = config.listConfig.indentation
 
@@ -69,8 +71,8 @@ class ListDrawable(
                 drawable
             )
             listItems.add(item)
-            y += item.layout(x + indentation, y, width - indentation)
-            y += elementSpacing
+            currY += item.layout(x + indentation, currY, width - indentation).height
+            currY += elementSpacing
         }
 
         for (drawable_ in drawables) {
@@ -94,11 +96,18 @@ class ListDrawable(
             index++
         }
 
-        y -= elementSpacing
-        if (insertSpaceAfter)
-            y += config.listConfig.spaceAfterList
+        currY -= elementSpacing
+        currY += marginBottom
 
-        return y - this.y
+        val height = currY - y
+
+        return Layout(
+            x,
+            y,
+            width,
+            height,
+            Margin(0f, marginTop, 0f, marginBottom)
+        )
     }
 
     override fun draw() {
@@ -131,15 +140,16 @@ class ListDrawable(
             }
         }
 
-        override fun layoutImpl(): Height {
+        override fun layoutImpl(x: Float, y: Float, width: Float): Layout {
             val nonDrawableSpace = symbolWidth + symbolPaddingRight
-            return drawable.layout(x + nonDrawableSpace, y, width - nonDrawableSpace)
+            drawable.layout(x + nonDrawableSpace, y, width - nonDrawableSpace)
+            return Layout(x, y, width, drawable.height)
         }
 
         override fun draw() {
-            val x = this.x + symbolWidth - actualSymbolWidth
+            val newX = x + symbolWidth - actualSymbolWidth
             if (drawable !is ListDrawable)
-                TextDrawable.drawString(config, symbol, x, y)
+                TextDrawable.drawString(config, symbol, newX, y)
             drawable.draw()
         }
     }

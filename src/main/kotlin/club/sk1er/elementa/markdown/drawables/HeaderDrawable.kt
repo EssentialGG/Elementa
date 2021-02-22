@@ -18,34 +18,39 @@ class HeaderDrawable(
         else -> throw IllegalStateException()
     }
 
-    private var textHeight: Height = -1f
-    private var spaceBefore: Height = -1f
-
     init {
         paragraph.scaleModifier = headerConfig.textScale
         trim(paragraph)
     }
 
-    override fun layoutImpl(): Height {
-        spaceBefore = if (insertSpaceBefore) headerConfig.verticalSpaceBefore else 0f
+    override fun layoutImpl(x: Float, y: Float, width: Float): Layout {
+        val spaceBefore = if (insertSpaceBefore) headerConfig.verticalSpaceBefore else 0f
         val spaceAfter = if (insertSpaceAfter) headerConfig.verticalSpaceAfter else 0f
-        textHeight = paragraph.layout(this.x, this.y + spaceBefore, this.width)
+        paragraph.layout(x, y + spaceBefore, width)
 
-        return spaceBefore + textHeight + spaceAfter + if (headerConfig.hasDivider) {
+        val height = spaceBefore + paragraph.height + spaceAfter + if (headerConfig.hasDivider) {
             headerConfig.spaceBeforeDivider + headerConfig.dividerWidth
         } else 0f
+
+        return Layout(
+            x,
+            y,
+            width,
+            height,
+            Margin(0f, spaceBefore, 0f, spaceAfter)
+        )
     }
 
     override fun draw() {
         paragraph.draw()
 
         if (headerConfig.hasDivider) {
-            val y = this.y + spaceBefore + textHeight + headerConfig.spaceBeforeDivider
+            val y = layout.bottom - layout.margin.bottom - headerConfig.dividerWidth
             UIBlock.drawBlockSized(
                 headerConfig.dividerColor, 
-                this.x.toDouble(),
+                x.toDouble(),
                 y.toDouble(),
-                this.width.toDouble(),
+                width.toDouble(),
                 headerConfig.dividerWidth.toDouble()
             )
         }
