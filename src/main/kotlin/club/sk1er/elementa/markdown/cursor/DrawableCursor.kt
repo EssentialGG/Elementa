@@ -1,10 +1,7 @@
 package club.sk1er.elementa.markdown.cursor
 
 import club.sk1er.elementa.markdown.DrawState
-import club.sk1er.elementa.markdown.drawables.Drawable
-import club.sk1er.elementa.markdown.drawables.DrawableList
-import club.sk1er.elementa.markdown.drawables.ListDrawable
-import club.sk1er.elementa.markdown.drawables.ParagraphDrawable
+import club.sk1er.elementa.markdown.drawables.*
 
 abstract class DrawableCursor {
     abstract val target: Drawable
@@ -26,6 +23,9 @@ abstract class DrawableCursor {
                 DrawableList(drawable.config, drawable.listItems.map { it.drawable })
             )
             is DrawableList -> DrawableListCursor(drawable)
+            is BlockquoteDrawable -> DrawableListCursor(
+                DrawableList(drawable.config, drawable.drawables)
+            )
             else -> TODO()
         }
     }

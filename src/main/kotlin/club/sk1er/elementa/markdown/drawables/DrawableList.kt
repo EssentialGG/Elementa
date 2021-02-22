@@ -6,8 +6,14 @@ import java.util.*
 
 class DrawableList(
     config: MarkdownConfig,
-    private var drawables: List<Drawable>
+    drawables: List<Drawable>
 ) : Drawable(config), List<Drawable> {
+    private lateinit var drawables: List<Drawable>
+
+    init {
+        setDrawables(drawables)
+    }
+
     fun setDrawables(newDrawables: List<Drawable>) {
         drawables = newDrawables
         trim(this)

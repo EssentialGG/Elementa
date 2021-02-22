@@ -44,14 +44,18 @@ class DrawableListCursor(val drawables: DrawableList) : DrawableCursor() {
                 }
                 return
             } else {
-                if (mouseY < drawable.y && drawable.y - mouseY < closestDistance) {
-                    direction = Direction.Down
-                    closestDistance = drawable.y - mouseY
-                    closestDrawable = drawable
-                } else if (mouseY > drawable.y + drawable.height && drawable.y + drawable.height - mouseY < closestDistance) {
-                    direction = Direction.Up
-                    closestDistance = mouseY - (drawable.y + drawable.height)
-                    closestDrawable = drawable
+                if (mouseY < drawable.y) {
+                    if (drawable.y - mouseY < closestDistance) {
+                        direction = Direction.Down
+                        closestDistance = drawable.y - mouseY
+                        closestDrawable = drawable
+                    }
+                } else if (mouseY > drawable.y + drawable.height) {
+                    if (drawable.y + drawable.height - mouseY < closestDistance) {
+                        direction = Direction.Up
+                        closestDistance = mouseY - (drawable.y + drawable.height)
+                        closestDrawable = drawable
+                    }
                 } else {
                     // The drawable is hovered vertically, but not horizontally
                     closestDistance = 0f

@@ -29,7 +29,7 @@ class ParagraphCursor(override val target: ParagraphDrawable) : DrawableCursor()
     override fun moveToEnd() {
         currentText = target.textDrawables.last()
         stringOffset = currentText.formattedText.length
-        cursorX = currentText.x
+        cursorX = currentText.layout.right
         cursorY = currentText.y
         cursorHeight = currentText.height
         cursorWidth = cursorHeight / 9f
@@ -50,8 +50,9 @@ class ParagraphCursor(override val target: ParagraphDrawable) : DrawableCursor()
                     selectPreviousText()
 
                 if (mouseY < currentText.y - linePadding) {
-                    // The mouse in in between text components, in which case this cursor
-                    // can't properly position
+                    // The mouse in beyond this component, in which case we just move
+                    // the cursor to the start of the component
+                    moveToStart()
                     return
                 }
             } else {
@@ -59,8 +60,9 @@ class ParagraphCursor(override val target: ParagraphDrawable) : DrawableCursor()
                     selectNextText()
 
                 if (mouseY > currentText.y + currentText.height + linePadding) {
-                    // The mouse in in between text components, in which case this cursor
-                    // can't properly position
+                    // The mouse in beyond this component, in which case we just move
+                    // the cursor to the end of the component
+                    moveToEnd()
                     return
                 }
             }
