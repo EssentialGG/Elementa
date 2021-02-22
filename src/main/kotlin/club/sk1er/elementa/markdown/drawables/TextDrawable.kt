@@ -14,13 +14,20 @@ class TextDrawable(
     // Used by HeaderDrawable
     var scaleModifier = 1f
 
-    private var formattedText = buildString {
-        if (isBold)
-            append("§l")
-        if (isItalic)
-            append("§o")
-        append(text)
+    var formattedText: String
+        private set
+
+    init {
+        formattedText = buildString {
+            if (isBold)
+                append("§l")
+            if (isItalic)
+                append("§o")
+            append(text)
+        }
     }
+
+    fun plainText() = formattedText.drop(styleChars())
 
     fun ensureTrimmed() {
         val styleChars = styleChars()
@@ -28,7 +35,7 @@ class TextDrawable(
             formattedText.substring(styleChars, formattedText.length).trimStart()
     }
 
-    private fun styleChars() = (if (isBold) 2 else 0) + (if (isItalic) 2 else 0)
+    fun styleChars() = (if (isBold) 2 else 0) + (if (isItalic) 2 else 0)
 
     fun width() = formattedText.width(scaleModifier)
 
@@ -37,7 +44,7 @@ class TextDrawable(
     // the next line
     fun split(maxWidth: Float, breakWords: Boolean = false): Pair<TextDrawable, TextDrawable>? {
         val styleChars = styleChars()
-        val plainText = formattedText.drop(styleChars)
+        val plainText = plainText()
 
         var splitPoint = formattedText.indices.drop(styleChars).firstOrNull {
             formattedText.substring(0, it + 1).width(scaleModifier) > maxWidth

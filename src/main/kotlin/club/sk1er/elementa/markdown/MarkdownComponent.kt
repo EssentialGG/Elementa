@@ -3,6 +3,8 @@ package club.sk1er.elementa.markdown
 import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.constraints.HeightConstraint
 import club.sk1er.elementa.dsl.pixels
+import club.sk1er.elementa.effects.OutlineEffect
+import club.sk1er.elementa.markdown.cursor.MarkdownCursor
 import club.sk1er.elementa.markdown.drawables.Drawable
 import club.sk1er.elementa.state.BasicState
 import club.sk1er.elementa.state.State
@@ -26,11 +28,23 @@ class MarkdownComponent @JvmOverloads constructor(
         layout()
     }
 
+    lateinit var drawables: List<Drawable>
+
     private var baseX: Float = -1f
     private var baseY: Float = -1f
-    private lateinit var drawables: List<Drawable>
     private lateinit var lastValues: ConstraintValues
     private var maxHeight: HeightConstraint = Int.MAX_VALUE.pixels()
+    private val cursor = MarkdownCursor(this)
+
+    init {
+        onMouseClick {
+            val xShift = getLeft() - baseX
+            val yShift = getTop() - baseY
+            cursor.moveTo(it.absoluteX - xShift, it.absoluteY - yShift)
+        }
+
+        enableEffect(OutlineEffect(Color.BLUE, 1f))
+    }
 
     fun bindText(state: State<String>) = apply {
         removeListener()
@@ -97,6 +111,7 @@ class MarkdownComponent @JvmOverloads constructor(
         val drawState = DrawState(getLeft() - baseX, getTop() - baseY)
 
         drawables.forEach { it.draw(drawState) }
+        cursor.draw(drawState)
 
         afterDraw()
     }

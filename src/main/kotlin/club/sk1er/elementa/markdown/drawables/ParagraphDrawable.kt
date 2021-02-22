@@ -11,9 +11,12 @@ import kotlin.math.floor
 
 class ParagraphDrawable(
     config: MarkdownConfig,
-    texts: DrawableList
+    private var texts: DrawableList
 ) : Drawable(config) {
-    private var texts = texts.toMutableList()
+    // Only safe to access after a call to layout()
+    @Suppress("UNCHECKED_CAST")
+    val textDrawables: List<TextDrawable>
+        get() = texts as List<TextDrawable>
 
     // Used by HeaderDrawable
     var scaleModifier = 1f
@@ -145,7 +148,7 @@ class ParagraphDrawable(
             }
         }
 
-        texts = lines.flatten().toMutableList()
+        texts = DrawableList(config, lines.flatten())
 
         val height = currY - y + 9f * scaleModifier + if (insertSpaceAfter) {
             config.paragraphConfig.spaceAfter
@@ -181,5 +184,4 @@ class ParagraphDrawable(
     }
 
     private fun randomComponent(): Int = floor(Math.random() * 256f).toInt()
-
 }
