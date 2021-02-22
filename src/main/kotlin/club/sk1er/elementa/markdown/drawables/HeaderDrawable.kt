@@ -1,6 +1,7 @@
 package club.sk1er.elementa.markdown.drawables
 
 import club.sk1er.elementa.components.UIBlock
+import club.sk1er.elementa.markdown.DrawState
 import club.sk1er.elementa.markdown.MarkdownConfig
 
 class HeaderDrawable(
@@ -41,15 +42,15 @@ class HeaderDrawable(
         )
     }
 
-    override fun draw() {
-        paragraph.draw()
+    override fun draw(state: DrawState) {
+        paragraph.draw(state)
 
         if (headerConfig.hasDivider) {
             val y = layout.bottom - layout.margin.bottom - headerConfig.dividerWidth
             UIBlock.drawBlockSized(
                 headerConfig.dividerColor, 
-                x.toDouble(),
-                y.toDouble(),
+                (x + state.xShift).toDouble(),
+                (y + state.yShift).toDouble(),
                 width.toDouble(),
                 headerConfig.dividerWidth.toDouble()
             )

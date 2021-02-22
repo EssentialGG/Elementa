@@ -1,5 +1,6 @@
 package club.sk1er.elementa.markdown.drawables
 
+import club.sk1er.elementa.markdown.DrawState
 import club.sk1er.elementa.markdown.MarkdownConfig
 
 class DrawableList(
@@ -26,7 +27,7 @@ class DrawableList(
         return Layout(x, currY, width, height)
     }
 
-    override fun draw() {
-        drawables.forEach(Drawable::draw)
+    override fun draw(state: DrawState) {
+        drawables.forEach { it.draw(state) }
     }
 }

@@ -1,5 +1,6 @@
 package club.sk1er.elementa.markdown.drawables
 
+import club.sk1er.elementa.markdown.DrawState
 import club.sk1er.elementa.markdown.MarkdownConfig
 
 class HardBreakDrawable(config: MarkdownConfig) : Drawable(config) {
@@ -7,7 +8,7 @@ class HardBreakDrawable(config: MarkdownConfig) : Drawable(config) {
         TODO("Not yet implemented")
     }
 
-    override fun draw() {
+    override fun draw(state: DrawState) {
         TODO("Not yet implemented")
     }
 }

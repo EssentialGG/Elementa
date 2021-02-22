@@ -1,6 +1,8 @@
 package club.sk1er.elementa.markdown
 
 import club.sk1er.elementa.UIComponent
+import club.sk1er.elementa.constraints.HeightConstraint
+import club.sk1er.elementa.dsl.pixels
 import club.sk1er.elementa.markdown.drawables.Drawable
 import club.sk1er.elementa.state.BasicState
 import club.sk1er.elementa.state.State
@@ -24,8 +26,11 @@ class MarkdownComponent @JvmOverloads constructor(
         layout()
     }
 
+    private var baseX: Float = -1f
+    private var baseY: Float = -1f
     private lateinit var drawables: List<Drawable>
     private lateinit var lastValues: ConstraintValues
+    private var maxHeight: HeightConstraint = Int.MAX_VALUE.pixels()
 
     fun bindText(state: State<String>) = apply {
         removeListener()
@@ -39,18 +44,35 @@ class MarkdownComponent @JvmOverloads constructor(
         }
     }
 
+    fun setMaxHeight(maxHeight: HeightConstraint) = apply {
+        this.maxHeight = maxHeight
+    }
+
+    /**
+     * Parses the text into a markdown tree. This is called everytime
+     * that the text of this component changes, and is always followed
+     * by a call to layout().
+     */
     private fun reparse() {
         drawables = MarkdownRenderer(textState.get(), config).render()
     }
 
+    /**
+     * This method is responsible for laying out the markdown tree.
+     *
+     * @see Drawable.layout
+     */
     private fun layout() {
-        val x = getLeft()
-        var y = getTop()
+        baseX = getLeft()
+        baseY = getTop()
+        var currY = baseY
         val width = getWidth()
 
         drawables.forEach {
-            y += it.layout(x, y, width).height
+            currY += it.layout(baseX, currY, width).height
         }
+
+        setHeight((currY - baseY).coerceAtMost(maxHeight.getHeight(this)).pixels())
     }
 
     override fun afterInitialization() {
@@ -72,28 +94,29 @@ class MarkdownComponent @JvmOverloads constructor(
             layout()
         lastValues = currentValues
 
-        drawables.forEach(Drawable::draw)
+        val drawState = DrawState(getLeft() - baseX, getTop() - baseY)
+
+        drawables.forEach { it.draw(drawState) }
 
         afterDraw()
     }
 
     private fun constraintValues() = ConstraintValues(
-        getLeft(),
-        getTop(),
         getWidth(),
-        getHeight(),
-        getRadius(),
-        getTextScale(),
-        getColor()
+        getTextScale()
     )
 
+    /**
+     * This class stores the values of the important constraints of this
+     * component. If these values change between frames, we need to do a
+     * complete re-layout of the entire markdown tree.
+     */
     data class ConstraintValues(
-        val x: Float,
-        val y: Float,
         val width: Float,
-        val height: Float,
-        val radius: Float,
-        val textScale: Float,
-        val color: Color
+        val textScale: Float
     )
+
+    companion object {
+        const val DEBUG = true
+    }
 }

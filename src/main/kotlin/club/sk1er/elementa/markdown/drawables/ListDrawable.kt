@@ -1,6 +1,7 @@
 package club.sk1er.elementa.markdown.drawables
 
 import club.sk1er.elementa.dsl.width
+import club.sk1er.elementa.markdown.DrawState
 import club.sk1er.elementa.markdown.MarkdownConfig
 
 class ListDrawable(
@@ -110,8 +111,8 @@ class ListDrawable(
         )
     }
 
-    override fun draw() {
-        listItems.forEach(Drawable::draw)
+    override fun draw(state: DrawState) {
+        listItems.forEach { it.draw(state) }
     }
 
     // A mostly organized and ready-to-render list item
@@ -146,11 +147,11 @@ class ListDrawable(
             return Layout(x, y, width, drawable.height)
         }
 
-        override fun draw() {
+        override fun draw(state: DrawState) {
             val newX = x + symbolWidth - actualSymbolWidth
             if (drawable !is ListDrawable)
-                TextDrawable.drawString(config, symbol, newX, y)
-            drawable.draw()
+                TextDrawable.drawString(config, symbol, newX + state.xShift, y + state.yShift)
+            drawable.draw(state)
         }
     }
 }

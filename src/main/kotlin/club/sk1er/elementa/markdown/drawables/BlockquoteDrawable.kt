@@ -1,6 +1,7 @@
 package club.sk1er.elementa.markdown.drawables
 
 import club.sk1er.elementa.components.UIBlock
+import club.sk1er.elementa.markdown.DrawState
 import club.sk1er.elementa.markdown.MarkdownConfig
 
 class BlockquoteDrawable(config: MarkdownConfig, val drawables: DrawableList) : Drawable(config) {
@@ -17,13 +18,16 @@ class BlockquoteDrawable(config: MarkdownConfig, val drawables: DrawableList) : 
         val dividerStart = currY
         currY += config.dividerPaddingTop
 
+        drawables.first().also {
+            it.insertSpaceBefore = false
+        }
+
         drawables.last().also {
-            if (it is ParagraphDrawable)
-                it.insertSpaceAfter = false
+            it.insertSpaceAfter = false
         }
 
         drawables.forEach {
-            currY += it.layout(x + padding, currY, width).height
+            currY += it.layout(x + padding, currY, width - padding).height
         }
 
         currY += config.dividerPaddingBottom
@@ -42,15 +46,15 @@ class BlockquoteDrawable(config: MarkdownConfig, val drawables: DrawableList) : 
         )
     }
 
-    override fun draw() {
+    override fun draw(state: DrawState) {
         UIBlock.drawBlockSized(
             config.blockquoteConfig.dividerColor,
-            x + config.blockquoteConfig.spaceBeforeDivider.toDouble(),
-            y + config.blockquoteConfig.spaceBeforeBlockquote.toDouble(),
+            x + state.xShift + config.blockquoteConfig.spaceBeforeDivider.toDouble(),
+            y + state.yShift + config.blockquoteConfig.spaceBeforeBlockquote.toDouble(),
             config.blockquoteConfig.dividerWidth.toDouble(),
             dividerHeight.toDouble()
         )
 
-        drawables.forEach(Drawable::draw)
+        drawables.forEach { it.draw(state) }
     }
 }

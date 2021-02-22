@@ -1,7 +1,13 @@
 package club.sk1er.elementa.markdown.drawables
 
+import club.sk1er.elementa.components.UIBlock
 import club.sk1er.elementa.dsl.width
+import club.sk1er.elementa.markdown.DrawState
+import club.sk1er.elementa.markdown.MarkdownComponent
 import club.sk1er.elementa.markdown.MarkdownConfig
+import club.sk1er.elementa.utils.withAlpha
+import java.awt.Color
+import kotlin.math.floor
 
 class ParagraphDrawable(
     config: MarkdownConfig,
@@ -154,7 +160,26 @@ class ParagraphDrawable(
         )
     }
 
-    override fun draw() {
-        texts.forEach(Drawable::draw)
+    override fun draw(state: DrawState) {
+        texts.forEach { it.draw(state) }
+
+        if (MarkdownComponent.DEBUG) {
+            UIBlock.drawBlockSized(
+                rc,
+                layout.elementLeft.toDouble() + state.xShift,
+                layout.elementTop.toDouble() + state.yShift,
+                layout.elementWidth.toDouble(),
+                layout.elementHeight.toDouble()
+            )
+        }
     }
+
+    private val rc = randomColor().withAlpha(100)
+
+    private fun randomColor(): Color {
+        return Color(randomComponent(), randomComponent(), randomComponent())
+    }
+
+    private fun randomComponent(): Int = floor(Math.random() * 256f).toInt()
+
 }

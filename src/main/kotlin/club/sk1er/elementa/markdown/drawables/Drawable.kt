@@ -1,5 +1,6 @@
 package club.sk1er.elementa.markdown.drawables
 
+import club.sk1er.elementa.markdown.DrawState
 import club.sk1er.elementa.markdown.MarkdownConfig
 import kotlin.reflect.KMutableProperty0
 import kotlin.reflect.KProperty
@@ -28,7 +29,7 @@ abstract class Drawable(val config: MarkdownConfig) {
 
     abstract fun layoutImpl(x: Float, y: Float, width: Float): Layout
 
-    abstract fun draw()
+    abstract fun draw(state: DrawState)
 
     fun isHovered(mouseX: Float, mouseY: Float): Boolean {
         return mouseX in layout.left..layout.right && mouseY in layout.top..layout.bottom

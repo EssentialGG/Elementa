@@ -1,6 +1,7 @@
 package club.sk1er.elementa.markdown.drawables
 
 import club.sk1er.elementa.dsl.width
+import club.sk1er.elementa.markdown.DrawState
 import club.sk1er.elementa.markdown.MarkdownConfig
 import club.sk1er.mods.core.universal.UGraphics
 
@@ -66,9 +67,9 @@ class TextDrawable(
         return Layout(x, y, width, 9f * scaleModifier)
     }
 
-    override fun draw() {
+    override fun draw(state: DrawState) {
         UGraphics.scale(scaleModifier, scaleModifier, 1f)
-        drawString(config, formattedText, x / scaleModifier, y / scaleModifier)
+        drawString(config, formattedText, (x + state.xShift) / scaleModifier, (y + state.yShift) / scaleModifier)
         UGraphics.scale(1f / scaleModifier, 1f / scaleModifier, 1f)
     }
 
