@@ -6,6 +6,7 @@ import club.sk1er.elementa.markdown.MarkdownConfig
 
 class BlockquoteDrawable(config: MarkdownConfig, val drawables: DrawableList) : Drawable(config) {
     private var dividerHeight: Float = -1f
+    override val children: List<Drawable> get() = drawables
 
     init {
         drawables.parent = this

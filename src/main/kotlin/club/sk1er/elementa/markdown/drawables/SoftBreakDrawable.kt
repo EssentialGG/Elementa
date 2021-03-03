@@ -2,7 +2,7 @@ package club.sk1er.elementa.markdown.drawables
 
 import club.sk1er.elementa.markdown.DrawState
 import club.sk1er.elementa.markdown.MarkdownConfig
-import club.sk1er.elementa.markdown.cursor.TextCursor
+import club.sk1er.elementa.markdown.selection.TextCursor
 
 /**
  * A soft break is one line break between lines of markdown text.

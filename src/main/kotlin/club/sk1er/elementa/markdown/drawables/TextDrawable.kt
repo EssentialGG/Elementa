@@ -1,9 +1,10 @@
 package club.sk1er.elementa.markdown.drawables
 
+import club.sk1er.elementa.components.UIBlock
 import club.sk1er.elementa.dsl.width
 import club.sk1er.elementa.markdown.DrawState
 import club.sk1er.elementa.markdown.MarkdownConfig
-import club.sk1er.elementa.markdown.cursor.TextCursor
+import club.sk1er.elementa.markdown.selection.TextCursor
 import club.sk1er.mods.core.universal.UGraphics
 
 class TextDrawable(
@@ -17,6 +18,11 @@ class TextDrawable(
 
     var formattedText: String
         private set
+
+    // Used by the selection API to tell this Drawable how it is
+    // selected. These do not consider style characters
+    var selectionStart = -1
+    var selectionEnd = -1
 
     init {
         formattedText = buildString {
@@ -81,35 +87,109 @@ class TextDrawable(
     }
 
     override fun draw(state: DrawState) {
-        UGraphics.scale(scaleModifier, scaleModifier, 1f)
-        drawString(config, formattedText, (x + state.xShift) / scaleModifier, (y + state.yShift) / scaleModifier)
-        UGraphics.scale(1f / scaleModifier, 1f / scaleModifier, 1f)
+        if (selectionStart == -1 && selectionEnd == -1) {
+            draw(state, listOf(Text(formattedText, x, y, false)))
+            return
+        }
+
+        if (selectionStart == -1 || selectionEnd == -1)
+            throw IllegalStateException()
+
+        val start = selectionStart + styleChars()
+        val end = selectionEnd + styleChars()
+
+        val texts = mutableListOf<Text>()
+        val formatChars = formattedText.substring(0, styleChars())
+
+        val nextX = if (selectionStart > 0) {
+            texts.add(Text(
+                formattedText.substring(0, start),
+                x,
+                y,
+                false
+            ))
+            x + formattedText.substring(0, start).width(scaleModifier)
+        } else x
+
+        val selectedString = formatChars + formattedText.substring(start, end)
+        texts.add(Text(
+            selectedString,
+            nextX,
+            y,
+            true
+        ))
+
+        if (end < formattedText.length) {
+            texts.add(Text(
+                formatChars + formattedText.substring(end),
+                nextX + selectedString.width(scaleModifier),
+                y,
+                false
+            ))
+        }
+
+        draw(state, texts)
     }
+
+    private fun draw(state: DrawState, texts: List<Text>) {
+        texts.forEach {
+            UGraphics.scale(scaleModifier, scaleModifier, 1f)
+            drawString(
+                config,
+                it.string,
+                (it.x + state.xShift) / scaleModifier,
+                (it.y + state.yShift) / scaleModifier,
+                it.selected
+            )
+            UGraphics.scale(1f / scaleModifier, 1f / scaleModifier, 1f)
+        }
+    }
+
+    data class Text(
+        val string: String,
+        val x: Float,
+        val y: Float,
+        val selected: Boolean
+    )
 
     // TextDrawable mouse selection is managed by ParagraphDrawable#select
     override fun cursorAt(mouseX: Float, mouseY: Float) = throw IllegalStateException("never called")
 
     override fun cursorAtStart() = TextCursor(this, 0)
-    override fun cursorAtEnd() = TextCursor(this, formattedText.length)
+    override fun cursorAtEnd() = TextCursor(this, plainText().length)
 
     override fun toString() = formattedText
 
     companion object {
-        fun drawString(config: MarkdownConfig, string: String, x: Float, y: Float) {
-            if (config.paragraphConfig.hasShadow) {
+        fun drawString(config: MarkdownConfig, string: String, x: Float, y: Float, selected: Boolean) {
+            if (selected) {
+                UIBlock.drawBlockSized(
+                    config.textConfig.selectionBackgroundColor,
+                    x.toDouble(),
+                    y.toDouble(),
+                    string.width().toDouble(),
+                    9.0
+                )
+            }
+
+            val foregroundColor = if (selected) {
+                config.textConfig.selectionForegroundColor.rgb
+            } else config.textConfig.color.rgb
+
+            if (config.textConfig.hasShadow) {
                 UGraphics.drawString(
                     string,
                     x,
                     y,
-                    config.paragraphConfig.color.rgb,
-                    config.paragraphConfig.shadowColor.rgb
+                    foregroundColor,
+                    config.textConfig.shadowColor.rgb
                 )
             } else {
                 UGraphics.drawString(
                     string,
                     x,
                     y,
-                    config.paragraphConfig.color.rgb,
+                    foregroundColor,
                     false
                 )
             }

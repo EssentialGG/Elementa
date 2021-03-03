@@ -2,7 +2,7 @@ package club.sk1er.elementa.markdown.drawables
 
 import club.sk1er.elementa.markdown.DrawState
 import club.sk1er.elementa.markdown.MarkdownConfig
-import club.sk1er.elementa.markdown.cursor.TextCursor
+import club.sk1er.elementa.markdown.selection.TextCursor
 
 /**
  * Represents a list of drawables.
@@ -18,6 +18,7 @@ class DrawableList(
     drawables: List<Drawable>
 ) : Drawable(config), List<Drawable> {
     private lateinit var drawables: List<Drawable>
+    override val children: List<Drawable> get() = drawables
 
     init {
         setDrawables(drawables)

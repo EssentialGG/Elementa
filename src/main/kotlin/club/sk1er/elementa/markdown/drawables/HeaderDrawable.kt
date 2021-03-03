@@ -9,6 +9,8 @@ class HeaderDrawable(
     private val level: Int,
     private val paragraph: ParagraphDrawable
 ) : Drawable(config) {
+    override val children: List<Drawable> get() = listOf(paragraph)
+
     init {
         paragraph.parent = this
     }

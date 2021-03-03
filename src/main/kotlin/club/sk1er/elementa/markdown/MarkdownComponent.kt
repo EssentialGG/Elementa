@@ -4,9 +4,10 @@ import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.constraints.HeightConstraint
 import club.sk1er.elementa.dsl.pixels
 import club.sk1er.elementa.effects.OutlineEffect
-import club.sk1er.elementa.markdown.cursor.TextCursor
+import club.sk1er.elementa.markdown.selection.TextCursor
 import club.sk1er.elementa.markdown.drawables.Drawable
 import club.sk1er.elementa.markdown.drawables.DrawableList
+import club.sk1er.elementa.markdown.selection.TextSelection
 import club.sk1er.elementa.state.BasicState
 import club.sk1er.elementa.state.State
 import java.awt.Color
@@ -36,12 +37,28 @@ class MarkdownComponent @JvmOverloads constructor(
     private lateinit var lastValues: ConstraintValues
     private var maxHeight: HeightConstraint = Int.MAX_VALUE.pixels()
     private var cursor: TextCursor? = null
+    private var selection: TextSelection? = null
 
     init {
         onMouseClick {
             val xShift = getLeft() - baseX
             val yShift = getTop() - baseY
             cursor = drawables.cursorAt(it.absoluteX - xShift, it.absoluteY - yShift)
+            selection?.remove()
+            selection = null
+        }
+
+        onMouseDrag { mouseX, mouseY, mouseButton ->
+            if (mouseButton != 0)
+                return@onMouseDrag
+
+            val otherEnd = drawables.cursorAt(baseX + mouseX, baseY + mouseY)
+
+            if (cursor == otherEnd)
+                return@onMouseDrag
+
+            selection?.remove()
+            selection = cursor!!.selectionTo(otherEnd)
         }
 
         // TODO: Remove

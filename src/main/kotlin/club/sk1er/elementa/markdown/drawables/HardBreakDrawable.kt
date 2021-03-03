@@ -2,7 +2,7 @@ package club.sk1er.elementa.markdown.drawables
 
 import club.sk1er.elementa.markdown.DrawState
 import club.sk1er.elementa.markdown.MarkdownConfig
-import club.sk1er.elementa.markdown.cursor.TextCursor
+import club.sk1er.elementa.markdown.selection.TextCursor
 
 /**
  * A hard break is two or more line breaks between lines of

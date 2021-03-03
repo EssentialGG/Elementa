@@ -5,7 +5,7 @@ import club.sk1er.elementa.dsl.width
 import club.sk1er.elementa.markdown.DrawState
 import club.sk1er.elementa.markdown.MarkdownComponent
 import club.sk1er.elementa.markdown.MarkdownConfig
-import club.sk1er.elementa.markdown.cursor.TextCursor
+import club.sk1er.elementa.markdown.selection.TextCursor
 import club.sk1er.elementa.utils.withAlpha
 import java.awt.Color
 import kotlin.math.abs
@@ -23,6 +23,8 @@ class ParagraphDrawable(
             field = value
             value.forEach { it.parent = this }
         }
+
+    override val children: List<Drawable> get() = drawables
 
     // Used by HeaderDrawable
     var scaleModifier = 1f
@@ -326,7 +328,7 @@ class ParagraphDrawable(
                     offset--
                 }
 
-                return TextCursor(currentText, offset)
+                return TextCursor(currentText, offset - currentText.styleChars())
             }
 
             cachedWidth = newWidth

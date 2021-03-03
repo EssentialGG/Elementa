@@ -2,7 +2,7 @@ package club.sk1er.elementa.markdown.drawables
 
 import club.sk1er.elementa.markdown.DrawState
 import club.sk1er.elementa.markdown.MarkdownConfig
-import club.sk1er.elementa.markdown.cursor.TextCursor
+import club.sk1er.elementa.markdown.selection.TextCursor
 import kotlin.reflect.KMutableProperty0
 import kotlin.reflect.KProperty
 
@@ -27,6 +27,7 @@ abstract class Drawable(val config: MarkdownConfig) {
     var next: Drawable? = null
     // parent == null indicates the parent is the MarkdownComponent
     var parent: Drawable? = null
+    open val children: List<Drawable> = emptyList()
 
     /**
      * Layout this element with the given x, y, and width constraints.

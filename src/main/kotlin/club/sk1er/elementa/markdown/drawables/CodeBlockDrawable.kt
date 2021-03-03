@@ -2,7 +2,7 @@ package club.sk1er.elementa.markdown.drawables
 
 import club.sk1er.elementa.markdown.DrawState
 import club.sk1er.elementa.markdown.MarkdownConfig
-import club.sk1er.elementa.markdown.cursor.TextCursor
+import club.sk1er.elementa.markdown.selection.TextCursor
 
 class CodeBlockDrawable(config: MarkdownConfig) : Drawable(config) {
     override fun layoutImpl(x: Float, y: Float, width: Float): Layout {

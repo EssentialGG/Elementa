@@ -6,6 +6,7 @@ data class MarkdownConfig @JvmOverloads constructor(
     val headerConfig: HeaderConfig = HeaderConfig(),
     val listConfig: ListConfig = ListConfig(),
     val paragraphConfig: ParagraphConfig = ParagraphConfig(),
+    val textConfig: TextConfig = TextConfig(),
     val blockquoteConfig: BlockquoteConfig = BlockquoteConfig(),
     val inlineCodeConfig: InlineCodeConfig = InlineCodeConfig(),
     val codeBlockConfig: CodeBlockConfig = CodeBlockConfig(),
@@ -47,13 +48,18 @@ data class ListConfig @JvmOverloads constructor(
 )
 
 data class ParagraphConfig @JvmOverloads constructor(
-    val color: Color = Color.WHITE,
-    val hasShadow: Boolean = true,
-    val shadowColor: Color = Color(0x3f, 0x3f, 0x3f),
     val spaceBetweenLines: Float = 4f,
     val spaceBefore: Float = 5f,
     val spaceAfter: Float = 5f,
     val centered: Boolean = false
+)
+
+data class TextConfig @JvmOverloads constructor(
+    val color: Color = Color.WHITE,
+    val hasShadow: Boolean = true,
+    val shadowColor: Color = Color(0x3f, 0x3f, 0x3f),
+    val selectionForegroundColor: Color = Color(64, 139, 229),
+    val selectionBackgroundColor: Color = Color.WHITE
 )
 
 data class InlineCodeConfig @JvmOverloads constructor(

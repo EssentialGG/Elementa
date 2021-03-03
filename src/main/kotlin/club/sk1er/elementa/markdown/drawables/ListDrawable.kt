@@ -19,6 +19,7 @@ class ListDrawable(
     private var isLoose: Boolean
 ) : Drawable(config) {
     private val listItems = mutableListOf<ListEntry>()
+    override val children: List<Drawable> get() = listItems
 
     private val elementSpacing: Float get() = if (isLoose) {
         config.listConfig.elementSpacingLoose
@@ -137,6 +138,7 @@ class ListDrawable(
         val drawable: Drawable
     ) : Drawable(config) {
         private val actualSymbolWidth = symbol.width()
+        override val children: List<Drawable> get() = listOf(drawable)
 
         init {
             trim(drawable)
@@ -163,7 +165,7 @@ class ListDrawable(
         override fun draw(state: DrawState) {
             val newX = x + symbolWidth - actualSymbolWidth
             if (drawable !is ListDrawable)
-                TextDrawable.drawString(config, symbol, newX + state.xShift, y + state.yShift)
+                TextDrawable.drawString(config, symbol, newX + state.xShift, y + state.yShift, false)
             drawable.draw(state)
         }
 
