@@ -3,6 +3,7 @@ package club.sk1er.elementa.markdown.drawables
 import club.sk1er.elementa.components.UIBlock
 import club.sk1er.elementa.markdown.DrawState
 import club.sk1er.elementa.markdown.MarkdownConfig
+import club.sk1er.elementa.markdown.cursor.TextCursor
 
 class BlockquoteDrawable(config: MarkdownConfig, val drawables: DrawableList) : Drawable(config) {
     private var dividerHeight: Float = -1f
@@ -57,4 +58,8 @@ class BlockquoteDrawable(config: MarkdownConfig, val drawables: DrawableList) : 
 
         drawables.forEach { it.draw(state) }
     }
+
+    override fun select(mouseX: Float, mouseY: Float) = drawables.select(mouseX, mouseY)
+    override fun selectStart() = drawables.selectStart()
+    override fun selectEnd() = drawables.selectEnd()
 }

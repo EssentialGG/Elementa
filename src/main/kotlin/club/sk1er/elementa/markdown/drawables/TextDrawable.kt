@@ -3,6 +3,7 @@ package club.sk1er.elementa.markdown.drawables
 import club.sk1er.elementa.dsl.width
 import club.sk1er.elementa.markdown.DrawState
 import club.sk1er.elementa.markdown.MarkdownConfig
+import club.sk1er.elementa.markdown.cursor.TextCursor
 import club.sk1er.mods.core.universal.UGraphics
 
 class TextDrawable(
@@ -79,6 +80,12 @@ class TextDrawable(
         drawString(config, formattedText, (x + state.xShift) / scaleModifier, (y + state.yShift) / scaleModifier)
         UGraphics.scale(1f / scaleModifier, 1f / scaleModifier, 1f)
     }
+
+    // TextDrawable mouse selection is managed by ParagraphDrawable#select
+    override fun select(mouseX: Float, mouseY: Float) = throw IllegalStateException("never called")
+
+    override fun selectStart() = TextCursor(this, 0)
+    override fun selectEnd() = TextCursor(this, formattedText.length)
 
     override fun toString() = formattedText
 

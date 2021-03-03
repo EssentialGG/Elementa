@@ -2,6 +2,7 @@ package club.sk1er.elementa.markdown.drawables
 
 import club.sk1er.elementa.markdown.DrawState
 import club.sk1er.elementa.markdown.MarkdownConfig
+import club.sk1er.elementa.markdown.cursor.TextCursor
 import kotlin.reflect.KMutableProperty0
 import kotlin.reflect.KProperty
 
@@ -38,6 +39,12 @@ abstract class Drawable(val config: MarkdownConfig) {
     fun isElementHovered(mouseX: Float, mouseY: Float): Boolean {
         return mouseX in layout.elementLeft..layout.elementRight && mouseY in layout.elementTop..layout.elementBottom
     }
+
+    abstract fun select(mouseX: Float, mouseY: Float): TextCursor
+
+    abstract fun selectStart(): TextCursor
+
+    abstract fun selectEnd(): TextCursor
 
     data class Layout(
         var x: Float,

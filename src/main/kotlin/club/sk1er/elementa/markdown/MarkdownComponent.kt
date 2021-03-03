@@ -4,7 +4,7 @@ import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.constraints.HeightConstraint
 import club.sk1er.elementa.dsl.pixels
 import club.sk1er.elementa.effects.OutlineEffect
-import club.sk1er.elementa.markdown.cursor.DrawableListCursor
+import club.sk1er.elementa.markdown.cursor.TextCursor
 import club.sk1er.elementa.markdown.drawables.Drawable
 import club.sk1er.elementa.markdown.drawables.DrawableList
 import club.sk1er.elementa.state.BasicState
@@ -35,13 +35,13 @@ class MarkdownComponent @JvmOverloads constructor(
     private var baseY: Float = -1f
     private lateinit var lastValues: ConstraintValues
     private var maxHeight: HeightConstraint = Int.MAX_VALUE.pixels()
-    private val cursor = DrawableListCursor(drawables)
+    private var cursor: TextCursor? = null
 
     init {
         onMouseClick {
             val xShift = getLeft() - baseX
             val yShift = getTop() - baseY
-            cursor.moveTo(it.absoluteX - xShift, it.absoluteY - yShift)
+            cursor = drawables.select(it.absoluteX - xShift, it.absoluteY - yShift)
         }
 
         enableEffect(OutlineEffect(Color.BLUE, 1f))
@@ -112,7 +112,7 @@ class MarkdownComponent @JvmOverloads constructor(
         val drawState = DrawState(getLeft() - baseX, getTop() - baseY)
 
         drawables.forEach { it.draw(drawState) }
-        cursor.draw(drawState)
+        cursor?.draw(drawState)
 
         afterDraw()
     }

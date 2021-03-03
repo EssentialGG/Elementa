@@ -115,6 +115,10 @@ class ListDrawable(
         listItems.forEach { it.draw(state) }
     }
 
+    override fun select(mouseX: Float, mouseY: Float) = drawables.select(mouseX, mouseY)
+    override fun selectStart() = drawables.selectStart()
+    override fun selectEnd() = drawables.selectEnd()
+
     // A mostly organized and ready-to-render list item
     class ListEntry(
         config: MarkdownConfig,
@@ -153,5 +157,9 @@ class ListDrawable(
                 TextDrawable.drawString(config, symbol, newX + state.xShift, y + state.yShift)
             drawable.draw(state)
         }
+
+        override fun select(mouseX: Float, mouseY: Float) = drawable.select(mouseX, mouseY)
+        override fun selectStart() = drawable.selectStart()
+        override fun selectEnd() = drawable.selectEnd()
     }
 }
