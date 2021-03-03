@@ -4,6 +4,9 @@ import club.sk1er.elementa.markdown.DrawState
 import club.sk1er.elementa.markdown.MarkdownConfig
 import club.sk1er.elementa.markdown.cursor.TextCursor
 
+/**
+ * A soft break is one line break between lines of markdown text.
+ */
 class SoftBreakDrawable(config: MarkdownConfig) : Drawable(config) {
     override fun layoutImpl(x: Float, y: Float, width: Float): Layout {
         TODO("Not yet implemented")

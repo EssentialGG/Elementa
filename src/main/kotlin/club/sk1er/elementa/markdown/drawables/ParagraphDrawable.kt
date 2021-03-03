@@ -33,14 +33,23 @@ class ParagraphDrawable(
     override fun layoutImpl(x: Float, y: Float, width: Float): Layout {
         val marginTop = if (insertSpaceBefore) config.paragraphConfig.spaceBefore else 0f
         val marginBottom = if (insertSpaceAfter) config.paragraphConfig.spaceAfter else 0f
+
+        // We need to build a new drawable list, as text drawables may be split
+        // into two or more during layout.
         val newDrawables = mutableListOf<Drawable>()
 
         var currX = x
         var currY = y + marginTop
         var widthRemaining = width
         val centered = config.paragraphConfig.centered
+
+        // Used to trim text components which are at the start of the line
+        // so we don't render
         var startOfLine = true
 
+        // These are used for centered text. When we render centered markdown,
+        // we layout all of our text drawables as normal, and center them after.
+        // These lists help keep track of which drawables are on their own lines.
         val lines = mutableListOf<List<TextDrawable>>()
         val currentLine = mutableListOf<TextDrawable>()
 
@@ -55,9 +64,12 @@ class ParagraphDrawable(
 
         fun layout(text: TextDrawable, width: Float) {
             val newWidth = if (startOfLine) {
+                // We don't want spaces at the start of a drawable if it is the
+                // first drawable in the line.
                 text.ensureTrimmed()
                 text.width()
             } else width
+
             text.layout(currX, currY, newWidth)
             widthRemaining -= newWidth
             currX += newWidth
@@ -67,6 +79,7 @@ class ParagraphDrawable(
 
         for (text in drawables) {
             if (text is SoftBreakDrawable) {
+                // TODO: This should probably just be a newline
                 val spaceWidth = ' '.width(scaleModifier)
                 widthRemaining -= spaceWidth
                 currX += spaceWidth
@@ -77,6 +90,8 @@ class ParagraphDrawable(
             }
 
             if (text is HardBreakDrawable) {
+                // TODO: Do we actually ever have HardBreakDrawables here? This
+                // should cause a split into two block drawables
                 gotoNextLine()
                 newDrawables.add(text)
                 continue
@@ -90,6 +105,7 @@ class ParagraphDrawable(
             while (true) {
                 val targetWidth = target.width()
                 if (targetWidth <= widthRemaining) {
+                    // We can just layout this text drawable inline, next to the last one
                     layout(target, targetWidth)
                     newDrawables.add(target)
                     if (widthRemaining <= 0)
@@ -99,6 +115,9 @@ class ParagraphDrawable(
 
                 val splitResult = target.split(widthRemaining)
                 if (splitResult != null) {
+                    // We successfully split the text component up. Draw the
+                    // first part on this line, and deal with the second part
+                    // during the next loop iteration
                     layout(splitResult.first, targetWidth)
                     newDrawables.add(splitResult.first)
                     gotoNextLine()
@@ -133,6 +152,9 @@ class ParagraphDrawable(
                         continue
                     }
 
+                    // We've split the component based on the overall width. We'll
+                    // draw the first part on this line, and the second part on the
+                    // next line during the next loop iteration.
                     layout(splitResult2.first, splitResult2.first.width())
                     newDrawables.add(splitResult2.first)
                     gotoNextLine()
@@ -140,16 +162,20 @@ class ParagraphDrawable(
                     continue
                 }
 
+                // We can draw the target on the next line
                 layout(target, targetWidth)
                 newDrawables.add(target)
                 break
             }
         }
 
+        // We can have extra drawables in the current line that didn't get handled
+        // by the last iteration of the loop
         if (currentLine.isNotEmpty())
             lines.add(currentLine.toList())
 
         if (centered) {
+            // Offset each text component by half of the space at the end of each line
             for (line in lines) {
                 val totalWidth = line.sumByDouble { it.width().toDouble() }.toFloat()
                 val shift = (width - totalWidth) / 2f
@@ -159,6 +185,10 @@ class ParagraphDrawable(
             }
         }
 
+        // TODO: We probably shouldn't mutate drawables directly, as if the
+        // MarkdownComponent re-layouts many times and causes a bunch of text
+        // splits, we'll have many, many small text drawables instead of a few
+        // large text drawables, which requires more work to deal with.
         drawables = DrawableList(config, newDrawables)
 
         val height = currY - y + 9f * scaleModifier + if (insertSpaceAfter) {
@@ -177,6 +207,7 @@ class ParagraphDrawable(
     override fun draw(state: DrawState) {
         textDrawables.forEach { it.draw(state) }
 
+        // TODO: Remove
         if (MarkdownComponent.DEBUG) {
             UIBlock.drawBlockSized(
                 rc,
@@ -298,7 +329,6 @@ class ParagraphDrawable(
     }
 
     override fun selectStart() = textDrawables.first().selectStart()
-
     override fun selectEnd() = textDrawables.last().selectEnd()
 
     private val rc = randomColor().withAlpha(100)

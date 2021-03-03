@@ -8,22 +8,26 @@ class ListDrawable(
     config: MarkdownConfig,
     private val drawables: DrawableList,
     private val isOrdered: Boolean,
-    isLoose: Boolean
+    /**
+     * A "loose" list is a list in which any of its list items are
+     * separated by blank lines, or if any item contains two block
+     * elements with a blank line between them. A loose list has more
+     * separation between list elements than a tight list does.
+     *
+     * Reference: https://spec.commonmark.org/0.28/#tight
+     */
+    private var isLoose: Boolean
 ) : Drawable(config) {
-    val listItems = mutableListOf<ListEntry>()
+    private val listItems = mutableListOf<ListEntry>()
 
-    private var isLoose: Boolean = isLoose
-        set(value) {
-            field = value
-            elementSpacing = if (isLoose) {
-                config.listConfig.elementSpacingLoose
-            } else config.listConfig.elementSpacingTight
-        }
-
-    private var elementSpacing = if (isLoose) {
+    private val elementSpacing: Float get() = if (isLoose) {
         config.listConfig.elementSpacingLoose
     } else config.listConfig.elementSpacingTight
 
+    /**
+     * The indentation of this list in any parent lists. This is set
+     * below in the layoutImpl method
+     */
     private var indentLevel = 0
 
     init {
@@ -32,6 +36,7 @@ class ListDrawable(
 
     override fun layoutImpl(x: Float, y: Float, width: Float): Layout {
         listItems.clear()
+
         val marginTop = if (insertSpaceBefore) config.listConfig.spaceBeforeList else 0f
         val marginBottom = if (insertSpaceAfter) config.listConfig.spaceAfterList else 0f
         var currY = y + marginTop
@@ -49,6 +54,9 @@ class ListDrawable(
             }
         }
 
+        // Get the maximum width of all list item symbols to align
+        // them with each other. Unordered lists have the same symbol
+        // at each level, however ordered lists are variable width.
         val symbolWidth = if (isOrdered) {
             val dotWidth = '.'.width()
             drawables.indices.filter {

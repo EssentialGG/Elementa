@@ -5,6 +5,15 @@ import club.sk1er.elementa.markdown.MarkdownConfig
 import club.sk1er.elementa.markdown.cursor.TextCursor
 import java.util.*
 
+/**
+ * Represents a list of drawables.
+ *
+ * Most markdown drawables accepts a DrawableList, which it
+ * will display with additional "effects" (such as a vertical
+ * bar in BlockquoteDrawable). This class nicely delegates
+ * certain behavior to its children, such as layout and
+ * selection.
+ */
 class DrawableList(
     config: MarkdownConfig,
     drawables: List<Drawable>

@@ -4,6 +4,10 @@ import club.sk1er.elementa.markdown.DrawState
 import club.sk1er.elementa.markdown.MarkdownConfig
 import club.sk1er.elementa.markdown.cursor.TextCursor
 
+/**
+ * A hard break is two or more line breaks between lines of
+ * markdown text.
+ */
 class HardBreakDrawable(config: MarkdownConfig) : Drawable(config) {
     override fun layoutImpl(x: Float, y: Float, width: Float): Layout {
         TODO("Not yet implemented")

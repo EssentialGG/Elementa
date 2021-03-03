@@ -44,6 +44,7 @@ class MarkdownComponent @JvmOverloads constructor(
             cursor = drawables.select(it.absoluteX - xShift, it.absoluteY - yShift)
         }
 
+        // TODO: Remove
         enableEffect(OutlineEffect(Color.BLUE, 1f))
     }
 
@@ -104,6 +105,7 @@ class MarkdownComponent @JvmOverloads constructor(
 
         beforeChildrenDraw()
 
+        // Re-layout if important constraint values have changed
         val currentValues = constraintValues()
         if (currentValues != lastValues)
             layout()
@@ -133,6 +135,7 @@ class MarkdownComponent @JvmOverloads constructor(
     )
 
     companion object {
+        // TODO: Remove
         const val DEBUG = true
     }
 }

@@ -31,6 +31,11 @@ class TextDrawable(
     fun plainText() = formattedText.drop(styleChars())
 
     fun ensureTrimmed() {
+        // TODO: We shouldn't mutate formattedText here, because this is used
+        // conditionally based on the position this text drawable _happens_ to
+        // be rendered in its parent ParagraphDrawable. This may change if the
+        // MarkdownComponent re-layouts, which can happen at any time.
+
         val styleChars = styleChars()
         formattedText = formattedText.substring(0, styleChars) +
             formattedText.substring(styleChars, formattedText.length).trimStart()

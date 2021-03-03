@@ -7,8 +7,11 @@ import kotlin.reflect.KMutableProperty0
 import kotlin.reflect.KProperty
 
 abstract class Drawable(val config: MarkdownConfig) {
+    // Cache the layout between draws, as calculating this is fairly
+    // expensive.
     lateinit var layout: Layout
 
+    // Layout helpers
     var x by lazy { layout::x }
     var y by lazy { layout::y }
     var width by lazy { layout::width }
@@ -22,13 +25,27 @@ abstract class Drawable(val config: MarkdownConfig) {
     var previous: Drawable? = null
     var next: Drawable? = null
 
+    /**
+     * Layout this element with the given x, y, and width constraints.
+     * Returns all of the information necessary to place both this
+     * component and any following components on the screen.
+     *
+     * This should be considered an expensive function call, and as such
+     * is only called (from MarkdownComponent) when necessary (i.e. when
+     * the x, y, or width values change).
+     *
+     * The result of this computation is cached in the [layout] property.
+     */
     fun layout(x: Float, y: Float, width: Float): Layout {
         return layoutImpl(x, y, width).also {
             layout = it
         }
     }
 
-    abstract fun layoutImpl(x: Float, y: Float, width: Float): Layout
+    /**
+     * Implementation of layout functionality
+     */
+    protected abstract fun layoutImpl(x: Float, y: Float, width: Float): Layout
 
     abstract fun draw(state: DrawState)
 
@@ -36,14 +53,23 @@ abstract class Drawable(val config: MarkdownConfig) {
         return mouseX in layout.left..layout.right && mouseY in layout.top..layout.bottom
     }
 
-    fun isElementHovered(mouseX: Float, mouseY: Float): Boolean {
-        return mouseX in layout.elementLeft..layout.elementRight && mouseY in layout.elementTop..layout.elementBottom
-    }
-
+    /**
+     * Produces a TextCursor for this drawable in the specified position.
+     *
+     * For higher-level drawables (like headers and lists), this simply
+     * delegates to a lower-level drawable (DrawableList and
+     * ParagraphDrawable).
+     */
     abstract fun select(mouseX: Float, mouseY: Float): TextCursor
 
+    /**
+     * Produces a TextCursor for the start of this drawable
+     */
     abstract fun selectStart(): TextCursor
 
+    /**
+     * Produces a TextCursor for the end of this drawable
+     */
     abstract fun selectEnd(): TextCursor
 
     data class Layout(
@@ -80,6 +106,11 @@ abstract class Drawable(val config: MarkdownConfig) {
             trim(drawableList as List<Drawable>)
         }
 
+        /**
+         * Disables the start padding from the first element of
+         * this list, as well as the end padding from the last
+         * element of this list
+         */
         fun trim(drawables: List<Drawable>) {
             drawables.firstOrNull()?.also {
                 it.insertSpaceBefore = false
@@ -89,6 +120,9 @@ abstract class Drawable(val config: MarkdownConfig) {
             }
         }
 
+        /**
+         * Disables both the start and end padding
+         */
         fun trim(drawable: Drawable) {
             if (drawable is DrawableList) {
                 drawable.first().insertSpaceBefore = false

@@ -10,24 +10,19 @@ class BlockquoteDrawable(config: MarkdownConfig, val drawables: DrawableList) : 
 
     override fun layoutImpl(x: Float, y: Float, width: Float): Layout {
         val config = config.blockquoteConfig
-        val padding = config.spaceBeforeDivider + config.dividerWidth + if (insertSpaceAfter) {
-            config.spaceAfterDivider
-        } else 0f
+
+        // Horizontal padding due to the quote bar, which will shift the drawables to the right
+        val padding = config.spaceBeforeDivider + config.dividerWidth + config.spaceAfterDivider
 
         var currY = y
-        currY += config.spaceBeforeBlockquote
+        currY += if (insertSpaceBefore) config.spaceBeforeBlockquote else 0f
         val dividerStart = currY
         currY += config.dividerPaddingTop
 
-        drawables.first().also {
-            it.insertSpaceBefore = false
-        }
-
-        drawables.last().also {
-            it.insertSpaceAfter = false
-        }
+        trim(drawables)
 
         drawables.forEach {
+            // Layout our children taking into account the quote bar padding
             currY += it.layout(x + padding, currY, width - padding).height
         }
 

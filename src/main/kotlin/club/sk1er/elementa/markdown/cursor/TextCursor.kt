@@ -6,6 +6,9 @@ import club.sk1er.elementa.markdown.DrawState
 import club.sk1er.elementa.markdown.drawables.TextDrawable
 import java.awt.Color
 
+/**
+ * A simple class which points to a position in a TextDrawable.
+ */
 class TextCursor(target: TextDrawable, offset: Int) {
     private val xBase = target.x + target.formattedText.substring(0, offset).width(target.scaleModifier)
     private val yBase = target.y
