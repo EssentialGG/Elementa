@@ -17,15 +17,15 @@ class HardBreakDrawable(config: MarkdownConfig) : Drawable(config) {
         TODO("Not yet implemented")
     }
 
-    override fun select(mouseX: Float, mouseY: Float): TextCursor {
+    override fun cursorAt(mouseX: Float, mouseY: Float): TextCursor {
         TODO("Not yet implemented")
     }
 
-    override fun selectStart(): TextCursor {
+    override fun cursorAtStart(): TextCursor {
         TODO("Not yet implemented")
     }
 
-    override fun selectEnd(): TextCursor {
+    override fun cursorAtEnd(): TextCursor {
         TODO("Not yet implemented")
     }
 }

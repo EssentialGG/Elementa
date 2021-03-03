@@ -226,7 +226,7 @@ class ParagraphDrawable(
         }
     }
 
-    override fun select(mouseX: Float, mouseY: Float): TextCursor {
+    override fun cursorAt(mouseX: Float, mouseY: Float): TextCursor {
         // Account for padding between lines
         // TODO: Don't account for this padding for the first and last lines?
         val linePadding = config.paragraphConfig.spaceBetweenLines / 2f
@@ -246,7 +246,7 @@ class ParagraphDrawable(
             if (mouseY < drawables.first().y - linePadding) {
                 // The position occurs before this paragraph, so we just
                 // select the start of this paragraph
-                return selectStart()
+                return cursorAtStart()
             }
 
             // The mouse isn't in this drawable, and it isn't before this
@@ -254,7 +254,7 @@ class ParagraphDrawable(
             if (mouseY <= drawables.last().let { it.y + it.height + linePadding })
                 throw IllegalStateException()
 
-            return selectEnd()
+            return cursorAtEnd()
         }
 
         // Step 2: Get to the correct text drawable
@@ -266,7 +266,7 @@ class ParagraphDrawable(
             // start of the current component. We don't have to walk the text
             // siblings (using text.previous) because firstTextInRow is the
             // first text component which has an acceptable y-range.
-            return firstTextInRow.selectStart()
+            return firstTextInRow.cursorAtStart()
         }
 
         // We've selected a drawable based on the y position, now we must do
@@ -288,13 +288,13 @@ class ParagraphDrawable(
             if (nextDrawable !is TextDrawable) {
                 // currentText is the last text in this paragraph, so we'll just
                 // select its end
-                return currentText.selectEnd()
+                return currentText.cursorAtEnd()
             }
 
             if (mouseY !in yRange(nextDrawable)) {
                 // As mentioned above, the mouse is to the right of this paragraph
                 // component
-                return currentText.selectEnd()
+                return currentText.cursorAtEnd()
             }
 
             currentText = nextDrawable
@@ -332,11 +332,11 @@ class ParagraphDrawable(
             cachedWidth = newWidth
         }
 
-        return currentText.selectEnd()
+        return currentText.cursorAtEnd()
     }
 
-    override fun selectStart() = textDrawables.first().selectStart()
-    override fun selectEnd() = textDrawables.last().selectEnd()
+    override fun cursorAtStart() = textDrawables.first().cursorAtStart()
+    override fun cursorAtEnd() = textDrawables.last().cursorAtEnd()
 
     private val rc = randomColor().withAlpha(100)
 

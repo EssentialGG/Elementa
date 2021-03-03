@@ -87,10 +87,10 @@ class TextDrawable(
     }
 
     // TextDrawable mouse selection is managed by ParagraphDrawable#select
-    override fun select(mouseX: Float, mouseY: Float) = throw IllegalStateException("never called")
+    override fun cursorAt(mouseX: Float, mouseY: Float) = throw IllegalStateException("never called")
 
-    override fun selectStart() = TextCursor(this, 0)
-    override fun selectEnd() = TextCursor(this, formattedText.length)
+    override fun cursorAtStart() = TextCursor(this, 0)
+    override fun cursorAtEnd() = TextCursor(this, formattedText.length)
 
     override fun toString() = formattedText
 

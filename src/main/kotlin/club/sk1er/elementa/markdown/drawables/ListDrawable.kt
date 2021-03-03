@@ -124,9 +124,9 @@ class ListDrawable(
         listItems.forEach { it.draw(state) }
     }
 
-    override fun select(mouseX: Float, mouseY: Float) = drawables.select(mouseX, mouseY)
-    override fun selectStart() = drawables.selectStart()
-    override fun selectEnd() = drawables.selectEnd()
+    override fun cursorAt(mouseX: Float, mouseY: Float) = drawables.cursorAt(mouseX, mouseY)
+    override fun cursorAtStart() = drawables.cursorAtStart()
+    override fun cursorAtEnd() = drawables.cursorAtEnd()
 
     // A mostly organized and ready-to-render list item
     class ListEntry(
@@ -167,8 +167,8 @@ class ListDrawable(
             drawable.draw(state)
         }
 
-        override fun select(mouseX: Float, mouseY: Float) = drawable.select(mouseX, mouseY)
-        override fun selectStart() = drawable.selectStart()
-        override fun selectEnd() = drawable.selectEnd()
+        override fun cursorAt(mouseX: Float, mouseY: Float) = drawable.cursorAt(mouseX, mouseY)
+        override fun cursorAtStart() = drawable.cursorAtStart()
+        override fun cursorAtEnd() = drawable.cursorAtEnd()
     }
 }

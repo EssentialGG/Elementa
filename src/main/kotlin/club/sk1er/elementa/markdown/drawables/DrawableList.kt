@@ -3,7 +3,6 @@ package club.sk1er.elementa.markdown.drawables
 import club.sk1er.elementa.markdown.DrawState
 import club.sk1er.elementa.markdown.MarkdownConfig
 import club.sk1er.elementa.markdown.cursor.TextCursor
-import java.util.*
 
 /**
  * Represents a list of drawables.
@@ -46,7 +45,7 @@ class DrawableList(
         return Layout(x, y, width, height)
     }
 
-    override fun select(mouseX: Float, mouseY: Float): TextCursor {
+    override fun cursorAt(mouseX: Float, mouseY: Float): TextCursor {
         // Used for positioning the cursor in-between drawables if no
         // drawable is being directly hovered
         var closestDrawable: Drawable? = null
@@ -55,7 +54,7 @@ class DrawableList(
 
         for (drawable in drawables) {
             if (drawable.isHovered(mouseX, mouseY)) {
-                return drawable.select(mouseX, mouseY)
+                return drawable.cursorAt(mouseX, mouseY)
             } else {
                 if (mouseY < drawable.y) {
                     if (drawable.y - mouseY < closestDistance) {
@@ -85,16 +84,16 @@ class DrawableList(
             TODO()
 
         return when (direction) {
-            Direction.Up -> closestDrawable.selectStart()
-            Direction.Down -> closestDrawable.selectEnd()
+            Direction.Up -> closestDrawable.cursorAtStart()
+            Direction.Down -> closestDrawable.cursorAtEnd()
             Direction.Left, Direction.Right ->
-                closestDrawable.select(mouseX, mouseY)
+                closestDrawable.cursorAt(mouseX, mouseY)
         }
     }
 
-    override fun selectStart() = drawables.first().selectStart()
+    override fun cursorAtStart() = drawables.first().cursorAtStart()
 
-    override fun selectEnd() = drawables.last().selectEnd()
+    override fun cursorAtEnd() = drawables.last().cursorAtEnd()
 
     override fun draw(state: DrawState) {
         forEach { it.draw(state) }

@@ -61,7 +61,7 @@ class HeaderDrawable(
         }
     }
 
-    override fun select(mouseX: Float, mouseY: Float) = paragraph.select(mouseX, mouseY)
-    override fun selectStart() = paragraph.selectStart()
-    override fun selectEnd() = paragraph.selectEnd()
+    override fun cursorAt(mouseX: Float, mouseY: Float) = paragraph.cursorAt(mouseX, mouseY)
+    override fun cursorAtStart() = paragraph.cursorAtStart()
+    override fun cursorAtEnd() = paragraph.cursorAtEnd()
 }

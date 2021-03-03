@@ -41,7 +41,7 @@ class MarkdownComponent @JvmOverloads constructor(
         onMouseClick {
             val xShift = getLeft() - baseX
             val yShift = getTop() - baseY
-            cursor = drawables.select(it.absoluteX - xShift, it.absoluteY - yShift)
+            cursor = drawables.cursorAt(it.absoluteX - xShift, it.absoluteY - yShift)
         }
 
         // TODO: Remove

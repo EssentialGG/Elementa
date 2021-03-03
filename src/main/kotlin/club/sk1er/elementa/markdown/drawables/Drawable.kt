@@ -63,17 +63,17 @@ abstract class Drawable(val config: MarkdownConfig) {
      * delegates to a lower-level drawable (DrawableList and
      * ParagraphDrawable).
      */
-    abstract fun select(mouseX: Float, mouseY: Float): TextCursor
+    abstract fun cursorAt(mouseX: Float, mouseY: Float): TextCursor
 
     /**
      * Produces a TextCursor for the start of this drawable
      */
-    abstract fun selectStart(): TextCursor
+    abstract fun cursorAtStart(): TextCursor
 
     /**
      * Produces a TextCursor for the end of this drawable
      */
-    abstract fun selectEnd(): TextCursor
+    abstract fun cursorAtEnd(): TextCursor
 
     data class Layout(
         var x: Float,
