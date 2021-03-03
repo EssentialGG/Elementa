@@ -26,6 +26,7 @@ class DrawableList(
 
     fun setDrawables(newDrawables: List<Drawable>) {
         drawables = newDrawables
+        drawables.forEach { it.parent = this }
         trim(this)
 
         forEachIndexed { index, drawable ->

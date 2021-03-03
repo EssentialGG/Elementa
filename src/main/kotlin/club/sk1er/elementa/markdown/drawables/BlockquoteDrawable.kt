@@ -8,6 +8,10 @@ import club.sk1er.elementa.markdown.cursor.TextCursor
 class BlockquoteDrawable(config: MarkdownConfig, val drawables: DrawableList) : Drawable(config) {
     private var dividerHeight: Float = -1f
 
+    init {
+        drawables.parent = this
+    }
+
     override fun layoutImpl(x: Float, y: Float, width: Float): Layout {
         val config = config.blockquoteConfig
 

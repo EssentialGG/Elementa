@@ -19,7 +19,10 @@ class ParagraphDrawable(
         get() = drawables.filterIsInstance<TextDrawable>()
 
     var drawables = drawables
-        private set
+        private set(value) {
+            field = value
+            value.forEach { it.parent = this }
+        }
 
     // Used by HeaderDrawable
     var scaleModifier = 1f
@@ -29,6 +32,10 @@ class ParagraphDrawable(
                 it.scaleModifier = value
             }
         }
+
+    init {
+        drawables.parent = this
+    }
 
     override fun layoutImpl(x: Float, y: Float, width: Float): Layout {
         val marginTop = if (insertSpaceBefore) config.paragraphConfig.spaceBefore else 0f

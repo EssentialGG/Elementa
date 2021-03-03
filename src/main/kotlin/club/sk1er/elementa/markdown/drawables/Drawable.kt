@@ -22,8 +22,11 @@ abstract class Drawable(val config: MarkdownConfig) {
     var insertSpaceBefore = true
     var insertSpaceAfter = true
 
+    // For tree-like navigation
     var previous: Drawable? = null
     var next: Drawable? = null
+    // parent == null indicates the parent is the MarkdownComponent
+    var parent: Drawable? = null
 
     /**
      * Layout this element with the given x, y, and width constraints.

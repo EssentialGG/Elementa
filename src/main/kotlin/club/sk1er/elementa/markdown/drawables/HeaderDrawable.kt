@@ -9,6 +9,10 @@ class HeaderDrawable(
     private val level: Int,
     private val paragraph: ParagraphDrawable
 ) : Drawable(config) {
+    init {
+        paragraph.parent = this
+    }
+
     private val headerConfig = when (level) {
         1 -> config.headerConfig.level1
         2 -> config.headerConfig.level2

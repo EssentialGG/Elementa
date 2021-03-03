@@ -32,6 +32,7 @@ class ListDrawable(
 
     init {
         trim(drawables)
+        drawables.parent = this
     }
 
     override fun layoutImpl(x: Float, y: Float, width: Float): Layout {
