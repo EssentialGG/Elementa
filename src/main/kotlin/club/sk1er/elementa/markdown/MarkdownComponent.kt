@@ -43,7 +43,9 @@ class MarkdownComponent @JvmOverloads constructor(
         onMouseClick {
             val xShift = getLeft() - baseX
             val yShift = getTop() - baseY
-            cursor = drawables.cursorAt(it.absoluteX - xShift, it.absoluteY - yShift)
+            val x = it.absoluteX - xShift
+            val y = it.absoluteY - yShift
+            cursor = drawables.cursorAt(x, y)
             selection?.remove()
             selection = null
         }
@@ -52,7 +54,10 @@ class MarkdownComponent @JvmOverloads constructor(
             if (mouseButton != 0)
                 return@onMouseDrag
 
-            val otherEnd = drawables.cursorAt(baseX + mouseX, baseY + mouseY)
+            val x = baseX + mouseX.coerceIn(0f, getWidth())
+            val y = baseY + mouseY.coerceIn(0f, getHeight())
+
+            val otherEnd = drawables.cursorAt(x, y)
 
             if (cursor == otherEnd)
                 return@onMouseDrag
@@ -60,9 +65,6 @@ class MarkdownComponent @JvmOverloads constructor(
             selection?.remove()
             selection = cursor!!.selectionTo(otherEnd)
         }
-
-        // TODO: Remove
-        enableEffect(OutlineEffect(Color.BLUE, 1f))
     }
 
     fun bindText(state: State<String>) = apply {
@@ -131,7 +133,7 @@ class MarkdownComponent @JvmOverloads constructor(
         val drawState = DrawState(getLeft() - baseX, getTop() - baseY)
 
         drawables.forEach { it.draw(drawState) }
-        cursor?.draw(drawState)
+        selection?.draw(drawState) ?: cursor?.draw(drawState)
 
         afterDraw()
     }
