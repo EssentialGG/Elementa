@@ -2,6 +2,7 @@ package club.sk1er.elementa.components
 
 import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.components.image.DefaultLoadingImage
+import club.sk1er.elementa.components.image.ImageCache
 import club.sk1er.elementa.components.image.ImageProvider
 import club.sk1er.elementa.svg.SVGParser
 import club.sk1er.elementa.utils.drawTexture
@@ -92,6 +93,16 @@ open class UIImage @JvmOverloads constructor(
         fun ofURL(url: URL): UIImage {
             return UIImage(CompletableFuture.supplyAsync { ImageIO.read(url) })
         }
+
+        @JvmStatic
+        fun ofURL(url: URL, cache: ImageCache): UIImage {
+            return UIImage(CompletableFuture.supplyAsync {
+                return@supplyAsync cache[url] ?: ImageIO.read(url).also {
+                    cache[url] = it
+                }
+            })
+        }
+
 
         @JvmStatic
         fun ofResource(path: String): UIImage {
