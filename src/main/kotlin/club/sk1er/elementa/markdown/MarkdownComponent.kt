@@ -38,6 +38,7 @@ class MarkdownComponent @JvmOverloads constructor(
     private var maxHeight: HeightConstraint = Int.MAX_VALUE.pixels()
     private var cursor: TextCursor? = null
     private var selection: TextSelection? = null
+    private var canDrag = false
 
     init {
         onMouseClick {
@@ -48,10 +49,15 @@ class MarkdownComponent @JvmOverloads constructor(
             cursor = drawables.cursorAt(x, y)
             selection?.remove()
             selection = null
+            canDrag = true
+        }
+
+        onMouseRelease {
+            canDrag = false
         }
 
         onMouseDrag { mouseX, mouseY, mouseButton ->
-            if (mouseButton != 0)
+            if (mouseButton != 0 || !canDrag)
                 return@onMouseDrag
 
             val x = baseX + mouseX.coerceIn(0f, getWidth())
