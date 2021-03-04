@@ -54,6 +54,7 @@ data class TextCursor(private val target: TextDrawable, private val offset: Int)
             when (currentTarget) {
                 null -> throw IllegalStateException()
                 other.target -> {
+                    selection.textDrawables.add(currentTarget)
                     currentTarget.selectionStart = 0
                     currentTarget.selectionEnd = other.offset
                     break@loop
