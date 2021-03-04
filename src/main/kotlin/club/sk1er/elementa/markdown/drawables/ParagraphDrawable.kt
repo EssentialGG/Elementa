@@ -53,8 +53,8 @@ class ParagraphDrawable(
         val centered = config.paragraphConfig.centered
 
         // Used to trim text components which are at the start of the line
-        // so we don't render
-        var startOfLine = true
+        // or after a soft break so we don't render extra spaces
+        var trimNextText = true
 
         // These are used for centered text. When we render centered markdown,
         // we layout all of our text drawables as normal, and center them after.
@@ -68,11 +68,11 @@ class ParagraphDrawable(
             widthRemaining = width
             lines.add(currentLine.toList())
             currentLine.clear()
-            startOfLine = true
+            trimNextText = true
         }
 
         fun layout(text: TextDrawable, width: Float) {
-            val newWidth = if (startOfLine) {
+            val newWidth = if (trimNextText) {
                 // We don't want spaces at the start of a drawable if it is the
                 // first drawable in the line.
                 text.ensureTrimmed()
@@ -82,28 +82,28 @@ class ParagraphDrawable(
             text.layout(currX, currY, newWidth)
             widthRemaining -= newWidth
             currX += newWidth
-            startOfLine = false
+            trimNextText = false
             currentLine.add(text)
+            newDrawables.add(text)
         }
 
         for (text in drawables) {
             if (text is SoftBreakDrawable) {
-                // TODO: This should probably just be a newline
-                val spaceWidth = ' '.width(scaleModifier)
-                widthRemaining -= spaceWidth
-                currX += spaceWidth
-                if (widthRemaining <= 0)
+                if (config.paragraphConfig.softBreakIsNewline) {
                     gotoNextLine()
-                newDrawables.add(text)
+                } else {
+                    // TODO: Carry bold/italic across soft newlines?
+                    val newText = TextDrawable(config, " ", isBold = false, isItalic = false)
+                    layout(newText, newText.width())
+                    if (widthRemaining <= 0)
+                        gotoNextLine()
+                    trimNextText = true
+                }
                 continue
             }
 
             if (text is HardBreakDrawable) {
-                // TODO: Do we actually ever have HardBreakDrawables here? This
-                // should cause a split into two block drawables
-                gotoNextLine()
-                newDrawables.add(text)
-                continue
+                TODO("I don't think this should ever happen, but I'm not 100% sure")
             }
 
             if (text !is TextDrawable)
@@ -116,7 +116,6 @@ class ParagraphDrawable(
                 if (targetWidth <= widthRemaining) {
                     // We can just layout this text drawable inline, next to the last one
                     layout(target, targetWidth)
-                    newDrawables.add(target)
                     if (widthRemaining <= 0)
                         gotoNextLine()
                     break
@@ -128,7 +127,6 @@ class ParagraphDrawable(
                     // first part on this line, and deal with the second part
                     // during the next loop iteration
                     layout(splitResult.first, targetWidth)
-                    newDrawables.add(splitResult.first)
                     gotoNextLine()
                     target = splitResult.second
                     continue
@@ -155,7 +153,6 @@ class ParagraphDrawable(
                             ?: throw IllegalStateException("not possible")
 
                         layout(splitResult3.first, splitResult3.first.width())
-                        newDrawables.add(splitResult3.first)
                         gotoNextLine()
                         target = splitResult3.second
                         continue
@@ -165,7 +162,6 @@ class ParagraphDrawable(
                     // draw the first part on this line, and the second part on the
                     // next line during the next loop iteration.
                     layout(splitResult2.first, splitResult2.first.width())
-                    newDrawables.add(splitResult2.first)
                     gotoNextLine()
                     target = splitResult2.second
                     continue
@@ -173,7 +169,6 @@ class ParagraphDrawable(
 
                 // We can draw the target on the next line
                 layout(target, targetWidth)
-                newDrawables.add(target)
                 break
             }
         }
