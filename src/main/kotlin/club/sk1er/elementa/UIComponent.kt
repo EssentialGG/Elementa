@@ -44,6 +44,9 @@ abstract class UIComponent : Observable() {
             notifyObservers(constraints)
         }
 
+    var lastDraggedMouseX: Double? = null
+    var lastDraggedMouseY: Double? = null
+
     /* Bubbling Events */
     var mouseScrollListeners = mutableListOf<UIComponent.(UIScrollEvent) -> Unit>()
     val mouseClickListeners = mutableListOf<UIComponent.(UIClickEvent) -> Unit>()
@@ -470,6 +473,8 @@ abstract class UIComponent : Observable() {
     open fun mouseClick(mouseX: Double, mouseY: Double, button: Int) {
         val clicked = hitTest(mouseX.toFloat(), mouseY.toFloat())
 
+        lastDraggedMouseX = mouseX
+        lastDraggedMouseY = mouseY
         lastClickCount = if (System.currentTimeMillis() - lastClickTime < 500) lastClickCount + 1 else 1
         lastClickTime = System.currentTimeMillis()
 
@@ -496,6 +501,9 @@ abstract class UIComponent : Observable() {
     open fun mouseRelease() {
         for (listener in mouseReleaseListeners)
             this.listener()
+
+        lastDraggedMouseX = null
+        lastDraggedMouseY = null
 
         this.children.forEach { it.mouseRelease() }
     }
@@ -546,6 +554,12 @@ abstract class UIComponent : Observable() {
      * Most common use is on the [Window] object.
      */
     open fun dragMouse(mouseX: Int, mouseY: Int, button: Int) {
+        if (lastDraggedMouseX == mouseX.toDouble() && lastDraggedMouseY == mouseY.toDouble())
+            return
+
+        lastDraggedMouseX = mouseX.toDouble()
+        lastDraggedMouseY = mouseY.toDouble()
+
         val relativeX = mouseX - getLeft()
         val relativeY = mouseY - getTop()
 
