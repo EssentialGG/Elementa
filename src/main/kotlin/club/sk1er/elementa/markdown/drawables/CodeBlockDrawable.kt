@@ -24,4 +24,8 @@ class CodeBlockDrawable(config: MarkdownConfig) : Drawable(config) {
     override fun cursorAtEnd(): TextCursor {
         TODO("Not yet implemented")
     }
+
+    override fun selectedText(asMarkdown: Boolean): String {
+        TODO("Not yet implemented")
+    }
 }

@@ -100,6 +100,14 @@ class DrawableList(
         forEach { it.draw(state) }
     }
 
+    override fun selectedText(asMarkdown: Boolean): String {
+        return filter {
+            it.hasSelectedText()
+        }.joinToString(separator = "\n\n") {
+            it.selectedText(asMarkdown)
+        }
+    }
+
     override val size get() = drawables.size
     override fun contains(element: Drawable) = element in drawables
     override fun containsAll(elements: Collection<Drawable>) = drawables.containsAll(elements)

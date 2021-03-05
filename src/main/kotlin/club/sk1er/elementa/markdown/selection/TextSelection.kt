@@ -1,6 +1,7 @@
 package club.sk1er.elementa.markdown.selection
 
 import club.sk1er.elementa.markdown.DrawState
+import club.sk1er.elementa.markdown.drawables.Drawable
 import club.sk1er.elementa.markdown.drawables.TextDrawable
 
 class TextSelection(val start: TextCursor, val end: TextCursor) {

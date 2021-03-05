@@ -70,11 +70,28 @@ abstract class Drawable(val config: MarkdownConfig) {
      * Produces a TextCursor for the start of this drawable
      */
     abstract fun cursorAtStart(): TextCursor
-
     /**
      * Produces a TextCursor for the end of this drawable
      */
     abstract fun cursorAtEnd(): TextCursor
+
+    /**
+     * Whether or not this drawable contains a selected TextDrawable anywhere
+     * in its children tree
+     */
+    fun hasSelectedText(): Boolean {
+        return children.any {
+            (it is TextDrawable && it.selectionStart != -1) || it.hasSelectedText()
+        }
+    }
+
+    /**
+     * The text that is currently selected inside of this drawable.
+     *
+     * @param asMarkdown Whether or not to format the returned text as markdown
+     *                   text (e.g. "> text" vs "text" for block quotes)
+     */
+    abstract fun selectedText(asMarkdown: Boolean): String
 
     data class Layout(
         var x: Float,

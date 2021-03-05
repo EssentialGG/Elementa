@@ -61,4 +61,14 @@ class BlockquoteDrawable(config: MarkdownConfig, val drawables: DrawableList) : 
     override fun cursorAt(mouseX: Float, mouseY: Float) = drawables.cursorAt(mouseX, mouseY)
     override fun cursorAtStart() = drawables.cursorAtStart()
     override fun cursorAtEnd() = drawables.cursorAtEnd()
+
+    override fun selectedText(asMarkdown: Boolean): String {
+        if (!hasSelectedText())
+            return ""
+
+        val text = drawables.selectedText(asMarkdown)
+        return if (asMarkdown) {
+            text.lines().joinToString(separator = "\n") { "> $it" }
+        } else text
+    }
 }

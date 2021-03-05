@@ -66,4 +66,14 @@ class HeaderDrawable(
     override fun cursorAt(mouseX: Float, mouseY: Float) = paragraph.cursorAt(mouseX, mouseY)
     override fun cursorAtStart() = paragraph.cursorAtStart()
     override fun cursorAtEnd() = paragraph.cursorAtEnd()
+
+    override fun selectedText(asMarkdown: Boolean): String {
+        if (!hasSelectedText())
+            return ""
+
+        val text = paragraph.selectedText(asMarkdown)
+        return if (asMarkdown) {
+            "#".repeat(level) + " $text"
+        } else text
+    }
 }

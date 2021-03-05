@@ -129,8 +129,12 @@ class ListDrawable(
     override fun cursorAtStart() = drawables.cursorAtStart()
     override fun cursorAtEnd() = drawables.cursorAtEnd()
 
+    override fun selectedText(asMarkdown: Boolean) = listItems.joinToString(separator = "\n") {
+        it.selectedText(asMarkdown)
+    }
+
     // A mostly organized and ready-to-render list item
-    class ListEntry(
+    inner class ListEntry(
         config: MarkdownConfig,
         private val symbol: String,
         private val symbolWidth: Float,
@@ -172,5 +176,23 @@ class ListDrawable(
         override fun cursorAt(mouseX: Float, mouseY: Float) = drawable.cursorAt(mouseX, mouseY)
         override fun cursorAtStart() = drawable.cursorAtStart()
         override fun cursorAtEnd() = drawable.cursorAtEnd()
+
+        override fun selectedText(asMarkdown: Boolean): String {
+            if (!hasSelectedText())
+                return ""
+
+            val text = drawable.selectedText(asMarkdown)
+
+            return buildString {
+                repeat(indentLevel) {
+                    append("  ")
+                }
+                if (asMarkdown) {
+                    append(symbol)
+                    append(' ')
+                }
+                append(text)
+            }
+        }
     }
 }

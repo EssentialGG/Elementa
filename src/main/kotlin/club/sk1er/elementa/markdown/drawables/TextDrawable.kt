@@ -10,8 +10,8 @@ import club.sk1er.mods.core.universal.UGraphics
 class TextDrawable(
     config: MarkdownConfig,
     text: String,
-    private val isBold: Boolean,
-    private val isItalic: Boolean
+    val isBold: Boolean,
+    val isItalic: Boolean
 ) : Drawable(config) {
     // Used by HeaderDrawable
     var scaleModifier = 1f
@@ -157,6 +157,18 @@ class TextDrawable(
 
     override fun cursorAtStart() = TextCursor(this, 0)
     override fun cursorAtEnd() = TextCursor(this, plainText().length)
+
+    override fun selectedText(asMarkdown: Boolean): String {
+        if (selectionStart == -1 || selectionEnd == -1)
+            return ""
+
+        val selectedText = plainText().substring(selectionStart, selectionEnd)
+        if (!asMarkdown)
+            return selectedText
+
+        val symbols = (if (isBold) "**" else "") + (if (isItalic) "*" else "")
+        return "$symbols$selectedText$symbols"
+    }
 
     override fun toString() = formattedText
 

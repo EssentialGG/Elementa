@@ -335,6 +335,10 @@ class ParagraphDrawable(
     override fun cursorAtStart() = textDrawables.first().cursorAtStart()
     override fun cursorAtEnd() = textDrawables.last().cursorAtEnd()
 
+    override fun selectedText(asMarkdown: Boolean): String {
+        return textDrawables.joinToString(separator = "") { it.selectedText(asMarkdown) }
+    }
+
     private val rc = randomColor().withAlpha(100)
 
     private fun randomColor(): Color {

@@ -10,7 +10,10 @@ import club.sk1er.elementa.markdown.drawables.DrawableList
 import club.sk1er.elementa.markdown.selection.TextSelection
 import club.sk1er.elementa.state.BasicState
 import club.sk1er.elementa.state.State
+import club.sk1er.mods.core.universal.UKeyboard
 import java.awt.Color
+import java.awt.Toolkit
+import java.awt.datatransfer.StringSelection
 
 /**
  * Component that parses a string as Markdown and renders it.
@@ -44,11 +47,12 @@ class MarkdownComponent @JvmOverloads constructor(
         onMouseClick {
             val xShift = getLeft() - baseX
             val yShift = getTop() - baseY
-            val x = it.absoluteX - xShift
-            val y = it.absoluteY - yShift
-            cursor = drawables.cursorAt(x, y)
+            cursor = drawables.cursorAt(it.absoluteX - xShift, it.absoluteY - yShift)
+
             selection?.remove()
             selection = null
+            releaseWindowFocus()
+
             canDrag = true
         }
 
@@ -70,6 +74,14 @@ class MarkdownComponent @JvmOverloads constructor(
 
             selection?.remove()
             selection = cursor!!.selectionTo(otherEnd)
+            grabWindowFocus()
+        }
+
+        onKeyType { _, keyCode ->
+            if (selection != null && keyCode == UKeyboard.KEY_C && UKeyboard.isCtrlKeyDown()) {
+                val selection = StringSelection(drawables.selectedText(UKeyboard.isShiftKeyDown()))
+                Toolkit.getDefaultToolkit().systemClipboard.setContents(selection, selection)
+            }
         }
     }
 
