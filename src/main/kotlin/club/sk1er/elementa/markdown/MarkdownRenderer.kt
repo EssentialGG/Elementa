@@ -19,7 +19,17 @@ class MarkdownRenderer(private val text: String, private val config: MarkdownCon
     }
 
     fun render(): DrawableList {
-        val document = Parser.builder().extensions(extensions).build().parse(text)
+        val document = Parser.builder()
+            .extensions(extensions)
+            .enabledBlockTypes(setOf(
+                Heading::class.java,
+                FencedCodeBlock::class.java,
+                IndentedCodeBlock::class.java,
+                BlockQuote::class.java,
+                ListBlock::class.java
+            ))
+            .build()
+            .parse(text)
         document.accept(this)
         return DrawableList(config, drawables)
     }
@@ -124,12 +134,13 @@ class MarkdownRenderer(private val text: String, private val config: MarkdownCon
         TODO("Not yet implemented")
     }
 
-    override fun visit(htmlInline: HtmlInline?) {
-        TODO("Not yet implemented")
-    }
-
-    override fun visit(htmlBlock: HtmlBlock?) {
-        TODO("Not yet implemented")
+    override fun visit(htmlInline: HtmlInline) {
+        // HtmlBlocks are disabled, but HTML tags will still be parsed as inline HTML.
+        // This is fine, as if the text inside of the angle brackets contains any
+        // formatting (or anything that makes it an invalid HTML tag), it will not
+        // be parsed as an HTML tag. If we're here, it is unformatted and we just
+        // handle it like raw text.
+        drawables.add(TextDrawable(config, htmlInline.literal, style.toTextStyle()))
     }
 
     override fun visit(image: Image?) {
