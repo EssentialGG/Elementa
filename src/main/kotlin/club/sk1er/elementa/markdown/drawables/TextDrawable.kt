@@ -161,7 +161,8 @@ class TextDrawable(
     data class Style(
         val isBold: Boolean,
         val isItalic: Boolean,
-        val isStrikethrough: Boolean
+        val isStrikethrough: Boolean,
+        val isUnderline: Boolean
     ) {
         val formattingSymbols = buildString {
             if (isBold)
@@ -170,6 +171,8 @@ class TextDrawable(
                 append("§o")
             if (isStrikethrough)
                 append("§m")
+            if (isUnderline)
+                append("§n")
         }
 
         val markdownSymbols = buildString {
@@ -179,12 +182,14 @@ class TextDrawable(
                 append("*")
             if (isStrikethrough)
                 append("~~")
+            if (isUnderline)
+                append("++")
         }
 
         val numFormattingChars: Int get() = formattingSymbols.length
 
         companion object {
-            val EMPTY = Style(isBold = false, isItalic = false, isStrikethrough = false)
+            val EMPTY = Style(isBold = false, isItalic = false, isStrikethrough = false, isUnderline = false)
         }
     }
 

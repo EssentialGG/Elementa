@@ -3,15 +3,14 @@ package club.sk1er.elementa.markdown
 import club.sk1er.elementa.markdown.drawables.*
 import org.commonmark.ext.gfm.strikethrough.Strikethrough
 import org.commonmark.ext.gfm.strikethrough.StrikethroughExtension
+import org.commonmark.ext.ins.Ins
+import org.commonmark.ext.ins.InsExtension
 import org.commonmark.node.*
 import org.commonmark.parser.Parser
-import org.commonmark.renderer.html.HtmlRenderer
 
 class MarkdownRenderer(private val text: String, private val config: MarkdownConfig) : AbstractVisitor() {
     private val drawables = mutableListOf<Drawable>()
-    private var isBold = false
-    private var isItalic = false
-    private var isStrikethrough = false
+    private val style = MutableStyle()
 
     private val marks = mutableListOf<Int>()
 
@@ -35,21 +34,21 @@ class MarkdownRenderer(private val text: String, private val config: MarkdownCon
     }
 
     override fun visit(emphasis: Emphasis) {
-        isItalic = true
+        style.isItalic = true
         super.visit(emphasis)
-        isItalic = false
+        style.isItalic = false
     }
 
     override fun visit(strongEmphasis: StrongEmphasis) {
-        isBold = true
+        style.isBold = true
         super.visit(strongEmphasis)
-        isBold = false
+        style.isBold = false
     }
 
     override fun visit(text: Text) {
         if (text.firstChild != null)
             TODO()
-        drawables.add(TextDrawable(config, text.literal, TextDrawable.Style(isBold, isItalic, isStrikethrough)))
+        drawables.add(TextDrawable(config, text.literal, style.toTextStyle()))
     }
 
     override fun visit(paragraph: Paragraph) {
@@ -160,18 +159,34 @@ class MarkdownRenderer(private val text: String, private val config: MarkdownCon
     }
 
     override fun visit(customNode: CustomNode) {
-        if (customNode is Strikethrough) {
-            isStrikethrough = true
-            super.visit(customNode)
-            isStrikethrough = false
-
-            return
+        when (customNode) {
+            is Strikethrough -> {
+                style.isStrikethrough = true
+                super.visit(customNode)
+                style.isStrikethrough = false
+            }
+            is Ins -> {
+                style.isUnderline = true
+                super.visit(customNode)
+                style.isUnderline = false
+            }
+            else -> TODO()
         }
+    }
 
-        TODO()
+    data class MutableStyle(
+        var isBold: Boolean = false,
+        var isItalic: Boolean = false,
+        var isStrikethrough: Boolean = false,
+        var isUnderline: Boolean = false
+    ) {
+        fun toTextStyle() = TextDrawable.Style(isBold, isItalic, isStrikethrough, isUnderline)
     }
 
     companion object {
-        private val extensions = listOf(StrikethroughExtension.create())
+        private val extensions = listOf(
+            StrikethroughExtension.create(),
+            InsExtension.create()
+        )
     }
 }
