@@ -93,7 +93,7 @@ class ParagraphDrawable(
                     gotoNextLine()
                 } else {
                     // TODO: Carry bold/italic across soft newlines?
-                    val newText = TextDrawable(config, " ", isBold = false, isItalic = false)
+                    val newText = TextDrawable(config, " ", TextDrawable.Style.EMPTY)
                     layout(newText, newText.width())
                     if (widthRemaining <= 0)
                         gotoNextLine()
@@ -301,7 +301,7 @@ class ParagraphDrawable(
 
         fun textWidth(offset: Int) = currentText.formattedText.substring(0, offset).width(currentText.scaleModifier)
 
-        var offset = currentText.styleChars()
+        var offset = currentText.style.numFormattingChars
         var cachedWidth = 0f
 
         // Iterate from left to right in the text component until we find a good
@@ -323,7 +323,7 @@ class ParagraphDrawable(
                     offset--
                 }
 
-                return TextCursor(currentText, offset - currentText.styleChars())
+                return TextCursor(currentText, offset - currentText.style.numFormattingChars)
             }
 
             cachedWidth = newWidth

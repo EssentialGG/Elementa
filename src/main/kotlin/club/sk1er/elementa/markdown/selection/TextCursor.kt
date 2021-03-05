@@ -11,7 +11,9 @@ import java.awt.Color
  * A simple class which points to a position in a TextDrawable.
  */
 data class TextCursor(val target: TextDrawable, val offset: Int) {
-    private val xBase = target.x + target.formattedText.substring(0, offset + target.styleChars()).width(target.scaleModifier)
+    private val xBase = target.x +
+        target.formattedText.substring(0, offset + target.style.numFormattingChars).width(target.scaleModifier)
+
     private val yBase = target.y
     private val height = target.height.toDouble()
     private val width = height / 9.0

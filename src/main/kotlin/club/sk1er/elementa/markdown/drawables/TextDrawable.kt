@@ -10,13 +10,12 @@ import club.sk1er.mods.core.universal.UGraphics
 class TextDrawable(
     config: MarkdownConfig,
     text: String,
-    val isBold: Boolean,
-    val isItalic: Boolean
+    val style: Style
 ) : Drawable(config) {
     // Used by HeaderDrawable
     var scaleModifier = 1f
 
-    var formattedText: String
+    var formattedText: String = style.formattingSymbols + text
         private set
 
     // Used by the selection API to tell this Drawable how it is
@@ -24,17 +23,7 @@ class TextDrawable(
     var selectionStart = -1
     var selectionEnd = -1
 
-    init {
-        formattedText = buildString {
-            if (isBold)
-                append("§l")
-            if (isItalic)
-                append("§o")
-            append(text)
-        }
-    }
-
-    fun plainText() = formattedText.drop(styleChars())
+    fun plainText() = formattedText.drop(style.numFormattingChars)
 
     fun ensureTrimmed() {
         // TODO: We shouldn't mutate formattedText here, because this is used
@@ -42,12 +31,10 @@ class TextDrawable(
         // be rendered in its parent ParagraphDrawable. This may change if the
         // MarkdownComponent re-layouts, which can happen at any time.
 
-        val styleChars = styleChars()
+        val styleChars = style.numFormattingChars
         formattedText = formattedText.substring(0, styleChars) +
             formattedText.substring(styleChars, formattedText.length).trimStart()
     }
-
-    fun styleChars() = (if (isBold) 2 else 0) + (if (isItalic) 2 else 0)
 
     fun width() = formattedText.width(scaleModifier)
 
@@ -55,7 +42,7 @@ class TextDrawable(
     // break a word. This means that the drawable should just be drawn on
     // the next line
     fun split(maxWidth: Float, breakWords: Boolean = false): Pair<TextDrawable, TextDrawable>? {
-        val styleChars = styleChars()
+        val styleChars = style.numFormattingChars
         val plainText = plainText()
 
         var splitPoint = formattedText.indices.drop(styleChars).firstOrNull {
@@ -75,8 +62,8 @@ class TextDrawable(
                 return null
         }
 
-        val first = TextDrawable(config, plainText.substring(0, splitPoint), isBold, isItalic)
-        val second = TextDrawable(config, plainText.substring(splitPoint, plainText.length), isBold, isItalic)
+        val first = TextDrawable(config, plainText.substring(0, splitPoint), style)
+        val second = TextDrawable(config, plainText.substring(splitPoint, plainText.length), style)
         first.scaleModifier = scaleModifier
         second.scaleModifier = scaleModifier
         return first to second
@@ -95,11 +82,11 @@ class TextDrawable(
         if (selectionStart == -1 || selectionEnd == -1)
             throw IllegalStateException()
 
-        val start = selectionStart + styleChars()
-        val end = selectionEnd + styleChars()
+        val start = selectionStart + style.numFormattingChars
+        val end = selectionEnd + style.numFormattingChars
 
         val texts = mutableListOf<Text>()
-        val formatChars = formattedText.substring(0, styleChars())
+        val formatChars = formattedText.substring(0, style.numFormattingChars)
 
         val nextX = if (selectionStart > 0) {
             texts.add(Text(
@@ -166,11 +153,40 @@ class TextDrawable(
         if (!asMarkdown)
             return selectedText
 
-        val symbols = (if (isBold) "**" else "") + (if (isItalic) "*" else "")
-        return "$symbols$selectedText$symbols"
+        return "${style.markdownSymbols}$selectedText${style.markdownSymbols}"
     }
 
     override fun toString() = formattedText
+
+    data class Style(
+        val isBold: Boolean,
+        val isItalic: Boolean,
+        val isStrikethrough: Boolean
+    ) {
+        val formattingSymbols = buildString {
+            if (isBold)
+                append("§l")
+            if (isItalic)
+                append("§o")
+            if (isStrikethrough)
+                append("§m")
+        }
+
+        val markdownSymbols = buildString {
+            if (isBold)
+                append("**")
+            if (isItalic)
+                append("*")
+            if (isStrikethrough)
+                append("~~")
+        }
+
+        val numFormattingChars: Int get() = formattingSymbols.length
+
+        companion object {
+            val EMPTY = Style(isBold = false, isItalic = false, isStrikethrough = false)
+        }
+    }
 
     companion object {
         fun drawString(config: MarkdownConfig, string: String, x: Float, y: Float, selected: Boolean) {

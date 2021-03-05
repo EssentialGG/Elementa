@@ -169,6 +169,7 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
     implementation "club.sk1er:UniversalCraft:97-${mcVersion}${FABRIC ? "-fabric" : ""}-SNAPSHOT"
     implementation "org.commonmark:commonmark:0.17.1"
+    implementation "org.commonmark:commonmark-ext-gfm-strikethrough:0.17.1"
     implementation "org.dom4j:dom4j:2.1.1"
 
     implementation ('org.slick2d:slick2d-core:1.0.2') {

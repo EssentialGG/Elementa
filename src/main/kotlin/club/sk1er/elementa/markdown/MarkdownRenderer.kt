@@ -1,23 +1,17 @@
 package club.sk1er.elementa.markdown
 
 import club.sk1er.elementa.markdown.drawables.*
+import org.commonmark.ext.gfm.strikethrough.Strikethrough
+import org.commonmark.ext.gfm.strikethrough.StrikethroughExtension
 import org.commonmark.node.*
 import org.commonmark.parser.Parser
-
-fun main() {
-    val markdown = """
-        > this is *some* _formatted
-         **text** with_ some extra ***shit***
-    """.trimIndent()
-
-    val drawables = MarkdownRenderer(markdown, MarkdownConfig()).render()
-    println()
-}
+import org.commonmark.renderer.html.HtmlRenderer
 
 class MarkdownRenderer(private val text: String, private val config: MarkdownConfig) : AbstractVisitor() {
     private val drawables = mutableListOf<Drawable>()
     private var isBold = false
     private var isItalic = false
+    private var isStrikethrough = false
 
     private val marks = mutableListOf<Int>()
 
@@ -26,7 +20,7 @@ class MarkdownRenderer(private val text: String, private val config: MarkdownCon
     }
 
     fun render(): DrawableList {
-        val document = Parser.builder().build().parse(text)
+        val document = Parser.builder().extensions(extensions).build().parse(text)
         document.accept(this)
         return DrawableList(config, drawables)
     }
@@ -55,7 +49,7 @@ class MarkdownRenderer(private val text: String, private val config: MarkdownCon
     override fun visit(text: Text) {
         if (text.firstChild != null)
             TODO()
-        drawables.add(TextDrawable(config, text.literal, isBold, isItalic))
+        drawables.add(TextDrawable(config, text.literal, TextDrawable.Style(isBold, isItalic, isStrikethrough)))
     }
 
     override fun visit(paragraph: Paragraph) {
@@ -165,7 +159,19 @@ class MarkdownRenderer(private val text: String, private val config: MarkdownCon
         TODO("Not yet implemented")
     }
 
-    override fun visit(customNode: CustomNode?) {
-        TODO("Not yet implemented")
+    override fun visit(customNode: CustomNode) {
+        if (customNode is Strikethrough) {
+            isStrikethrough = true
+            super.visit(customNode)
+            isStrikethrough = false
+
+            return
+        }
+
+        TODO()
+    }
+
+    companion object {
+        private val extensions = listOf(StrikethroughExtension.create())
     }
 }
