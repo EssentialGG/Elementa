@@ -33,10 +33,10 @@ class KtTestGui : WindowScreen() {
         x = 5.pixels()
         y = 5.pixels()
         width = RelativeConstraint(1f)
-        height = FillConstraint() - 5.pixels()
+        height = 100.percent() - 5.pixels()
     }.addChildren(
         UIBlock(Color(0, 124, 145, 255)).constrain {
-            width = FillConstraint()
+            width = 100.percent()
             height = 20.pixels()
         }.addChildren(
             UIText("Settings").constrain {
@@ -53,7 +53,7 @@ class KtTestGui : WindowScreen() {
         UIBlock(Color(0, 0, 0, 255)).constrain {
             x = 5.pixels()
             y = SiblingConstraint() + 5.pixels()
-            width = FillConstraint() - 5.pixels()
+            width = 100.percent() - 5.pixels()
             height = 20.pixels()
         }.onMouseClick {
             notification.setText(
@@ -351,13 +351,13 @@ class KtTestGui : WindowScreen() {
             this
                 .setX(PixelConstraint(15f))
                 .setY(yConstraint)
-                .setWidth(FillConstraint() + (-15).pixels())
+                .setWidth(100.percent() + (-15).pixels())
                 .setHeight(PixelConstraint(30f))
                 .addChildren(
                     UIText(text),
                     UIBlock(Color(64, 64, 64, 255))
                         .setY(12.pixels())
-                        .setWidth(FillConstraint())
+                        .setWidth(100.percent())
                         .setHeight(5.pixels())
                         .addChild(slider)
                 )
@@ -387,7 +387,7 @@ class KtTestGui : WindowScreen() {
         private val text = UIWrappedText(textString, true).constrain {
             x = 2.pixels()
             y = SiblingConstraint() + 6.pixels()
-            width = FillConstraint() - 2.pixels()
+            width = 100.percent() - 2.pixels()
         }
         private val title = UIText(titleString ?: "").constrain {
             x = 2.pixels()
