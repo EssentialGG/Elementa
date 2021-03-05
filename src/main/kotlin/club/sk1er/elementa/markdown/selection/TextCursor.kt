@@ -10,7 +10,7 @@ import java.awt.Color
 /**
  * A simple class which points to a position in a TextDrawable.
  */
-data class TextCursor(private val target: TextDrawable, private val offset: Int) {
+data class TextCursor(val target: TextDrawable, val offset: Int) {
     private val xBase = target.x + target.formattedText.substring(0, offset + target.styleChars()).width(target.scaleModifier)
     private val yBase = target.y
     private val height = target.height.toDouble()
@@ -24,77 +24,6 @@ data class TextCursor(private val target: TextDrawable, private val offset: Int)
             width,
             height
         )
-    }
-
-    fun selectionTo(other: TextCursor): TextSelection {
-        // Ensure correct cursor ordering
-        if (this > other)
-            return other.selectionTo(this)
-
-        val selection = TextSelection(this, other)
-
-        if (target == other.target) {
-            selection.textDrawables.add(target)
-            target.selectionStart = offset
-            target.selectionEnd = other.offset
-            return selection
-        }
-
-        // Configure selection area for the starting target
-        target.selectionStart = offset
-        target.selectionEnd = target.plainText().length
-
-        // We now have to iterate the entire markdown tree structure.
-        var currentTarget: TextDrawable? = target
-
-        loop@while (currentTarget != null) {
-            selection.textDrawables.add(currentTarget)
-            currentTarget = nextText(currentTarget)
-
-            when (currentTarget) {
-                null -> throw IllegalStateException()
-                other.target -> {
-                    selection.textDrawables.add(currentTarget)
-                    currentTarget.selectionStart = 0
-                    currentTarget.selectionEnd = other.offset
-                    break@loop
-                }
-                else -> {
-                    currentTarget.selectionStart = 0
-                    currentTarget.selectionEnd = currentTarget.plainText().length
-                }
-            }
-        }
-
-        return selection
-    }
-
-    private fun nextText(drawable: TextDrawable): TextDrawable? {
-        var nextText: Drawable? = drawable.next
-        while (nextText != null && nextText !is TextDrawable)
-            nextText = nextText.next
-
-        if (nextText is TextDrawable)
-            return nextText
-
-        var nextContainer: Drawable = drawable.parent ?: return null
-        while (nextContainer.next == null) {
-            if (nextContainer.parent == null)
-                return null
-            nextContainer = nextContainer.parent!!
-        }
-
-        return firstTextChild(nextContainer.next!!)
-    }
-
-    private fun firstTextChild(drawable: Drawable): TextDrawable? {
-        if (drawable is TextDrawable)
-            return drawable
-
-        if (drawable.children.isEmpty())
-            return null
-
-        return firstTextChild(drawable.children.first())
     }
 
     operator fun compareTo(other: TextCursor): Int {

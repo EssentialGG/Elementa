@@ -73,7 +73,7 @@ class MarkdownComponent @JvmOverloads constructor(
                 return@onMouseDrag
 
             selection?.remove()
-            selection = cursor!!.selectionTo(otherEnd)
+            selection = TextSelection.fromCursors(cursor!!, otherEnd)
             grabWindowFocus()
         }
 
