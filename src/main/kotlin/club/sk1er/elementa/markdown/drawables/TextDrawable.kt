@@ -6,6 +6,8 @@ import club.sk1er.elementa.markdown.DrawState
 import club.sk1er.elementa.markdown.MarkdownConfig
 import club.sk1er.elementa.markdown.selection.TextCursor
 import club.sk1er.mods.core.universal.UGraphics
+import club.sk1er.mods.core.universal.UMouse
+import club.sk1er.mods.core.universal.UResolution
 
 class TextDrawable(
     config: MarkdownConfig,
@@ -120,13 +122,22 @@ class TextDrawable(
 
     private fun draw(state: DrawState, texts: List<Text>) {
         texts.forEach {
+            val isHovered = if (style.linkLocation != null) {
+                val mouseX = UMouse.getScaledX() - state.xShift
+                val mouseY = UResolution.scaledHeight - UMouse.getScaledY() - state.yShift
+
+                isHovered(mouseX.toFloat(), mouseY.toFloat())
+            } else false
+
             UGraphics.scale(scaleModifier, scaleModifier, 1f)
             drawString(
                 config,
                 it.string,
                 (it.x + state.xShift) / scaleModifier,
                 (it.y + state.yShift) / scaleModifier,
-                it.selected
+                it.selected,
+                style.linkLocation != null,
+                isHovered
             )
             UGraphics.scale(1f / scaleModifier, 1f / scaleModifier, 1f)
         }
@@ -140,7 +151,7 @@ class TextDrawable(
     )
 
     // TextDrawable mouse selection is managed by ParagraphDrawable#select
-    override fun cursorAt(mouseX: Float, mouseY: Float) = throw IllegalStateException("never called")
+    override fun cursorAt(mouseX: Float, mouseY: Float, dragged: Boolean) = throw IllegalStateException("never called")
 
     override fun cursorAtStart() = TextCursor(this, 0)
     override fun cursorAtEnd() = TextCursor(this, plainText().length)
@@ -162,7 +173,8 @@ class TextDrawable(
         val isBold: Boolean,
         val isItalic: Boolean,
         val isStrikethrough: Boolean,
-        val isUnderline: Boolean
+        val isUnderline: Boolean,
+        val linkLocation: String?
     ) {
         val formattingSymbols = buildString {
             if (isBold)
@@ -189,12 +201,26 @@ class TextDrawable(
         val numFormattingChars: Int get() = formattingSymbols.length
 
         companion object {
-            val EMPTY = Style(isBold = false, isItalic = false, isStrikethrough = false, isUnderline = false)
+            val EMPTY = Style(
+                isBold = false,
+                isItalic = false,
+                isStrikethrough = false,
+                isUnderline = false,
+                linkLocation = null
+            )
         }
     }
 
     companion object {
-        fun drawString(config: MarkdownConfig, string: String, x: Float, y: Float, selected: Boolean) {
+        fun drawString(
+            config: MarkdownConfig,
+            string: String,
+            x: Float,
+            y: Float,
+            selected: Boolean = false,
+            isLink: Boolean = false,
+            isHovered: Boolean = false
+        ) {
             if (selected) {
                 UIBlock.drawBlockSized(
                     config.textConfig.selectionBackgroundColor,
@@ -205,9 +231,11 @@ class TextDrawable(
                 )
             }
 
-            val foregroundColor = if (selected) {
-                config.textConfig.selectionForegroundColor.rgb
-            } else config.textConfig.color.rgb
+            val foregroundColor = when {
+                isLink -> config.textConfig.linkColor.rgb
+                selected -> config.textConfig.selectionForegroundColor.rgb
+                else -> config.textConfig.color.rgb
+            }
 
             if (config.textConfig.hasShadow) {
                 UGraphics.drawString(
@@ -224,6 +252,16 @@ class TextDrawable(
                     y,
                     foregroundColor,
                     false
+                )
+            }
+
+            if (isLink && isHovered) {
+                UIBlock.drawBlockSized(
+                    config.textConfig.linkColor,
+                    x.toDouble(),
+                    y.toDouble() + 8,
+                    string.width().toDouble(),
+                    1.0
                 )
             }
         }

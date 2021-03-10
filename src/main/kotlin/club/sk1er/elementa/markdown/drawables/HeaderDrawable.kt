@@ -63,7 +63,7 @@ class HeaderDrawable(
         }
     }
 
-    override fun cursorAt(mouseX: Float, mouseY: Float) = paragraph.cursorAt(mouseX, mouseY)
+    override fun cursorAt(mouseX: Float, mouseY: Float, dragged: Boolean) = paragraph.cursorAt(mouseX, mouseY, dragged)
     override fun cursorAtStart() = paragraph.cursorAtStart()
     override fun cursorAtEnd() = paragraph.cursorAtEnd()
 

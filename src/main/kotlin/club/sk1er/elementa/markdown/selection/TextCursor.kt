@@ -3,6 +3,7 @@ package club.sk1er.elementa.markdown.selection
 import club.sk1er.elementa.components.UIBlock
 import club.sk1er.elementa.dsl.width
 import club.sk1er.elementa.markdown.DrawState
+import club.sk1er.elementa.markdown.MarkdownComponent
 import club.sk1er.elementa.markdown.drawables.Drawable
 import club.sk1er.elementa.markdown.drawables.TextDrawable
 import java.awt.Color
@@ -19,6 +20,9 @@ data class TextCursor(val target: TextDrawable, val offset: Int) {
     private val width = height / 9.0
 
     fun draw(state: DrawState) {
+        if (!MarkdownComponent.DEBUG)
+            return
+
         UIBlock.drawBlockSized(
             Color.RED,
             (xBase + state.xShift).toDouble(),

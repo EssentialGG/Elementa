@@ -60,7 +60,9 @@ data class TextConfig @JvmOverloads constructor(
     val hasShadow: Boolean = true,
     val shadowColor: Color = Color(0x3f, 0x3f, 0x3f),
     val selectionForegroundColor: Color = Color(64, 139, 229),
-    val selectionBackgroundColor: Color = Color.WHITE
+    val selectionBackgroundColor: Color = Color.WHITE,
+    val linkColor: Color = Color(1, 165, 82),
+    val underlineHoveredLink: Boolean = true
 )
 
 data class InlineCodeConfig @JvmOverloads constructor(

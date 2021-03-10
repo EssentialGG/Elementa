@@ -151,8 +151,10 @@ class MarkdownRenderer(private val text: String, private val config: MarkdownCon
         TODO("Not yet implemented")
     }
 
-    override fun visit(link: Link?) {
-        TODO("Not yet implemented")
+    override fun visit(link: Link) {
+        style.linkLocation = link.destination
+        super.visit(link)
+        style.linkLocation = null
     }
 
     override fun visit(softLineBreak: SoftLineBreak) {
@@ -189,9 +191,10 @@ class MarkdownRenderer(private val text: String, private val config: MarkdownCon
         var isBold: Boolean = false,
         var isItalic: Boolean = false,
         var isStrikethrough: Boolean = false,
-        var isUnderline: Boolean = false
+        var isUnderline: Boolean = false,
+        var linkLocation: String? = null
     ) {
-        fun toTextStyle() = TextDrawable.Style(isBold, isItalic, isStrikethrough, isUnderline)
+        fun toTextStyle() = TextDrawable.Style(isBold, isItalic, isStrikethrough, isUnderline, linkLocation)
     }
 
     companion object {

@@ -58,7 +58,7 @@ class BlockquoteDrawable(config: MarkdownConfig, val drawables: DrawableList) : 
         drawables.forEach { it.draw(state) }
     }
 
-    override fun cursorAt(mouseX: Float, mouseY: Float) = drawables.cursorAt(mouseX, mouseY)
+    override fun cursorAt(mouseX: Float, mouseY: Float, dragged: Boolean) = drawables.cursorAt(mouseX, mouseY, dragged)
     override fun cursorAtStart() = drawables.cursorAtStart()
     override fun cursorAtEnd() = drawables.cursorAtEnd()
 

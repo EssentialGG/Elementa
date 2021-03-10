@@ -7,7 +7,10 @@ import club.sk1er.elementa.markdown.MarkdownComponent
 import club.sk1er.elementa.markdown.MarkdownConfig
 import club.sk1er.elementa.markdown.selection.TextCursor
 import club.sk1er.elementa.utils.withAlpha
+import club.sk1er.mods.core.universal.UDesktop
 import java.awt.Color
+import java.net.URI
+import java.net.URISyntaxException
 import kotlin.math.abs
 import kotlin.math.floor
 
@@ -223,7 +226,7 @@ class ParagraphDrawable(
         }
     }
 
-    override fun cursorAt(mouseX: Float, mouseY: Float): TextCursor {
+    override fun cursorAt(mouseX: Float, mouseY: Float, dragged: Boolean): TextCursor {
         // Account for padding between lines
         // TODO: Don't account for this padding for the first and last lines?
         val linePadding = config.paragraphConfig.spaceBetweenLines / 2f
@@ -295,6 +298,17 @@ class ParagraphDrawable(
             }
 
             currentText = nextDrawable
+        }
+
+        // Step 2.5: If the current text is linked, open it (only if we're not dragging though)
+        // TODO: Confirmation modal somehow?
+
+        if (!dragged && currentText.style.linkLocation != null) {
+            try {
+                UDesktop.browse(URI(currentText.style.linkLocation!!))
+            } catch (e: URISyntaxException) {
+                // Ignored, if the link is invalid we just do nothing
+            }
         }
 
         // Step 3: Get the string offset position in the current text

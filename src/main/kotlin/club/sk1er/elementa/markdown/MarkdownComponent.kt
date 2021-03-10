@@ -3,7 +3,6 @@ package club.sk1er.elementa.markdown
 import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.constraints.HeightConstraint
 import club.sk1er.elementa.dsl.pixels
-import club.sk1er.elementa.effects.OutlineEffect
 import club.sk1er.elementa.markdown.selection.TextCursor
 import club.sk1er.elementa.markdown.drawables.Drawable
 import club.sk1er.elementa.markdown.drawables.DrawableList
@@ -11,7 +10,6 @@ import club.sk1er.elementa.markdown.selection.TextSelection
 import club.sk1er.elementa.state.BasicState
 import club.sk1er.elementa.state.State
 import club.sk1er.mods.core.universal.UKeyboard
-import java.awt.Color
 import java.awt.Toolkit
 import java.awt.datatransfer.StringSelection
 
@@ -47,7 +45,7 @@ class MarkdownComponent @JvmOverloads constructor(
         onMouseClick {
             val xShift = getLeft() - baseX
             val yShift = getTop() - baseY
-            cursor = drawables.cursorAt(it.absoluteX - xShift, it.absoluteY - yShift)
+            cursor = drawables.cursorAt(it.absoluteX - xShift, it.absoluteY - yShift, dragged = false)
 
             selection?.remove()
             selection = null
@@ -67,7 +65,7 @@ class MarkdownComponent @JvmOverloads constructor(
             val x = baseX + mouseX.coerceIn(0f, getWidth())
             val y = baseY + mouseY.coerceIn(0f, getHeight())
 
-            val otherEnd = drawables.cursorAt(x, y)
+            val otherEnd = drawables.cursorAt(x, y, dragged = true)
 
             if (cursor == otherEnd)
                 return@onMouseDrag
@@ -173,6 +171,6 @@ class MarkdownComponent @JvmOverloads constructor(
 
     companion object {
         // TODO: Remove
-        const val DEBUG = true
+        const val DEBUG = false
     }
 }

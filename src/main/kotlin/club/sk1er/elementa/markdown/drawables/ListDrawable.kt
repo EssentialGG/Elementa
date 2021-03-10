@@ -125,7 +125,7 @@ class ListDrawable(
         listItems.forEach { it.draw(state) }
     }
 
-    override fun cursorAt(mouseX: Float, mouseY: Float) = drawables.cursorAt(mouseX, mouseY)
+    override fun cursorAt(mouseX: Float, mouseY: Float, dragged: Boolean) = drawables.cursorAt(mouseX, mouseY, dragged)
     override fun cursorAtStart() = drawables.cursorAtStart()
     override fun cursorAtEnd() = drawables.cursorAtEnd()
 
@@ -169,11 +169,11 @@ class ListDrawable(
         override fun draw(state: DrawState) {
             val newX = x + symbolWidth - actualSymbolWidth
             if (drawable !is ListDrawable)
-                TextDrawable.drawString(config, symbol, newX + state.xShift, y + state.yShift, false)
+                TextDrawable.drawString(config, symbol, newX + state.xShift, y + state.yShift)
             drawable.draw(state)
         }
 
-        override fun cursorAt(mouseX: Float, mouseY: Float) = drawable.cursorAt(mouseX, mouseY)
+        override fun cursorAt(mouseX: Float, mouseY: Float, dragged: Boolean) = drawable.cursorAt(mouseX, mouseY, dragged)
         override fun cursorAtStart() = drawable.cursorAtStart()
         override fun cursorAtEnd() = drawable.cursorAtEnd()
 
