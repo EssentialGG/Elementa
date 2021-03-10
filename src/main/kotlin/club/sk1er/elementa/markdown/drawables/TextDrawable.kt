@@ -25,6 +25,17 @@ class TextDrawable(
     var selectionStart = -1
     var selectionEnd = -1
 
+    // Used to store the Text classes to render between beforeDraw and draw
+    private var texts = mutableListOf<Text>()
+
+    // Stores whether or not this component is hovered
+    private var hovered = false
+
+    // Populated with any text drawables which used to be part of this
+    // drawable, but were split with a call to split(). Used to show
+    // hovered links across newline boundaries
+    private var linkedTexts = mutableListOf<TextDrawable>()
+
     fun plainText() = formattedText.drop(style.numFormattingChars)
 
     fun ensureTrimmed() {
@@ -66,8 +77,12 @@ class TextDrawable(
 
         val first = TextDrawable(config, plainText.substring(0, splitPoint), style)
         val second = TextDrawable(config, plainText.substring(splitPoint, plainText.length), style)
+
+        first.linkedTexts.add(second)
+        second.linkedTexts.add(first)
         first.scaleModifier = scaleModifier
         second.scaleModifier = scaleModifier
+
         return first to second
     }
 
@@ -75,60 +90,58 @@ class TextDrawable(
         return Layout(x, y, width, 9f * scaleModifier)
     }
 
-    override fun draw(state: DrawState) {
+    fun beforeDraw(state: DrawState) {
+        texts.clear()
+
         if (selectionStart == -1 && selectionEnd == -1) {
-            draw(state, listOf(Text(formattedText, x, y, false)))
-            return
-        }
-
-        if (selectionStart == -1 || selectionEnd == -1)
+            texts.add(Text(formattedText, x, y, false))
+        } else if (selectionStart == -1 || selectionEnd == -1) {
             throw IllegalStateException()
+        } else {
+            val start = selectionStart + style.numFormattingChars
+            val end = selectionEnd + style.numFormattingChars
 
-        val start = selectionStart + style.numFormattingChars
-        val end = selectionEnd + style.numFormattingChars
+            val formatChars = formattedText.substring(0, style.numFormattingChars)
 
-        val texts = mutableListOf<Text>()
-        val formatChars = formattedText.substring(0, style.numFormattingChars)
+            val nextX = if (selectionStart > 0) {
+                texts.add(Text(
+                    formattedText.substring(0, start),
+                    x,
+                    y,
+                    false
+                ))
+                x + formattedText.substring(0, start).width(scaleModifier)
+            } else x
 
-        val nextX = if (selectionStart > 0) {
+            val selectedString = formatChars + formattedText.substring(start, end)
             texts.add(Text(
-                formattedText.substring(0, start),
-                x,
+                selectedString,
+                nextX,
                 y,
-                false
+                true
             ))
-            x + formattedText.substring(0, start).width(scaleModifier)
-        } else x
 
-        val selectedString = formatChars + formattedText.substring(start, end)
-        texts.add(Text(
-            selectedString,
-            nextX,
-            y,
-            true
-        ))
-
-        if (end < formattedText.length) {
-            texts.add(Text(
-                formatChars + formattedText.substring(end),
-                nextX + selectedString.width(scaleModifier),
-                y,
-                false
-            ))
+            if (end < formattedText.length) {
+                texts.add(Text(
+                    formatChars + formattedText.substring(end),
+                    nextX + selectedString.width(scaleModifier),
+                    y,
+                    false
+                ))
+            }
         }
 
-        draw(state, texts)
+        val mouseX = UMouse.getScaledX() - state.xShift
+        val mouseY = UResolution.scaledHeight - UMouse.getScaledY() - state.yShift
+        hovered = if (style.linkLocation != null) {
+            isHovered(mouseX.toFloat(), mouseY.toFloat())
+        } else false
     }
 
-    private fun draw(state: DrawState, texts: List<Text>) {
+    override fun draw(state: DrawState) {
+        val hovered = this.hovered || linkedTexts.any { it.hovered }
+
         texts.forEach {
-            val isHovered = if (style.linkLocation != null) {
-                val mouseX = UMouse.getScaledX() - state.xShift
-                val mouseY = UResolution.scaledHeight - UMouse.getScaledY() - state.yShift
-
-                isHovered(mouseX.toFloat(), mouseY.toFloat())
-            } else false
-
             UGraphics.scale(scaleModifier, scaleModifier, 1f)
             drawString(
                 config,
@@ -137,7 +150,7 @@ class TextDrawable(
                 (it.y + state.yShift) / scaleModifier,
                 it.selected,
                 style.linkLocation != null,
-                isHovered
+                hovered
             )
             UGraphics.scale(1f / scaleModifier, 1f / scaleModifier, 1f)
         }

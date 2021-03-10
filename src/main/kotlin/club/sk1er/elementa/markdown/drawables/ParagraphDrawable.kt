@@ -212,6 +212,7 @@ class ParagraphDrawable(
     }
 
     override fun draw(state: DrawState) {
+        textDrawables.forEach { it.beforeDraw(state) }
         textDrawables.forEach { it.draw(state) }
 
         // TODO: Remove
