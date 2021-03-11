@@ -90,13 +90,32 @@ class ParagraphDrawable(
             newDrawables.add(text)
         }
 
-        for (text in drawables) {
+        for ((index, text) in drawables.withIndex()) {
             if (text is SoftBreakDrawable) {
                 if (config.paragraphConfig.softBreakIsNewline) {
                     gotoNextLine()
                 } else {
-                    // TODO: Carry bold/italic across soft newlines?
-                    val newText = TextDrawable(config, " ", TextDrawable.Style.EMPTY)
+                    val previousStyle = (newDrawables.lastOrNull { it is TextDrawable } as? TextDrawable)?.style
+                        ?: TextDrawable.Style.EMPTY
+                    val newText = TextDrawable(config, " ", previousStyle)
+
+                    // Do this before laying out newText, so that newText isn't in the
+                    // newDrawables list yet
+                    if (newDrawables.isNotEmpty() && index != drawables.lastIndex) {
+                        val previous = newDrawables.last()
+                        val next = drawables[index + 1]
+                        if (previous is TextDrawable && next is TextDrawable && previous.style == next.style) {
+                            // Link the two texts together, as a soft break (when not
+                            // treated as a new line) should not interrupt a link
+                            val linkedTexts = TextDrawable.LinkedTexts.merge(previous.linkedTexts, next.linkedTexts)
+                            linkedTexts.linkText(previous)
+                            linkedTexts.linkText(newText)
+                            linkedTexts.linkText(next)
+                            previous.linkedTexts = linkedTexts
+                            newText.linkedTexts = linkedTexts
+                            next.linkedTexts = linkedTexts
+                        }
+                    }
                     layout(newText, newText.width())
                     if (widthRemaining <= 0)
                         gotoNextLine()

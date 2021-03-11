@@ -29,12 +29,12 @@ class TextDrawable(
     private var texts = mutableListOf<Text>()
 
     // Stores whether or not this component is hovered
-    private var hovered = false
+    private var isHovered = false
 
     // Populated with any text drawables which used to be part of this
     // drawable, but were split with a call to split(). Used to show
     // hovered links across newline boundaries
-    private var linkedTexts = mutableListOf<TextDrawable>()
+    var linkedTexts: LinkedTexts? = null
 
     fun plainText() = formattedText.drop(style.numFormattingChars)
 
@@ -78,8 +78,18 @@ class TextDrawable(
         val first = TextDrawable(config, plainText.substring(0, splitPoint), style)
         val second = TextDrawable(config, plainText.substring(splitPoint, plainText.length), style)
 
-        first.linkedTexts.add(second)
-        second.linkedTexts.add(first)
+        val linkedTexts = this.linkedTexts?.also {
+            // We are splitting this text drawable, so in effect this
+            // drawable no longer "exists", because it isn't relevant.
+            // Therefore we remove it from this linked text group
+            it.unlinkText(this)
+        } ?: LinkedTexts()
+
+        linkedTexts.linkText(first)
+        linkedTexts.linkText(second)
+        first.linkedTexts = linkedTexts
+        second.linkedTexts = linkedTexts
+
         first.scaleModifier = scaleModifier
         second.scaleModifier = scaleModifier
 
@@ -133,13 +143,13 @@ class TextDrawable(
 
         val mouseX = UMouse.getScaledX() - state.xShift
         val mouseY = UResolution.scaledHeight - UMouse.getScaledY() - state.yShift
-        hovered = if (style.linkLocation != null) {
+        isHovered = if (style.linkLocation != null) {
             isHovered(mouseX.toFloat(), mouseY.toFloat())
         } else false
     }
 
     override fun draw(state: DrawState) {
-        val hovered = this.hovered || linkedTexts.any { it.hovered }
+        val hovered = isHovered || (linkedTexts?.isHovered() ?: false)
 
         texts.forEach {
             UGraphics.scale(scaleModifier, scaleModifier, 1f)
@@ -181,6 +191,36 @@ class TextDrawable(
     }
 
     override fun toString() = formattedText
+
+    class LinkedTexts {
+        private val texts = mutableSetOf<TextDrawable>()
+
+        fun isHovered() = texts.any { it.isHovered }
+
+        fun linkText(text: TextDrawable) {
+            texts.add(text)
+        }
+
+        fun unlinkText(text: TextDrawable) {
+            texts.remove(text)
+        }
+
+        companion object {
+            fun merge(linked1: LinkedTexts?, linked2: LinkedTexts?): LinkedTexts {
+                return when {
+                    linked1 == null && linked2 == null -> LinkedTexts()
+                    linked1 == null -> linked2!!
+                    linked2 == null -> linked1
+                    else -> {
+                        linked2.texts.forEach {
+                            linked1.linkText(it)
+                        }
+                        linked1
+                    }
+                }
+            }
+        }
+    }
 
     data class Style(
         val isBold: Boolean,
