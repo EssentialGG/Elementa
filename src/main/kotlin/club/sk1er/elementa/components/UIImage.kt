@@ -24,6 +24,21 @@ open class UIImage @JvmOverloads constructor(
     var imageWidth = 1f
     var imageHeight = 1f
 
+    val isLoaded: Boolean
+        get() = ::texture.isInitialized
+
+    init {
+        imageFuture.thenAcceptAsync {
+            imageWidth = it.width.toFloat()
+            imageHeight = it.height.toFloat()
+            imageFuture.obtrudeValue(null)
+
+            Window.enqueueRenderOperation {
+                texture = UGraphics.getTexture(it)
+            }
+        }
+    }
+
     @Deprecated(
         "Please provide a completable future instead",
         ReplaceWith("CompletableFuture.supplyAsync(imageFunction)", "java.util.concurrent.CompletableFuture"),
@@ -32,22 +47,10 @@ open class UIImage @JvmOverloads constructor(
     constructor(imageFunction: () -> BufferedImage) : this(CompletableFuture.supplyAsync(imageFunction))
 
     override fun drawImage(x: Double, y: Double, width: Double, height: Double, color: Color) {
-        if (::texture.isInitialized) {
-            drawTexture(texture, color, x, y, width, height)
-        } else if (imageFuture.isDone) {
-            if (imageFuture.isCompletedExceptionally) {
-                failureImage.drawImage(x, y, width, height, color)
-            } else {
-                val image = imageFuture.get()
-
-                imageWidth = image.width.toFloat()
-                imageHeight = image.height.toFloat()
-                texture = UGraphics.getTexture(image)
-
-                imageFuture.obtrudeValue(null)
-            }
-        } else {
-            loadingImage.drawImage(x, y, width, height, color)
+        when {
+            ::texture.isInitialized -> drawTexture(texture, color, x, y, width, height)
+            imageFuture.isCompletedExceptionally -> failureImage.drawImage(x, y, width, height, color)
+            else -> loadingImage.drawImage(x, y, width, height, color)
         }
     }
 
