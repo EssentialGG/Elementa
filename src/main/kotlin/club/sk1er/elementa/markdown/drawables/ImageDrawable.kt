@@ -3,7 +3,6 @@ package club.sk1er.elementa.markdown.drawables
 import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.components.UIImage
 import club.sk1er.elementa.constraints.ConstraintType
-import club.sk1er.elementa.constraints.MasterConstraint
 import club.sk1er.elementa.constraints.XConstraint
 import club.sk1er.elementa.constraints.YConstraint
 import club.sk1er.elementa.constraints.resolution.ConstraintVisitor
@@ -11,10 +10,12 @@ import club.sk1er.elementa.dsl.childOf
 import club.sk1er.elementa.dsl.pixels
 import club.sk1er.elementa.markdown.DrawState
 import club.sk1er.elementa.markdown.MarkdownComponent
-import club.sk1er.elementa.markdown.selection.TextCursor
+import club.sk1er.elementa.markdown.selection.ImageCursor
 import java.net.URL
 
-class ImageDrawable(md: MarkdownComponent, url: URL, private val fallback: Drawable) : Drawable(md) {
+class ImageDrawable(md: MarkdownComponent, val url: URL, private val fallback: Drawable) : Drawable(md) {
+    var selected = false
+
     private lateinit var imageX: ShiftableMDPixelConstraint
     private lateinit var imageY: ShiftableMDPixelConstraint
 
@@ -50,26 +51,26 @@ class ImageDrawable(md: MarkdownComponent, url: URL, private val fallback: Drawa
 
             imageX.shift = state.xShift
             imageY.shift = state.yShift
-
             image.draw()
         }
     }
 
-    override fun cursorAt(mouseX: Float, mouseY: Float, dragged: Boolean): TextCursor {
-        TODO("Not yet implemented")
-    }
-
-    override fun cursorAtStart(): TextCursor {
-        TODO("Not yet implemented")
-    }
-
-    override fun cursorAtEnd(): TextCursor {
-        TODO("Not yet implemented")
-    }
+    // ImageDrawable mouse selection is managed by ParagraphDrawable#select
+    override fun cursorAt(mouseX: Float, mouseY: Float, dragged: Boolean) = throw IllegalStateException("never called")
+    override fun cursorAtStart() = ImageCursor(this)
+    override fun cursorAtEnd() = ImageCursor(this)
 
     override fun selectedText(asMarkdown: Boolean): String {
-        TODO("Not yet implemented")
+        if (asMarkdown) {
+            // TODO: `fallback.selectedText(true)` will be empty since the children aren't
+            // marked as selected
+            return " ![${fallback.selectedText(true)}]($url) "
+        }
+        return " $url "
     }
+
+    // TODO: Rename this function?
+    override fun hasSelectedText() = selected
 
     private inner class ShiftableMDPixelConstraint(val base: Float, var shift: Float) : XConstraint, YConstraint {
         override var cachedValue = 0f

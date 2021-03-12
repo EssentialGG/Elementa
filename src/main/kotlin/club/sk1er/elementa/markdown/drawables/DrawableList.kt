@@ -3,6 +3,7 @@ package club.sk1er.elementa.markdown.drawables
 import club.sk1er.elementa.markdown.DrawState
 import club.sk1er.elementa.markdown.MarkdownComponent
 import club.sk1er.elementa.markdown.MarkdownConfig
+import club.sk1er.elementa.markdown.selection.Cursor
 import club.sk1er.elementa.markdown.selection.TextCursor
 
 /**
@@ -47,7 +48,7 @@ class DrawableList(
         return Layout(x, y, width, height)
     }
 
-    override fun cursorAt(mouseX: Float, mouseY: Float, dragged: Boolean): TextCursor {
+    override fun cursorAt(mouseX: Float, mouseY: Float, dragged: Boolean): Cursor<*> {
         // Used for positioning the cursor in-between drawables if no
         // drawable is being directly hovered
         var closestDrawable: Drawable? = null

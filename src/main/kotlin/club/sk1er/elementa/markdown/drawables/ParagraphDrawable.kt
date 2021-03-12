@@ -4,6 +4,8 @@ import club.sk1er.elementa.components.UIBlock
 import club.sk1er.elementa.dsl.width
 import club.sk1er.elementa.markdown.DrawState
 import club.sk1er.elementa.markdown.MarkdownComponent
+import club.sk1er.elementa.markdown.selection.Cursor
+import club.sk1er.elementa.markdown.selection.ImageCursor
 import club.sk1er.elementa.markdown.selection.TextCursor
 import club.sk1er.elementa.utils.withAlpha
 import club.sk1er.mods.core.universal.UDesktop
@@ -257,23 +259,23 @@ class ParagraphDrawable(
         }
     }
 
-    override fun cursorAt(mouseX: Float, mouseY: Float, dragged: Boolean): TextCursor {
+    override fun cursorAt(mouseX: Float, mouseY: Float, dragged: Boolean): Cursor<*> {
         // Account for padding between lines
         // TODO: Don't account for this padding for the first and last lines?
         val linePadding = config.paragraphConfig.spaceBetweenLines / 2f
 
-        fun yRange(d: TextDrawable) = (d.y - linePadding)..(d.y + d.height + linePadding)
+        fun yRange(d: Drawable) = (d.y - linePadding)..(d.y + d.height + linePadding)
 
         // Step 1: Get to the correct row
 
-        val firstTextInRow = textDrawables.firstOrNull {
+        val firstInRow = drawables.firstOrNull {
             mouseY in yRange(it)
         }
 
         // Ensure that the mouseY position actually falls within this drawable.
         // If not, we'll just select either the start of end of the component,
         // depending on the mouseY position
-        if (firstTextInRow == null) {
+        if (firstInRow == null) {
             if (mouseY < drawables.first().y - linePadding) {
                 // The position occurs before this paragraph, so we just
                 // select the start of this paragraph
@@ -289,15 +291,14 @@ class ParagraphDrawable(
         }
 
         // Step 2: Get to the correct text drawable
-        var positionHorizontally = true
 
-        if (mouseX < firstTextInRow.x) {
+        if (mouseX < firstInRow.x) {
             // Because we iterate text drawables top to bottom, left to right,
             // if the mouseX is left of the text start, we can just select the
             // start of the current component. We don't have to walk the text
             // siblings (using text.previous) because firstTextInRow is the
             // first text component which has an acceptable y-range.
-            return firstTextInRow.cursorAtStart()
+            return firstInRow.cursorAtStart()
         }
 
         // We've selected a drawable based on the y position, now we must do
@@ -307,81 +308,91 @@ class ParagraphDrawable(
         // is to the right of this paragraph drawable, and we'll select the
         // drawable which we are currently on
 
-        var currentText: TextDrawable = firstTextInRow
+        var currentDrawable: Drawable = firstInRow
 
-        while (mouseX > currentText.x + currentText.width && currentText.next != null) {
-            var nextDrawable = currentText.next!!
+        while (mouseX > currentDrawable.x + currentDrawable.width && currentDrawable.next != null) {
+            var nextDrawable = currentDrawable.next!!
 
-            while (nextDrawable !is TextDrawable && nextDrawable.next != null) {
+            while (nextDrawable !is TextDrawable && nextDrawable !is ImageDrawable && nextDrawable.next != null) {
                 nextDrawable = nextDrawable.next!!
             }
 
-            if (nextDrawable !is TextDrawable) {
+            if (nextDrawable !is TextDrawable && nextDrawable !is ImageDrawable) {
                 // currentText is the last text in this paragraph, so we'll just
                 // select its end
-                return currentText.cursorAtEnd()
+                return currentDrawable.cursorAtEnd()
             }
 
             if (mouseY !in yRange(nextDrawable)) {
                 // As mentioned above, the mouse is to the right of this paragraph
                 // component
-                return currentText.cursorAtEnd()
+                return currentDrawable.cursorAtEnd()
             }
 
-            currentText = nextDrawable
+            currentDrawable = nextDrawable
         }
 
-        // Step 2.5: If the current text is linked, open it (only if we're not dragging though)
+        // Step 3: If the hovered drawable is an image, we return early
+
+        if (currentDrawable is ImageDrawable)
+            return ImageCursor(currentDrawable)
+
+        if (currentDrawable !is TextDrawable)
+            TODO()
+
+        // Step 4: If the current text is linked, open it (only if we're not dragging though)
         // TODO: Confirmation modal somehow?
 
-        if (!dragged && currentText.style.linkLocation != null) {
+        if (!dragged && currentDrawable.style.linkLocation != null) {
             try {
-                UDesktop.browse(URI(currentText.style.linkLocation!!))
+                UDesktop.browse(URI(currentDrawable.style.linkLocation!!))
             } catch (e: URISyntaxException) {
                 // Ignored, if the link is invalid we just do nothing
             }
         }
 
-        // Step 3: Get the string offset position in the current text
+        // Step 5: Get the string offset position in the current text
 
-        fun textWidth(offset: Int) = currentText.formattedText.substring(0, offset).width(currentText.scaleModifier)
+        fun textWidth(offset: Int) = currentDrawable.formattedText.substring(0, offset).width(currentDrawable.scaleModifier)
 
-        var offset = currentText.style.numFormattingChars
+        var offset = currentDrawable.style.numFormattingChars
         var cachedWidth = 0f
 
         // Iterate from left to right in the text component until we find a good
         // offset based on the text width
-        while (offset < currentText.formattedText.length) {
+        while (offset < currentDrawable.formattedText.length) {
             offset++
             val newWidth = textWidth(offset)
 
-            if (currentText.x + newWidth > mouseX) {
+            if (currentDrawable.x + newWidth > mouseX) {
                 // We've passed mouseX, but now we have to consider which offset
                 // is closer to mouseX: `offset` or `offset - 1`. We check that
                 // here and use the closest offset
 
-                val oldDist = abs(mouseX - currentText.x - cachedWidth)
-                val newDist = abs(newWidth - (mouseX - currentText.x))
+                val oldDist = abs(mouseX - currentDrawable.x - cachedWidth)
+                val newDist = abs(newWidth - (mouseX - currentDrawable.x))
 
                 if (oldDist < newDist) {
                     // The old offset was better
                     offset--
                 }
 
-                return TextCursor(currentText, offset - currentText.style.numFormattingChars)
+                return TextCursor(currentDrawable, offset - currentDrawable.style.numFormattingChars)
             }
 
             cachedWidth = newWidth
         }
 
-        return currentText.cursorAtEnd()
+        return currentDrawable.cursorAtEnd()
     }
 
-    override fun cursorAtStart() = textDrawables.first().cursorAtStart()
-    override fun cursorAtEnd() = textDrawables.last().cursorAtEnd()
+    override fun cursorAtStart() = drawables.first { it is TextDrawable || it is ImageDrawable }.cursorAtStart()
+    override fun cursorAtEnd() = drawables.last { it is TextDrawable || it is ImageDrawable }.cursorAtEnd()
 
     override fun selectedText(asMarkdown: Boolean): String {
-        return textDrawables.joinToString(separator = "") { it.selectedText(asMarkdown) }
+        return drawables.filter {
+            it is TextDrawable || it is ImageDrawable
+        }.joinToString(separator = "") { it.selectedText(asMarkdown) }
     }
 
     private val rc = randomColor().withAlpha(100)

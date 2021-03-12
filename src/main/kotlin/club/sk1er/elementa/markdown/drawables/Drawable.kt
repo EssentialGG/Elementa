@@ -3,6 +3,7 @@ package club.sk1er.elementa.markdown.drawables
 import club.sk1er.elementa.markdown.DrawState
 import club.sk1er.elementa.markdown.MarkdownComponent
 import club.sk1er.elementa.markdown.MarkdownConfig
+import club.sk1er.elementa.markdown.selection.Cursor
 import club.sk1er.elementa.markdown.selection.TextCursor
 import kotlin.reflect.KMutableProperty0
 import kotlin.reflect.KProperty
@@ -78,22 +79,23 @@ abstract class Drawable(val md: MarkdownComponent) {
      * delegates to a lower-level drawable (DrawableList and
      * ParagraphDrawable).
      */
-    abstract fun cursorAt(mouseX: Float, mouseY: Float, dragged: Boolean): TextCursor
+    abstract fun cursorAt(mouseX: Float, mouseY: Float, dragged: Boolean): Cursor<*>
 
     /**
      * Produces a TextCursor for the start of this drawable
      */
-    abstract fun cursorAtStart(): TextCursor
+    abstract fun cursorAtStart(): Cursor<*>
+
     /**
      * Produces a TextCursor for the end of this drawable
      */
-    abstract fun cursorAtEnd(): TextCursor
+    abstract fun cursorAtEnd(): Cursor<*>
 
     /**
      * Whether or not this drawable contains a selected TextDrawable anywhere
      * in its children tree
      */
-    fun hasSelectedText(): Boolean {
+    open fun hasSelectedText(): Boolean {
         return children.any {
             (it is TextDrawable && it.selectionStart != -1) || it.hasSelectedText()
         }

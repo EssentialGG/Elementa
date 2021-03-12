@@ -3,10 +3,10 @@ package club.sk1er.elementa.markdown
 import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.constraints.HeightConstraint
 import club.sk1er.elementa.dsl.pixels
-import club.sk1er.elementa.markdown.selection.TextCursor
 import club.sk1er.elementa.markdown.drawables.Drawable
 import club.sk1er.elementa.markdown.drawables.DrawableList
-import club.sk1er.elementa.markdown.selection.TextSelection
+import club.sk1er.elementa.markdown.selection.Cursor
+import club.sk1er.elementa.markdown.selection.Selection
 import club.sk1er.elementa.state.BasicState
 import club.sk1er.elementa.state.State
 import club.sk1er.mods.core.universal.UKeyboard
@@ -37,8 +37,8 @@ class MarkdownComponent @JvmOverloads constructor(
     private var baseY: Float = -1f
     private lateinit var lastValues: ConstraintValues
     private var maxHeight: HeightConstraint = Int.MAX_VALUE.pixels()
-    private var cursor: TextCursor? = null
-    private var selection: TextSelection? = null
+    private var cursor: Cursor<*>? = null
+    private var selection: Selection? = null
     private var canDrag = false
 
     init {
@@ -71,7 +71,7 @@ class MarkdownComponent @JvmOverloads constructor(
                 return@onMouseDrag
 
             selection?.remove()
-            selection = TextSelection.fromCursors(cursor!!, otherEnd)
+            selection = Selection.fromCursors(cursor!!, otherEnd)
             grabWindowFocus()
         }
 

@@ -3,6 +3,7 @@ package club.sk1er.elementa.markdown.drawables
 import club.sk1er.elementa.markdown.DrawState
 import club.sk1er.elementa.markdown.MarkdownComponent
 import club.sk1er.elementa.markdown.MarkdownConfig
+import club.sk1er.elementa.markdown.selection.Cursor
 import club.sk1er.elementa.markdown.selection.TextCursor
 
 /**
@@ -18,15 +19,15 @@ class HardBreakDrawable(md: MarkdownComponent) : Drawable(md) {
         TODO("Not yet implemented")
     }
 
-    override fun cursorAt(mouseX: Float, mouseY: Float, dragged: Boolean): TextCursor {
+    override fun cursorAt(mouseX: Float, mouseY: Float, dragged: Boolean): Cursor<*> {
         TODO("Not yet implemented")
     }
 
-    override fun cursorAtStart(): TextCursor {
+    override fun cursorAtStart(): Cursor<*> {
         TODO("Not yet implemented")
     }
 
-    override fun cursorAtEnd(): TextCursor {
+    override fun cursorAtEnd(): Cursor<*> {
         TODO("Not yet implemented")
     }
 

@@ -1,38 +1,23 @@
 package club.sk1er.elementa.markdown.selection
 
-import club.sk1er.elementa.components.UIBlock
 import club.sk1er.elementa.dsl.width
-import club.sk1er.elementa.markdown.DrawState
-import club.sk1er.elementa.markdown.MarkdownComponent
-import club.sk1er.elementa.markdown.drawables.Drawable
 import club.sk1er.elementa.markdown.drawables.TextDrawable
-import java.awt.Color
 
 /**
  * A simple class which points to a position in a TextDrawable.
  */
-data class TextCursor(val target: TextDrawable, val offset: Int) {
-    private val xBase = target.x +
+class TextCursor(target: TextDrawable, val offset: Int) : Cursor<TextDrawable>(target) {
+    override val xBase = target.x +
         target.formattedText.substring(0, offset + target.style.numFormattingChars).width(target.scaleModifier)
+    override val yBase = target.y
 
-    private val yBase = target.y
-    private val height = target.height.toDouble()
-    private val width = height / 9.0
-
-    fun draw(state: DrawState) {
-        if (!MarkdownComponent.DEBUG)
-            return
-
-        UIBlock.drawBlockSized(
-            Color.RED,
-            (xBase + state.xShift).toDouble(),
-            (yBase + state.yShift).toDouble(),
-            width,
-            height
-        )
-    }
-
-    operator fun compareTo(other: TextCursor): Int {
+    override operator fun compareTo(other: Cursor<*>): Int {
+        if (other !is TextCursor) {
+            return target.y.compareTo(other.target.y).let {
+                if (it == 0) target.x.compareTo(other.target.x) else it
+            }
+        }
+        
         if (target == other.target)
             return offset.compareTo(other.offset)
 
