@@ -15,9 +15,9 @@ import kotlin.math.abs
 import kotlin.math.floor
 
 class ParagraphDrawable(
-    config: MarkdownConfig,
+    md: MarkdownComponent,
     drawables: DrawableList
-) : Drawable(config) {
+) : Drawable(md) {
     val textDrawables: List<TextDrawable>
         get() = drawables.filterIsInstance<TextDrawable>()
 
@@ -97,7 +97,7 @@ class ParagraphDrawable(
                 } else {
                     val previousStyle = (newDrawables.lastOrNull { it is TextDrawable } as? TextDrawable)?.style
                         ?: TextDrawable.Style.EMPTY
-                    val newText = TextDrawable(config, " ", previousStyle)
+                    val newText = TextDrawable(md, " ", previousStyle)
 
                     // Do this before laying out newText, so that newText isn't in the
                     // newDrawables list yet
@@ -215,7 +215,7 @@ class ParagraphDrawable(
         // MarkdownComponent re-layouts many times and causes a bunch of text
         // splits, we'll have many, many small text drawables instead of a few
         // large text drawables, which requires more work to deal with.
-        drawables = DrawableList(config, newDrawables)
+        drawables = DrawableList(md, newDrawables)
 
         val height = currY - y + 9f * scaleModifier + if (insertSpaceAfter) {
             config.paragraphConfig.spaceAfter

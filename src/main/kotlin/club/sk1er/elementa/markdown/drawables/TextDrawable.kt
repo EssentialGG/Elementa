@@ -3,6 +3,7 @@ package club.sk1er.elementa.markdown.drawables
 import club.sk1er.elementa.components.UIBlock
 import club.sk1er.elementa.dsl.width
 import club.sk1er.elementa.markdown.DrawState
+import club.sk1er.elementa.markdown.MarkdownComponent
 import club.sk1er.elementa.markdown.MarkdownConfig
 import club.sk1er.elementa.markdown.selection.TextCursor
 import club.sk1er.mods.core.universal.UGraphics
@@ -10,10 +11,10 @@ import club.sk1er.mods.core.universal.UMouse
 import club.sk1er.mods.core.universal.UResolution
 
 class TextDrawable(
-    config: MarkdownConfig,
+    md: MarkdownComponent,
     text: String,
     val style: Style
-) : Drawable(config) {
+) : Drawable(md) {
     // Used by HeaderDrawable
     var scaleModifier = 1f
 
@@ -75,8 +76,8 @@ class TextDrawable(
                 return null
         }
 
-        val first = TextDrawable(config, plainText.substring(0, splitPoint), style)
-        val second = TextDrawable(config, plainText.substring(splitPoint, plainText.length), style)
+        val first = TextDrawable(md, plainText.substring(0, splitPoint), style)
+        val second = TextDrawable(md, plainText.substring(splitPoint, plainText.length), style)
 
         val linkedTexts = this.linkedTexts?.also {
             // We are splitting this text drawable, so in effect this

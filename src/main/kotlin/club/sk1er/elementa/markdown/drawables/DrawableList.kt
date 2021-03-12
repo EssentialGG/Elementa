@@ -1,6 +1,7 @@
 package club.sk1er.elementa.markdown.drawables
 
 import club.sk1er.elementa.markdown.DrawState
+import club.sk1er.elementa.markdown.MarkdownComponent
 import club.sk1er.elementa.markdown.MarkdownConfig
 import club.sk1er.elementa.markdown.selection.TextCursor
 
@@ -14,9 +15,9 @@ import club.sk1er.elementa.markdown.selection.TextCursor
  * selection.
  */
 class DrawableList(
-    config: MarkdownConfig,
+    md: MarkdownComponent,
     drawables: List<Drawable>
-) : Drawable(config), List<Drawable> {
+) : Drawable(md), List<Drawable> {
     private lateinit var drawables: List<Drawable>
     override val children: List<Drawable> get() = drawables
 

@@ -2,9 +2,10 @@ package club.sk1er.elementa.markdown.drawables
 
 import club.sk1er.elementa.components.UIBlock
 import club.sk1er.elementa.markdown.DrawState
+import club.sk1er.elementa.markdown.MarkdownComponent
 import club.sk1er.elementa.markdown.MarkdownConfig
 
-class BlockquoteDrawable(config: MarkdownConfig, val drawables: DrawableList) : Drawable(config) {
+class BlockquoteDrawable(md: MarkdownComponent, val drawables: DrawableList) : Drawable(md) {
     private var dividerHeight: Float = -1f
     override val children: List<Drawable> get() = drawables
 

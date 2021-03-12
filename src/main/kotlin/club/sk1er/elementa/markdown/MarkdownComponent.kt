@@ -23,7 +23,7 @@ import java.awt.datatransfer.StringSelection
  */
 class MarkdownComponent @JvmOverloads constructor(
     text: String,
-    private val config: MarkdownConfig = MarkdownConfig()
+    val config: MarkdownConfig = MarkdownConfig()
 ) : UIComponent() {
     private var textState: State<String> = BasicState(text)
     private var removeListener = textState.onSetValue {
@@ -31,7 +31,7 @@ class MarkdownComponent @JvmOverloads constructor(
         layout()
     }
 
-    val drawables = DrawableList(config, emptyList())
+    val drawables = DrawableList(this, emptyList())
 
     private var baseX: Float = -1f
     private var baseY: Float = -1f
@@ -105,7 +105,7 @@ class MarkdownComponent @JvmOverloads constructor(
      * by a call to layout().
      */
     private fun reparse() {
-        drawables.setDrawables(MarkdownRenderer(textState.get(), config).render())
+        drawables.setDrawables(MarkdownRenderer(textState.get(), this).render())
     }
 
     /**

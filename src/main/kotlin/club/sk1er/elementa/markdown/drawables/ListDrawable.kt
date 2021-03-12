@@ -2,10 +2,11 @@ package club.sk1er.elementa.markdown.drawables
 
 import club.sk1er.elementa.dsl.width
 import club.sk1er.elementa.markdown.DrawState
+import club.sk1er.elementa.markdown.MarkdownComponent
 import club.sk1er.elementa.markdown.MarkdownConfig
 
 class ListDrawable(
-    config: MarkdownConfig,
+    md: MarkdownComponent,
     private val drawables: DrawableList,
     private val isOrdered: Boolean,
     /**
@@ -17,7 +18,7 @@ class ListDrawable(
      * Reference: https://spec.commonmark.org/0.28/#tight
      */
     private var isLoose: Boolean
-) : Drawable(config) {
+) : Drawable(md) {
     private val listItems = mutableListOf<ListEntry>()
     override val children: List<Drawable> get() = listItems
 
@@ -75,7 +76,7 @@ class ListDrawable(
 
         fun addItem(drawable: Drawable) {
             val item = ListEntry(
-                config,
+                md,
                 symbol(index),
                 symbolWidth,
                 spaceAfterSymbol,
@@ -94,7 +95,7 @@ class ListDrawable(
                 // Pull out any trailing ListDrawables into their own ListElement
                 val last = drawable.last()
                 if (last is ListDrawable) {
-                    drawable = DrawableList(config, drawable.dropLast(1))
+                    drawable = DrawableList(md, drawable.dropLast(1))
                     addItem(drawable)
                     index++
                     orderedListShift++
@@ -135,12 +136,12 @@ class ListDrawable(
 
     // A mostly organized and ready-to-render list item
     inner class ListEntry(
-        config: MarkdownConfig,
+        md: MarkdownComponent,
         private val symbol: String,
         private val symbolWidth: Float,
         private val symbolPaddingRight: Float,
         val drawable: Drawable
-    ) : Drawable(config) {
+    ) : Drawable(md) {
         private val actualSymbolWidth = symbol.width()
         override val children: List<Drawable> get() = listOf(drawable)
 

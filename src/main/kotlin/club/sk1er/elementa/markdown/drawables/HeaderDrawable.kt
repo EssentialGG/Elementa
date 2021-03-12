@@ -2,13 +2,14 @@ package club.sk1er.elementa.markdown.drawables
 
 import club.sk1er.elementa.components.UIBlock
 import club.sk1er.elementa.markdown.DrawState
+import club.sk1er.elementa.markdown.MarkdownComponent
 import club.sk1er.elementa.markdown.MarkdownConfig
 
 class HeaderDrawable(
-    config: MarkdownConfig,
+    md: MarkdownComponent,
     private val level: Int,
     private val paragraph: ParagraphDrawable
-) : Drawable(config) {
+) : Drawable(md) {
     override val children: List<Drawable> get() = listOf(paragraph)
 
     init {

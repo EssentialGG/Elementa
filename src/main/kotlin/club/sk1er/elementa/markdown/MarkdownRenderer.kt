@@ -7,8 +7,9 @@ import org.commonmark.ext.ins.Ins
 import org.commonmark.ext.ins.InsExtension
 import org.commonmark.node.*
 import org.commonmark.parser.Parser
+import java.net.URL
 
-class MarkdownRenderer(private val text: String, private val config: MarkdownConfig) : AbstractVisitor() {
+class MarkdownRenderer(private val text: String, private val md: MarkdownComponent) : AbstractVisitor() {
     private val drawables = mutableListOf<Drawable>()
     private val style = MutableStyle()
 
@@ -31,7 +32,7 @@ class MarkdownRenderer(private val text: String, private val config: MarkdownCon
             .build()
             .parse(text)
         document.accept(this)
-        return DrawableList(config, drawables)
+        return DrawableList(md, drawables)
     }
 
     private fun unmarkAndCollect(): DrawableList {
@@ -40,7 +41,7 @@ class MarkdownRenderer(private val text: String, private val config: MarkdownCon
         repeat(slice.size) {
             drawables.removeAt(drawables.lastIndex)
         }
-        return DrawableList(config, slice)
+        return DrawableList(md, slice)
     }
 
     override fun visit(emphasis: Emphasis) {
@@ -58,19 +59,19 @@ class MarkdownRenderer(private val text: String, private val config: MarkdownCon
     override fun visit(text: Text) {
         if (text.firstChild != null)
             TODO()
-        drawables.add(TextDrawable(config, text.literal, style.toTextStyle()))
+        drawables.add(TextDrawable(md, text.literal, style.toTextStyle()))
     }
 
     override fun visit(paragraph: Paragraph) {
         mark()
         super.visit(paragraph)
-        drawables.add(ParagraphDrawable(config, unmarkAndCollect()))
+        drawables.add(ParagraphDrawable(md, unmarkAndCollect()))
     }
 
     override fun visit(blockQuote: BlockQuote) {
         mark()
         super.visit(blockQuote)
-        drawables.add(BlockquoteDrawable(config, unmarkAndCollect()))
+        drawables.add(BlockquoteDrawable(md, unmarkAndCollect()))
     }
 
     override fun visit(bulletList: BulletList) {
@@ -81,7 +82,7 @@ class MarkdownRenderer(private val text: String, private val config: MarkdownCon
             TODO()
 
         drawables.add(ListDrawable(
-            config,
+            md,
             children,
             isOrdered = false,
             isLoose = !bulletList.isTight
@@ -91,7 +92,7 @@ class MarkdownRenderer(private val text: String, private val config: MarkdownCon
     override fun visit(listItem: ListItem) {
         mark()
         super.visit(listItem)
-        drawables.add(DrawableList(config, unmarkAndCollect()))
+        drawables.add(DrawableList(md, unmarkAndCollect()))
     }
 
     override fun visit(orderedList: OrderedList) {
@@ -102,35 +103,35 @@ class MarkdownRenderer(private val text: String, private val config: MarkdownCon
             TODO()
 
         drawables.add(ListDrawable(
-            config,
+            md,
             children,
             isOrdered = true,
             isLoose = !orderedList.isTight
         ))
     }
 
-    override fun visit(code: Code?) {
+    override fun visit(code: Code) {
         TODO("Not yet implemented")
     }
 
-    override fun visit(fencedCodeBlock: FencedCodeBlock?) {
+    override fun visit(fencedCodeBlock: FencedCodeBlock) {
         TODO("Not yet implemented")
     }
 
     override fun visit(hardLineBreak: HardLineBreak) {
         if (hardLineBreak.firstChild != null)
             TODO()
-        drawables.add(HardBreakDrawable(config))
+        drawables.add(HardBreakDrawable(md))
     }
 
     override fun visit(heading: Heading) {
         mark()
         super.visit(heading)
         val children = unmarkAndCollect()
-        drawables.add(HeaderDrawable(config, heading.level, ParagraphDrawable(config, children)))
+        drawables.add(HeaderDrawable(md, heading.level, ParagraphDrawable(md, children)))
     }
 
-    override fun visit(thematicBreak: ThematicBreak?) {
+    override fun visit(thematicBreak: ThematicBreak) {
         TODO("Not yet implemented")
     }
 
@@ -140,14 +141,14 @@ class MarkdownRenderer(private val text: String, private val config: MarkdownCon
         // formatting (or anything that makes it an invalid HTML tag), it will not
         // be parsed as an HTML tag. If we're here, it is unformatted and we just
         // handle it like raw text.
-        drawables.add(TextDrawable(config, htmlInline.literal, style.toTextStyle()))
+        drawables.add(TextDrawable(md, htmlInline.literal, style.toTextStyle()))
     }
 
     override fun visit(image: Image?) {
         TODO("Not yet implemented")
     }
 
-    override fun visit(indentedCodeBlock: IndentedCodeBlock?) {
+    override fun visit(indentedCodeBlock: IndentedCodeBlock) {
         TODO("Not yet implemented")
     }
 
@@ -160,14 +161,14 @@ class MarkdownRenderer(private val text: String, private val config: MarkdownCon
     override fun visit(softLineBreak: SoftLineBreak) {
         if (softLineBreak.firstChild != null)
             TODO()
-        drawables.add(SoftBreakDrawable(config))
+        drawables.add(SoftBreakDrawable(md))
     }
 
-    override fun visit(linkReferenceDefinition: LinkReferenceDefinition?) {
+    override fun visit(linkReferenceDefinition: LinkReferenceDefinition) {
         TODO("Not yet implemented")
     }
 
-    override fun visit(customBlock: CustomBlock?) {
+    override fun visit(customBlock: CustomBlock) {
         TODO("Not yet implemented")
     }
 

@@ -1,10 +1,11 @@
 package club.sk1er.elementa.markdown.drawables
 
 import club.sk1er.elementa.markdown.DrawState
+import club.sk1er.elementa.markdown.MarkdownComponent
 import club.sk1er.elementa.markdown.MarkdownConfig
 import club.sk1er.elementa.markdown.selection.TextCursor
 
-class CodeBlockDrawable(config: MarkdownConfig) : Drawable(config) {
+class CodeBlockDrawable(md: MarkdownComponent) : Drawable(md) {
     override fun layoutImpl(x: Float, y: Float, width: Float): Layout {
         TODO("Not yet implemented")
     }

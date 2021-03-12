@@ -1,12 +1,16 @@
 package club.sk1er.elementa.markdown.drawables
 
 import club.sk1er.elementa.markdown.DrawState
+import club.sk1er.elementa.markdown.MarkdownComponent
 import club.sk1er.elementa.markdown.MarkdownConfig
 import club.sk1er.elementa.markdown.selection.TextCursor
 import kotlin.reflect.KMutableProperty0
 import kotlin.reflect.KProperty
 
-abstract class Drawable(val config: MarkdownConfig) {
+abstract class Drawable(val md: MarkdownComponent) {
+    val config: MarkdownConfig
+        get() = md.config
+
     // Cache the layout between draws, as calculating this is fairly
     // expensive.
     lateinit var layout: Layout
