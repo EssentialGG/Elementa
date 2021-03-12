@@ -4,7 +4,6 @@ import club.sk1er.elementa.components.UIBlock
 import club.sk1er.elementa.dsl.width
 import club.sk1er.elementa.markdown.DrawState
 import club.sk1er.elementa.markdown.MarkdownComponent
-import club.sk1er.elementa.markdown.MarkdownConfig
 import club.sk1er.elementa.markdown.selection.TextCursor
 import club.sk1er.elementa.utils.withAlpha
 import club.sk1er.mods.core.universal.UDesktop
@@ -62,8 +61,8 @@ class ParagraphDrawable(
         // These are used for centered text. When we render centered markdown,
         // we layout all of our text drawables as normal, and center them after.
         // These lists help keep track of which drawables are on their own lines.
-        val lines = mutableListOf<List<TextDrawable>>()
-        val currentLine = mutableListOf<TextDrawable>()
+        val lines = mutableListOf<List<Drawable>>()
+        val currentLine = mutableListOf<Drawable>()
 
         fun gotoNextLine() {
             currX = x
@@ -74,20 +73,23 @@ class ParagraphDrawable(
             trimNextText = true
         }
 
-        fun layout(text: TextDrawable, width: Float) {
-            val newWidth = if (trimNextText) {
+        fun layout(drawable: Drawable, width: Float, inline: Boolean = true) {
+            val newWidth = if (trimNextText && drawable is TextDrawable) {
                 // We don't want spaces at the start of a drawable if it is the
                 // first drawable in the line.
-                text.ensureTrimmed()
-                text.width()
+                drawable.ensureTrimmed()
+                drawable.width()
             } else width
 
-            text.layout(currX, currY, newWidth)
+            drawable.layout(currX, currY, newWidth).also {
+                if (!inline)
+                    currY += it.height
+            }
             widthRemaining -= newWidth
             currX += newWidth
             trimNextText = false
-            currentLine.add(text)
-            newDrawables.add(text)
+            currentLine.add(drawable)
+            newDrawables.add(drawable)
         }
 
         for ((index, text) in drawables.withIndex()) {
@@ -126,6 +128,13 @@ class ParagraphDrawable(
 
             if (text is HardBreakDrawable) {
                 TODO("I don't think this should ever happen, but I'm not 100% sure")
+            }
+
+            if (text is ImageDrawable) {
+                gotoNextLine()
+                layout(text, width, inline = false)
+                gotoNextLine()
+                continue
             }
 
             if (text !is TextDrawable)
@@ -203,7 +212,9 @@ class ParagraphDrawable(
         if (centered) {
             // Offset each text component by half of the space at the end of each line
             for (line in lines) {
-                val totalWidth = line.sumByDouble { it.width().toDouble() }.toFloat()
+                val totalWidth = line.sumByDouble {
+                    (it as? TextDrawable)?.width()?.toDouble() ?: it.width.toDouble()
+                }.toFloat()
                 val shift = (width - totalWidth) / 2f
                 for (text in line) {
                     text.x += shift
@@ -232,7 +243,7 @@ class ParagraphDrawable(
 
     override fun draw(state: DrawState) {
         textDrawables.forEach { it.beforeDraw(state) }
-        textDrawables.forEach { it.draw(state) }
+        drawables.forEach { it.draw(state) }
 
         // TODO: Remove
         if (MarkdownComponent.DEBUG) {

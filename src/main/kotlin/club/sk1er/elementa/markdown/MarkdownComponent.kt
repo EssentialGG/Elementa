@@ -113,7 +113,7 @@ class MarkdownComponent @JvmOverloads constructor(
      *
      * @see Drawable.layout
      */
-    private fun layout() {
+    fun layout() {
         baseX = getLeft()
         baseY = getTop()
         var currY = baseY

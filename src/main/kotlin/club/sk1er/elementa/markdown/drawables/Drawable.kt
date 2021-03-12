@@ -16,11 +16,21 @@ abstract class Drawable(val md: MarkdownComponent) {
     lateinit var layout: Layout
 
     // Layout helpers
-    var x by lazy { layout::x }
-    var y by lazy { layout::y }
-    var width by lazy { layout::width }
-    var height by lazy { layout::height }
-    var margin by lazy { layout::margin }
+    var x: Float
+        get() = layout.x
+        set(value) { layout.x = value }
+    var y: Float
+        get() = layout.y
+        set(value) { layout.y = value }
+    var width
+        get() = layout.width
+        set(value) { layout.width = value }
+    var height
+        get() = layout.height
+        set(value) { layout.height = value }
+    var margin
+        get() = layout.margin
+        set(value) { layout.margin = value }
 
     // Used to disable top and bottom padding in some elements
     var insertSpaceBefore = true

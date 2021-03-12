@@ -144,8 +144,11 @@ class MarkdownRenderer(private val text: String, private val md: MarkdownCompone
         drawables.add(TextDrawable(md, htmlInline.literal, style.toTextStyle()))
     }
 
-    override fun visit(image: Image?) {
-        TODO("Not yet implemented")
+    override fun visit(image: Image) {
+        mark()
+        super.visit(image)
+        val fallback = unmarkAndCollect()
+        drawables.add(ImageDrawable(md, URL(image.destination), fallback))
     }
 
     override fun visit(indentedCodeBlock: IndentedCodeBlock) {
