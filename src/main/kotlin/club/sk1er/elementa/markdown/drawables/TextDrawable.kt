@@ -58,6 +58,8 @@ class TextDrawable(
     fun split(maxWidth: Float, breakWords: Boolean = false): Pair<TextDrawable, TextDrawable>? {
         val styleChars = style.numFormattingChars
         val plainText = plainText()
+        if (plainText.length <= 1)
+            return null
 
         var splitPoint = formattedText.indices.drop(styleChars).firstOrNull {
             formattedText.substring(0, it + 1).width(scaleModifier) > maxWidth
