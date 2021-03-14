@@ -823,6 +823,8 @@ abstract class UIComponent : Observable() {
             this.listener()
     }
 
+    fun hasFocus(): Boolean = Window.of(this).focusedComponent == this
+
     /**
      * Floating API
      */

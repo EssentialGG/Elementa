@@ -19,7 +19,8 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
     private var floatingComponents = mutableListOf<UIComponent>()
 
     var hoveredFloatingComponent: UIComponent? = null
-    private var focusedComponent: UIComponent? = null
+    var focusedComponent: UIComponent? = null
+        private set
     private var componentRequestingFocus: UIComponent? = null
 
     private var cancelDrawing = false

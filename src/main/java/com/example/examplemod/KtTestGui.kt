@@ -182,6 +182,11 @@ class KtTestGui : WindowScreen() {
             input2.grabWindowFocus()
         }
 
+        window.onMouseClick {
+            println(input2.hasFocus())
+            println(window.focusedComponent)
+        }
+
         // For testing constraint error resolution
 //        val firstBad = UIContainer().constrain {
 //            width = ChildBasedSizeConstraint()
