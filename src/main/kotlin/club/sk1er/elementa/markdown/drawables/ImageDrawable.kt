@@ -8,13 +8,23 @@ import club.sk1er.elementa.constraints.YConstraint
 import club.sk1er.elementa.constraints.resolution.ConstraintVisitor
 import club.sk1er.elementa.dsl.childOf
 import club.sk1er.elementa.dsl.pixels
+import club.sk1er.elementa.dsl.toConstraint
 import club.sk1er.elementa.markdown.DrawState
 import club.sk1er.elementa.markdown.MarkdownComponent
 import club.sk1er.elementa.markdown.selection.ImageCursor
+import java.awt.Color
 import java.net.URL
 
 class ImageDrawable(md: MarkdownComponent, val url: URL, private val fallback: Drawable) : Drawable(md) {
     var selected = false
+        set(value) {
+            field = value
+            if (value) {
+                image.setColor(Color(200, 200, 255, 255).toConstraint())
+            } else {
+                image.setColor(Color.WHITE.toConstraint())
+            }
+        }
 
     private lateinit var imageX: ShiftableMDPixelConstraint
     private lateinit var imageY: ShiftableMDPixelConstraint

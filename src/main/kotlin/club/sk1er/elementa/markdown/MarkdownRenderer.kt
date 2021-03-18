@@ -111,7 +111,9 @@ class MarkdownRenderer(private val text: String, private val md: MarkdownCompone
     }
 
     override fun visit(code: Code) {
-        TODO("Not yet implemented")
+        style.isCode = true
+        drawables.add(TextDrawable(md, code.literal, style.toTextStyle()))
+        style.isCode = false
     }
 
     override fun visit(fencedCodeBlock: FencedCodeBlock) {
@@ -196,9 +198,17 @@ class MarkdownRenderer(private val text: String, private val md: MarkdownCompone
         var isItalic: Boolean = false,
         var isStrikethrough: Boolean = false,
         var isUnderline: Boolean = false,
+        var isCode: Boolean = false,
         var linkLocation: String? = null
     ) {
-        fun toTextStyle() = TextDrawable.Style(isBold, isItalic, isStrikethrough, isUnderline, linkLocation)
+        fun toTextStyle() = TextDrawable.Style(
+            isBold,
+            isItalic,
+            isStrikethrough,
+            isUnderline,
+            isCode,
+            linkLocation
+        )
     }
 
     companion object {

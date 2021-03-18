@@ -1,6 +1,7 @@
 package club.sk1er.elementa.markdown.drawables
 
 import club.sk1er.elementa.components.UIBlock
+import club.sk1er.elementa.components.UIRoundedRectangle
 import club.sk1er.elementa.dsl.width
 import club.sk1er.elementa.markdown.DrawState
 import club.sk1er.elementa.markdown.MarkdownComponent
@@ -50,7 +51,11 @@ class TextDrawable(
             formattedText.substring(styleChars, formattedText.length).trimStart()
     }
 
-    fun width() = formattedText.width(scaleModifier)
+    fun width() = formattedText.width(scaleModifier) + if (style.isCode) {
+        config.inlineCodeConfig.let {
+            (it.outlineWidth + it.horizontalPadding) * 2f
+        }
+    } else 0f
 
     // Returns null if this drawable cannot be split in a way that doesn't
     // break a word. This means that the drawable should just be drawn on
@@ -100,7 +105,14 @@ class TextDrawable(
     }
 
     override fun layoutImpl(x: Float, y: Float, width: Float): Layout {
-        return Layout(x, y, width, 9f * scaleModifier)
+        return Layout(
+            x,
+            y,
+            width,
+            9f * scaleModifier + if (style.isCode) {
+                (config.inlineCodeConfig.let { it.verticalPadding + it.outlineWidth }) * 2f
+            } else 0f
+        )
     }
 
     fun beforeDraw(state: DrawState) {
@@ -154,13 +166,42 @@ class TextDrawable(
     override fun draw(state: DrawState) {
         val hovered = isHovered || (linkedTexts?.isHovered() ?: false)
 
+        if (style.isCode) {
+            val x1 = x + state.xShift
+            val y1 = y + state.yShift - 1f
+            val x2 = x1 + width
+            val y2 = y1 + height + config.inlineCodeConfig.verticalPadding * 2 - 1f
+            val outlineWidth = config.inlineCodeConfig.outlineWidth
+
+            UIRoundedRectangle.drawRoundedRectangle(
+                x1,
+                y1,
+                x2,
+                y2,
+                config.inlineCodeConfig.cornerRadius,
+                config.inlineCodeConfig.outlineColor
+            )
+
+            UIRoundedRectangle.drawRoundedRectangle(
+                x1 + outlineWidth,
+                y1 + outlineWidth,
+                x2 - outlineWidth,
+                y2 - outlineWidth,
+                config.inlineCodeConfig.cornerRadius,
+                config.inlineCodeConfig.backgroundColor
+            )
+        }
+
+        val xShift = state.xShift + if (style.isCode) config.inlineCodeConfig.horizontalPadding else 0f
+        val yShift = state.yShift + if (style.isCode) config.inlineCodeConfig.verticalPadding else 0f
+
         texts.forEach {
             UGraphics.scale(scaleModifier, scaleModifier, 1f)
             drawString(
                 config,
                 it.string,
-                (it.x + state.xShift) / scaleModifier,
-                (it.y + state.yShift) / scaleModifier,
+                (it.x + xShift) / scaleModifier,
+                (it.y + yShift) / scaleModifier,
                 it.selected,
                 style.linkLocation != null,
                 hovered
@@ -230,9 +271,12 @@ class TextDrawable(
         val isItalic: Boolean,
         val isStrikethrough: Boolean,
         val isUnderline: Boolean,
+        val isCode: Boolean,
         val linkLocation: String?
     ) {
         val formattingSymbols = buildString {
+            if (isCode)
+                return@buildString
             if (isBold)
                 append("§l")
             if (isItalic)
@@ -244,6 +288,8 @@ class TextDrawable(
         }
 
         val markdownSymbols = buildString {
+            if (isCode)
+                append("`")
             if (isBold)
                 append("**")
             if (isItalic)
@@ -262,6 +308,7 @@ class TextDrawable(
                 isItalic = false,
                 isStrikethrough = false,
                 isUnderline = false,
+                isCode = false,
                 linkLocation = null
             )
         }

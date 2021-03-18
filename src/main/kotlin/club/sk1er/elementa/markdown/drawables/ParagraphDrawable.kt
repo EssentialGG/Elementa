@@ -65,17 +65,26 @@ class ParagraphDrawable(
         // These lists help keep track of which drawables are on their own lines.
         val lines = mutableListOf<List<Drawable>>()
         val currentLine = mutableListOf<Drawable>()
+        var maxLineHeight = Float.MIN_VALUE
 
         fun gotoNextLine() {
             currX = x
-            currY += 9f * scaleModifier + config.paragraphConfig.spaceBetweenLines
+            currY += maxLineHeight * scaleModifier + config.paragraphConfig.spaceBetweenLines
+
+            if (maxLineHeight > 9f) {
+                for (drawable in currentLine)
+                    drawable.y += (maxLineHeight - drawable.height) / 2f
+            }
+
+            maxLineHeight = Float.MIN_VALUE
+
             widthRemaining = width
             lines.add(currentLine.toList())
             currentLine.clear()
             trimNextText = true
         }
 
-        fun layout(drawable: Drawable, width: Float, inline: Boolean = true) {
+        fun layout(drawable: Drawable, width: Float) {
             val newWidth = if (trimNextText && drawable is TextDrawable) {
                 // We don't want spaces at the start of a drawable if it is the
                 // first drawable in the line.
@@ -84,8 +93,8 @@ class ParagraphDrawable(
             } else width
 
             drawable.layout(currX, currY, newWidth).also {
-                if (!inline)
-                    currY += it.height
+                if (it.height > maxLineHeight)
+                    maxLineHeight = it.height
             }
             widthRemaining -= newWidth
             currX += newWidth
@@ -134,7 +143,7 @@ class ParagraphDrawable(
 
             if (text is ImageDrawable) {
                 gotoNextLine()
-                layout(text, width, inline = false)
+                layout(text, width)
                 gotoNextLine()
                 continue
             }
