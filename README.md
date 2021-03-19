@@ -12,7 +12,7 @@ instead you simply have to describe _what_ you want.
 ## Dependency
 
 In your repository block, add:
-```groovy
+```gradle
 maven {
     url = "https://repo.sk1er.club/repository/maven-public"
 }
@@ -20,7 +20,7 @@ maven {
 
 In your dependencies block, add:
 
-```groovy
+```gradle
 implementation "club.sk1er:Elementa:1.7.1-$mcVersion"
 ```
 
@@ -28,7 +28,7 @@ implementation "club.sk1er:Elementa:1.7.1-$mcVersion"
 
 To use the latest snapshot, use the following dependency:
 
-```groovy
+```gradle
 implementation "club.sk1er:Elementa:129-$mcVersion-SNAPSHOT"
 ```
 
