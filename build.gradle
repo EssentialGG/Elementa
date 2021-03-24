@@ -173,6 +173,7 @@ dependencies {
     implementation "org.commonmark:commonmark-ext-ins:0.17.1"
     implementation "org.dom4j:dom4j:2.1.1"
 
+    if(mcVersion < 11300)
     implementation ('org.slick2d:slick2d-core:1.0.2') {
         exclude module: 'lwjgl'
     }

@@ -1,5 +1,8 @@
 package club.sk1er.elementa.font
 
+//#if MC<11300
+
+
 import club.sk1er.mods.core.universal.UGraphics
 import club.sk1er.mods.core.universal.UResolution
 import net.minecraft.client.Minecraft
@@ -196,3 +199,4 @@ class FontRenderer private constructor(private val fontSize: Float) {
         )
     }
 }
+//#endif
