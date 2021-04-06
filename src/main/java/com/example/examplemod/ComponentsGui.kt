@@ -293,6 +293,15 @@ class ComponentsGui : WindowScreen() {
             } childOf this
         } childOf window
 
+        ComponentType("Gradient") {
+            GradientComponent(Color.BLACK, Color.PINK).constrain {
+                x = 2.pixels()
+                y = SiblingConstraint() + 5.pixels()
+                width = 50.pixels()
+                height = 50.pixels()
+            } childOf this
+        } childOf window
+
         Inspector(window).constrain {
             x = 10.pixels(true)
             y = 10.pixels(true)

@@ -15,6 +15,7 @@ What the entire playground GUI looks like:
 - [UIText](#uitext)
 - [UIWrappedText](#uiwrappedtext)
 - [UIRoundedRectangle](#uiroundedrectangle)
+- [GradientComponent](#gradient) 
 - [UICircle](#uicircle)
 - [UIShape](#uishape)
 - [UIImage](#uiimage)
@@ -190,6 +191,23 @@ UIRoundedRectangle(10f).constrain {
 ```
 
 ![UIRoundedRectangle Example](https://i.imgur.com/FL5R68P.png)
+
+### Gradient
+[GradientComponent](../src/main/kotlin/club/sk1er/elementa/components/GradientComponent.kt)s are another alternative 
+to `UIBlock` components that take two colours instead of one and will fade from one to the other in a 
+[gradient](https://en.wikipedia.org/wiki/Gradient) style. Additionally, the component can optionally 
+take a fade direction.
+
+```kotlin
+GradientComponent(Color.ORANGE, Color.BLACK).constrain {
+    x = 2.pixels()
+    y = SiblingConstraint() + 5.pixels()
+    width = 50.pixels()
+    height = 50.pixels()
+} childOf this
+```
+
+![GradientComponent Example](https://i.imgur.com/XeuO5MZ.png)
 
 ### UICircle
 

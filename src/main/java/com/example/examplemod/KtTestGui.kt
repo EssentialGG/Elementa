@@ -309,6 +309,13 @@ class KtTestGui : WindowScreen() {
             x = 100.pixels(alignOpposite = true)
             y = 100.pixels(alignOpposite = true)
         } childOf window
+
+        GradientComponent(Color.BLACK, Color.PINK, GradientComponent.GradientDirection.RIGHT_TO_LEFT).constrain {
+            x = CenterConstraint()
+            y = CenterConstraint()
+            height = 300.pixels()
+            width = 300.pixels()
+        } childOf window
     }
 
     private fun animImgSmall(img: UIImage) {
