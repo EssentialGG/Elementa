@@ -49,7 +49,15 @@ open class GradientComponent @JvmOverloads constructor(
         val y2 = this.getBottom().toDouble()
 
         UGraphics.pushMatrix()
-        drawGradientBlock(x.toInt(), y.toInt(), x2.toInt(), y2.toInt(), Color.BLACK, Color.PINK, directionState.get())
+        drawGradientBlock(
+            x.toInt(),
+            y.toInt(),
+            x2.toInt(),
+            y2.toInt(),
+            startColorState.get(),
+            endColorState.get(),
+            directionState.get()
+        )
         UGraphics.popMatrix()
 
         super.draw()

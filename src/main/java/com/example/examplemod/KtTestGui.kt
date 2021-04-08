@@ -310,7 +310,7 @@ class KtTestGui : WindowScreen() {
             y = 100.pixels(alignOpposite = true)
         } childOf window
 
-        GradientComponent(Color.BLACK, Color.PINK, GradientComponent.GradientDirection.RIGHT_TO_LEFT).constrain {
+        GradientComponent(Color.BLACK, Color.PINK).constrain {
             x = CenterConstraint()
             y = CenterConstraint()
             height = 300.pixels()
