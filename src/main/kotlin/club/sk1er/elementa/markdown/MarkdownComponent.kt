@@ -9,7 +9,7 @@ import club.sk1er.elementa.constraints.FillConstraint
 import club.sk1er.elementa.constraints.RelativeConstraint
 import club.sk1er.elementa.dsl.*
 import club.sk1er.elementa.effects.ScissorEffect
-import club.sk1er.elementa.font.DefaultFonts
+import club.sk1er.elementa.font.ElementaFonts
 import club.sk1er.elementa.font.FontRenderer
 import java.awt.Color
 import java.util.concurrent.CompletableFuture
@@ -25,7 +25,7 @@ import java.util.concurrent.CompletableFuture
 class MarkdownComponent @JvmOverloads constructor(
     text: String,
     private val config: MarkdownConfig = MarkdownConfig(),
-    private val codeFontRenderer: FontRenderer = DefaultFonts.JETBRAINS_MONO,
+    private val codeFontRenderer: FontRenderer = ElementaFonts.JETBRAINS_MONO,
     private val codeFontPointSize: Float = 10f
 ) : UIComponent() {
     private val documentFuture = CompletableFuture.supplyAsync {

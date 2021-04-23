@@ -2,9 +2,8 @@ package club.sk1er.elementa.components
 
 import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.dsl.basicHeightConstraint
-import club.sk1er.elementa.dsl.pixels
 import club.sk1er.elementa.dsl.width
-import club.sk1er.elementa.font.DefaultFonts
+import club.sk1er.elementa.font.ElementaFonts
 import club.sk1er.elementa.font.FontRenderer
 import club.sk1er.elementa.state.BasicState
 import club.sk1er.elementa.state.State
@@ -28,7 +27,7 @@ open class UIWrappedText @JvmOverloads constructor(
      * inserting an ellipsis ("...") if text is trimmed
      */
     private val trimText: Boolean = false,
-    private val fontRenderer: FontRenderer = DefaultFonts.MINECRAFT
+    private val fontRenderer: FontRenderer = ElementaFonts.MINECRAFT
 ) : UIComponent() {
     private var textState: State<String> = BasicState(text)
     private var shadowState: State<Boolean> = BasicState(shadow)

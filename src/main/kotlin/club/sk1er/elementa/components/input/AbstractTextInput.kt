@@ -6,10 +6,9 @@ import club.sk1er.elementa.constraints.CenterConstraint
 import club.sk1er.elementa.constraints.animation.Animations
 import club.sk1er.elementa.dsl.*
 import club.sk1er.elementa.effects.ScissorEffect
-import club.sk1er.elementa.font.DefaultFonts
+import club.sk1er.elementa.font.ElementaFonts
 import club.sk1er.elementa.font.FontRenderer
 import club.sk1er.elementa.utils.getStringSplitToWidth
-import club.sk1er.mods.core.universal.UGraphics
 import club.sk1er.mods.core.universal.UKeyboard
 import java.awt.Color
 import java.awt.Toolkit
@@ -26,7 +25,7 @@ abstract class AbstractTextInput(
     protected val allowInactiveSelection: Boolean,
     protected val inactiveSelectionBackgroundColor: Color,
     protected val inactiveSelectionForegroundColor: Color,
-    protected val fontRenderer: FontRenderer = DefaultFonts.MINECRAFT
+    protected val fontRenderer: FontRenderer = ElementaFonts.MINECRAFT
 ) : UIComponent() {
     protected var active = false
 

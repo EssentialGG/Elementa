@@ -4,13 +4,10 @@ import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.constraints.resolution.ConstraintResolutionGui
 import club.sk1er.elementa.constraints.resolution.ConstraintResolver
 import club.sk1er.elementa.effects.ScissorEffect
-import club.sk1er.elementa.font.DefaultFonts
 import club.sk1er.elementa.font.FontRenderer
 import club.sk1er.mods.core.universal.*
 import org.lwjgl.opengl.GL11
-import java.awt.Color
 import java.util.concurrent.ConcurrentLinkedQueue
-import kotlin.random.Random
 
 /**
  * "Root" component. All components MUST have a Window in their hierarchy in order to do any rendering

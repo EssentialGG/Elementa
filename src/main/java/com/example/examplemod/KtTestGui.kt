@@ -11,7 +11,7 @@ import club.sk1er.elementa.constraints.animation.Animations
 import club.sk1er.elementa.dsl.*
 import club.sk1er.elementa.effects.OutlineEffect
 import club.sk1er.elementa.effects.ScissorEffect
-import club.sk1er.elementa.font.DefaultFonts
+import club.sk1er.elementa.font.ElementaFonts
 import club.sk1er.elementa.state.BasicState
 import club.sk1er.elementa.state.pixels
 import java.awt.Color
@@ -311,16 +311,26 @@ class KtTestGui : WindowScreen() {
     override fun onDrawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
         super.onDrawScreen(mouseX, mouseY, partialTicks)
 
-        UIBlock.drawBlock(Color.BLACK, 10.0, 10.0, 500.0, 600.0)
+        UIBlock.drawBlock(Color.GRAY, 10.0, 10.0, 500.0, 600.0)
 
         val random = Random(1)
 
         var y = 0
-        for (i in 4..20) {
-            (if (i % 2 == 0) DefaultFonts.JETBRAINS_MONO else DefaultFonts.MINECRAFT)
-                .drawString("This \u00a7cis \u00a7aa \u00a7kTEST \u00a7rString!",
-                    Color.BLUE, 20.0f, 10.0f + y, i.toFloat() + random.nextFloat())
-            y += i + 1
+        for (i in 8..40) {
+            if (i % 2 == 0)
+                ElementaFonts.MINECRAFT
+                    .drawString(
+                        "This is a TEST String! ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
+                        Color(16777215), 20.0f, 10.0f + y, i.toFloat()/2
+                    )
+            else
+                ElementaFonts.MINECRAFT
+                    .drawString(
+                        "§lThis is a TEST String! ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
+                        Color(16777215), 20.0f, 10.0f + y, i.toFloat()/2
+                    )
+
+            y += i/2 + 1
         }
     }
 

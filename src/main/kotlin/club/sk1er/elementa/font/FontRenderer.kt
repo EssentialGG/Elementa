@@ -1,6 +1,5 @@
 package club.sk1er.elementa.font
 
-import club.sk1er.elementa.components.UIBlock
 import club.sk1er.elementa.font.data.Font
 import club.sk1er.elementa.font.data.Glyph
 import club.sk1er.elementa.shaders.*
@@ -15,7 +14,7 @@ import java.awt.Color
 import kotlin.math.ceil
 import kotlin.math.floor
 
-class FontRenderer(private val font: Font) {
+class FontRenderer(private val regularFont: Font, private val boldFont: Font = regularFont) : FontProvider {
     private var underline: Boolean = false
     private var strikethrough: Boolean = false
     private var bold: Boolean = false
@@ -23,11 +22,14 @@ class FontRenderer(private val font: Font) {
     private var obfuscated: Boolean = false
     private var textColor: Color? = null
     private var shadowColor: Color? = null
+    private var drawingShadow = false
+    private var activeFont: Font = regularFont
 
-    fun getStringWidth(string: String, pointSize: Float): Float {
+    override fun getStringWidth(string: String, pointSize: Float): Float {
         var width = 0f
+        // TODO: 4/20/2021 account for bold
         string.forEach { char ->
-            val glyph = font.fontInfo.glyphs[char.toInt()] ?: return@forEach
+            val glyph = activeFont.fontInfo.glyphs[char.toInt()] ?: return@forEach
 
             width += (glyph.advance * pointSize)
         }
@@ -36,8 +38,9 @@ class FontRenderer(private val font: Font) {
 
     fun getStringHeight(string: String, pointSize: Float): Float {
         var maxHeight = 0f
+        // TODO: 4/23/2021 account for bold
         string.forEach { char ->
-            val glyph = font.fontInfo.glyphs[char.toInt()] ?: return@forEach
+            val glyph = regularFont.fontInfo.glyphs[char.toInt()] ?: return@forEach
             val planeBounds = glyph.planeBounds ?: return@forEach
 
             val height = (planeBounds.top - planeBounds.bottom) * pointSize
@@ -48,44 +51,84 @@ class FontRenderer(private val font: Font) {
     }
 
     fun getLineHeight(pointSize: Float): Float {
-        return font.fontInfo.metrics.lineHeight * pointSize
+        return activeFont.fontInfo.metrics.lineHeight * pointSize
     }
 
-    @JvmOverloads
-    fun drawString(string: String, color: Color, x: Float, y: Float, pointSize: Float, shadow: Boolean = true) {
+    /**
+     * Changes font context. Use 1 for regular and 2 for bold
+     */
+    private fun switchFont(type: Int) {
+        val tmp = activeFont
+        when (type) {
+            1 -> {
+                activeFont = regularFont
+            }
+            2 -> {
+                activeFont = boldFont
+            }
+        }
+
+        if (activeFont != tmp) { //Font context switch
+            GL13.glActiveTexture(GL13.GL_TEXTURE0)
+
+            UGraphics.bindTexture(activeFont.getTexture().glTextureId)
+            GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR)
+            GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR)
+            sdfTexel.setValue(Vector2f(1f / activeFont.fontInfo.atlas.width, 1f / activeFont.fontInfo.atlas.height))
+        }
+    }
+
+    override fun drawString(
+        string: String,
+        color: Color,
+        x: Float,
+        y: Float,
+        originalPointSize: Float,
+        shadow: Boolean,
+        shadowColor: Color?
+    ) {
+        if (shadow) {
+            drawingShadow = true
+            var effectiveShadow: Color? = shadowColor
+            if (effectiveShadow == null) {
+                effectiveShadow = Color.BLUE.darker().darker()
+            }
+            val shadowOffset = originalPointSize / 10
+            UGraphics.translate(shadowOffset, shadowOffset, 0f)
+            drawStringNow(string, effectiveShadow!!, x, y, originalPointSize)
+            UGraphics.translate(-shadowOffset, -shadowOffset, 0f)
+        }
+        drawingShadow = false
+        drawStringNow(string, color, x, y, originalPointSize)
+    }
+
+
+    private fun drawStringNow(string: String, color: Color, x: Float, y: Float, originalPointSize: Float) {
         if (!areShadersInitialized())
             return
 
-        val fontTexture = font.getTexture()
+        var currentPointSize = originalPointSize
 
-        GL13.glActiveTexture(GL13.GL_TEXTURE0)
-        UGraphics.bindTexture(fontTexture.glTextureId)
-        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR)
-        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR)
         UGraphics.enableBlend()
 
         shader.bindIfUsable()
+        switchFont(1)
         samplerUniform.setValue(0)
         //shadowColorUniform.setValue(Vector4f(0.1f, 0.1f, 0.1f, 1f))
-        sdfTexel.setValue(Vector2f(1f / font.fontInfo.atlas.width, 1f / font.fontInfo.atlas.height))
+
+        doffsetUniform.setValue(3.5f / currentPointSize)
 
         hintAmountUniform.setValue(1f)
         subpixelAmountUniform.setValue(1f)
 
         val guiScale = UMinecraft.getMinecraft().gameSettings.guiScale
 
-        val metrics = font.fontInfo.metrics
-        val baseline = y + ((metrics.lineHeight + metrics.descender) * pointSize)
-
-        doffsetUniform.setValue(3.5f / pointSize)
-
-        val hintedBaseline = floor(baseline * guiScale) / guiScale
 
         var currentX = x
         var i = 0
         while (i < string.length) {
-        //for (i in string.indices) {
-        //string.forEach { char ->
+            //for (i in string.indices) {
+            //string.forEach { char ->
             val char = string[i]
 
             // parse formatting codes
@@ -93,6 +136,7 @@ class FontRenderer(private val font: Font) {
                 val j = "0123456789abcdefklmnor".indexOf(string[i + 1])
                 when {
                     j < 16 -> {
+                        switchFont(1)
                         obfuscated = false
                         bold = false
                         italics = false
@@ -105,13 +149,24 @@ class FontRenderer(private val font: Font) {
                             textColor = colors[j]
                             shadowColor = colors[j + 16]
                         }
+                        currentPointSize = originalPointSize
+                        doffsetUniform.setValue(3.5f / currentPointSize)
+
                     }
                     j == 16 -> obfuscated = true
-                    j == 17 -> bold = true
+                    j == 17 -> {
+                        switchFont(2)
+                        currentPointSize = originalPointSize * 1.075f //Adjust bold being smaller
+                        doffsetUniform.setValue(3.5f / currentPointSize)
+                        bold = true
+                    }
                     j == 18 -> strikethrough = true
                     j == 19 -> underline = true
                     j == 20 -> italics = true
                     else -> {
+                        currentPointSize = originalPointSize
+                        switchFont(1)
+                        doffsetUniform.setValue(3.5f / currentPointSize)
                         obfuscated = false
                         bold = false
                         italics = false
@@ -125,9 +180,11 @@ class FontRenderer(private val font: Font) {
                 continue
             }
 
-            val c = if (obfuscated && char != ' ') "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".random() else char
+            // TODO: 4/19/2021 make this account for width
+            val c =
+                if (obfuscated && char != ' ') "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".random() else char
 
-            val glyph = font.fontInfo.glyphs[c.toInt()]
+            val glyph = activeFont.fontInfo.glyphs[c.toInt()]
             if (glyph == null) {
                 i++
                 continue
@@ -135,11 +192,16 @@ class FontRenderer(private val font: Font) {
             val planeBounds = glyph.planeBounds
 
             if (planeBounds != null) {
-                val width = (planeBounds.right - planeBounds.left) * pointSize
-                val height = (planeBounds.top - planeBounds.bottom) * pointSize
+                val metrics = activeFont.fontInfo.metrics
+                val baseline = y + ((metrics.lineHeight + metrics.descender) * currentPointSize)
+
+                val hintedBaseline = floor(baseline * guiScale) / guiScale
+
+                val width = (planeBounds.right - planeBounds.left) * currentPointSize
+                val height = (planeBounds.top - planeBounds.bottom) * currentPointSize
 
                 val hintedHeight = ceil(height * guiScale) / guiScale
-                val hintedY = hintedBaseline - ceil(planeBounds.top * pointSize * guiScale) / guiScale
+                val hintedY = hintedBaseline - ceil(planeBounds.top * currentPointSize * guiScale) / guiScale
 
                 drawGlyph(
                     glyph,
@@ -151,24 +213,32 @@ class FontRenderer(private val font: Font) {
                 )
             }
 
-            currentX += (glyph.advance * pointSize)
+            currentX += (glyph.advance * currentPointSize)
             i++
         }
 
         shader.unbindIfUsable()
+        activeFont = boldFont
     }
+
 
     private fun drawGlyph(glyph: Glyph, color: Color, x: Float, y: Float, width: Float, height: Float) {
         val atlasBounds = glyph.atlasBounds ?: return
-        val atlas = font.fontInfo.atlas
+        val atlas = activeFont.fontInfo.atlas
         val textureTop = 1.0 - (atlasBounds.top / atlas.height)
         val textureBottom = 1.0 - (atlasBounds.bottom / atlas.height)
         val textureLeft = (atlasBounds.left / atlas.width).toDouble()
         val textureRight = (atlasBounds.right / atlas.width).toDouble()
 
-        val drawColor = textColor ?: color
-        fgColorUniform.setValue(Vector4f(drawColor.red / 255f, drawColor.green / 255f, drawColor.blue / 255f, drawColor.alpha / 255f))
-
+        val drawColor = if (drawingShadow) (shadowColor ?: color) else (textColor ?: color)
+        fgColorUniform.setValue(
+            Vector4f(
+                drawColor.red / 255f,
+                drawColor.green / 255f,
+                drawColor.blue / 255f,
+                drawColor.alpha / 255f
+            )
+        )
         val worldRenderer = UGraphics.getFromTessellator()
         worldRenderer.begin(7, DefaultVertexFormats.POSITION_TEX)
         val doubleX = x.toDouble()
@@ -179,19 +249,15 @@ class FontRenderer(private val font: Font) {
         worldRenderer.pos(doubleX, doubleY, 0.0).tex(textureLeft, textureTop).endVertex()
         UGraphics.draw()
 
-        // TODO: all of these
-        if (strikethrough) {
-            TODO()
-        }
-        if (underline) {
-            TODO()
-        }
-        if (bold) {
-            TODO()
-        }
-        if (italics) {
-            TODO()
-        }
+//        if (underline) {
+//            TODO()
+//        }
+//        if (bold) {
+//            TODO()
+//        }
+//        if (italics) {
+//            TODO()
+//        }
     }
 
     companion object {
@@ -201,7 +267,7 @@ class FontRenderer(private val font: Font) {
             1 to Color(0, 0, 170),
             2 to Color(0, 170, 0),
             3 to Color(0, 170, 170),
-            4 to Color(170, 0 ,0),
+            4 to Color(170, 0, 0),
             5 to Color(170, 0, 170),
             6 to Color(255, 170, 0),
             7 to Color(170, 170, 170),

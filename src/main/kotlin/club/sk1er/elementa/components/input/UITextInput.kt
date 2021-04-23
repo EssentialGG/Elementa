@@ -4,9 +4,8 @@ import club.sk1er.elementa.constraints.WidthConstraint
 import club.sk1er.elementa.dsl.coerceIn
 import club.sk1er.elementa.dsl.pixels
 import club.sk1er.elementa.dsl.width
-import club.sk1er.elementa.font.DefaultFonts
+import club.sk1er.elementa.font.ElementaFonts
 import club.sk1er.elementa.font.FontRenderer
-import club.sk1er.mods.core.universal.UGraphics
 import java.awt.Color
 
 open class UITextInput @JvmOverloads constructor(
@@ -17,7 +16,7 @@ open class UITextInput @JvmOverloads constructor(
     allowInactiveSelection: Boolean = false,
     inactiveSelectionBackgroundColor: Color = Color(176, 176, 176),
     inactiveSelectionForegroundColor: Color = Color.WHITE,
-    fontRenderer: FontRenderer = DefaultFonts.MINECRAFT
+    fontRenderer: FontRenderer = ElementaFonts.MINECRAFT
 ) : AbstractTextInput(
     placeholder,
     shadow,

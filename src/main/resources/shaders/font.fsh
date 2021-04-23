@@ -50,7 +50,7 @@ void main() {
     float vgrad = abs( grad.y ); // 0.0 - vertical stroke, 1.0 - horizontal one
 
     float horz_scale  = 1.1; // Blurring vertical strokes along the X axis a bit
-    float vert_scale  = 0.6; // While adding some contrast to the horizontal strokes
+    float vert_scale  = 0.8; // While adding some contrast to the horizontal strokes
     float hdoffset    = mix( doffset * horz_scale, doffset * vert_scale, vgrad );
     float res_doffset = mix( doffset, hdoffset, hint_amount );
 
