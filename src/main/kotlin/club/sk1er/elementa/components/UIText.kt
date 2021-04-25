@@ -2,8 +2,6 @@ package club.sk1er.elementa.components
 
 import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.dsl.pixels
-import club.sk1er.elementa.font.ElementaFonts
-import club.sk1er.elementa.font.FontRenderer
 import club.sk1er.elementa.state.BasicState
 import club.sk1er.elementa.state.State
 import club.sk1er.elementa.state.pixels
@@ -17,8 +15,7 @@ import java.awt.Color
 open class UIText @JvmOverloads constructor(
     text: String = "",
     shadow: Boolean = true,
-    shadowColor: Color? = null,
-    private val fontRenderer: FontRenderer = ElementaFonts.MINECRAFT
+    shadowColor: Color? = null
 ) : UIComponent() {
     private var textState: State<String> = BasicState(text)
     private var shadowState: State<Boolean> = BasicState(shadow)
@@ -82,8 +79,9 @@ open class UIText @JvmOverloads constructor(
         UGraphics.enableBlend()
 
         UGraphics.scale(width.toDouble(), height.toDouble(), 1.0)
-        // TODO: Shadow color
-        fontRenderer.drawString(textState.get(), color, x / width, y / height, height * 10f, shadow = false)
+        val shadow = shadowState.get()
+        val shadowColor = shadowColorState.get()
+        getFontProvider().drawString(textState.get(), color, x / width, y / height, 10f, shadow, shadowColor)
         UGraphics.scale(1 / width.toDouble(), 1 / height.toDouble(), 1.0)
 
         super.draw()

@@ -1,8 +1,9 @@
 package club.sk1er.elementa.font
 
+import club.sk1er.elementa.constraints.SuperConstraint
 import java.awt.Color
 
-interface FontProvider {
+interface FontProvider: SuperConstraint<FontProvider> {
 
     fun getStringWidth(string: String, pointSize: Float): Float
 

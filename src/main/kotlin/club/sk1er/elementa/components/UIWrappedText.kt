@@ -3,8 +3,6 @@ package club.sk1er.elementa.components
 import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.dsl.basicHeightConstraint
 import club.sk1er.elementa.dsl.width
-import club.sk1er.elementa.font.ElementaFonts
-import club.sk1er.elementa.font.FontRenderer
 import club.sk1er.elementa.state.BasicState
 import club.sk1er.elementa.state.State
 import club.sk1er.elementa.state.pixels
@@ -26,8 +24,7 @@ open class UIWrappedText @JvmOverloads constructor(
      * Keeps the rendered text without the bounds of the component,
      * inserting an ellipsis ("...") if text is trimmed
      */
-    private val trimText: Boolean = false,
-    private val fontRenderer: FontRenderer = ElementaFonts.MINECRAFT
+    private val trimText: Boolean = false
 ) : UIComponent() {
     private var textState: State<String> = BasicState(text)
     private var shadowState: State<Boolean> = BasicState(shadow)
@@ -39,7 +36,13 @@ open class UIWrappedText @JvmOverloads constructor(
     init {
         setWidth(textWidthState.pixels())
         setHeight(basicHeightConstraint {
-            val lines = getStringSplitToWidth(text, getWidth(), getTextScale(), ensureSpaceAtEndOfLines = false)
+            val lines = getStringSplitToWidth(
+                text,
+                getWidth(),
+                getTextScale(),
+                ensureSpaceAtEndOfLines = false,
+                fontProvider = super.getFontProvider()
+            )
 
             lines.size * 9f * getTextScale()
         })
@@ -99,8 +102,21 @@ open class UIWrappedText @JvmOverloads constructor(
         UGraphics.translate(x.toDouble(), y.toDouble(), 0.0)
 
         val lines = if (trimText) {
-            getStringSplitToWidthTruncated(textState.get(), width, textScale, (getHeight() / 9f / textScale).toInt(), ensureSpaceAtEndOfLines = false)
-        } else getStringSplitToWidth(textState.get(), width, textScale, ensureSpaceAtEndOfLines = false)
+            getStringSplitToWidthTruncated(
+                textState.get(),
+                width,
+                textScale,
+                (getHeight() / 9f / textScale).toInt(),
+                ensureSpaceAtEndOfLines = false,
+                fontProvider = getFontProvider()
+            )
+        } else getStringSplitToWidth(
+            textState.get(),
+            width,
+            textScale,
+            ensureSpaceAtEndOfLines = false,
+            fontProvider = getFontProvider()
+        )
 
         val shadow = shadowState.get()
         val shadowColor = shadowColorState.get()
@@ -110,8 +126,11 @@ open class UIWrappedText @JvmOverloads constructor(
                 (scaledWidth - line.width(textScale)) / 2f
             } else 0f
 
-            // TODO: Shadow color
-            fontRenderer.drawString(line, color, xOffset, i * 9f, getHeight(), shadow = false)
+            if (shadow) {
+                getFontProvider().drawString(line, color, xOffset, i * 9f, 10f, true, shadowColor)
+            } else {
+                getFontProvider().drawString(line, color, xOffset, i * 9f, 10f, shadow = false)
+            }
         }
 
         UGraphics.translate(-x.toDouble(), -y.toDouble(), 0.0)

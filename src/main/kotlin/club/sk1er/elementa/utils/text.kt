@@ -1,6 +1,8 @@
 package club.sk1er.elementa.utils
 
 import club.sk1er.elementa.dsl.width
+import club.sk1er.elementa.font.DefaultFonts
+import club.sk1er.elementa.font.FontProvider
 import club.sk1er.mods.core.universal.ChatColor
 import club.sk1er.mods.core.universal.UGraphics
 
@@ -10,18 +12,19 @@ fun getStringSplitToWidthTruncated(
     textScale: Float,
     maxLines: Int,
     ensureSpaceAtEndOfLines: Boolean = true,
-    processColorCodes: Boolean = true
+    processColorCodes: Boolean = true,
+    fontProvider: FontProvider = DefaultFonts.vanillaFontRenderer
 ): List<String> {
-    val lines = getStringSplitToWidth(text, maxLineWidth, textScale, ensureSpaceAtEndOfLines, processColorCodes)
+    val lines = getStringSplitToWidth(text, maxLineWidth, textScale, ensureSpaceAtEndOfLines, processColorCodes,fontProvider)
     if (lines.size <= maxLines)
         return lines
 
-    val ellipsisWidth = "...".width(textScale)
+    val ellipsisWidth = "...".width(textScale,fontProvider)
 
     return lines.subList(0, maxLines).mapIndexed { index, contents ->
         if (index == maxLines - 1) {
             var length = contents.lastIndex
-            while (contents.substring(0, length).width(textScale) + ellipsisWidth > maxLineWidth * textScale)
+            while (contents.substring(0, length).width(textScale,fontProvider) + ellipsisWidth > maxLineWidth * textScale)
                 length--
             contents.substring(0, length) + "..."
         } else contents
@@ -33,7 +36,8 @@ fun getStringSplitToWidth(
     maxLineWidth: Float,
     textScale: Float,
     ensureSpaceAtEndOfLines: Boolean = true,
-    processColorCodes: Boolean = true
+    processColorCodes: Boolean = true,
+    fontProvider: FontProvider = DefaultFonts.vanillaFontRenderer
 ): List<String> {
     val spaceWidth = ' '.width(textScale)
     val maxLineWidthSpace = maxLineWidth - if (ensureSpaceAtEndOfLines) spaceWidth else 0f
@@ -83,7 +87,7 @@ fun getStringSplitToWidth(
 
         val newline = textPos < text.length && text[textPos] == '\n'
         val word = builder.toString()
-        val wordWidth = word.width(textScale)
+        val wordWidth = word.width(textScale,fontProvider)
 
         if (processColorCodes && newline) {
             currChatColor = null

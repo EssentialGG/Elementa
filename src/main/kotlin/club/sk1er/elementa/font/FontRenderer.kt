@@ -1,5 +1,8 @@
 package club.sk1er.elementa.font
 
+import club.sk1er.elementa.UIComponent
+import club.sk1er.elementa.constraints.ConstraintType
+import club.sk1er.elementa.constraints.resolution.ConstraintVisitor
 import club.sk1er.elementa.font.data.Font
 import club.sk1er.elementa.font.data.Glyph
 import club.sk1er.elementa.shaders.*
@@ -13,8 +16,11 @@ import org.lwjgl.opengl.GL13
 import java.awt.Color
 import kotlin.math.ceil
 import kotlin.math.floor
+import kotlin.math.max
 
-class FontRenderer(private val regularFont: Font, private val boldFont: Font = regularFont) : FontProvider {
+class FontRenderer(
+    private val regularFont: Font, private val boldFont: Font = regularFont
+) : FontProvider {
     private var underline: Boolean = false
     private var strikethrough: Boolean = false
     private var bold: Boolean = false
@@ -24,30 +30,57 @@ class FontRenderer(private val regularFont: Font, private val boldFont: Font = r
     private var shadowColor: Color? = null
     private var drawingShadow = false
     private var activeFont: Font = regularFont
+    override var cachedValue: FontProvider = this
+    override var recalculate: Boolean = false
+    override var constrainTo: UIComponent? = null
 
     override fun getStringWidth(string: String, pointSize: Float): Float {
-        var width = 0f
-        // TODO: 4/20/2021 account for bold
-        string.forEach { char ->
-            val glyph = activeFont.fontInfo.glyphs[char.toInt()] ?: return@forEach
+        return getStringInformation(string, pointSize).first
+    }
 
-            width += (glyph.advance * pointSize)
+    private fun getStringInformation(string: String, pointSize: Float): Pair<Float, Float> {
+        var width = 0f
+        var height = 0f
+        var currentPointSize = pointSize
+
+        var i = 0
+        while (i < string.length) {
+            val char = string[i]
+
+            // parse formatting codes
+            if (char == '\u00a7' && i + 1 < string.length) {
+                val j = ("0123456789abcdefklm" +
+                    "nor").indexOf(string[i + 1])
+                if (j == 17) {
+                    currentPointSize = pointSize * 1.075f //Adjust bold being smaller
+                    activeFont = boldFont
+                } else {
+                    currentPointSize = pointSize
+                    activeFont = regularFont
+                }
+                i += 2
+                continue
+            }
+
+            val glyph = activeFont.fontInfo.glyphs[char.toInt()]
+            if (glyph == null) {
+                i++
+                continue
+            }
+            val planeBounds = glyph.planeBounds
+
+            if (planeBounds != null) {
+                height = max((planeBounds.top - planeBounds.bottom) * currentPointSize, height)
+            }
+
+            width += (glyph.advance * currentPointSize)
+            i++
         }
-        return width
+        return Pair(width, height)
     }
 
     fun getStringHeight(string: String, pointSize: Float): Float {
-        var maxHeight = 0f
-        // TODO: 4/23/2021 account for bold
-        string.forEach { char ->
-            val glyph = regularFont.fontInfo.glyphs[char.toInt()] ?: return@forEach
-            val planeBounds = glyph.planeBounds ?: return@forEach
-
-            val height = (planeBounds.top - planeBounds.bottom) * pointSize
-            if (height > maxHeight)
-                maxHeight = height
-        }
-        return maxHeight
+        return getStringInformation(string, pointSize).second
     }
 
     fun getLineHeight(pointSize: Float): Float {
@@ -87,19 +120,29 @@ class FontRenderer(private val regularFont: Font, private val boldFont: Font = r
         shadow: Boolean,
         shadowColor: Color?
     ) {
+        val adjustedY = y - 3
         if (shadow) {
             drawingShadow = true
             var effectiveShadow: Color? = shadowColor
+            var baseColor = color.rgb
+
             if (effectiveShadow == null) {
-                effectiveShadow = Color.BLUE.darker().darker()
+                if (baseColor and -67108864 == 0) {
+                    baseColor = baseColor or -16777216
+                }
+                baseColor = baseColor and 0xFCFCFC shr 2 or (baseColor and -16777216)
             }
             val shadowOffset = originalPointSize / 10
             UGraphics.translate(shadowOffset, shadowOffset, 0f)
-            drawStringNow(string, effectiveShadow!!, x, y, originalPointSize)
+            drawStringNow(string, Color(baseColor), x, adjustedY, originalPointSize)
             UGraphics.translate(-shadowOffset, -shadowOffset, 0f)
         }
         drawingShadow = false
-        drawStringNow(string, color, x, y, originalPointSize)
+        drawStringNow(string, color, x, adjustedY, originalPointSize)
+    }
+
+    override fun visitImpl(visitor: ConstraintVisitor, type: ConstraintType) {
+
     }
 
 
@@ -123,6 +166,12 @@ class FontRenderer(private val regularFont: Font, private val boldFont: Font = r
 
         val guiScale = UMinecraft.getMinecraft().gameSettings.guiScale
 
+        //Reset
+        obfuscated = false
+        bold = false
+        italics = false
+        strikethrough = false
+        underline = false
 
         var currentX = x
         var i = 0
@@ -180,11 +229,25 @@ class FontRenderer(private val regularFont: Font, private val boldFont: Font = r
                 continue
             }
 
-            // TODO: 4/19/2021 make this account for width
-            val c =
-                if (obfuscated && char != ' ') "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".random() else char
 
-            val glyph = activeFont.fontInfo.glyphs[c.toInt()]
+            var glyph = activeFont.fontInfo.glyphs[char.toInt()]
+            if (glyph == null) {
+                i++
+                continue
+            }
+
+            if (obfuscated && char != ' ') {
+                val advance = glyph.advance
+
+                for (iter in 1..100) { //100 tries max
+
+                    val tmp = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".random()
+                    if (advance == activeFont.fontInfo.glyphs[tmp.toInt()]?.advance ?: continue) {
+                        glyph = activeFont.fontInfo.glyphs[tmp.toInt()]
+                        break
+                    }
+                }
+            }
             if (glyph == null) {
                 i++
                 continue

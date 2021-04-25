@@ -1,6 +1,8 @@
 package club.sk1er.elementa.font
 
-object DefaultFonts {
+import club.sk1er.elementa.VanillaFontRenderer
+
+object DefaultFonts   {
 
     @JvmStatic
     val vanillaFontRenderer: FontProvider = VanillaFontRenderer()
