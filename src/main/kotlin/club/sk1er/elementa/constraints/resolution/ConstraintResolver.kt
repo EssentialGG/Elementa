@@ -44,6 +44,7 @@ fun UIConstraints.getConstraint(type: ConstraintType) = when (type) {
     ConstraintType.RADIUS -> radius
     ConstraintType.COLOR -> color
     ConstraintType.TEXT_SCALE -> textScale
+    ConstraintType.FONT_PROVIDER -> fontProvider
 }
 
 fun Window.forEachChild(action: (UIComponent) -> Unit) {

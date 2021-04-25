@@ -40,11 +40,10 @@ buildscript {
                 exclude group: 'trove', module: 'trove' // preprocessor/idea requires more recent one
             }
         } else {
-            classpath('com.github.ReplayMod:ForgeGradle:' + (
-                    mcVersion >= 11200 ? 'b64de9c' : // FG 2.3
-                            mcVersion >= 10904 ? '5bb7a53' : // FG 2.2
-                                    'fc1eabc'   // FG 2.1
-            ) + ':all') {
+            def forgeGradleVersion = mcVersion >= 11200 ? 'b64de9c' : // FG 2.3
+                    mcVersion >= 10904 ? '5bb7a53' : // FG 2.2
+                            'fc1eabc'   // FG 2.1
+            classpath("com.github.ReplayMod:ForgeGradle:$forgeGradleVersion:all") {
                 exclude group: 'net.sf.trove4j', module: 'trove4j' // preprocessor/idea requires more recent one
                 exclude group: 'trove', module: 'trove' // different name same thing
             }
@@ -52,6 +51,7 @@ buildscript {
     }
 }
 
+apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'kotlin'
 apply plugin: 'org.jetbrains.dokka'
 apply plugin: 'maven-publish'
@@ -237,6 +237,26 @@ processResources {
         exclude "META-INF/mods.toml"
     }
 }
+
+tasks.removeByName('shadowJar') // we want to base our shadowed jar on the reobfJar output, not the sourceSet output
+task shadowJar(type: com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar) {
+    from { (FABRIC ? tasks.remapJar : tasks.jar).archiveFile.get() }
+    dependsOn { FABRIC ? tasks.remapJar : (mcVersion >= 10800 ? tasks.reobfJar : tasks.reobf) }
+
+    manifest.inheritFrom tasks.jar.manifest
+
+    exclude 'META-INF/INDEX.LIST', 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA', 'module-info.class'
+
+    exclude('com/example/examplemod/**')
+    exclude("META-INF/mods.toml")
+    exclude("mods.toml")
+    exclude("kotlin/**")
+
+    if (this.properties.getOrDefault("IS_CTJS", false)) {
+        relocate 'club.sk1er', 'club.sk1er.ctjs'
+    }
+}
+tasks.assemble.dependsOn tasks.shadowJar
 
 dokka {
     outputFormat = 'html'

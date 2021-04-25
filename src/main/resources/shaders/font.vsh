@@ -1,10 +1,9 @@
 #version 110
 
-varying vec2 f_Position;
+varying vec2 pos;
 
 void main() {
-    f_Position = gl_Vertex.xy;
+    pos = gl_MultiTexCoord0.st;
 
     gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
-    gl_FrontColor = gl_Color;
 }

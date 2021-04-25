@@ -2,7 +2,6 @@ package club.sk1er.elementa.components
 
 import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.dsl.basicHeightConstraint
-import club.sk1er.elementa.dsl.pixels
 import club.sk1er.elementa.dsl.width
 import club.sk1er.elementa.state.BasicState
 import club.sk1er.elementa.state.State
@@ -37,7 +36,13 @@ open class UIWrappedText @JvmOverloads constructor(
     init {
         setWidth(textWidthState.pixels())
         setHeight(basicHeightConstraint {
-            val lines = getStringSplitToWidth(text, getWidth(), getTextScale(), ensureSpaceAtEndOfLines = false)
+            val lines = getStringSplitToWidth(
+                text,
+                getWidth(),
+                getTextScale(),
+                ensureSpaceAtEndOfLines = false,
+                fontProvider = super.getFontProvider()
+            )
 
             lines.size * 9f * getTextScale()
         })
@@ -97,8 +102,21 @@ open class UIWrappedText @JvmOverloads constructor(
         UGraphics.translate(x.toDouble(), y.toDouble(), 0.0)
 
         val lines = if (trimText) {
-            getStringSplitToWidthTruncated(textState.get(), width, textScale, (getHeight() / 9f / textScale).toInt(), ensureSpaceAtEndOfLines = false)
-        } else getStringSplitToWidth(textState.get(), width, textScale, ensureSpaceAtEndOfLines = false)
+            getStringSplitToWidthTruncated(
+                textState.get(),
+                width,
+                textScale,
+                (getHeight() / 9f / textScale).toInt(),
+                ensureSpaceAtEndOfLines = false,
+                fontProvider = getFontProvider()
+            )
+        } else getStringSplitToWidth(
+            textState.get(),
+            width,
+            textScale,
+            ensureSpaceAtEndOfLines = false,
+            fontProvider = getFontProvider()
+        )
 
         val shadow = shadowState.get()
         val shadowColor = shadowColorState.get()
@@ -108,10 +126,10 @@ open class UIWrappedText @JvmOverloads constructor(
                 (scaledWidth - line.width(textScale)) / 2f
             } else 0f
 
-            if (shadow && shadowColor != null) {
-                UGraphics.drawString(line, xOffset, i * 9f, color.rgb, shadowColor.rgb)
+            if (shadow) {
+                getFontProvider().drawString(line, color, xOffset, i * 9f, 10f, true, shadowColor)
             } else {
-                UGraphics.drawString(line, xOffset, i * 9f, color.rgb, shadow)
+                getFontProvider().drawString(line, color, xOffset, i * 9f, 10f, shadow = false)
             }
         }
 

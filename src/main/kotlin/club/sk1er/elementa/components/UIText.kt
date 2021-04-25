@@ -85,11 +85,7 @@ open class UIText @JvmOverloads constructor(
         UGraphics.scale(width.toDouble(), height.toDouble(), 1.0)
         val shadow = shadowState.get()
         val shadowColor = shadowColorState.get()
-        if (shadow && shadowColor != null) {
-            UGraphics.drawString(text, x / width, y / height, color.rgb, shadowColor.rgb)
-        } else {
-            UGraphics.drawString(text, x / width, y / height, color.rgb, shadow)
-        }
+        getFontProvider().drawString(textState.get(), color, x / width, y / height, 10f, shadow, shadowColor)
         UGraphics.scale(1 / width.toDouble(), 1 / height.toDouble(), 1.0)
 
         super.draw()

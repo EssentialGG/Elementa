@@ -160,6 +160,7 @@ class InfoBlock(private val inspector: Inspector) : UIContainer() {
                 ConstraintType.RADIUS -> constraints.radius
                 ConstraintType.COLOR -> constraints.color
                 ConstraintType.TEXT_SCALE -> constraints.textScale
+                ConstraintType.FONT_PROVIDER -> constraints.fontProvider
             }
 
             when (arg) {

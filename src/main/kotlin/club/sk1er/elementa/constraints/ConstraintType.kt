@@ -7,5 +7,6 @@ enum class ConstraintType(val prettyName: String) {
     HEIGHT("Height"),
     RADIUS("Radius"),
     COLOR("Color"),
+    FONT_PROVIDER("Font Provider"),
     TEXT_SCALE("TextScale")
 }

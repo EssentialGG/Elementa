@@ -9,6 +9,7 @@ import club.sk1er.elementa.markdown.selection.Cursor
 import club.sk1er.elementa.markdown.selection.Selection
 import club.sk1er.elementa.state.BasicState
 import club.sk1er.elementa.state.State
+import club.sk1er.elementa.font.ElementaFonts
 import club.sk1er.mods.core.universal.UKeyboard
 import java.awt.Toolkit
 import java.awt.datatransfer.StringSelection
@@ -23,6 +24,8 @@ import java.awt.datatransfer.StringSelection
  */
 class MarkdownComponent @JvmOverloads constructor(
     text: String,
+    private val codeFontRenderer: FontRenderer = ElementaFonts.JETBRAINS_MONO,
+    private val codeFontPointSize: Float = 10f
     val config: MarkdownConfig = MarkdownConfig()
 ) : UIComponent() {
     private var textState: State<String> = BasicState(text)

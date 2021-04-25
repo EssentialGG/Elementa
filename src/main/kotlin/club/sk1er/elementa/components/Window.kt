@@ -4,6 +4,7 @@ import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.constraints.resolution.ConstraintResolutionGui
 import club.sk1er.elementa.constraints.resolution.ConstraintResolver
 import club.sk1er.elementa.effects.ScissorEffect
+import club.sk1er.elementa.font.FontRenderer
 import club.sk1er.mods.core.universal.*
 import org.lwjgl.opengl.GL11
 import java.util.concurrent.ConcurrentLinkedQueue
@@ -31,6 +32,7 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
 
     override fun afterInitialization() {
         enqueueRenderOperation {
+            FontRenderer.initShaders()
             UICircle.initShaders()
             UIRoundedRectangle.initShaders()
         }
@@ -231,9 +233,9 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
         val realHeight = currentScissor.height / sf
 
         return right > realX &&
-                left < realX + realWidth &&
-                bottom >= bottomY - realHeight &&
-                top <= bottomY
+            left < realX + realWidth &&
+            bottom >= bottomY - realHeight &&
+            top <= bottomY
     }
 
     /*

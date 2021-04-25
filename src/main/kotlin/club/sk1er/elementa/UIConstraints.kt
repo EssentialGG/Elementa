@@ -1,9 +1,11 @@
 package club.sk1er.elementa
 
 import club.sk1er.elementa.constraints.*
-import club.sk1er.elementa.dsl.toConstraint
 import club.sk1er.elementa.dsl.pixel
 import club.sk1er.elementa.dsl.pixels
+import club.sk1er.elementa.dsl.toConstraint
+import club.sk1er.elementa.font.DefaultFonts
+import club.sk1er.elementa.font.FontProvider
 import java.awt.Color
 import java.util.*
 
@@ -38,6 +40,11 @@ open class UIConstraints(protected val component: UIComponent) : Observable() {
             field = value
             update(ConstraintType.TEXT_SCALE)
         }
+    var fontProvider: FontProvider = DefaultFonts.vanillaFontRenderer
+        set(value) {
+            field = value
+            update(ConstraintType.FONT_PROVIDER)
+        }
     var color: ColorConstraint = Color.WHITE.toConstraint()
         set(value) {
             field = value
@@ -47,6 +54,7 @@ open class UIConstraints(protected val component: UIComponent) : Observable() {
     open fun getX(): Float {
         return x.getXPosition(component)
     }
+
     open fun withX(constraint: XConstraint) = apply {
         x = constraint
     }
@@ -54,6 +62,7 @@ open class UIConstraints(protected val component: UIComponent) : Observable() {
     open fun getY(): Float {
         return y.getYPosition(component)
     }
+
     open fun withY(constraint: YConstraint) = apply {
         y = constraint
     }
@@ -61,6 +70,7 @@ open class UIConstraints(protected val component: UIComponent) : Observable() {
     open fun getWidth(): Float {
         return width.getWidth(component)
     }
+
     open fun withWidth(constraint: WidthConstraint) = apply {
         width = constraint
     }
@@ -68,6 +78,7 @@ open class UIConstraints(protected val component: UIComponent) : Observable() {
     open fun getHeight(): Float {
         return height.getHeight(component)
     }
+
     open fun withHeight(constraint: HeightConstraint) = apply {
         height = constraint
     }
@@ -75,6 +86,7 @@ open class UIConstraints(protected val component: UIComponent) : Observable() {
     open fun getRadius(): Float {
         return radius.getRadius(component)
     }
+
     open fun withRadius(constraint: RadiusConstraint) = apply {
         radius = constraint
     }
@@ -82,13 +94,19 @@ open class UIConstraints(protected val component: UIComponent) : Observable() {
     open fun getTextScale(): Float {
         return textScale.getHeight(component)
     }
+
     open fun withTextScale(constraint: HeightConstraint) = apply {
         textScale = constraint
     }
 
+   open fun withFontProvider(setFontProvider: FontProvider) {
+       fontProvider = setFontProvider
+   }
+
     open fun getColor(): Color {
         return color.getColor(component)
     }
+
     open fun withColor(constraint: ColorConstraint) = apply {
         color = constraint
     }

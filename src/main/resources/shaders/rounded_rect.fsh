@@ -1,13 +1,11 @@
-#version 130
-
-precision highp float;
+#version 110
 
 uniform float u_Radius;
 uniform vec4 u_InnerRect;
 
-in vec2 f_Position;
+varying vec2 f_Position;
 
-out vec4 fragColor;
+//out vec4 fragColor;
 
 void main() {
     vec2 tl = u_InnerRect.xy - f_Position;
@@ -16,5 +14,5 @@ void main() {
 
     float v = length(max(vec2(0.0), dis)) - u_Radius;
     float a = 1.0 - smoothstep(0.0, 1.0, v);
-    fragColor = gl_Color * vec4(1.0, 1.0, 1.0, a);
+    gl_FragColor = gl_Color * vec4(1.0, 1.0, 1.0, a);
 }

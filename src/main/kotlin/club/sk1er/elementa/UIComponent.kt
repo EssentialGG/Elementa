@@ -9,6 +9,7 @@ import club.sk1er.elementa.effects.Effect
 import club.sk1er.elementa.effects.ScissorEffect
 import club.sk1er.elementa.events.UIClickEvent
 import club.sk1er.elementa.events.UIScrollEvent
+import club.sk1er.elementa.font.FontProvider
 import club.sk1er.elementa.utils.TriConsumer
 import club.sk1er.elementa.utils.observable
 import club.sk1er.mods.core.universal.UMouse
@@ -77,6 +78,7 @@ abstract class UIComponent : Observable() {
 
     // Timer API
     private val activeTimers = mutableMapOf<Int, Timer>()
+
     // We have to store stopped timers separately to avoid ConcurrentModificationException
     private val stoppedTimers = mutableSetOf<Int>()
     private var nextTimerId = 0
@@ -273,6 +275,10 @@ abstract class UIComponent : Observable() {
         this.constraints.withTextScale(constraint)
     }
 
+    fun setFontProvider(fontProvider: FontProvider) = apply {
+        this.constraints.fontProvider = fontProvider
+    }
+
     fun setColor(constraint: ColorConstraint) = apply {
         this.constraints.withColor(constraint)
     }
@@ -292,6 +298,8 @@ abstract class UIComponent : Observable() {
     open fun getRadius() = constraints.getRadius()
 
     open fun getTextScale() = constraints.getTextScale()
+
+    open fun getFontProvider() = constraints.fontProvider
 
     open fun getColor() = constraints.getColor()
 
@@ -320,9 +328,9 @@ abstract class UIComponent : Observable() {
 
     open fun isPointInside(x: Float, y: Float): Boolean {
         return x > getLeft()
-                && x < getRight()
-                && y > getTop()
-                && y < getBottom()
+            && x < getRight()
+            && y > getTop()
+            && y < getBottom()
     }
 
     open fun hitTest(x: Float, y: Float): UIComponent {
@@ -478,7 +486,16 @@ abstract class UIComponent : Observable() {
         lastClickCount = if (System.currentTimeMillis() - lastClickTime < 500) lastClickCount + 1 else 1
         lastClickTime = System.currentTimeMillis()
 
-        clicked.fireClickEvent(UIClickEvent(mouseX.toFloat(), mouseY.toFloat(), button, clicked, clicked, lastClickCount))
+        clicked.fireClickEvent(
+            UIClickEvent(
+                mouseX.toFloat(),
+                mouseY.toFloat(),
+                button,
+                clicked,
+                clicked,
+                lastClickCount
+            )
+        )
     }
 
     protected fun fireClickEvent(event: UIClickEvent) {
@@ -856,7 +873,16 @@ abstract class UIComponent : Observable() {
         val totalDelay = (delay * Window.of(this@UIComponent).animationFPS).toInt()
 
         fieldAnimationQueue.removeIf { it.field == this }
-        fieldAnimationQueue.addFirst(IntFieldAnimationComponent(this, strategy, totalFrames, this.get(), newValue, totalDelay))
+        fieldAnimationQueue.addFirst(
+            IntFieldAnimationComponent(
+                this,
+                strategy,
+                totalFrames,
+                this.get(),
+                newValue,
+                totalDelay
+            )
+        )
     }
 
     fun KMutableProperty0<Float>.animate(strategy: AnimationStrategy, time: Float, newValue: Float, delay: Float = 0f) {
@@ -872,7 +898,16 @@ abstract class UIComponent : Observable() {
         val totalDelay = (delay * Window.of(this@UIComponent).animationFPS).toInt()
 
         fieldAnimationQueue.removeIf { it.field == this }
-        fieldAnimationQueue.addFirst(FloatFieldAnimationComponent(this, strategy, totalFrames, this.get(), newValue, totalDelay))
+        fieldAnimationQueue.addFirst(
+            FloatFieldAnimationComponent(
+                this,
+                strategy,
+                totalFrames,
+                this.get(),
+                newValue,
+                totalDelay
+            )
+        )
     }
 
     fun KMutableProperty0<Long>.animate(strategy: AnimationStrategy, time: Float, newValue: Long, delay: Float = 0f) {
@@ -888,10 +923,24 @@ abstract class UIComponent : Observable() {
         val totalDelay = (delay * Window.of(this@UIComponent).animationFPS).toInt()
 
         fieldAnimationQueue.removeIf { it.field == this }
-        fieldAnimationQueue.addFirst(LongFieldAnimationComponent(this, strategy, totalFrames, this.get(), newValue, totalDelay))
+        fieldAnimationQueue.addFirst(
+            LongFieldAnimationComponent(
+                this,
+                strategy,
+                totalFrames,
+                this.get(),
+                newValue,
+                totalDelay
+            )
+        )
     }
 
-    fun KMutableProperty0<Double>.animate(strategy: AnimationStrategy, time: Float, newValue: Double, delay: Float = 0f) {
+    fun KMutableProperty0<Double>.animate(
+        strategy: AnimationStrategy,
+        time: Float,
+        newValue: Double,
+        delay: Float = 0f
+    ) {
         if (!validateAnimationFields(time, delay))
             return
 
@@ -904,7 +953,16 @@ abstract class UIComponent : Observable() {
         val totalDelay = (delay * Window.of(this@UIComponent).animationFPS).toInt()
 
         fieldAnimationQueue.removeIf { it.field == this }
-        fieldAnimationQueue.addFirst(DoubleFieldAnimationComponent(this, strategy, totalFrames, this.get(), newValue, totalDelay))
+        fieldAnimationQueue.addFirst(
+            DoubleFieldAnimationComponent(
+                this,
+                strategy,
+                totalFrames,
+                this.get(),
+                newValue,
+                totalDelay
+            )
+        )
     }
 
     fun KMutableProperty0<Color>.animate(strategy: AnimationStrategy, time: Float, newValue: Color, delay: Float = 0f) {
@@ -920,7 +978,16 @@ abstract class UIComponent : Observable() {
         val totalDelay = (delay * Window.of(this@UIComponent).animationFPS).toInt()
 
         fieldAnimationQueue.removeIf { it.field == this }
-        fieldAnimationQueue.addFirst(ColorFieldAnimationComponent(this, strategy, totalFrames, this.get(), newValue, totalDelay))
+        fieldAnimationQueue.addFirst(
+            ColorFieldAnimationComponent(
+                this,
+                strategy,
+                totalFrames,
+                this.get(),
+                newValue,
+                totalDelay
+            )
+        )
     }
 
     fun KMutableProperty0<*>.stopAnimating() {
