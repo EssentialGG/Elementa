@@ -3,7 +3,6 @@ package club.sk1er.elementa.markdown.drawables
 import club.sk1er.elementa.dsl.width
 import club.sk1er.elementa.markdown.DrawState
 import club.sk1er.elementa.markdown.MarkdownComponent
-import club.sk1er.elementa.markdown.MarkdownConfig
 
 class ListDrawable(
     md: MarkdownComponent,
@@ -22,9 +21,10 @@ class ListDrawable(
     private val listItems = mutableListOf<ListEntry>()
     override val children: List<Drawable> get() = listItems
 
-    private val elementSpacing: Float get() = if (isLoose) {
-        config.listConfig.elementSpacingLoose
-    } else config.listConfig.elementSpacingTight
+    private val elementSpacing: Float
+        get() = if (isLoose) {
+            config.listConfig.elementSpacingLoose
+        } else config.listConfig.elementSpacingTight
 
     /**
      * The indentation of this list in any parent lists. This is set
@@ -170,11 +170,13 @@ class ListDrawable(
         override fun draw(state: DrawState) {
             val newX = x + symbolWidth - actualSymbolWidth
             if (drawable !is ListDrawable)
-                TextDrawable.drawString(config, symbol, newX + state.xShift, y + state.yShift)
+                TextDrawable.drawString(config, md.getFontProvider(), symbol, newX + state.xShift, y + state.yShift)
             drawable.draw(state)
         }
 
-        override fun cursorAt(mouseX: Float, mouseY: Float, dragged: Boolean) = drawable.cursorAt(mouseX, mouseY, dragged)
+        override fun cursorAt(mouseX: Float, mouseY: Float, dragged: Boolean) =
+            drawable.cursorAt(mouseX, mouseY, dragged)
+
         override fun cursorAtStart() = drawable.cursorAtStart()
         override fun cursorAtEnd() = drawable.cursorAtEnd()
 

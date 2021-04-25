@@ -25,9 +25,9 @@ import java.awt.datatransfer.StringSelection
  */
 class MarkdownComponent @JvmOverloads constructor(
     text: String,
-    private val codeFontRenderer: FontProvider = ElementaFonts.JETBRAINS_MONO,
+    val config: MarkdownConfig = MarkdownConfig(),
     private val codeFontPointSize: Float = 10f,
-    val config: MarkdownConfig = MarkdownConfig()
+    private val codeFontRenderer: FontProvider = ElementaFonts.JETBRAINS_MONO
 ) : UIComponent() {
     private var textState: State<String> = BasicState(text)
     private var removeListener = textState.onSetValue {

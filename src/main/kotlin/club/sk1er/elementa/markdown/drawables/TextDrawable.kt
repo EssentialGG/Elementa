@@ -3,6 +3,7 @@ package club.sk1er.elementa.markdown.drawables
 import club.sk1er.elementa.components.UIBlock
 import club.sk1er.elementa.components.UIRoundedRectangle
 import club.sk1er.elementa.dsl.width
+import club.sk1er.elementa.font.FontProvider
 import club.sk1er.elementa.markdown.DrawState
 import club.sk1er.elementa.markdown.MarkdownComponent
 import club.sk1er.elementa.markdown.MarkdownConfig
@@ -10,6 +11,7 @@ import club.sk1er.elementa.markdown.selection.TextCursor
 import club.sk1er.mods.core.universal.UGraphics
 import club.sk1er.mods.core.universal.UMouse
 import club.sk1er.mods.core.universal.UResolution
+import java.awt.Color
 
 class TextDrawable(
     md: MarkdownComponent,
@@ -129,30 +131,36 @@ class TextDrawable(
             val formatChars = formattedText.substring(0, style.numFormattingChars)
 
             val nextX = if (selectionStart > 0) {
-                texts.add(Text(
-                    formattedText.substring(0, start),
-                    x,
-                    y,
-                    false
-                ))
+                texts.add(
+                    Text(
+                        formattedText.substring(0, start),
+                        x,
+                        y,
+                        false
+                    )
+                )
                 x + formattedText.substring(0, start).width(scaleModifier)
             } else x
 
             val selectedString = formatChars + formattedText.substring(start, end)
-            texts.add(Text(
-                selectedString,
-                nextX,
-                y,
-                true
-            ))
+            texts.add(
+                Text(
+                    selectedString,
+                    nextX,
+                    y,
+                    true
+                )
+            )
 
             if (end < formattedText.length) {
-                texts.add(Text(
-                    formatChars + formattedText.substring(end),
-                    nextX + selectedString.width(scaleModifier),
-                    y,
-                    false
-                ))
+                texts.add(
+                    Text(
+                        formatChars + formattedText.substring(end),
+                        nextX + selectedString.width(scaleModifier),
+                        y,
+                        false
+                    )
+                )
             }
         }
 
@@ -199,6 +207,7 @@ class TextDrawable(
             UGraphics.scale(scaleModifier, scaleModifier, 1f)
             drawString(
                 config,
+                md.getFontProvider(),
                 it.string,
                 (it.x + xShift) / scaleModifier,
                 (it.y + yShift) / scaleModifier,
@@ -317,6 +326,7 @@ class TextDrawable(
     companion object {
         fun drawString(
             config: MarkdownConfig,
+            fontProvider: FontProvider,
             string: String,
             x: Float,
             y: Float,
@@ -329,7 +339,7 @@ class TextDrawable(
                     config.textConfig.selectionBackgroundColor,
                     x.toDouble(),
                     y.toDouble(),
-                    string.width().toDouble(),
+                    string.width(1f, fontProvider).toDouble(),
                     9.0
                 )
             }
@@ -341,19 +351,22 @@ class TextDrawable(
             }
 
             if (config.textConfig.hasShadow) {
-                UGraphics.drawString(
+                fontProvider.drawString(
                     string,
+                    Color(foregroundColor),
                     x,
                     y,
-                    foregroundColor,
-                    config.textConfig.shadowColor.rgb
+                    10f,
+                    true,
+                    Color(config.textConfig.shadowColor.rgb)
                 )
             } else {
-                UGraphics.drawString(
+                fontProvider.drawString(
                     string,
+                    Color(foregroundColor),
                     x,
                     y,
-                    foregroundColor,
+                    10f,
                     false
                 )
             }
