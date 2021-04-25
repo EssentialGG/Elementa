@@ -51,7 +51,7 @@ buildscript {
     }
 }
 
-apply plugin: 'com.github.johnrengelman.shadow'
+//apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'kotlin'
 apply plugin: 'org.jetbrains.dokka'
 apply plugin: 'maven-publish'
@@ -238,25 +238,6 @@ processResources {
     }
 }
 
-tasks.removeByName('shadowJar') // we want to base our shadowed jar on the reobfJar output, not the sourceSet output
-task shadowJar(type: com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar) {
-    from { (FABRIC ? tasks.remapJar : tasks.jar).archiveFile.get() }
-    dependsOn { FABRIC ? tasks.remapJar : (mcVersion >= 10800 ? tasks.reobfJar : tasks.reobf) }
-
-    manifest.inheritFrom tasks.jar.manifest
-
-    exclude 'META-INF/INDEX.LIST', 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA', 'module-info.class'
-
-    exclude('com/example/examplemod/**')
-    exclude("META-INF/mods.toml")
-    exclude("mods.toml")
-    exclude("kotlin/**")
-
-    if (this.properties.getOrDefault("IS_CTJS", false)) {
-        relocate 'club.sk1er', 'club.sk1er.ctjs'
-    }
-}
-tasks.assemble.dependsOn tasks.shadowJar
 
 dokka {
     outputFormat = 'html'
