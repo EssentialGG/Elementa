@@ -2,7 +2,6 @@ package club.sk1er.elementa.components
 
 import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.constraints.CenterConstraint
-import club.sk1er.elementa.constraints.FillConstraint
 import club.sk1er.elementa.constraints.RelativeConstraint
 import club.sk1er.elementa.constraints.SiblingConstraint
 import club.sk1er.elementa.constraints.animation.Animations
@@ -69,8 +68,10 @@ class ScrollComponent @JvmOverloads constructor(
     private var horizontalDragBeginPos = -1f
     private var verticalDragBeginPos = -1f
 
-    private val horizontalScrollAdjustEvents: MutableList<(Float, Float) -> Unit> = mutableListOf(::updateScrollBar.bindLast(true))
-    private val verticalScrollAdjustEvents: MutableList<(Float, Float) -> Unit> = mutableListOf(::updateScrollBar.bindLast(false))
+    private val horizontalScrollAdjustEvents: MutableList<(Float, Float) -> Unit> =
+        mutableListOf(::updateScrollBar.bindLast(true))
+    private val verticalScrollAdjustEvents: MutableList<(Float, Float) -> Unit> =
+        mutableListOf(::updateScrollBar.bindLast(false))
     private var needsUpdate = true
 
     private var isAutoScrolling = false
@@ -96,13 +97,14 @@ class ScrollComponent @JvmOverloads constructor(
         get() = max(0f, calculateActualHeight() - getHeight())
 
     init {
+
         if (!horizontalScrollEnabled && !verticalScrollEnabled)
             throw IllegalArgumentException("ScrollComponent must have at least one direction of scrolling enabled")
 
         super.addChild(actualHolder)
         actualHolder.addChild(emptyText)
         this.enableEffects(ScissorEffect(customScissorBoundingBox))
-
+        emptyText.setFontProvider(getFontProvider())
         super.addChild(scrollSVGComponent)
         scrollSVGComponent.hide(instantly = true)
 
@@ -129,7 +131,8 @@ class ScrollComponent @JvmOverloads constructor(
 
             // Recalculate our scroll box and move the content inside if needed.
             actualHolder.animate {
-                horizontalOffset = if (horizontalRange.isEmpty()) innerPadding else horizontalOffset.coerceIn(horizontalRange)
+                horizontalOffset =
+                    if (horizontalRange.isEmpty()) innerPadding else horizontalOffset.coerceIn(horizontalRange)
                 verticalOffset = if (verticalRange.isEmpty()) innerPadding else verticalOffset.coerceIn(verticalRange)
 
                 setXAnimation(Animations.IN_SIN, 0.1f, horizontalOffset.pixels())
@@ -162,7 +165,10 @@ class ScrollComponent @JvmOverloads constructor(
         emptyText.setText(text)
     }
 
-    fun addScrollAdjustEvent(isHorizontal: Boolean, event: (scrollPercentage: Float, percentageOfParent: Float) -> Unit) {
+    fun addScrollAdjustEvent(
+        isHorizontal: Boolean,
+        event: (scrollPercentage: Float, percentageOfParent: Float) -> Unit
+    ) {
         if (isHorizontal) horizontalScrollAdjustEvents.add(event) else verticalScrollAdjustEvents.add(event)
     }
 
@@ -358,7 +364,8 @@ class ScrollComponent @JvmOverloads constructor(
             verticalOffset += delta * pixelsPerScroll * currentScrollAcceleration
         }
 
-        currentScrollAcceleration = (currentScrollAcceleration + (scrollAcceleration - 1.0f) * 0.15f).coerceIn(0f, scrollAcceleration)
+        currentScrollAcceleration =
+            (currentScrollAcceleration + (scrollAcceleration - 1.0f) * 0.15f).coerceIn(0f, scrollAcceleration)
 
         needsUpdate = true
     }
@@ -462,8 +469,9 @@ class ScrollComponent @JvmOverloads constructor(
     override fun animationFrame() {
         super.animationFrame()
 
-        currentScrollAcceleration = (currentScrollAcceleration - ((scrollAcceleration - 1.0f) / (animationFPS ?: 244).toFloat()))
-            .coerceAtLeast(1.0f)
+        currentScrollAcceleration =
+            (currentScrollAcceleration - ((scrollAcceleration - 1.0f) / (animationFPS ?: 244).toFloat()))
+                .coerceAtLeast(1.0f)
 
         if (!isAutoScrolling) return
 
