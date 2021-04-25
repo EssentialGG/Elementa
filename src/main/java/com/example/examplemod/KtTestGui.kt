@@ -7,7 +7,6 @@ import club.sk1er.elementa.constraints.animation.Animations
 import club.sk1er.elementa.dsl.*
 import club.sk1er.elementa.font.DefaultFonts
 import club.sk1er.mods.core.universal.ChatColor
-import net.minecraft.entity.player.EntityPlayer
 import java.awt.Color
 
 class KtTestGui : WindowScreen() {
