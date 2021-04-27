@@ -211,7 +211,8 @@ abstract class AbstractTextInput(
             val heightDifference = getHeight() - visualLines.size * 9f
             if (heightDifference > 0)
                 return@onMouseScroll
-            targetVerticalScrollingOffset = (targetVerticalScrollingOffset + it.delta.toFloat() * 9f).coerceIn(heightDifference, 0f)
+            targetVerticalScrollingOffset =
+                (targetVerticalScrollingOffset + it.delta.toFloat() * 9f).coerceIn(heightDifference, 0f)
             it.stopPropagation()
         }
 
@@ -680,7 +681,8 @@ abstract class AbstractTextInput(
             getColor(),
             left - horizontalScrollingOffset,
             getTop() + (9 * row) + verticalScrollingOffset,
-            getHeight() * 10f / 9f,
+            10f,
+            getHeight(),
             shadow = false
         )
     }
@@ -699,7 +701,8 @@ abstract class AbstractTextInput(
                 if (active) selectionForegroundColor else inactiveSelectionForegroundColor,
                 left - horizontalScrollingOffset,
                 getTop() + (9 * row) + verticalScrollingOffset,
-                getHeight() * 10f / 9f,
+                10f,
+                getHeight(),
                 shadow = false
             )
         }
@@ -721,7 +724,8 @@ abstract class AbstractTextInput(
         }
     }
 
-    protected inner class LinePosition(val line: Int, val column: Int, val isVisual: Boolean) : Comparable<LinePosition> {
+    protected inner class LinePosition(val line: Int, val column: Int, val isVisual: Boolean) :
+        Comparable<LinePosition> {
         val isAtLineStart: Boolean get() = column == 0
         val isAtLineEnd: Boolean get() = column == lines[line].length
 
@@ -839,7 +843,8 @@ abstract class AbstractTextInput(
 
         fun toScreenPos(): Pair<Float, Float> {
             val visualPos = toVisualPos()
-            val x = visualLines[visualPos.line].text.substring(0, visualPos.column).width(getTextScale()) - horizontalScrollingOffset
+            val x = visualLines[visualPos.line].text.substring(0, visualPos.column)
+                .width(getTextScale()) - horizontalScrollingOffset
             val y = (9f * visualPos.line) + verticalScrollingOffset
             return x to y
         }

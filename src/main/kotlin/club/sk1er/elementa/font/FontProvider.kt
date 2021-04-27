@@ -3,7 +3,7 @@ package club.sk1er.elementa.font
 import club.sk1er.elementa.constraints.SuperConstraint
 import java.awt.Color
 
-interface FontProvider: SuperConstraint<FontProvider> {
+interface FontProvider : SuperConstraint<FontProvider> {
 
     fun getStringWidth(string: String, pointSize: Float): Float
 
@@ -13,6 +13,7 @@ interface FontProvider: SuperConstraint<FontProvider> {
         x: Float,
         y: Float,
         originalPointSize: Float, //Unused for MC font
+        scale: Float,
         shadow: Boolean = true,
         shadowColor: Color? = null
     )

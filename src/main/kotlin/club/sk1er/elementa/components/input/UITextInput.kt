@@ -101,7 +101,7 @@ open class UITextInput @JvmOverloads constructor(
         beforeDraw()
 
         if (!active && !hasText()) {
-            fontRenderer.drawString(placeholder, getColor(), getLeft(), getTop(), getHeight() * 10f / 9f)
+            fontRenderer.drawString(placeholder, getColor(), getLeft(), getTop(), 10f, getHeight())
             return super.draw()
         }
 

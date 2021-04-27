@@ -6,6 +6,7 @@ import club.sk1er.elementa.constraints.*
 import club.sk1er.elementa.constraints.animation.Animations
 import club.sk1er.elementa.dsl.*
 import club.sk1er.elementa.font.DefaultFonts
+import club.sk1er.elementa.markdown.MarkdownComponent
 import club.sk1er.mods.core.universal.ChatColor
 import java.awt.Color
 
@@ -250,22 +251,22 @@ class KtTestGui : WindowScreen() {
             width = RelativeConstraint(.5f)
         } childOf window
         val baseScale = .05
-        for (i in 5..40) {
+        for (i in 4..80) {
             if (i % 4 != 0) continue
-            UIWrappedText("This is some cool text I have, it would be a shame if it didnt work right. Its on Vanilla").constrain {
-                x = CenterConstraint()
-                y = SiblingConstraint() + 5.pixels()
-                width = 150.pixels()
-                textScale = (baseScale * i).pixels()
-            }.setShadow(true) childOf wrapped
-
-            UIWrappedText("This is some cool text I have, it would be a shame if it didnt work right. Its on MSDF").constrain {
-                x = CenterConstraint()
-                y = SiblingConstraint() + 5.pixels()
-                width = 150.pixels()
-                textScale = (baseScale * i).pixels()
-                fontProvider = DefaultFonts.elementaMinecraftFontRenderer
-            }.setShadow(true) childOf wrapped
+//            UIWrappedText("This is some cool text I have, it would be a shame if it didnt work right. Its on Vanilla").constrain {
+//                x = CenterConstraint()
+//                y = SiblingConstraint() + 5.pixels()
+//                width = 150.pixels()
+//                textScale = (baseScale * i).pixels()
+//            }.setShadow(true) childOf wrapped
+//
+//            UIWrappedText("This is some cool text I have, it would be a shame if it didnt work right. Its on MSDF").constrain {
+//                x = CenterConstraint()
+//                y = SiblingConstraint() + 5.pixels()
+//                width = 150.pixels()
+//                textScale = (baseScale * i).pixels()
+//                fontProvider = DefaultFonts.elementaMinecraftFontRenderer
+//            }.setShadow(true) childOf wrapped
 
 
             UIText("Other text on Vanilla wooooo").constrain {
@@ -275,15 +276,20 @@ class KtTestGui : WindowScreen() {
                 textScale = (baseScale * i).pixels()
             }.setShadow(true) childOf text
 
-            UIText("Other text on ${ChatColor.COLOR_CHAR}kmsdf renderer").constrain {
+            UIText("Other text on msdf renderer").constrain {
                 x = CenterConstraint()
                 y = SiblingConstraint() + 5.pixels()
                 width = 150.pixels()
                 textScale = (baseScale * i).pixels()
                 fontProvider = DefaultFonts.elementaMinecraftFontRenderer
+                color = Color.WHITE.toConstraint()
             }.setShadow(true) childOf text
         }
 
+//        MarkdownComponent("Hello world").constrain {
+//            x = CenterConstraint()
+//            y = CenterConstraint()
+//        } childOf window
 //        val inspector = Inspector(window).constrain {
 //            x = 20.pixels(alignOpposite = true)
 //            y = 20.pixels()

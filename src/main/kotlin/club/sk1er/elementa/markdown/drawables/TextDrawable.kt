@@ -357,6 +357,7 @@ class TextDrawable(
                     x,
                     y,
                     10f,
+                    1f,
                     true,
                     Color(config.textConfig.shadowColor.rgb)
                 )
@@ -367,6 +368,7 @@ class TextDrawable(
                     x,
                     y,
                     10f,
+                    1f,
                     false
                 )
             }

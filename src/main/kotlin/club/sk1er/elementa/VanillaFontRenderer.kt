@@ -26,13 +26,17 @@ class VanillaFontRenderer : FontProvider {
         x: Float,
         y: Float,
         originalPointSize: Float,
+        scale: Float,
         shadow: Boolean,
         shadowColor: Color?
     ) {
+        UGraphics.scale(scale, scale, 1f)
         if (shadowColor == null) {
-            UGraphics.drawString(string, x, y, color.rgb, shadow)
+            UGraphics.drawString(string, x / scale, y / scale, color.rgb, shadow)
         } else {
-            UGraphics.drawString(string, x, y, color.rgb, shadowColor.rgb)
+            UGraphics.drawString(string, x / scale, y / scale, color.rgb, shadowColor.rgb)
         }
+        UGraphics.scale(1 / scale, 1 / scale, 1f)
+
     }
 }

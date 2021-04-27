@@ -117,13 +117,15 @@ class FontRenderer(
         x: Float,
         y: Float,
         originalPointSize: Float,
+        scale: Float,
         shadow: Boolean,
         shadowColor: Color?
     ) {
-        val adjustedY = y - 3
+        val effectiveSize = originalPointSize * scale
+        val adjustedY = y - effectiveSize / 5
         if (shadow) {
             drawingShadow = true
-            var effectiveShadow: Color? = shadowColor
+            val effectiveShadow: Color? = shadowColor
             var baseColor = color.rgb
 
             if (effectiveShadow == null) {
@@ -132,19 +134,26 @@ class FontRenderer(
                 }
                 baseColor = baseColor and 0xFCFCFC shr 2 or (baseColor and -16777216)
             }
-            val shadowOffset = originalPointSize / 10
+            this.shadowColor = Color(baseColor)
+            val shadowOffset = effectiveSize / 10
             UGraphics.translate(shadowOffset, shadowOffset, 0f)
-            drawStringNow(string, Color(baseColor), x, adjustedY, originalPointSize)
+            drawStringNow(string, Color(baseColor), x, adjustedY, effectiveSize)
             UGraphics.translate(-shadowOffset, -shadowOffset, 0f)
         }
         drawingShadow = false
-        drawStringNow(string, color, x, adjustedY, originalPointSize)
+        drawStringNow(string, color, x, adjustedY, effectiveSize)
     }
 
     override fun visitImpl(visitor: ConstraintVisitor, type: ConstraintType) {
 
     }
 
+    private fun refreshColor() {
+        val current = if (drawingShadow) shadowColor else textColor
+        val amt = Color.RGBtoHSB(current!!.red, current.green, current.blue, null)[2]
+        hintAmountUniform.setValue(amt)
+        subpixelAmountUniform.setValue(amt)
+    }
 
     private fun drawStringNow(string: String, color: Color, x: Float, y: Float, originalPointSize: Float) {
         if (!areShadersInitialized())
@@ -153,7 +162,12 @@ class FontRenderer(
         var currentPointSize = originalPointSize
 
         UGraphics.enableBlend()
-
+        UGraphics.tryBlendFuncSeparate(
+            GL11.GL_SRC_ALPHA,
+            GL11.GL_ONE_MINUS_SRC_ALPHA,
+            GL11.GL_SRC_ALPHA,
+            GL11.GL_ONE_MINUS_SRC_ALPHA
+        )
         shader.bindIfUsable()
         switchFont(1)
         samplerUniform.setValue(0)
@@ -161,8 +175,6 @@ class FontRenderer(
 
         doffsetUniform.setValue(3.5f / currentPointSize)
 
-        hintAmountUniform.setValue(1f)
-        subpixelAmountUniform.setValue(1f)
 
         val guiScale = UMinecraft.getMinecraft().gameSettings.guiScale
 
@@ -172,6 +184,9 @@ class FontRenderer(
         italics = false
         strikethrough = false
         underline = false
+        textColor = color
+
+        refreshColor()
 
         var currentX = x
         var i = 0
@@ -200,7 +215,7 @@ class FontRenderer(
                         }
                         currentPointSize = originalPointSize
                         doffsetUniform.setValue(3.5f / currentPointSize)
-
+                        refreshColor()
                     }
                     j == 16 -> obfuscated = true
                     j == 17 -> {
@@ -221,8 +236,9 @@ class FontRenderer(
                         italics = false
                         strikethrough = false
                         underline = false
-                        textColor = null
-                        shadowColor = null
+                        textColor = color
+                        shadowColor
+                        refreshColor()
                     }
                 }
                 i += 2
@@ -299,7 +315,7 @@ class FontRenderer(
                 drawColor.red / 255f,
                 drawColor.green / 255f,
                 drawColor.blue / 255f,
-                drawColor.alpha / 255f
+                1f
             )
         )
         val worldRenderer = UGraphics.getFromTessellator()
