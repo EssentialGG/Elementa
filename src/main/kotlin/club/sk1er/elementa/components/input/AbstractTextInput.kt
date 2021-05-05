@@ -69,7 +69,8 @@ abstract class AbstractTextInput(
     }
 
     init {
-//        setHeight(9.pixels())
+
+        setHeight(9.pixels())
 
         onKeyType { typedChar, keyCode ->
             if (!active) return@onKeyType
@@ -297,11 +298,13 @@ abstract class AbstractTextInput(
             val currentTime = System.currentTimeMillis()
             if (currentTime - lastSelectionMoveTimestamp > 50) {
                 if (mouseY <= 0) {
-                    targetVerticalScrollingOffset = (targetVerticalScrollingOffset + 9* getTextScale()).coerceAtMost(0f)
+                    targetVerticalScrollingOffset =
+                        (targetVerticalScrollingOffset + 9 * getTextScale()).coerceAtMost(0f)
                     lastSelectionMoveTimestamp = currentTime
                 } else if (mouseY >= getHeight()) {
                     val heightDifference = getHeight() - visualLines.size * 9f * getTextScale()
-                    targetVerticalScrollingOffset = (targetVerticalScrollingOffset - 9* getTextScale()).coerceIn(heightDifference, 0f)
+                    targetVerticalScrollingOffset =
+                        (targetVerticalScrollingOffset - 9 * getTextScale()).coerceIn(heightDifference, 0f)
                     lastSelectionMoveTimestamp = currentTime
                 } else if (mouseX <= 0) {
                     scrollIntoView(draggedVisualPos.offsetColumn(-1))
@@ -695,9 +698,9 @@ abstract class AbstractTextInput(
         UIBlock.drawBlock(
             if (active) selectionBackgroundColor else inactiveSelectionBackgroundColor,
             left.toDouble() - horizontalScrollingOffset,
-            getTop().toDouble() + (9 * row *getTextScale()) + verticalScrollingOffset ,
+            getTop().toDouble() + (9 * row * getTextScale()) + verticalScrollingOffset,
             right.toDouble() - horizontalScrollingOffset,
-            getTop().toDouble() + (9 * ((row + 1) *getTextScale())) + verticalScrollingOffset
+            getTop().toDouble() + (9 * ((row + 1) * getTextScale())) + verticalScrollingOffset
         )
         if (text.isNotEmpty()) {
             getFontProvider().drawString(
