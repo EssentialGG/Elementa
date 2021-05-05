@@ -24,8 +24,7 @@ abstract class AbstractTextInput(
     protected val selectionForegroundColor: Color,
     protected val allowInactiveSelection: Boolean,
     protected val inactiveSelectionBackgroundColor: Color,
-    protected val inactiveSelectionForegroundColor: Color,
-    protected val fontRenderer: FontRenderer = ElementaFonts.MINECRAFT
+    protected val inactiveSelectionForegroundColor: Color
 ) : UIComponent() {
     protected var active = false
 
@@ -676,7 +675,7 @@ abstract class AbstractTextInput(
 
     protected open fun drawUnselectedText(text: String, left: Float, row: Int) {
         // TODO: Shadow color
-        fontRenderer.drawString(
+        getFontProvider().drawString(
             text,
             getColor(),
             left - horizontalScrollingOffset,
@@ -696,7 +695,7 @@ abstract class AbstractTextInput(
             getTop().toDouble() + (9 * (row + 1)) + verticalScrollingOffset
         )
         if (text.isNotEmpty()) {
-            fontRenderer.drawString(
+            getFontProvider().drawString(
                 text,
                 if (active) selectionForegroundColor else inactiveSelectionForegroundColor,
                 left - horizontalScrollingOffset,

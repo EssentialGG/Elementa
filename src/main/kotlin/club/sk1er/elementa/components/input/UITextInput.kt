@@ -15,8 +15,7 @@ open class UITextInput @JvmOverloads constructor(
     selectionForegroundColor: Color = Color(64, 139, 229),
     allowInactiveSelection: Boolean = false,
     inactiveSelectionBackgroundColor: Color = Color(176, 176, 176),
-    inactiveSelectionForegroundColor: Color = Color.WHITE,
-    fontRenderer: FontRenderer = ElementaFonts.MINECRAFT
+    inactiveSelectionForegroundColor: Color = Color.WHITE
 ) : AbstractTextInput(
     placeholder,
     shadow,
@@ -24,8 +23,7 @@ open class UITextInput @JvmOverloads constructor(
     selectionForegroundColor,
     allowInactiveSelection,
     inactiveSelectionBackgroundColor,
-    inactiveSelectionForegroundColor,
-    fontRenderer
+    inactiveSelectionForegroundColor
 ) {
     private var minWidth: WidthConstraint? = null
     private var maxWidth: WidthConstraint? = null
@@ -101,7 +99,7 @@ open class UITextInput @JvmOverloads constructor(
         beforeDraw()
 
         if (!active && !hasText()) {
-            fontRenderer.drawString(placeholder, getColor(), getLeft(), getTop(), 10f, getHeight())
+            getFontProvider().drawString(placeholder, getColor(), getLeft(), getTop(), 10f, getHeight())
             return super.draw()
         }
 
