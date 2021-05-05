@@ -2,13 +2,10 @@ package com.example.examplemod
 
 import club.sk1er.elementa.WindowScreen
 import club.sk1er.elementa.components.*
-import club.sk1er.elementa.components.input.UITextInput
+import club.sk1er.elementa.components.input.UIMultilineTextInput
 import club.sk1er.elementa.constraints.*
 import club.sk1er.elementa.constraints.animation.Animations
 import club.sk1er.elementa.dsl.*
-import club.sk1er.elementa.font.DefaultFonts
-import club.sk1er.elementa.markdown.MarkdownComponent
-import club.sk1er.mods.core.universal.ChatColor
 import java.awt.Color
 
 class KtTestGui : WindowScreen() {
@@ -242,16 +239,19 @@ class KtTestGui : WindowScreen() {
 //            height = RelativeConstraint(0.25f)
 //        } childOf window
 
-        UITextInput("Hello world").constrain {
+        val placeholder =
+            "Hello world this is my reallly really long text that is wayyyyyyy tooo long for one line and will be succeffed"
+        val tmp = UIMultilineTextInput(placeholder).constrain {
             x = CenterConstraint()
             y = CenterConstraint()
             width = RelativeConstraint(.2f)
-            height = 15.pixels()
-
-        } .onMouseClick {
+            height = 45.pixels()
+            textScale = 2.pixels()
+        }.onMouseClick {
             grabWindowFocus()
 
-        }childOf window
+        } childOf window
+        (tmp as UIMultilineTextInput).setText(placeholder)
 //        var text = UIContainer().constrain {
 //            y = 10.pixels()
 //            width = RelativeConstraint(.5f)

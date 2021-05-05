@@ -72,7 +72,7 @@ open class UITextInput @JvmOverloads constructor(
         for (i in line.indices) {
             val charWidth = line[i].width()
             if (currentX + (charWidth / 2) >= targetXPos) return LinePosition(0, i, isVisual = true)
-            currentX += charWidth * getHeight()/10
+            currentX += charWidth * getTextScale()
         }
 
         return LinePosition(0, line.length, isVisual = true)
@@ -97,7 +97,7 @@ open class UITextInput @JvmOverloads constructor(
         beforeDraw()
 
         if (!active && !hasText()) {
-            getFontProvider().drawString(placeholder, getColor(), getLeft(), getTop(), 10f, getHeight() / 10)
+            getFontProvider().drawString(placeholder, getColor(), getLeft(), getTop(), 10f, getTextScale())
             return super.draw()
         }
 
@@ -110,11 +110,11 @@ open class UITextInput @JvmOverloads constructor(
             if (!selectionStart().isAtLineStart) {
                 val preSelectionText = lineText.substring(0, selectionStart().column)
                 drawUnselectedText(preSelectionText, currentX, row = 0)
-                currentX += preSelectionText.width() * getHeight() / 10
+                currentX += preSelectionText.width() * getTextScale()
             }
 
             val selectedText = lineText.substring(selectionStart().column, selectionEnd().column)
-            val selectedTextWidth = selectedText.width()  * getHeight() / 10
+            val selectedTextWidth = selectedText.width() * getTextScale()
             drawSelectedText(selectedText, currentX, currentX + selectedTextWidth, row = 0)
             currentX += selectedTextWidth
 
@@ -124,7 +124,7 @@ open class UITextInput @JvmOverloads constructor(
         } else {
             cursorComponent.unhide()
             val (cursorPosX, _) = cursor.toScreenPos()
-            cursorComponent.setX((cursorPosX * getHeight() / 10).pixels())
+            cursorComponent.setX((cursorPosX * getTextScale()).pixels())
 
             drawUnselectedText(lineText, getLeft(), 0)
         }

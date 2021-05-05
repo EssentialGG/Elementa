@@ -84,15 +84,15 @@ class UIMultilineTextInput @JvmOverloads constructor(
         } else {
             cursorComponent.unhide()
             val (cursorPosX, cursorPosY) = cursor.toScreenPos()
-            cursorComponent.setX(cursorPosX.pixels())
-            cursorComponent.setY(cursorPosY.pixels())
+            cursorComponent.setX((cursorPosX ).pixels())
+            cursorComponent.setY((cursorPosY ).pixels())
         }
 
         val (selectionStart, selectionEnd) = getSelection()
 
         for ((i, visualLine) in visualLines.withIndex()) {
-            val topOffset = (9 * i) + verticalScrollingOffset
-            if (topOffset < -9 || topOffset > getHeight() + 9)
+            val topOffset = (9 * i * getTextScale()) + verticalScrollingOffset
+            if (topOffset < -9 * getTextScale() || topOffset > getHeight() + 9 * getTextScale())
                 continue
 
             if (!hasSelection() || i < selectionStart.line || i > selectionEnd.line) {
@@ -154,7 +154,7 @@ class UIMultilineTextInput @JvmOverloads constructor(
         if (realY <= 0)
             return LinePosition(0, 0, isVisual = true)
 
-        val line = (realY / 9).toInt()
+        val line = (realY / (9 * getTextScale())).toInt()
         if (line > visualLines.lastIndex)
             return LinePosition(visualLines.lastIndex, visualLines.last().text.length, isVisual = true)
 

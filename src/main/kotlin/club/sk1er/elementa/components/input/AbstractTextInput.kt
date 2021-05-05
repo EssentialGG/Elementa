@@ -297,11 +297,11 @@ abstract class AbstractTextInput(
             val currentTime = System.currentTimeMillis()
             if (currentTime - lastSelectionMoveTimestamp > 50) {
                 if (mouseY <= 0) {
-                    targetVerticalScrollingOffset = (targetVerticalScrollingOffset + 9).coerceAtMost(0f)
+                    targetVerticalScrollingOffset = (targetVerticalScrollingOffset + 9* getTextScale()).coerceAtMost(0f)
                     lastSelectionMoveTimestamp = currentTime
                 } else if (mouseY >= getHeight()) {
-                    val heightDifference = getHeight() - visualLines.size * 9f
-                    targetVerticalScrollingOffset = (targetVerticalScrollingOffset - 9).coerceIn(heightDifference, 0f)
+                    val heightDifference = getHeight() - visualLines.size * 9f * getTextScale()
+                    targetVerticalScrollingOffset = (targetVerticalScrollingOffset - 9* getTextScale()).coerceIn(heightDifference, 0f)
                     lastSelectionMoveTimestamp = currentTime
                 } else if (mouseX <= 0) {
                     scrollIntoView(draggedVisualPos.offsetColumn(-1))
@@ -343,7 +343,8 @@ abstract class AbstractTextInput(
 
     override fun draw() {
         cursorComponent.setHeight(
-            (9 * getHeight() / 10).pixels())
+            (9 * getTextScale()).pixels()
+        )
         super.draw()
     }
 
@@ -683,9 +684,9 @@ abstract class AbstractTextInput(
             text,
             getColor(),
             left - horizontalScrollingOffset,
-            getTop() + (9 * row) + verticalScrollingOffset + 1* getHeight()/10,
+            getTop() + ((9 * row + 1) * getTextScale()) + verticalScrollingOffset,
             10f,
-            getHeight() / 10,
+            getTextScale(),
             shadow = false
         )
     }
@@ -694,18 +695,18 @@ abstract class AbstractTextInput(
         UIBlock.drawBlock(
             if (active) selectionBackgroundColor else inactiveSelectionBackgroundColor,
             left.toDouble() - horizontalScrollingOffset,
-            getTop().toDouble() + (9 * row) + verticalScrollingOffset,
+            getTop().toDouble() + (9 * row *getTextScale()) + verticalScrollingOffset ,
             right.toDouble() - horizontalScrollingOffset,
-            getTop().toDouble() + (9 * (row + 1 * getHeight() / 10)) + verticalScrollingOffset
+            getTop().toDouble() + (9 * ((row + 1) *getTextScale())) + verticalScrollingOffset
         )
         if (text.isNotEmpty()) {
             getFontProvider().drawString(
                 text,
                 if (active) selectionForegroundColor else inactiveSelectionForegroundColor,
                 left - horizontalScrollingOffset,
-                getTop() + (9 * row) + verticalScrollingOffset + 1* getHeight()/10,
+                getTop() + ((9 * row + 1) * getTextScale()) + verticalScrollingOffset,
                 10f,
-                getHeight() / 10,
+                getTextScale(),
                 shadow = false
             )
         }
@@ -848,7 +849,7 @@ abstract class AbstractTextInput(
             val visualPos = toVisualPos()
             val x = visualLines[visualPos.line].text.substring(0, visualPos.column)
                 .width(getTextScale()) - horizontalScrollingOffset
-            val y = (9f * visualPos.line) + verticalScrollingOffset
+            val y = (9f * visualPos.line * getTextScale()) + verticalScrollingOffset
             return x to y
         }
 
