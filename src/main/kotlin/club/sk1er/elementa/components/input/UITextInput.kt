@@ -4,8 +4,6 @@ import club.sk1er.elementa.constraints.WidthConstraint
 import club.sk1er.elementa.dsl.coerceIn
 import club.sk1er.elementa.dsl.pixels
 import club.sk1er.elementa.dsl.width
-import club.sk1er.elementa.font.ElementaFonts
-import club.sk1er.elementa.font.FontRenderer
 import java.awt.Color
 
 open class UITextInput @JvmOverloads constructor(
@@ -74,7 +72,7 @@ open class UITextInput @JvmOverloads constructor(
         for (i in line.indices) {
             val charWidth = line[i].width()
             if (currentX + (charWidth / 2) >= targetXPos) return LinePosition(0, i, isVisual = true)
-            currentX += charWidth
+            currentX += charWidth * getHeight()/10
         }
 
         return LinePosition(0, line.length, isVisual = true)
@@ -99,7 +97,7 @@ open class UITextInput @JvmOverloads constructor(
         beforeDraw()
 
         if (!active && !hasText()) {
-            getFontProvider().drawString(placeholder, getColor(), getLeft(), getTop(), 10f, getHeight())
+            getFontProvider().drawString(placeholder, getColor(), getLeft(), getTop(), 10f, getHeight() / 10)
             return super.draw()
         }
 
@@ -112,11 +110,11 @@ open class UITextInput @JvmOverloads constructor(
             if (!selectionStart().isAtLineStart) {
                 val preSelectionText = lineText.substring(0, selectionStart().column)
                 drawUnselectedText(preSelectionText, currentX, row = 0)
-                currentX += preSelectionText.width()
+                currentX += preSelectionText.width() * getHeight() / 10
             }
 
             val selectedText = lineText.substring(selectionStart().column, selectionEnd().column)
-            val selectedTextWidth = selectedText.width()
+            val selectedTextWidth = selectedText.width()  * getHeight() / 10
             drawSelectedText(selectedText, currentX, currentX + selectedTextWidth, row = 0)
             currentX += selectedTextWidth
 
@@ -126,7 +124,7 @@ open class UITextInput @JvmOverloads constructor(
         } else {
             cursorComponent.unhide()
             val (cursorPosX, _) = cursor.toScreenPos()
-            cursorComponent.setX(cursorPosX.pixels())
+            cursorComponent.setX((cursorPosX * getHeight() / 10).pixels())
 
             drawUnselectedText(lineText, getLeft(), 0)
         }

@@ -2,6 +2,7 @@ package com.example.examplemod
 
 import club.sk1er.elementa.WindowScreen
 import club.sk1er.elementa.components.*
+import club.sk1er.elementa.components.input.UITextInput
 import club.sk1er.elementa.constraints.*
 import club.sk1er.elementa.constraints.animation.Animations
 import club.sk1er.elementa.dsl.*
@@ -240,51 +241,62 @@ class KtTestGui : WindowScreen() {
 //            width = RelativeConstraint(0.25f)
 //            height = RelativeConstraint(0.25f)
 //        } childOf window
-        var text = UIContainer().constrain {
-            y = 10.pixels()
-            width = RelativeConstraint(.5f)
-        } childOf window
 
-        var wrapped = UIContainer().constrain {
-            x = SiblingConstraint()
-            y = 10.pixels()
-            width = RelativeConstraint(.5f)
-        } childOf window
-        val baseScale = .05
-        for (i in 4..80) {
-            if (i % 4 != 0) continue
-//            UIWrappedText("This is some cool text I have, it would be a shame if it didnt work right. Its on Vanilla").constrain {
+        UITextInput("Hello world").constrain {
+            x = CenterConstraint()
+            y = CenterConstraint()
+            width = RelativeConstraint(.2f)
+            height = 15.pixels()
+
+        } .onMouseClick {
+            grabWindowFocus()
+
+        }childOf window
+//        var text = UIContainer().constrain {
+//            y = 10.pixels()
+//            width = RelativeConstraint(.5f)
+//        } childOf window
+//
+//        var wrapped = UIContainer().constrain {
+//            x = SiblingConstraint()
+//            y = 10.pixels()
+//            width = RelativeConstraint(.5f)
+//        } childOf window
+//        val baseScale = .05
+//        for (i in 4..80) {
+//            if (i % 4 != 0) continue
+////            UIWrappedText("This is some cool text I have, it would be a shame if it didnt work right. Its on Vanilla").constrain {
+////                x = CenterConstraint()
+////                y = SiblingConstraint() + 5.pixels()
+////                width = 150.pixels()
+////                textScale = (baseScale * i).pixels()
+////            }.setShadow(true) childOf wrapped
+////
+////            UIWrappedText("This is some cool text I have, it would be a shame if it didnt work right. Its on MSDF").constrain {
+////                x = CenterConstraint()
+////                y = SiblingConstraint() + 5.pixels()
+////                width = 150.pixels()
+////                textScale = (baseScale * i).pixels()
+////                fontProvider = DefaultFonts.elementaMinecraftFontRenderer
+////            }.setShadow(true) childOf wrapped
+//
+//
+//            UIText("Other text on Vanilla wooooo").constrain {
 //                x = CenterConstraint()
 //                y = SiblingConstraint() + 5.pixels()
 //                width = 150.pixels()
 //                textScale = (baseScale * i).pixels()
-//            }.setShadow(true) childOf wrapped
+//            }.setShadow(true) childOf text
 //
-//            UIWrappedText("This is some cool text I have, it would be a shame if it didnt work right. Its on MSDF").constrain {
+//            UIText("Other text on msdf renderer").constrain {
 //                x = CenterConstraint()
 //                y = SiblingConstraint() + 5.pixels()
 //                width = 150.pixels()
 //                textScale = (baseScale * i).pixels()
 //                fontProvider = DefaultFonts.elementaMinecraftFontRenderer
-//            }.setShadow(true) childOf wrapped
-
-
-            UIText("Other text on Vanilla wooooo").constrain {
-                x = CenterConstraint()
-                y = SiblingConstraint() + 5.pixels()
-                width = 150.pixels()
-                textScale = (baseScale * i).pixels()
-            }.setShadow(true) childOf text
-
-            UIText("Other text on msdf renderer").constrain {
-                x = CenterConstraint()
-                y = SiblingConstraint() + 5.pixels()
-                width = 150.pixels()
-                textScale = (baseScale * i).pixels()
-                fontProvider = DefaultFonts.elementaMinecraftFontRenderer
-                color = Color.WHITE.toConstraint()
-            }.setShadow(true) childOf text
-        }
+//                color = Color.WHITE.toConstraint()
+//            }.setShadow(true) childOf text
+//        }
 
 //        MarkdownComponent("Hello world").constrain {
 //            x = CenterConstraint()

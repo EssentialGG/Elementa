@@ -6,8 +6,6 @@ import club.sk1er.elementa.constraints.CenterConstraint
 import club.sk1er.elementa.constraints.animation.Animations
 import club.sk1er.elementa.dsl.*
 import club.sk1er.elementa.effects.ScissorEffect
-import club.sk1er.elementa.font.ElementaFonts
-import club.sk1er.elementa.font.FontRenderer
 import club.sk1er.elementa.utils.getStringSplitToWidth
 import club.sk1er.mods.core.universal.UKeyboard
 import java.awt.Color
@@ -71,7 +69,7 @@ abstract class AbstractTextInput(
     }
 
     init {
-        setHeight(9.pixels())
+//        setHeight(9.pixels())
 
         onKeyType { typedChar, keyCode ->
             if (!active) return@onKeyType
@@ -341,6 +339,12 @@ abstract class AbstractTextInput(
         }
 
         enableEffect(ScissorEffect())
+    }
+
+    override fun draw() {
+        cursorComponent.setHeight(
+            (9 * getHeight() / 10).pixels())
+        super.draw()
     }
 
     abstract fun getText(): String
@@ -679,9 +683,9 @@ abstract class AbstractTextInput(
             text,
             getColor(),
             left - horizontalScrollingOffset,
-            getTop() + (9 * row) + verticalScrollingOffset,
+            getTop() + (9 * row) + verticalScrollingOffset + 1* getHeight()/10,
             10f,
-            getHeight(),
+            getHeight() / 10,
             shadow = false
         )
     }
@@ -692,16 +696,16 @@ abstract class AbstractTextInput(
             left.toDouble() - horizontalScrollingOffset,
             getTop().toDouble() + (9 * row) + verticalScrollingOffset,
             right.toDouble() - horizontalScrollingOffset,
-            getTop().toDouble() + (9 * (row + 1)) + verticalScrollingOffset
+            getTop().toDouble() + (9 * (row + 1 * getHeight() / 10)) + verticalScrollingOffset
         )
         if (text.isNotEmpty()) {
             getFontProvider().drawString(
                 text,
                 if (active) selectionForegroundColor else inactiveSelectionForegroundColor,
                 left - horizontalScrollingOffset,
-                getTop() + (9 * row) + verticalScrollingOffset,
+                getTop() + (9 * row) + verticalScrollingOffset + 1* getHeight()/10,
                 10f,
-                getHeight(),
+                getHeight() / 10,
                 shadow = false
             )
         }
