@@ -48,10 +48,10 @@ open class UITextInput @JvmOverloads constructor(
         if (column < 0 || column > lineText.length)
             return
 
-        val widthBeforePosition = lineText.substring(0, column).width()
+        val widthBeforePosition = lineText.substring(0, column).width(getTextScale())
 
         when {
-            getText().width() < getWidth() -> {
+            getText().width(getTextScale()) < getWidth() -> {
                 horizontalScrollingOffset = 0f
             }
             horizontalScrollingOffset > widthBeforePosition -> {
@@ -70,9 +70,9 @@ open class UITextInput @JvmOverloads constructor(
         val line = getText()
 
         for (i in line.indices) {
-            val charWidth = line[i].width()
+            val charWidth = line[i].width(getTextScale())
             if (currentX + (charWidth / 2) >= targetXPos) return LinePosition(0, i, isVisual = true)
-            currentX += charWidth * getTextScale()
+            currentX += charWidth
         }
 
         return LinePosition(0, line.length, isVisual = true)
@@ -80,7 +80,7 @@ open class UITextInput @JvmOverloads constructor(
 
     override fun recalculateDimensions() {
         if (minWidth != null && maxWidth != null) {
-            val width = if (!hasText() && !this.active) placeholderWidth else getText().width()
+            val width = if (!hasText() && !this.active) placeholderWidth else getText().width(getTextScale())
             setWidth(width.pixels().coerceIn(minWidth!!, maxWidth!!))
         }
     }
@@ -110,11 +110,11 @@ open class UITextInput @JvmOverloads constructor(
             if (!selectionStart().isAtLineStart) {
                 val preSelectionText = lineText.substring(0, selectionStart().column)
                 drawUnselectedText(preSelectionText, currentX, row = 0)
-                currentX += preSelectionText.width() * getTextScale()
+                currentX += preSelectionText.width(getTextScale())
             }
 
             val selectedText = lineText.substring(selectionStart().column, selectionEnd().column)
-            val selectedTextWidth = selectedText.width() * getTextScale()
+            val selectedTextWidth = selectedText.width(getTextScale())
             drawSelectedText(selectedText, currentX, currentX + selectedTextWidth, row = 0)
             currentX += selectedTextWidth
 
@@ -124,7 +124,7 @@ open class UITextInput @JvmOverloads constructor(
         } else {
             cursorComponent.unhide()
             val (cursorPosX, _) = cursor.toScreenPos()
-            cursorComponent.setX((cursorPosX * getTextScale()).pixels())
+            cursorComponent.setX((cursorPosX).pixels())
 
             drawUnselectedText(lineText, getLeft(), 0)
         }
