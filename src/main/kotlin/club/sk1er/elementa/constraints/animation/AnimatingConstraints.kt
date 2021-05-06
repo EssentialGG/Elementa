@@ -221,6 +221,7 @@ class AnimatingConstraints(
                 this.radius = this@AnimatingConstraints.radius
                 this.textScale = this@AnimatingConstraints.textScale
                 this.color = this@AnimatingConstraints.color
+                this.fontProvider = this@AnimatingConstraints.fontProvider
             }
             completeAction()
         }
