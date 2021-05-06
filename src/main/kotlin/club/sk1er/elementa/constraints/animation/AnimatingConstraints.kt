@@ -21,6 +21,7 @@ class AnimatingConstraints(
         this.radius = oldConstraints.radius
         this.textScale = oldConstraints.textScale
         this.color = oldConstraints.color
+        this.fontProvider = oldConstraints.fontProvider
     }
 
     fun begin() = apply {
@@ -56,21 +57,27 @@ class AnimatingConstraints(
     }
 
     @JvmOverloads
-    fun setWidthAnimation(strategy: AnimationStrategy, time: Float, newConstraint: WidthConstraint, delay: Float = 0f) = apply {
-        val totalFrames = time * Window.of(component).animationFPS
-        val totalDelay = delay * Window.of(component).animationFPS
+    fun setWidthAnimation(strategy: AnimationStrategy, time: Float, newConstraint: WidthConstraint, delay: Float = 0f) =
+        apply {
+            val totalFrames = time * Window.of(component).animationFPS
+            val totalDelay = delay * Window.of(component).animationFPS
 
-        width = WidthAnimationComponent(
-            strategy,
-            totalFrames.toInt(),
-            oldConstraints.width,
-            newConstraint,
-            totalDelay.toInt()
-        )
-    }
+            width = WidthAnimationComponent(
+                strategy,
+                totalFrames.toInt(),
+                oldConstraints.width,
+                newConstraint,
+                totalDelay.toInt()
+            )
+        }
 
     @JvmOverloads
-    fun setHeightAnimation(strategy: AnimationStrategy, time: Float, newConstraint: HeightConstraint, delay: Float = 0f) = apply {
+    fun setHeightAnimation(
+        strategy: AnimationStrategy,
+        time: Float,
+        newConstraint: HeightConstraint,
+        delay: Float = 0f
+    ) = apply {
         val totalFrames = time * Window.of(component).animationFPS
         val totalDelay = delay * Window.of(component).animationFPS
 
@@ -84,7 +91,12 @@ class AnimatingConstraints(
     }
 
     @JvmOverloads
-    fun setRadiusAnimation(strategy: AnimationStrategy, time: Float, newConstraint: RadiusConstraint, delay: Float = 0f) = apply {
+    fun setRadiusAnimation(
+        strategy: AnimationStrategy,
+        time: Float,
+        newConstraint: RadiusConstraint,
+        delay: Float = 0f
+    ) = apply {
         val totalFrames = time * Window.of(component).animationFPS
         val totalDelay = delay * Window.of(component).animationFPS
 
@@ -98,7 +110,12 @@ class AnimatingConstraints(
     }
 
     @JvmOverloads
-    fun setTextScaleAnimation(strategy: AnimationStrategy, time: Float, newConstraint: HeightConstraint, delay: Float = 0f) = apply {
+    fun setTextScaleAnimation(
+        strategy: AnimationStrategy,
+        time: Float,
+        newConstraint: HeightConstraint,
+        delay: Float = 0f
+    ) = apply {
         val totalFrames = time * Window.of(component).animationFPS
         val totalDelay = delay * Window.of(component).animationFPS
 
@@ -112,18 +129,19 @@ class AnimatingConstraints(
     }
 
     @JvmOverloads
-    fun setColorAnimation(strategy: AnimationStrategy, time: Float, newConstraint: ColorConstraint, delay: Float = 0f) = apply {
-        val totalFrames = time * Window.of(component).animationFPS
-        val totalDelay = delay * Window.of(component).animationFPS
+    fun setColorAnimation(strategy: AnimationStrategy, time: Float, newConstraint: ColorConstraint, delay: Float = 0f) =
+        apply {
+            val totalFrames = time * Window.of(component).animationFPS
+            val totalDelay = delay * Window.of(component).animationFPS
 
-        color = ColorAnimationComponent(
-            strategy,
-            totalFrames.toInt(),
-            oldConstraints.color,
-            newConstraint,
-            totalDelay.toInt()
-        )
-    }
+            color = ColorAnimationComponent(
+                strategy,
+                totalFrames.toInt(),
+                oldConstraints.color,
+                newConstraint,
+                totalDelay.toInt()
+            )
+        }
 
     /**
      * Sets the "extra delay" of this animation. This delay does not affect any of the actual changes in the animation,
@@ -179,7 +197,7 @@ class AnimatingConstraints(
 
         val textScale = textScale
         if (textScale is HeightAnimationComponent) {
-            if (textScale.isComplete())  this.textScale = textScale.newConstraint
+            if (textScale.isComplete()) this.textScale = textScale.newConstraint
             else anyLeftAnimating = true
         }
 
