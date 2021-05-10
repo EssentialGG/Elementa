@@ -5,7 +5,7 @@ import club.sk1er.elementa.components.UIImage
 import club.sk1er.elementa.utils.decodeBlurHash
 import club.sk1er.elementa.utils.drawTexture
 import club.sk1er.mods.core.universal.UGraphics
-import net.minecraft.client.renderer.texture.DynamicTexture
+import club.sk1er.mods.core.universal.utils.ReleasedDynamicTexture
 import java.awt.Color
 import java.io.File
 import java.net.URL
@@ -14,10 +14,10 @@ import javax.imageio.ImageIO
 import kotlin.math.abs
 
 open class BlurHashImage(private val hash: String) : UIComponent(), ImageProvider {
-    private lateinit var texture: DynamicTexture
+    private lateinit var texture: ReleasedDynamicTexture
     private var dimensions = BASE_WIDTH to BASE_HEIGHT
 
-    private fun generateTexture(): DynamicTexture {
+    private fun generateTexture(): ReleasedDynamicTexture {
         return decodeBlurHash(hash, dimensions.first.toInt(), dimensions.second.toInt())?.let {
             UGraphics.getTexture(it)
         } ?: run {

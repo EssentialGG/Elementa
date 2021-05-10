@@ -8,7 +8,7 @@ import club.sk1er.elementa.svg.SVGParser
 import club.sk1er.elementa.utils.ResourceCache
 import club.sk1er.elementa.utils.drawTexture
 import club.sk1er.mods.core.universal.UGraphics
-import net.minecraft.client.renderer.texture.DynamicTexture
+import club.sk1er.mods.core.universal.utils.ReleasedDynamicTexture
 import java.awt.Color
 import java.awt.image.BufferedImage
 import java.io.File
@@ -22,7 +22,7 @@ open class UIImage @JvmOverloads constructor(
     private val loadingImage: ImageProvider = DefaultLoadingImage,
     private val failureImage: ImageProvider = SVGComponent(failureSVG)
 ) : UIComponent(), ImageProvider {
-    private var texture: DynamicTexture? = null
+    private var texture: ReleasedDynamicTexture? = null
 
     private val waiting = ConcurrentLinkedQueue<UIImage>()
     var imageWidth = 1f

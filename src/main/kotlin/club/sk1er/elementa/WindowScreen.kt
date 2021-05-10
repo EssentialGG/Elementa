@@ -38,7 +38,7 @@ abstract class WindowScreen(
         super.onDrawScreen(mouseX, mouseY, partialTicks)
 
         //#if MC>=11602
-        //$$ UGraphics.setStack(getMatrixStack())
+        //$$ UGraphics.setStack(matrixStack)
         //#endif
 
         if (drawDefaultBackground)
