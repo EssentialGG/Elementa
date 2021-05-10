@@ -5,6 +5,7 @@ import club.sk1er.elementa.components.image.DefaultLoadingImage
 import club.sk1er.elementa.components.image.ImageCache
 import club.sk1er.elementa.components.image.ImageProvider
 import club.sk1er.elementa.svg.SVGParser
+import club.sk1er.elementa.utils.ResourceCache
 import club.sk1er.elementa.utils.drawTexture
 import club.sk1er.mods.core.universal.UGraphics
 import net.minecraft.client.renderer.texture.DynamicTexture
@@ -13,6 +14,7 @@ import java.awt.image.BufferedImage
 import java.io.File
 import java.net.URL
 import java.util.concurrent.CompletableFuture
+import java.util.concurrent.ConcurrentLinkedQueue
 import javax.imageio.ImageIO
 
 open class UIImage @JvmOverloads constructor(
@@ -20,22 +22,29 @@ open class UIImage @JvmOverloads constructor(
     private val loadingImage: ImageProvider = DefaultLoadingImage,
     private val failureImage: ImageProvider = SVGComponent(failureSVG)
 ) : UIComponent(), ImageProvider {
-    private lateinit var texture: DynamicTexture
+    private var texture: DynamicTexture = emptyTexture
 
+    private val waiting = ConcurrentLinkedQueue<UIImage>()
     var imageWidth = 1f
     var imageHeight = 1f
-
+    var destroy = true
     val isLoaded: Boolean
-        get() = ::texture.isInitialized
+        get() = texture != emptyTexture
 
     init {
         imageFuture.thenAcceptAsync {
+            if (it == null) {
+                destroy = false
+                return@thenAcceptAsync
+            }
             imageWidth = it.width.toFloat()
             imageHeight = it.height.toFloat()
             imageFuture.obtrudeValue(null)
 
             Window.enqueueRenderOperation {
                 texture = UGraphics.getTexture(it)
+                while (waiting.isEmpty().not())
+                    waiting.poll().texture = texture
             }
         }
     }
@@ -49,7 +58,7 @@ open class UIImage @JvmOverloads constructor(
 
     override fun drawImage(x: Double, y: Double, width: Double, height: Double, color: Color) {
         when {
-            ::texture.isInitialized -> drawTexture(texture, color, x, y, width, height)
+            texture != emptyTexture -> drawTexture(texture, color, x, y, width, height)
             imageFuture.isCompletedExceptionally -> failureImage.drawImage(x, y, width, height, color)
             else -> loadingImage.drawImage(x, y, width, height, color)
         }
@@ -75,14 +84,25 @@ open class UIImage @JvmOverloads constructor(
 
     @Throws(Throwable::class)
     protected fun finalize() {
+        if (!destroy) return
         val glTextureId = texture.glTextureId
         if (glTextureId != 0 && glTextureId != -1) {
             UGraphics.deleteTexture(glTextureId)
         }
     }
 
+    fun supply(uiImage: UIImage) {
+        if (texture != emptyTexture) {
+            uiImage.texture = texture
+            return
+        }
+        waiting.add(uiImage)
+    }
+
     companion object {
         private val failureSVG = SVGParser.parseFromResource("/svg/failure.svg")
+        private val emptyTexture = UGraphics.getTexture(BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB))
+        private val defaultResourceCache = ResourceCache(50)
 
         @JvmStatic
         fun ofFile(file: File): UIImage {
@@ -110,5 +130,19 @@ open class UIImage @JvmOverloads constructor(
                 ImageIO.read(this::class.java.getResourceAsStream(path))
             })
         }
+
+        @JvmStatic
+        fun ofResourceCached(path: String): UIImage {
+            return ofResourceCached(path, defaultResourceCache)
+        }
+
+        @JvmStatic
+        fun ofResourceCached(path: String, resourceCache: ResourceCache): UIImage {
+            return resourceCache.get(path)
+        }
+
+
     }
+
+
 }
