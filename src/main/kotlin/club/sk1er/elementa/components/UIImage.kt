@@ -22,14 +22,14 @@ open class UIImage @JvmOverloads constructor(
     private val loadingImage: ImageProvider = DefaultLoadingImage,
     private val failureImage: ImageProvider = SVGComponent(failureSVG)
 ) : UIComponent(), ImageProvider {
-    private var texture: DynamicTexture = emptyTexture
+    private var texture: DynamicTexture? = null
 
     private val waiting = ConcurrentLinkedQueue<UIImage>()
     var imageWidth = 1f
     var imageHeight = 1f
     var destroy = true
     val isLoaded: Boolean
-        get() = texture != emptyTexture
+        get() = texture != null
 
     init {
         imageFuture.thenAcceptAsync {
@@ -58,7 +58,7 @@ open class UIImage @JvmOverloads constructor(
 
     override fun drawImage(x: Double, y: Double, width: Double, height: Double, color: Color) {
         when {
-            texture != emptyTexture -> drawTexture(texture, color, x, y, width, height)
+            texture != null -> drawTexture(texture!!, color, x, y, width, height)
             imageFuture.isCompletedExceptionally -> failureImage.drawImage(x, y, width, height, color)
             else -> loadingImage.drawImage(x, y, width, height, color)
         }
@@ -85,14 +85,14 @@ open class UIImage @JvmOverloads constructor(
     @Throws(Throwable::class)
     protected fun finalize() {
         if (!destroy) return
-        val glTextureId = texture.glTextureId
-        if (glTextureId != 0 && glTextureId != -1) {
+        val glTextureId = texture?.glTextureId
+        if (glTextureId != null && glTextureId != 0 && glTextureId != -1) {
             UGraphics.deleteTexture(glTextureId)
         }
     }
 
     fun supply(uiImage: UIImage) {
-        if (texture != emptyTexture) {
+        if (texture != null) {
             uiImage.texture = texture
             return
         }
@@ -101,8 +101,7 @@ open class UIImage @JvmOverloads constructor(
 
     companion object {
         private val failureSVG = SVGParser.parseFromResource("/svg/failure.svg")
-        private val emptyTexture = UGraphics.getTexture(BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB))
-        private val defaultResourceCache = ResourceCache(50)
+        val defaultResourceCache = ResourceCache(50)
 
         @JvmStatic
         fun ofFile(file: File): UIImage {
