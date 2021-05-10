@@ -12,22 +12,10 @@ buildscript {
 
     repositories {
         mavenLocal()
-        jcenter()
         mavenCentral()
-        maven {
-            name = "fabric"
-            url = "https://maven.fabricmc.net/"
-        }
-        if (!fabric) {
-            maven {
-                name = "forge"
-                url = "https://files.minecraftforge.net/maven"
-            }
-        }
-        maven {
-            name = "sonatype"
-            url = "https://oss.sonatype.org/content/repositories/snapshots/"
-        }
+        maven { url "https://maven.fabricmc.net/" }
+        if (!fabric) maven { url "https://files.minecraftforge.net/maven" }
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
         maven { url 'https://jitpack.io' }
     }
 
@@ -36,7 +24,7 @@ buildscript {
         if (fabric) {
             classpath 'fabric-loom:fabric-loom.gradle.plugin:0.4-SNAPSHOT'
         } else if (mcVersion >= 11400) {
-            classpath('net.minecraftforge.gradle:ForgeGradle:3.+'){
+            classpath('net.minecraftforge.gradle:ForgeGradle:3.+') {
                 exclude group: 'trove', module: 'trove' // preprocessor/idea requires more recent one
             }
         } else {
@@ -58,14 +46,7 @@ apply plugin: 'maven-publish'
 
 repositories {
     mavenCentral()
-    jcenter()
-    maven {
-        name = "kryonet"
-        url = "http://clojars.org/repo/"
-    }
-    maven {
-        url 'https://repository.apache.org/content/repositories/releases/org/apache/xmlgraphics/'
-    }
+    maven { url 'https://repository.apache.org/content/repositories/releases/org/apache/xmlgraphics/' }
     maven { url 'https://jitpack.io' }
     maven { url "https://repo.sk1er.club/repository/maven-public" }
 }
@@ -173,10 +154,6 @@ dependencies {
     implementation "org.commonmark:commonmark-ext-ins:0.17.1"
     implementation "org.dom4j:dom4j:2.1.1"
 
-    if(mcVersion < 11300)
-    implementation ('org.slick2d:slick2d-core:1.0.2') {
-        exclude module: 'lwjgl'
-    }
     if (FABRIC) {
         minecraft 'com.mojang:minecraft:' + [
                 11404: '1.14.4',
@@ -262,7 +239,7 @@ jar {
     exclude("kotlin/**")
     manifest {
         attributes(
-            'FMLModType': 'LIBRARY'
+                'FMLModType': 'LIBRARY'
         )
     }
 }
