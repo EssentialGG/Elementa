@@ -15,7 +15,8 @@ class UIMultilineTextInput @JvmOverloads constructor(
     selectionForegroundColor: Color = Color(64, 139, 229),
     allowInactiveSelection: Boolean = false,
     inactiveSelectionBackgroundColor: Color = Color(176, 176, 176),
-    inactiveSelectionForegroundColor: Color = Color.WHITE
+    inactiveSelectionForegroundColor: Color = Color.WHITE,
+    cursorColor: Color = Color.WHITE
 ) : AbstractTextInput(
     placeholder,
     shadow,
@@ -23,7 +24,8 @@ class UIMultilineTextInput @JvmOverloads constructor(
     selectionForegroundColor,
     allowInactiveSelection,
     inactiveSelectionBackgroundColor,
-    inactiveSelectionForegroundColor
+    inactiveSelectionForegroundColor,
+    cursorColor
 ) {
     private var maxHeight: HeightConstraint? = null
 

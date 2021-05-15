@@ -22,7 +22,8 @@ abstract class AbstractTextInput(
     protected val selectionForegroundColor: Color,
     protected val allowInactiveSelection: Boolean,
     protected val inactiveSelectionBackgroundColor: Color,
-    protected val inactiveSelectionForegroundColor: Color
+    protected val inactiveSelectionForegroundColor: Color,
+    protected val cursorColor: Color
 ) : UIComponent() {
     protected var active = false
 
@@ -329,7 +330,7 @@ abstract class AbstractTextInput(
         }
 
         cursorComponent.animateAfterUnhide {
-            setColorAnimation(Animations.OUT_CIRCULAR, 0.5f, Color.WHITE.toConstraint())
+            setColorAnimation(Animations.OUT_CIRCULAR, 0.5f, cursorColor.toConstraint())
             onComplete {
                 if (!active) return@onComplete
                 cursorComponent.animate {
@@ -666,7 +667,7 @@ abstract class AbstractTextInput(
         if (!active) return
 
         cursorComponent.animate {
-            setColorAnimation(Animations.OUT_CIRCULAR, 0.5f, Color.WHITE.toConstraint())
+            setColorAnimation(Animations.OUT_CIRCULAR, 0.5f, cursorColor.toConstraint())
             onComplete {
                 if (!active) return@onComplete
                 cursorComponent.animate {

@@ -13,7 +13,8 @@ open class UITextInput @JvmOverloads constructor(
     selectionForegroundColor: Color = Color(64, 139, 229),
     allowInactiveSelection: Boolean = false,
     inactiveSelectionBackgroundColor: Color = Color(176, 176, 176),
-    inactiveSelectionForegroundColor: Color = Color.WHITE
+    inactiveSelectionForegroundColor: Color = Color.WHITE,
+    cursorColor: Color = Color.WHITE
 ) : AbstractTextInput(
     placeholder,
     shadow,
@@ -21,12 +22,13 @@ open class UITextInput @JvmOverloads constructor(
     selectionForegroundColor,
     allowInactiveSelection,
     inactiveSelectionBackgroundColor,
-    inactiveSelectionForegroundColor
+    inactiveSelectionForegroundColor,
+    cursorColor = Color.WHITE
 ) {
-    private var minWidth: WidthConstraint? = null
-    private var maxWidth: WidthConstraint? = null
+    protected var minWidth: WidthConstraint? = null
+    protected var maxWidth: WidthConstraint? = null
 
-    private val placeholderWidth = placeholder.width()
+    protected val placeholderWidth = placeholder.width()
 
     fun setMinWidth(constraint: WidthConstraint) = apply {
         minWidth = constraint
@@ -38,20 +40,28 @@ open class UITextInput @JvmOverloads constructor(
 
     override fun getText() = textualLines.first().text
 
+    protected open fun getTextForRender(): String = getText()
+
+    protected open fun setCursorPos() {
+        cursorComponent.unhide()
+        val (cursorPosX, _) = cursor.toScreenPos()
+        cursorComponent.setX((cursorPosX).pixels())
+    }
+
     override fun textToLines(text: String): List<String> {
         return listOf(text.replace('\n', ' '))
     }
 
     override fun scrollIntoView(pos: LinePosition) {
         val column = pos.column
-        val lineText = getText()
+        val lineText = getTextForRender()
         if (column < 0 || column > lineText.length)
             return
 
         val widthBeforePosition = lineText.substring(0, column).width(getTextScale())
 
         when {
-            getText().width(getTextScale()) < getWidth() -> {
+            getTextForRender().width(getTextScale()) < getWidth() -> {
                 horizontalScrollingOffset = 0f
             }
             horizontalScrollingOffset > widthBeforePosition -> {
@@ -67,7 +77,7 @@ open class UITextInput @JvmOverloads constructor(
         val targetXPos = x + horizontalScrollingOffset
         var currentX = 0f
 
-        val line = getText()
+        val line = getTextForRender()
 
         for (i in line.indices) {
             val charWidth = line[i].width(getTextScale())
@@ -80,7 +90,7 @@ open class UITextInput @JvmOverloads constructor(
 
     override fun recalculateDimensions() {
         if (minWidth != null && maxWidth != null) {
-            val width = if (!hasText() && !this.active) placeholderWidth else getText().width(getTextScale())
+            val width = if (!hasText() && !this.active) placeholderWidth else getTextForRender().width(getTextScale())
             setWidth(width.pixels().coerceIn(minWidth!!, maxWidth!!))
         }
     }
@@ -101,7 +111,7 @@ open class UITextInput @JvmOverloads constructor(
             return super.draw()
         }
 
-        val lineText = getText()
+        val lineText = getTextForRender()
 
         if (hasSelection()) {
             var currentX = getLeft()
@@ -122,9 +132,7 @@ open class UITextInput @JvmOverloads constructor(
                 drawUnselectedText(lineText.substring(selectionEnd().column), currentX, row = 0)
             }
         } else {
-            cursorComponent.unhide()
-            val (cursorPosX, _) = cursor.toScreenPos()
-            cursorComponent.setX((cursorPosX).pixels())
+            setCursorPos()
 
             drawUnselectedText(lineText, getLeft(), 0)
         }
