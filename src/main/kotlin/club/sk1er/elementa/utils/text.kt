@@ -13,7 +13,7 @@ fun getStringSplitToWidthTruncated(
     maxLines: Int,
     ensureSpaceAtEndOfLines: Boolean = true,
     processColorCodes: Boolean = true,
-    fontProvider: FontProvider = DefaultFonts.vanillaFontRenderer
+    fontProvider: FontProvider = DefaultFonts.VANILLA_FONT_RENDERER
 ): List<String> {
     val lines = getStringSplitToWidth(text, maxLineWidth, textScale, ensureSpaceAtEndOfLines, processColorCodes,fontProvider)
     if (lines.size <= maxLines)
@@ -37,7 +37,7 @@ fun getStringSplitToWidth(
     textScale: Float,
     ensureSpaceAtEndOfLines: Boolean = true,
     processColorCodes: Boolean = true,
-    fontProvider: FontProvider = DefaultFonts.vanillaFontRenderer
+    fontProvider: FontProvider = DefaultFonts.VANILLA_FONT_RENDERER
 ): List<String> {
     val spaceWidth = ' '.width(textScale)
     val maxLineWidthSpace = maxLineWidth - if (ensureSpaceAtEndOfLines) spaceWidth else 0f

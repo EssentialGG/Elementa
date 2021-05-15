@@ -8,7 +8,7 @@ import java.awt.Color
 
 fun Char.width(textScale: Float = 1f) = UGraphics.getCharWidth(this) * textScale
 
-fun String.width(textScale: Float = 1f, fontProvider: FontProvider = DefaultFonts.vanillaFontRenderer) =
+fun String.width(textScale: Float = 1f, fontProvider: FontProvider = DefaultFonts.VANILLA_FONT_RENDERER) =
     fontProvider.getStringWidth(this, 10f) * textScale
 
 @JvmOverloads

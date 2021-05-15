@@ -40,7 +40,7 @@ open class UIConstraints(protected val component: UIComponent) : Observable() {
             field = value
             update(ConstraintType.TEXT_SCALE)
         }
-    var fontProvider: FontProvider = DefaultFonts.vanillaFontRenderer
+    var fontProvider: FontProvider = DefaultFonts.VANILLA_FONT_RENDERER
         set(value) {
             field = value
             update(ConstraintType.FONT_PROVIDER)
