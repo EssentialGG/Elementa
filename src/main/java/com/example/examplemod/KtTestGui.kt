@@ -47,7 +47,7 @@ class KtTestGui : WindowScreen() {
     }
 
     init {
-        UIBlock(Color.PINK).constrain {
+        UIBlock(Color.DARK_GRAY).constrain {
             x = CenterConstraint()
             height = 20.pixels()
             width = 80.pixels()
@@ -55,8 +55,16 @@ class KtTestGui : WindowScreen() {
         }.onMouseClick {
             UChat.chat("b1: ${textInput.getText()}")
             UChat.chat("b2: ${textInput2.getText()}")
-        } childOf window
+        }.addChild(UIText("Print").constrain { x = CenterConstraint(); y = CenterConstraint() }) childOf window
 
+        UIBlock(Color.DARK_GRAY).constrain {
+            x = CenterConstraint()
+            y = SiblingConstraint(8f)
+            height = 20.pixels()
+            width = 80.pixels()
+        }.onMouseClick {
+            textInput2.setProtection(!textInput2.isProtected())
+        }.addChild(UIText("Toggle Prot").constrain { x = CenterConstraint(); y = CenterConstraint() }) childOf window
         Inspector(window) childOf window
     }
 
