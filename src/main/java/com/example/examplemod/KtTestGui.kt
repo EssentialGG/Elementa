@@ -2,70 +2,85 @@ package com.example.examplemod
 
 import club.sk1er.elementa.WindowScreen
 import club.sk1er.elementa.components.*
-import club.sk1er.elementa.components.input.UIPasswordInput
-import club.sk1er.elementa.components.input.UITextInput
-import club.sk1er.elementa.components.inspector.Inspector
+import club.sk1er.elementa.components.image.MSDFComponent
 import club.sk1er.elementa.constraints.*
 import club.sk1er.elementa.constraints.animation.Animations
 import club.sk1er.elementa.dsl.*
-import club.sk1er.elementa.font.DefaultFonts
-import club.sk1er.mods.core.universal.UChat
 import java.awt.Color
 
 class KtTestGui : WindowScreen() {
-    private val block by UIBlock(Color.BLACK).constrain {
-        x = CenterConstraint()
-        height = 12.pixels()
-        width = 120.pixels()
-        y = 40.percent()
-    } childOf window
-
-    private val textInput by UITextInput("hello").constrain {
-        x = CenterConstraint()
-        width = 90.percent()
-        y = CenterConstraint()
-        fontProvider = DefaultFonts.VANILLA_FONT_RENDERER
-    } childOf block
-
-    private val block2 by UIBlock(Color.BLACK).constrain {
-        x = CenterConstraint()
-        y = SiblingConstraint(10f)
-        width = 120.pixels()
-        height = 12.pixels()
-    } childOf window
-
-    private val textInput2 by UIPasswordInput(placeholder = "hello2").constrain {
-        x = CenterConstraint()
-        width = 90.percent()
-        y = CenterConstraint()
-        fontProvider = DefaultFonts.VANILLA_FONT_RENDERER
-    } childOf block2
+    private val myTextBox = UIBlock(Color(0, 0, 0, 255))
 
     init {
-        block.onMouseClick { textInput.grabWindowFocus() }
-        block2.onMouseClick { textInput2.grabWindowFocus() }
+//        for (i in 0..100) {
+//            UIImage.ofResource("/cosmetics.png").constrain {
+//                width = 15.pixels()
+//                height = 15.pixels()
+//                x = CramSiblingConstraint()
+//                y = CramSiblingConstraint()
+//            } childOf window
+//        }
+
+        var first = true
+        val items = listOf(
+            "cart",
+            "add",
+            "arrow-left",
+            "search",
+            "arrow-right",
+            "kick",
+            "featured",
+            "hat",
+            "friends",
+            "chat"
+        )
+        UIContainer().constrain {
+            x = CenterConstraint()
+            y = RelativeConstraint(.25f)
+        } childOf window
+        for (j in 1..10) {
+            val tmp = UIContainer().constrain {
+                x = CenterConstraint()
+                y = SiblingConstraint()
+                width = RelativeConstraint(.5f)
+                height = ChildBasedMaxSizeConstraint()
+            } childOf window
+            for (i in items) {
+                MSDFComponent.ofResource("/${i}.png").constrain {
+                    width = (2 * j).pixels()
+                    height = (2 * j).pixels()
+                    x = CramSiblingConstraint()
+                    y = CramSiblingConstraint()
+                } childOf tmp
+            }
+
+        }
     }
 
-    init {
-        UIBlock(Color.DARK_GRAY).constrain {
-            x = CenterConstraint()
-            height = 20.pixels()
-            width = 80.pixels()
-            y = CenterConstraint()
-        }.onMouseClick {
-            UChat.chat("b1: ${textInput.getText()}")
-            UChat.chat("b2: ${textInput2.getText()}")
-        }.addChild(UIText("Print").constrain { x = CenterConstraint(); y = CenterConstraint() }) childOf window
+    override fun onDrawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
+        super.onDrawScreen(mouseX, mouseY, partialTicks)
 
-        UIBlock(Color.DARK_GRAY).constrain {
-            x = CenterConstraint()
-            y = SiblingConstraint(8f)
-            height = 20.pixels()
-            width = 80.pixels()
-        }.onMouseClick {
-            textInput2.setProtection(!textInput2.isProtected())
-        }.addChild(UIText("Toggle Prot").constrain { x = CenterConstraint(); y = CenterConstraint() }) childOf window
-        Inspector(window) childOf window
+//        UIBlock.drawBlock(Color.GRAY, 10.0, 10.0, 500.0, 600.0)
+//
+//        val random = Random(1)
+//
+//        var y = 0
+//        for (i in 8..40) {
+//            if (i % 2 == 0)
+//                ElementaFonts.MINECRAFT
+//                    .drawString(
+//                        "This is a TEST String! ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
+//                        Color(16777215), 20.0f, 10.0f + y, i.toFloat()/2
+//                    )
+//            else
+//                ElementaFonts.MINECRAFT
+//                    .drawString(
+//                        "§lThis is a TEST String! ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
+//                        Color(16777215), 20.0f, 10.0f + y, i.toFloat()/2
+//                    )
+//
+//            y += i/2 + 1
+//        }
     }
 
     private fun animImgSmall(img: UIImage) {
@@ -86,6 +101,10 @@ class KtTestGui : WindowScreen() {
                 animImgSmall(img)
             }
         }
+    }
+
+    private fun closeSettings() {
+//        window.removeChild(settings)
     }
 
     //#if MC<11500
