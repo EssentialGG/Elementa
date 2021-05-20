@@ -1,6 +1,7 @@
 package club.sk1er.elementa.components
 
 import club.sk1er.elementa.UIComponent
+import club.sk1er.elementa.components.image.CacheableImage
 import club.sk1er.elementa.components.image.DefaultLoadingImage
 import club.sk1er.elementa.components.image.ImageCache
 import club.sk1er.elementa.components.image.ImageProvider
@@ -21,10 +22,10 @@ open class UIImage @JvmOverloads constructor(
     private val imageFuture: CompletableFuture<BufferedImage>,
     private val loadingImage: ImageProvider = DefaultLoadingImage,
     private val failureImage: ImageProvider = SVGComponent(failureSVG)
-) : UIComponent(), ImageProvider {
+) : UIComponent(), ImageProvider, CacheableImage {
     private var texture: ReleasedDynamicTexture? = null
 
-    private val waiting = ConcurrentLinkedQueue<UIImage>()
+    private val waiting = ConcurrentLinkedQueue<CacheableImage>()
     var imageWidth = 1f
     var imageHeight = 1f
     var destroy = true
@@ -44,7 +45,7 @@ open class UIImage @JvmOverloads constructor(
             Window.enqueueRenderOperation {
                 texture = UGraphics.getTexture(it)
                 while (waiting.isEmpty().not())
-                    waiting.poll().texture = texture
+                    waiting.poll().applyTexture(texture)
             }
         }
     }
@@ -91,12 +92,16 @@ open class UIImage @JvmOverloads constructor(
         }
     }
 
-    fun supply(uiImage: UIImage) {
+    override fun supply(image: CacheableImage) {
         if (texture != null) {
-            uiImage.texture = texture
+            image.applyTexture(texture)
             return
         }
-        waiting.add(uiImage)
+        waiting.add(image)
+    }
+
+    override fun applyTexture(texture: ReleasedDynamicTexture?) {
+        this.texture = texture;
     }
 
     companion object {
@@ -137,7 +142,7 @@ open class UIImage @JvmOverloads constructor(
 
         @JvmStatic
         fun ofResourceCached(path: String, resourceCache: ResourceCache): UIImage {
-            return resourceCache.get(path)
+            return resourceCache.getUIImage(path) as UIImage
         }
 
 

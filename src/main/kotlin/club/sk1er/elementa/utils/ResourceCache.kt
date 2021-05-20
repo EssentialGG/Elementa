@@ -1,15 +1,17 @@
 package club.sk1er.elementa.utils
 
 import club.sk1er.elementa.components.UIImage
+import club.sk1er.elementa.components.image.CacheableImage
+import club.sk1er.elementa.components.image.MSDFComponent
 import java.awt.image.BufferedImage
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ConcurrentHashMap
 import javax.imageio.ImageIO
 
 class ResourceCache(val size: Int = 50) {
-    private val cacheMap = ConcurrentHashMap<String, UIImage>()
+    private val cacheMap = ConcurrentHashMap<String, CacheableImage>()
 
-    fun get(path: String): UIImage {
+    fun getUIImage(path: String): CacheableImage {
         if (cacheMap.size > size)
             cacheMap.clear()
         val cachedImage = cacheMap.computeIfAbsent(path) { pth ->
@@ -28,5 +30,18 @@ class ResourceCache(val size: Int = 50) {
 
     fun invalidate(path: String): Boolean {
         return cacheMap.remove(path) != null
+    }
+
+    fun getMSDFComponent(path: String): MSDFComponent {
+        if (cacheMap.size > size)
+            cacheMap.clear()
+        val cachedImage = cacheMap.computeIfAbsent(path) { pth ->
+            MSDFComponent(CompletableFuture.supplyAsync {
+                ImageIO.read(this::class.java.getResourceAsStream(pth))
+            })
+        }
+        return MSDFComponent(CompletableFuture.completedFuture<BufferedImage>(null)).also {
+            cachedImage.supply(it)
+        }
     }
 }

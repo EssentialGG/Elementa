@@ -23,10 +23,10 @@ import javax.imageio.ImageIO
 
 open class MSDFComponent @JvmOverloads constructor(
     private val imageFuture: CompletableFuture<BufferedImage>
-) : UIComponent() {
+) : UIComponent(), CacheableImage {
     private var texture: ReleasedDynamicTexture? = null
 
-    private val waiting = ConcurrentLinkedQueue<MSDFComponent>()
+    private val waiting = ConcurrentLinkedQueue<CacheableImage>()
     var imageWidth = 1f
     var imageHeight = 1f
     var destroy = true
@@ -46,7 +46,7 @@ open class MSDFComponent @JvmOverloads constructor(
             Window.enqueueRenderOperation {
                 texture = UGraphics.getTexture(it)
                 while (waiting.isEmpty().not())
-                    waiting.poll().texture = texture
+                    waiting.poll().applyTexture(texture)
             }
         }
     }
@@ -72,6 +72,9 @@ open class MSDFComponent @JvmOverloads constructor(
             return super.draw()
         }
         val tex = texture ?: return super.draw();
+        while (waiting.isEmpty().not())
+            waiting.poll().applyTexture(texture)
+
         initShaders()
         UGraphics.enableBlend()
         UGraphics.tryBlendFuncSeparate(
@@ -134,17 +137,20 @@ open class MSDFComponent @JvmOverloads constructor(
         }
     }
 
-    fun supply(uiImage: MSDFComponent) {
+
+    override fun supply(image: CacheableImage) {
         if (texture != null) {
-            uiImage.texture = texture
+            image.applyTexture(texture)
             return
         }
-        waiting.add(uiImage)
+        waiting.add(image)
+    }
+
+    override fun applyTexture(texture: ReleasedDynamicTexture?) {
+        this.texture=texture;
     }
 
     companion object {
-        private val failureSVG = SVGParser.parseFromResource("/svg/failure.svg")
-        val defaultResourceCache = ResourceCache(50)
 
         @JvmStatic
         fun ofFile(file: File): MSDFComponent {
@@ -178,8 +184,8 @@ open class MSDFComponent @JvmOverloads constructor(
         }
 
         @JvmStatic
-        fun ofResourceCached(path: String, resourceCache: ResourceCache): UIImage {
-            return resourceCache.get(path)
+        fun ofResourceCached(path: String, resourceCache: ResourceCache): MSDFComponent {
+            return resourceCache.getMSDFComponent(path)
         }
 
         private lateinit var shader: Shader
@@ -209,6 +215,8 @@ open class MSDFComponent @JvmOverloads constructor(
 
 
     }
+
+
 
 
 }
