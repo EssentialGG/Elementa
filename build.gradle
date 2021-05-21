@@ -72,7 +72,7 @@ preprocess {
 }
 
 version = this.properties.getOrDefault("BUILD_ID", "LOCAL") //BUILD_ID
-group = "club.sk1er" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+group = "gg.essential" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "Elementa" + project.name
 
 sourceCompatibility = targetCompatibility = 1.8

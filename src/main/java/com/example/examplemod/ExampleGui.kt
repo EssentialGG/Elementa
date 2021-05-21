@@ -1,12 +1,12 @@
 package com.example.examplemod
 
-import club.sk1er.elementa.WindowScreen
-import club.sk1er.elementa.components.*
-import club.sk1er.elementa.components.input.UITextInput
-import club.sk1er.elementa.constraints.*
-import club.sk1er.elementa.constraints.animation.Animations
-import club.sk1er.elementa.dsl.*
-import club.sk1er.elementa.effects.ScissorEffect
+import gg.essential.elementa.WindowScreen
+import gg.essential.elementa.components.*
+import gg.essential.elementa.components.input.UITextInput
+import gg.essential.elementa.constraints.*
+import gg.essential.elementa.constraints.animation.Animations
+import gg.essential.elementa.dsl.*
+import gg.essential.elementa.effects.ScissorEffect
 import java.awt.Color
 
 /**

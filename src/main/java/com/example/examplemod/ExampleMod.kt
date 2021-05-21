@@ -1,6 +1,6 @@
 package com.example.examplemod
 
-import club.sk1er.elementa.effects.StencilEffect
+import gg.essential.elementa.effects.StencilEffect
 import gg.essential.universal.UMinecraft
 import gg.essential.universal.UScreen
 

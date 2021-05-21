@@ -1,14 +1,14 @@
 package com.example.examplemod;
 
-import club.sk1er.elementa.UIComponent;
-import club.sk1er.elementa.components.UIBlock;
-import club.sk1er.elementa.components.Window;
-import club.sk1er.elementa.constraints.CenterConstraint;
-import club.sk1er.elementa.constraints.ChildBasedSizeConstraint;
-import club.sk1er.elementa.constraints.PixelConstraint;
-import club.sk1er.elementa.constraints.animation.AnimatingConstraints;
-import club.sk1er.elementa.constraints.animation.Animations;
-import club.sk1er.elementa.effects.ScissorEffect;
+import gg.essential.elementa.UIComponent;
+import gg.essential.elementa.components.UIBlock;
+import gg.essential.elementa.components.Window;
+import gg.essential.elementa.constraints.CenterConstraint;
+import gg.essential.elementa.constraints.ChildBasedSizeConstraint;
+import gg.essential.elementa.constraints.PixelConstraint;
+import gg.essential.elementa.constraints.animation.AnimatingConstraints;
+import gg.essential.elementa.constraints.animation.Animations;
+import gg.essential.elementa.effects.ScissorEffect;
 import gg.essential.universal.UScreen;
 
 public class JavaTestGui extends UScreen {

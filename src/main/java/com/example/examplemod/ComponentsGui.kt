@@ -1,15 +1,15 @@
 package com.example.examplemod
 
-import club.sk1er.elementa.WindowScreen
-import club.sk1er.elementa.components.*
-import club.sk1er.elementa.components.image.BlurHashImage
-import club.sk1er.elementa.components.input.UIMultilineTextInput
-import club.sk1er.elementa.components.input.UITextInput
-import club.sk1er.elementa.components.inspector.Inspector
-import club.sk1er.elementa.constraints.*
-import club.sk1er.elementa.dsl.*
-import club.sk1er.elementa.effects.OutlineEffect
-import club.sk1er.elementa.markdown.MarkdownComponent
+import gg.essential.elementa.WindowScreen
+import gg.essential.elementa.components.*
+import gg.essential.elementa.components.image.BlurHashImage
+import gg.essential.elementa.components.input.UIMultilineTextInput
+import gg.essential.elementa.components.input.UITextInput
+import gg.essential.elementa.components.inspector.Inspector
+import gg.essential.elementa.constraints.*
+import gg.essential.elementa.dsl.*
+import gg.essential.elementa.effects.OutlineEffect
+import gg.essential.elementa.markdown.MarkdownComponent
 import java.awt.Color
 import java.net.URL
 
