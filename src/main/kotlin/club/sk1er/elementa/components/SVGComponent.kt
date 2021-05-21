@@ -4,7 +4,7 @@ import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.components.image.ImageProvider
 import club.sk1er.elementa.svg.SVGParser
 import club.sk1er.elementa.svg.data.SVG
-import club.sk1er.mods.core.universal.UGraphics
+import gg.essential.universal.UGraphics
 import org.lwjgl.BufferUtils
 import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL15

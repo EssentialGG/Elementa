@@ -8,7 +8,7 @@ import club.sk1er.elementa.state.State
 import club.sk1er.elementa.state.pixels
 import club.sk1er.elementa.utils.getStringSplitToWidth
 import club.sk1er.elementa.utils.getStringSplitToWidthTruncated
-import club.sk1er.mods.core.universal.UGraphics
+import gg.essential.universal.UGraphics
 import java.awt.Color
 
 /**

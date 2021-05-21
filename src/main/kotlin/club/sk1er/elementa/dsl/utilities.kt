@@ -3,7 +3,7 @@ package club.sk1er.elementa.dsl
 import club.sk1er.elementa.constraints.*
 import club.sk1er.elementa.font.DefaultFonts
 import club.sk1er.elementa.font.FontProvider
-import club.sk1er.mods.core.universal.UGraphics
+import gg.essential.universal.UGraphics
 import java.awt.Color
 
 fun Char.width(textScale: Float = 1f) = UGraphics.getCharWidth(this) * textScale

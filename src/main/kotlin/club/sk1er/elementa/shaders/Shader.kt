@@ -1,6 +1,6 @@
 package club.sk1er.elementa.shaders
 
-import club.sk1er.mods.core.universal.UGraphics
+import gg.essential.universal.UGraphics
 import org.lwjgl.opengl.ARBShaderObjects
 import org.lwjgl.opengl.GL20
 

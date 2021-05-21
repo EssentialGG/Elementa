@@ -5,7 +5,7 @@ import club.sk1er.elementa.dsl.coerceAtMost
 import club.sk1er.elementa.dsl.pixels
 import club.sk1er.elementa.dsl.width
 import club.sk1er.elementa.utils.getStringSplitToWidthTruncated
-import club.sk1er.mods.core.universal.UKeyboard
+import gg.essential.universal.UKeyboard
 import java.awt.Color
 
 class UIMultilineTextInput @JvmOverloads constructor(

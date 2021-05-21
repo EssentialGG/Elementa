@@ -8,8 +8,8 @@ import club.sk1er.elementa.font.data.Glyph
 import club.sk1er.elementa.shaders.*
 import club.sk1er.elementa.utils.Vector2f
 import club.sk1er.elementa.utils.Vector4f
-import club.sk1er.mods.core.universal.UGraphics
-import club.sk1er.mods.core.universal.UMinecraft
+import gg.essential.universal.UGraphics
+import gg.essential.universal.UMinecraft
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats
 import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL13

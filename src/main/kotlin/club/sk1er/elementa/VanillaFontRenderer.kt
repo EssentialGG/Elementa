@@ -3,8 +3,8 @@ package club.sk1er.elementa
 import club.sk1er.elementa.constraints.ConstraintType
 import club.sk1er.elementa.constraints.resolution.ConstraintVisitor
 import club.sk1er.elementa.font.FontProvider
-import club.sk1er.mods.core.universal.UGraphics
-import club.sk1er.mods.core.universal.UMinecraft.getFontRenderer
+import gg.essential.universal.UGraphics
+import gg.essential.universal.UMinecraft.getFontRenderer
 import java.awt.Color
 
 class VanillaFontRenderer : FontProvider {

@@ -4,8 +4,8 @@ import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.components.UIImage
 import club.sk1er.elementa.utils.decodeBlurHash
 import club.sk1er.elementa.utils.drawTexture
-import club.sk1er.mods.core.universal.UGraphics
-import club.sk1er.mods.core.universal.utils.ReleasedDynamicTexture
+import gg.essential.universal.UGraphics
+import gg.essential.universal.utils.ReleasedDynamicTexture
 import java.awt.Color
 import java.io.File
 import java.net.URL

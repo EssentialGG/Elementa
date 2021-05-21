@@ -1,6 +1,6 @@
 package club.sk1er.elementa.components.image
 
-import club.sk1er.mods.core.universal.utils.ReleasedDynamicTexture
+import gg.essential.universal.utils.ReleasedDynamicTexture
 
 interface CacheableImage {
 

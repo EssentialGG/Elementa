@@ -8,7 +8,7 @@ import club.sk1er.elementa.constraints.*
 import club.sk1er.elementa.constraints.animation.Animations
 import club.sk1er.elementa.dsl.*
 import club.sk1er.elementa.effects.ScissorEffect
-import club.sk1er.mods.core.universal.UScreen
+import gg.essential.universal.UScreen
 import java.awt.Color
 import java.net.URL
 

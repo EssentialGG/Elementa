@@ -6,7 +6,7 @@ import club.sk1er.elementa.shaders.FloatUniform
 import club.sk1er.elementa.shaders.Shader
 import club.sk1er.elementa.shaders.Vec4Uniform
 import club.sk1er.elementa.utils.Vector4f
-import club.sk1er.mods.core.universal.UGraphics
+import gg.essential.universal.UGraphics
 import java.awt.Color
 
 /**

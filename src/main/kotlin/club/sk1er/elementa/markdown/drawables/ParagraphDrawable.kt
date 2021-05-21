@@ -8,7 +8,7 @@ import club.sk1er.elementa.markdown.selection.Cursor
 import club.sk1er.elementa.markdown.selection.ImageCursor
 import club.sk1er.elementa.markdown.selection.TextCursor
 import club.sk1er.elementa.utils.withAlpha
-import club.sk1er.mods.core.universal.UDesktop
+import gg.essential.universal.UDesktop
 import java.awt.Color
 import java.net.URI
 import java.net.URISyntaxException

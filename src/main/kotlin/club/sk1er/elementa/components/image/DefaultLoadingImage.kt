@@ -1,8 +1,8 @@
 package club.sk1er.elementa.components.image
 
 import club.sk1er.elementa.utils.drawTexture
-import club.sk1er.mods.core.universal.UGraphics
-import club.sk1er.mods.core.universal.utils.ReleasedDynamicTexture
+import gg.essential.universal.UGraphics
+import gg.essential.universal.utils.ReleasedDynamicTexture
 import java.awt.Color
 import java.awt.image.BufferedImage
 import javax.imageio.ImageIO

@@ -11,7 +11,7 @@ import club.sk1er.elementa.state.BasicState
 import club.sk1er.elementa.state.State
 import club.sk1er.elementa.font.ElementaFonts
 import club.sk1er.elementa.font.FontProvider
-import club.sk1er.mods.core.universal.UKeyboard
+import gg.essential.universal.UKeyboard
 import java.awt.Toolkit
 import java.awt.datatransfer.StringSelection
 

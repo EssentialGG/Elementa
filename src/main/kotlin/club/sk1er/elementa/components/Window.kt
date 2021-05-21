@@ -5,7 +5,7 @@ import club.sk1er.elementa.constraints.resolution.ConstraintResolutionGui
 import club.sk1er.elementa.constraints.resolution.ConstraintResolver
 import club.sk1er.elementa.effects.ScissorEffect
 import club.sk1er.elementa.font.FontRenderer
-import club.sk1er.mods.core.universal.*
+import gg.essential.universal.*
 import org.lwjgl.opengl.GL11
 import java.util.concurrent.ConcurrentLinkedQueue
 

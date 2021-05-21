@@ -8,9 +8,9 @@ import club.sk1er.elementa.markdown.DrawState
 import club.sk1er.elementa.markdown.MarkdownComponent
 import club.sk1er.elementa.markdown.MarkdownConfig
 import club.sk1er.elementa.markdown.selection.TextCursor
-import club.sk1er.mods.core.universal.UGraphics
-import club.sk1er.mods.core.universal.UMouse
-import club.sk1er.mods.core.universal.UResolution
+import gg.essential.universal.UGraphics
+import gg.essential.universal.UMouse
+import gg.essential.universal.UResolution
 import java.awt.Color
 
 class TextDrawable(

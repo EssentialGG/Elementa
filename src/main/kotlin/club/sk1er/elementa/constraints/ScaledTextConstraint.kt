@@ -3,7 +3,7 @@ package club.sk1er.elementa.constraints
 import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.components.UIText
 import club.sk1er.elementa.constraints.resolution.ConstraintVisitor
-import club.sk1er.mods.core.universal.UGraphics
+import gg.essential.universal.UGraphics
 import net.minecraft.client.Minecraft
 import java.lang.UnsupportedOperationException
 

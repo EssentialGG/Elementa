@@ -7,7 +7,7 @@ import club.sk1er.elementa.shaders.FloatUniform
 import club.sk1er.elementa.shaders.Shader
 import club.sk1er.elementa.shaders.Vec2Uniform
 import club.sk1er.elementa.utils.Vector2f
-import club.sk1er.mods.core.universal.UGraphics
+import gg.essential.universal.UGraphics
 import java.awt.Color
 
 class UICircle @JvmOverloads constructor(radius: Float = 0f, color: Color = Color.WHITE, var steps: Int = 40) :

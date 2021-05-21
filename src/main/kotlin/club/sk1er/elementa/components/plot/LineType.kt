@@ -1,6 +1,6 @@
 package club.sk1er.elementa.components.plot
 
-import club.sk1er.mods.core.universal.UGraphics
+import gg.essential.universal.UGraphics
 import org.lwjgl.opengl.GL11
 import java.awt.Color
 

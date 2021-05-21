@@ -12,8 +12,8 @@ import club.sk1er.elementa.events.UIScrollEvent
 import club.sk1er.elementa.font.FontProvider
 import club.sk1er.elementa.utils.TriConsumer
 import club.sk1er.elementa.utils.observable
-import club.sk1er.mods.core.universal.UMouse
-import club.sk1er.mods.core.universal.UResolution
+import gg.essential.universal.UMouse
+import gg.essential.universal.UResolution
 import org.lwjgl.opengl.GL11
 import java.awt.Color
 import java.util.*

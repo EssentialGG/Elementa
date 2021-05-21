@@ -7,7 +7,7 @@ import club.sk1er.elementa.constraints.animation.Animations
 import club.sk1er.elementa.dsl.*
 import club.sk1er.elementa.effects.ScissorEffect
 import club.sk1er.elementa.utils.getStringSplitToWidth
-import club.sk1er.mods.core.universal.UKeyboard
+import gg.essential.universal.UKeyboard
 import java.awt.Color
 import java.awt.Toolkit
 import java.awt.datatransfer.DataFlavor

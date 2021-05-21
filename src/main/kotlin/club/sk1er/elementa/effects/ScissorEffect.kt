@@ -2,7 +2,7 @@ package club.sk1er.elementa.effects
 
 import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.components.Window
-import club.sk1er.mods.core.universal.UResolution
+import gg.essential.universal.UResolution
 import org.lwjgl.opengl.GL11.*
 import kotlin.math.max
 import kotlin.math.min

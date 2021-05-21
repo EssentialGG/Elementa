@@ -5,7 +5,7 @@ import club.sk1er.elementa.dsl.pixels
 import club.sk1er.elementa.state.BasicState
 import club.sk1er.elementa.state.State
 import club.sk1er.elementa.state.pixels
-import club.sk1er.mods.core.universal.UGraphics
+import gg.essential.universal.UGraphics
 import java.awt.Color
 
 /**

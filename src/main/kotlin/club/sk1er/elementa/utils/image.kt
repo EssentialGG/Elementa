@@ -5,7 +5,7 @@ import net.minecraft.client.renderer.texture.AbstractTexture
 //#else
 //$$ import net.minecraft.client.renderer.texture.Texture
 //#endif
-import club.sk1er.mods.core.universal.UGraphics
+import gg.essential.universal.UGraphics
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats
 import java.awt.Color
 import java.awt.image.BufferedImage

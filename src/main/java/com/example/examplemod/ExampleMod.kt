@@ -1,8 +1,8 @@
 package com.example.examplemod
 
 import club.sk1er.elementa.effects.StencilEffect
-import club.sk1er.mods.core.universal.UMinecraft
-import club.sk1er.mods.core.universal.UScreen
+import gg.essential.universal.UMinecraft
+import gg.essential.universal.UScreen
 
 //#if FORGE
 //#if MC<=11202

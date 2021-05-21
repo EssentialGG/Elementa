@@ -3,8 +3,8 @@ package club.sk1er.elementa.utils
 import club.sk1er.elementa.dsl.width
 import club.sk1er.elementa.font.DefaultFonts
 import club.sk1er.elementa.font.FontProvider
-import club.sk1er.mods.core.universal.ChatColor
-import club.sk1er.mods.core.universal.UGraphics
+import gg.essential.universal.ChatColor
+import gg.essential.universal.UGraphics
 
 fun getStringSplitToWidthTruncated(
     text: String,

@@ -8,8 +8,8 @@ import club.sk1er.elementa.components.image.ImageProvider
 import club.sk1er.elementa.svg.SVGParser
 import club.sk1er.elementa.utils.ResourceCache
 import club.sk1er.elementa.utils.drawTexture
-import club.sk1er.mods.core.universal.UGraphics
-import club.sk1er.mods.core.universal.utils.ReleasedDynamicTexture
+import gg.essential.universal.UGraphics
+import gg.essential.universal.utils.ReleasedDynamicTexture
 import java.awt.Color
 import java.awt.image.BufferedImage
 import java.io.File

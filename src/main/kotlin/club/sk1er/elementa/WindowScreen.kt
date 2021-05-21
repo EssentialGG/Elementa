@@ -1,13 +1,13 @@
 package club.sk1er.elementa
 
 //#if MC>=11602
-//$$ import club.sk1er.mods.core.universal.UGraphics
+//$$ import gg.essential.universal.UGraphics
 //#endif
 
 import club.sk1er.elementa.components.Window
 import club.sk1er.elementa.constraints.animation.*
-import club.sk1er.mods.core.universal.UKeyboard
-import club.sk1er.mods.core.universal.UScreen
+import gg.essential.universal.UKeyboard
+import gg.essential.universal.UScreen
 
 import java.awt.Color
 import kotlin.reflect.KMutableProperty0

@@ -5,7 +5,7 @@ import club.sk1er.elementa.constraints.ColorConstraint
 import club.sk1er.elementa.dsl.toConstraint
 import club.sk1er.elementa.state.State
 import club.sk1er.elementa.state.toConstraint
-import club.sk1er.mods.core.universal.UGraphics
+import gg.essential.universal.UGraphics
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats
 import org.lwjgl.opengl.GL11
 import java.awt.Color

@@ -1,7 +1,7 @@
 package club.sk1er.elementa.font.data
 
-import club.sk1er.mods.core.universal.UGraphics
-import club.sk1er.mods.core.universal.utils.ReleasedDynamicTexture
+import gg.essential.universal.UGraphics
+import gg.essential.universal.utils.ReleasedDynamicTexture
 import com.google.gson.JsonParser
 import java.io.InputStream
 

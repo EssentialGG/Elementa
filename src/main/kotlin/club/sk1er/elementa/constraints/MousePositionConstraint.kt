@@ -2,8 +2,8 @@ package club.sk1er.elementa.constraints
 
 import club.sk1er.elementa.UIComponent
 import club.sk1er.elementa.constraints.resolution.ConstraintVisitor
-import club.sk1er.mods.core.universal.UMouse
-import club.sk1er.mods.core.universal.UResolution
+import gg.essential.universal.UMouse
+import gg.essential.universal.UResolution
 
 class MousePositionConstraint : PositionConstraint {
     override var cachedValue = 0f

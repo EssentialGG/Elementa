@@ -8,8 +8,8 @@ import club.sk1er.elementa.effects.OutlineEffect
 import club.sk1er.elementa.utils.ObservableAddEvent
 import club.sk1er.elementa.utils.ObservableClearEvent
 import club.sk1er.elementa.utils.ObservableRemoveEvent
-import club.sk1er.mods.core.universal.UMouse
-import club.sk1er.mods.core.universal.UResolution
+import gg.essential.universal.UMouse
+import gg.essential.universal.UResolution
 import java.awt.Color
 import java.text.NumberFormat
 
