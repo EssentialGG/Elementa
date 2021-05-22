@@ -12,7 +12,7 @@ import gg.essential.elementa.constraints.resolution.ConstraintVisitor
 open class SiblingConstraint @JvmOverloads constructor(
     val padding: Float = 0f,
     val alignOpposite: Boolean = false
-) : PositionConstraint {
+) : PositionConstraint, PaddingConstraint {
     override var cachedValue = 0f
     override var recalculate = true
     override var constrainTo: UIComponent? = null
@@ -177,5 +177,13 @@ open class SiblingConstraint @JvmOverloads constructor(
             }
             else -> throw IllegalArgumentException(type.prettyName)
         }
+    }
+
+    override fun getVerticalPadding(component: UIComponent): Float {
+        return padding
+    }
+
+    override fun getHorizontalPadding(component: UIComponent): Float {
+        return padding
     }
 }

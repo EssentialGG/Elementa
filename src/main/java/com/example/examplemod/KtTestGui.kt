@@ -21,41 +21,42 @@ class KtTestGui : WindowScreen() {
 //            } childOf window
 //        }
 
-        var first = true
-        val items = listOf(
-            "cart",
-            "add",
-            "arrow-left",
-            "search",
-            "arrow-right",
-            "kick",
-            "featured",
-            "hat",
-            "friends",
-            "chat"
-        )
-        UIContainer().constrain {
-            x = CenterConstraint()
-            y = RelativeConstraint(.25f)
-        } childOf window
-        for (j in 1..10) {
-            val tmp = UIContainer().constrain {
-                x = CenterConstraint()
-                y = SiblingConstraint()
-                width = RelativeConstraint(.5f)
-                height = ChildBasedMaxSizeConstraint()
-            } childOf window
-            for (i in items) {
-                UIImage.ofResourceCached("/${i}.png").constrain {
-                    width = (2 * j).pixels()
-                    height = (2 * j).pixels()
-                    x = CramSiblingConstraint()
-                    y = CramSiblingConstraint()
-                    color = Color.white.toConstraint()
-                } childOf tmp
-            }
+//        var first = true
+//        val items = listOf(
+//            "cart",
+//            "add",
+//            "arrow-left",
+//            "search",
+//            "arrow-right",
+//            "kick",
+//            "featured",
+//            "hat",
+//            "friends",
+//            "chat"
+//        )
+//        UIContainer().constrain {
+//            x = CenterConstraint()
+//            y = RelativeConstraint(.25f)
+//        } childOf window
+//        for (j in 1..10) {
+//            val tmp = UIContainer().constrain {
+//                x = CenterConstraint()
+//                y = SiblingConstraint()
+//                width = RelativeConstraint(.5f)
+//                height = ChildBasedMaxSizeConstraint()
+//            } childOf window
+//            for (i in items) {
+//                UIImage.ofResourceCached("/${i}.png").constrain {
+//                    width = (2 * j).pixels()
+//                    height = (2 * j).pixels()
+//                    x = CramSiblingConstraint()
+//                    y = CramSiblingConstraint()
+//                    color = Color.white.toConstraint()
+//                } childOf tmp
+//            }
+//
+//        }
 
-        }
     }
 
     override fun onDrawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {

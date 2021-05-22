@@ -1,8 +1,8 @@
 package gg.essential.elementa.constraints
 
 import gg.essential.elementa.UIComponent
-import gg.essential.elementa.components.Window
 import gg.essential.elementa.constraints.resolution.ConstraintVisitor
+import sun.security.krb5.internal.PAData
 
 /**
  * Sets this component's width or height to be the sum of its children's width or height
@@ -14,7 +14,13 @@ class ChildBasedSizeConstraint(val padding: Float = 0f) : SizeConstraint {
 
     override fun getWidthImpl(component: UIComponent): Float {
         val holder = (constrainTo ?: component)
-        val totalPadding = (holder.children.size - 1) * padding
+        var totalPadding = (holder.children.size - 1) * padding
+        for (i in 0 until holder.children.size - 1) {
+            val child =  holder.children[i]
+            if (child.constraints.x is PaddingConstraint) {
+                totalPadding += (child.constraints.x as PaddingConstraint).getHorizontalPadding(child)
+            }
+        }
 
         return holder.children
             .sumByDouble { it.getWidth().toDouble() }.toFloat() + totalPadding
@@ -22,7 +28,13 @@ class ChildBasedSizeConstraint(val padding: Float = 0f) : SizeConstraint {
 
     override fun getHeightImpl(component: UIComponent): Float {
         val holder = (constrainTo ?: component)
-        val totalPadding = (holder.children.size - 1) * padding
+        var totalPadding = (holder.children.size - 1) * padding
+        for (i in 0 until holder.children.size - 1) {
+            val child =  holder.children[i]
+            if (child.constraints.y is PaddingConstraint) {
+                totalPadding += (child.constraints.y as PaddingConstraint).getVerticalPadding(child)
+            }
+        }
 
         return holder.children
             .sumByDouble { it.getHeight().toDouble() }.toFloat() + totalPadding
@@ -48,11 +60,17 @@ class ChildBasedMaxSizeConstraint : SizeConstraint {
     override var constrainTo: UIComponent? = null
 
     override fun getWidthImpl(component: UIComponent): Float {
-        return (constrainTo ?: component).children.maxBy { it.getWidth() }?.getWidth() ?: 0f
+        return (constrainTo ?: component).children.maxBy {
+            if(it.constraints.x is PaddingConstraint)
+                return@maxBy it.getWidth() + (it.constraints.x as PaddingConstraint).getHorizontalPadding(it)
+            it.getWidth() }?.getWidth() ?: 0f
     }
 
     override fun getHeightImpl(component: UIComponent): Float {
-        return (constrainTo ?: component).children.maxBy { it.getHeight() }?.getHeight() ?: 0f
+        return (constrainTo ?: component).children.maxBy {
+            if(it.constraints.y is PaddingConstraint)
+                return@maxBy it.getWidth() + (it.constraints.y as PaddingConstraint).getVerticalPadding(it)
+            it.getHeight() }?.getHeight() ?: 0f
     }
 
     override fun getRadiusImpl(component: UIComponent): Float {

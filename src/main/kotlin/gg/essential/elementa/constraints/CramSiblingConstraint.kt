@@ -53,6 +53,8 @@ class CramSiblingConstraint(padding: Float = 0f) : SiblingConstraint(padding) {
         throw UnsupportedOperationException("Constraint.to(UIComponent) is not available in this context!")
     }
 
+
+
     override fun visitImpl(visitor: ConstraintVisitor, type: ConstraintType) {
         val indexInParent = visitor.component.let { it.parent.children.indexOf(it) }
 
@@ -83,5 +85,34 @@ class CramSiblingConstraint(padding: Float = 0f) : SiblingConstraint(padding) {
             }
             else -> throw IllegalArgumentException(type.prettyName)
         }
+    }
+    override fun getHorizontalPadding(component: UIComponent): Float {
+        val index = component.parent.children.indexOf(component)
+
+        if (index == 0) {
+            return component.parent.getLeft()
+        }
+
+        val sibling = component.parent.children[index - 1]
+
+        if (sibling.getRight() + component.getWidth() + padding <= component.parent.getRight()) {
+            return padding
+        }
+        return 0F
+    }
+    override fun getVerticalPadding(component: UIComponent): Float {
+        val index = component.parent.children.indexOf(component)
+
+        if (index == 0) {
+            return component.parent.getTop()
+        }
+
+        val sibling = component.parent.children[index - 1]
+
+        if (sibling.getRight() + component.getWidth() + padding <= component.parent.getRight()) {
+            return 0F
+        }
+
+        return padding
     }
 }
