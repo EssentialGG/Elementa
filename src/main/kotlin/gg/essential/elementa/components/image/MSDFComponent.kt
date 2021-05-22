@@ -159,13 +159,13 @@ open class MSDFComponent @JvmOverloads constructor(
 
         @JvmStatic
         fun ofURL(url: URL): MSDFComponent {
-            return MSDFComponent(CompletableFuture.supplyAsync { ImageIO.read(url) })
+            return MSDFComponent(CompletableFuture.supplyAsync { UIImage.get(url) })
         }
 
         @JvmStatic
         fun ofURL(url: URL, cache: ImageCache): MSDFComponent {
             return MSDFComponent(CompletableFuture.supplyAsync {
-                return@supplyAsync cache[url] ?: ImageIO.read(url).also {
+                return@supplyAsync cache[url] ?: UIImage.get(url).also {
                     cache[url] = it
                 }
             })

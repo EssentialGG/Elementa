@@ -90,7 +90,7 @@ open class BlurHashImage(private val hash: String) : UIComponent(), ImageProvide
          */
         @JvmStatic
         fun ofURL(hash: String, url: URL): UIImage {
-            return UIImage(CompletableFuture.supplyAsync { ImageIO.read(url) }, BlurHashImage(hash))
+            return UIImage(CompletableFuture.supplyAsync { UIImage.get(url) }, BlurHashImage(hash))
         }
 
         /**

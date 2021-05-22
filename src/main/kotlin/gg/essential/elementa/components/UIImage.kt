@@ -13,6 +13,7 @@ import gg.essential.universal.utils.ReleasedDynamicTexture
 import java.awt.Color
 import java.awt.image.BufferedImage
 import java.io.File
+import java.net.HttpURLConnection
 import java.net.URL
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ConcurrentLinkedQueue
@@ -115,13 +116,13 @@ open class UIImage @JvmOverloads constructor(
 
         @JvmStatic
         fun ofURL(url: URL): UIImage {
-            return UIImage(CompletableFuture.supplyAsync { ImageIO.read(url) })
+            return UIImage(CompletableFuture.supplyAsync { get(url) })
         }
 
         @JvmStatic
         fun ofURL(url: URL, cache: ImageCache): UIImage {
             return UIImage(CompletableFuture.supplyAsync {
-                return@supplyAsync cache[url] ?: ImageIO.read(url).also {
+                return@supplyAsync cache[url] ?: get(url).also {
                     cache[url] = it
                 }
             })
@@ -143,6 +144,18 @@ open class UIImage @JvmOverloads constructor(
         @JvmStatic
         fun ofResourceCached(path: String, resourceCache: ResourceCache): UIImage {
             return resourceCache.getUIImage(path) as UIImage
+        }
+
+        @JvmStatic
+        fun get(url: URL): BufferedImage {
+            val connection = url.openConnection() as HttpURLConnection
+
+            connection.requestMethod = "GET"
+            connection.useCaches = true
+            connection.addRequestProperty("User-Agent", "Mozilla/4.76 (Elementa)")
+            connection.doOutput = true
+
+            return ImageIO.read(connection.inputStream)
         }
 
 
