@@ -46,11 +46,12 @@ class KtTestGui : WindowScreen() {
                 height = ChildBasedMaxSizeConstraint()
             } childOf window
             for (i in items) {
-                MSDFComponent.ofResource("/${i}.png").constrain {
+                UIImage.ofResourceCached("/${i}.png").constrain {
                     width = (2 * j).pixels()
                     height = (2 * j).pixels()
                     x = CramSiblingConstraint()
                     y = CramSiblingConstraint()
+                    color = Color.white.toConstraint()
                 } childOf tmp
             }
 

@@ -7,6 +7,7 @@ import net.minecraft.client.renderer.texture.AbstractTexture
 //#endif
 import gg.essential.universal.UGraphics
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats
+import org.lwjgl.opengl.GL11
 import java.awt.Color
 import java.awt.image.BufferedImage
 import kotlin.math.PI
@@ -42,6 +43,7 @@ internal fun drawTexture(
     val blue = color.blue.toFloat() / 255f
     val alpha = color.alpha.toFloat() / 255f
     val worldRenderer = UGraphics.getFromTessellator()
+    GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
 
     worldRenderer.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR)
 

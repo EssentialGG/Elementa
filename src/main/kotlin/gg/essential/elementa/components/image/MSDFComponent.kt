@@ -94,10 +94,10 @@ open class MSDFComponent @JvmOverloads constructor(
         samplerUniform.setValue(0)
         doffsetUniform.setValue((3.5f / height).toFloat())
 
-        val current = Color(255, 255, 255, 255)
+        val current = getColor()
         val amt = Color.RGBtoHSB(current.red, current.green, current.blue, null)[2]
-        hintAmountUniform.setValue(amt)
-        subpixelAmountUniform.setValue(amt)
+        subpixelAmountUniform.setValue(0f)
+        hintAmountUniform.setValue(0f)
 
 
         val textureTop = 0.0
@@ -107,9 +107,9 @@ open class MSDFComponent @JvmOverloads constructor(
 
         fgColorUniform.setValue(
             Vector4f(
-                1f,
-                1f,
-                1f,
+                current.red / 255F,
+                current.green / 255F,
+                current.blue / 255F,
                 1f
             )
         )
@@ -179,8 +179,8 @@ open class MSDFComponent @JvmOverloads constructor(
         }
 
         @JvmStatic
-        fun ofResourceCached(path: String): UIImage {
-            return UIImage.ofResourceCached(path, UIImage.defaultResourceCache)
+        fun ofResourceCached(path: String): MSDFComponent {
+            return ofResourceCached(path, UIImage.defaultResourceCache)
         }
 
         @JvmStatic
