@@ -38,6 +38,10 @@ class FontRenderer(
         return getStringInformation(string, pointSize).first
     }
 
+    override fun getStringHeight(string: String, pointSize: Float): Float {
+        return getStringInformation(string, pointSize).second
+    }
+
     private fun getStringInformation(string: String, pointSize: Float): Pair<Float, Float> {
         var width = 0f
         var height = 0f
@@ -77,10 +81,6 @@ class FontRenderer(
             i++
         }
         return Pair(width, height)
-    }
-
-    fun getStringHeight(string: String, pointSize: Float): Float {
-        return getStringInformation(string, pointSize).second
     }
 
     fun getLineHeight(pointSize: Float): Float {

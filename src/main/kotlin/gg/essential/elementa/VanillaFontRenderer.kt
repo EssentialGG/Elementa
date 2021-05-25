@@ -13,12 +13,13 @@ class VanillaFontRenderer : FontProvider {
     override var constrainTo: UIComponent? = null
 
     override fun visitImpl(visitor: ConstraintVisitor, type: ConstraintType) {
-
     }
 
-    override fun getStringWidth(string: String, pointSize: Float): Float {
-        return getFontRenderer().getStringWidth(string).toFloat()
-    }
+    override fun getStringWidth(string: String, pointSize: Float): Float =
+        getFontRenderer().getStringWidth(string).toFloat()
+    
+    override fun getStringHeight(string: String, pointSize: Float): Float =
+        getFontRenderer().FONT_HEIGHT.toFloat()
 
     override fun drawString(
         string: String,
@@ -37,6 +38,5 @@ class VanillaFontRenderer : FontProvider {
             UGraphics.drawString(string, x / scale, y / scale, color.rgb, shadowColor.rgb)
         }
         UGraphics.scale(1 / scale, 1 / scale, 1f)
-
     }
 }

@@ -4,8 +4,9 @@ import gg.essential.elementa.constraints.SuperConstraint
 import java.awt.Color
 
 interface FontProvider : SuperConstraint<FontProvider> {
-
     fun getStringWidth(string: String, pointSize: Float): Float
+
+    fun getStringHeight(string: String, pointSize: Float): Float
 
     fun drawString(
         string: String,
@@ -17,5 +18,4 @@ interface FontProvider : SuperConstraint<FontProvider> {
         shadow: Boolean = true,
         shadowColor: Color? = null
     )
-
 }
