@@ -3,9 +3,11 @@ package com.example.examplemod
 import gg.essential.elementa.WindowScreen
 import gg.essential.elementa.components.*
 import gg.essential.elementa.components.image.MSDFComponent
+import gg.essential.elementa.components.input.UIMultilineTextInput
 import gg.essential.elementa.constraints.*
 import gg.essential.elementa.constraints.animation.Animations
 import gg.essential.elementa.dsl.*
+import gg.essential.elementa.font.DefaultFonts
 import java.awt.Color
 
 class KtTestGui : WindowScreen() {
@@ -56,7 +58,17 @@ class KtTestGui : WindowScreen() {
 //            }
 //
 //        }
+        val input by UIMultilineTextInput("Type something...").constrain {
+            x = 15.pixels()
+            y = CenterConstraint()
+            width = 100.percent() - 63.pixels()
+            color = Color(255,255,255,255).toConstraint()
+            fontProvider = DefaultFonts.ELEMENTA_MINECRAFT_FONT_RENDERER
+        }.setMaxLines(3) childOf window
 
+        input.onMouseClick {
+            input.grabWindowFocus()
+        }
     }
 
     override fun onDrawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {

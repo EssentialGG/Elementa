@@ -688,7 +688,7 @@ abstract class AbstractTextInput(
             text,
             getColor(),
             left - horizontalScrollingOffset,
-            getTop() + ((9 * row + (if (this is UIMultilineTextInput) 1 else 0)) * getTextScale()) + verticalScrollingOffset,
+            getTop() + (9 * row * getTextScale()) + verticalScrollingOffset,
             10f,
             getTextScale(),
             shadow = false
@@ -708,7 +708,7 @@ abstract class AbstractTextInput(
                 text,
                 if (active) selectionForegroundColor else inactiveSelectionForegroundColor,
                 left - horizontalScrollingOffset,
-                getTop() + ((9 * row + (if (this is UIMultilineTextInput) 1 else 0)) * getTextScale()) + verticalScrollingOffset,
+                getTop() + ((9 * row) * getTextScale()) + verticalScrollingOffset,
                 10f,
                 getTextScale(),
                 shadow = false
