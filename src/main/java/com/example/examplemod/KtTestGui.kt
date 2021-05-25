@@ -59,28 +59,33 @@ class KtTestGui : WindowScreen() {
 //            }
 //
 //        }
-        val input by UIMultilineTextInput("Type something...").constrain {
-            x = 15.pixels()
-            y = CenterConstraint()
-            width = 100.percent() - 63.pixels()
-            color = Color(255,255,255,255).toConstraint()
-            fontProvider = DefaultFonts.ELEMENTA_MINECRAFT_FONT_RENDERER
-        }.setMaxLines(3) childOf window
-
-        input.onMouseClick {
-            input.grabWindowFocus()
-        }
-        val searchInput by UITextInput("Search...", shadow = false).constrain {
-            width = 90.percent()
-            height = 100.percent()
-            fontProvider = DefaultFonts.ELEMENTA_MINECRAFT_FONT_RENDERER
+//        val input by UIMultilineTextInput("Type something...").constrain {
+//            x = 15.pixels()
+//            y = CenterConstraint()
+//            width = 100.percent() - 63.pixels()
+//            color = Color(255,255,255,255).toConstraint()
+//            fontProvider = DefaultFonts.ELEMENTA_MINECRAFT_FONT_RENDERER
+//        }.setMaxLines(3) childOf window
+//
+//        input.onMouseClick {
+//            input.grabWindowFocus()
+//        }
+//        val searchInput by UITextInput("Search...", shadow = false).constrain {
+//            width = 90.percent()
+//            height = 100.percent()
+//            fontProvider = DefaultFonts.ELEMENTA_MINECRAFT_FONT_RENDERER
+//            x = CenterConstraint()
+//            y = CenterConstraint()
+//        } childOf window
+//        searchInput.onMouseClick {
+//            searchInput.grabWindowFocus()
+//
+//        }
+        UIText("§lAdd Outfit to Cart").constrain {
             x = CenterConstraint()
             y = CenterConstraint()
+            fontProvider = DefaultFonts.ELEMENTA_MINECRAFT_FONT_RENDERER
         } childOf window
-        searchInput.onMouseClick {
-            searchInput.grabWindowFocus()
-
-        }
     }
 
     override fun onDrawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
