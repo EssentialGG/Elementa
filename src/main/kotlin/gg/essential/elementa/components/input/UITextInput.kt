@@ -1,9 +1,7 @@
 package gg.essential.elementa.components.input
 
 import gg.essential.elementa.constraints.WidthConstraint
-import gg.essential.elementa.dsl.coerceIn
-import gg.essential.elementa.dsl.pixels
-import gg.essential.elementa.dsl.width
+import gg.essential.elementa.dsl.*
 import java.awt.Color
 
 open class UITextInput @JvmOverloads constructor(
@@ -132,6 +130,9 @@ open class UITextInput @JvmOverloads constructor(
                 drawUnselectedText(lineText.substring(selectionEnd().column), currentX, row = 0)
             }
         } else {
+            cursorComponent.setY(basicYConstraint {
+                getTop()  + 1f
+            })
             setCursorPos()
 
             drawUnselectedText(lineText, getLeft(), 0)

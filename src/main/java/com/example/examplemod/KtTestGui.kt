@@ -4,6 +4,7 @@ import gg.essential.elementa.WindowScreen
 import gg.essential.elementa.components.*
 import gg.essential.elementa.components.image.MSDFComponent
 import gg.essential.elementa.components.input.UIMultilineTextInput
+import gg.essential.elementa.components.input.UITextInput
 import gg.essential.elementa.constraints.*
 import gg.essential.elementa.constraints.animation.Animations
 import gg.essential.elementa.dsl.*
@@ -68,6 +69,17 @@ class KtTestGui : WindowScreen() {
 
         input.onMouseClick {
             input.grabWindowFocus()
+        }
+        val searchInput by UITextInput("Search...", shadow = false).constrain {
+            width = 90.percent()
+            height = 100.percent()
+            fontProvider = DefaultFonts.ELEMENTA_MINECRAFT_FONT_RENDERER
+            x = CenterConstraint()
+            y = CenterConstraint()
+        } childOf window
+        searchInput.onMouseClick {
+            searchInput.grabWindowFocus()
+
         }
     }
 
