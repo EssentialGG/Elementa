@@ -5,6 +5,7 @@ import gg.essential.elementa.components.*
 import gg.essential.elementa.components.image.MSDFComponent
 import gg.essential.elementa.components.input.UIMultilineTextInput
 import gg.essential.elementa.components.input.UITextInput
+import gg.essential.elementa.components.inspector.Inspector
 import gg.essential.elementa.constraints.*
 import gg.essential.elementa.constraints.animation.Animations
 import gg.essential.elementa.dsl.*
@@ -81,11 +82,14 @@ class KtTestGui : WindowScreen() {
 //            searchInput.grabWindowFocus()
 //
 //        }
-        UIText("§lAdd Outfit to Cart").constrain {
+        UIText("\u00a7lAdd Outfit to Cart").constrain {
             x = CenterConstraint()
             y = CenterConstraint()
+            textScale = 2.pixels()
             fontProvider = DefaultFonts.ELEMENTA_MINECRAFT_FONT_RENDERER
         } childOf window
+
+        Inspector(window) childOf window
     }
 
     override fun onDrawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {

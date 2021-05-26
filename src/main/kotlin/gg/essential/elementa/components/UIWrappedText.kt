@@ -29,7 +29,7 @@ open class UIWrappedText @JvmOverloads constructor(
     private var textState: State<String> = BasicState(text)
     private var shadowState: State<Boolean> = BasicState(shadow)
     private var shadowColorState: State<Color?> = BasicState(shadowColor)
-    private var textWidthState = this.textState.map { it.width(getTextScale(), getFontProvider()) }
+    private var textWidthState = textState.map { it.width(getTextScale(), getFontProvider()) / getTextScale() }
 
     private val charWidth = UGraphics.getCharWidth('x')
 
@@ -47,7 +47,7 @@ open class UIWrappedText @JvmOverloads constructor(
             lines.size * 9f * getTextScale()
         })
         Window.enqueueRenderOperation {
-            textWidthState.rebind(textState); //Needed so that the text scale and font provider are now present
+            textWidthState.rebind(textState) //Needed so that the text scale and font provider are now present
         }
     }
 
