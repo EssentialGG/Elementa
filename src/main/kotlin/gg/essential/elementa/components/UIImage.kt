@@ -9,6 +9,7 @@ import gg.essential.elementa.svg.SVGParser
 import gg.essential.elementa.utils.ResourceCache
 import gg.essential.elementa.utils.drawTexture
 import gg.essential.universal.UGraphics
+import gg.essential.universal.UMinecraft
 import gg.essential.universal.utils.ReleasedDynamicTexture
 import java.awt.Color
 import java.awt.image.BufferedImage
@@ -43,8 +44,18 @@ open class UIImage @JvmOverloads constructor(
             imageHeight = it.height.toFloat()
             imageFuture.obtrudeValue(null)
 
+            //In versions before 1.15, we make the bufferedImage.getRGB call without the upload in the
+            // constructor since that takes most of the CPU time and we upload the actual texture during the
+            // first call to uploadTexture or getGlTextureId
+            //#if MC<11502
+            texture = UGraphics.getTexture(it)
+            //#endif
             Window.enqueueRenderOperation {
-                texture = UGraphics.getTexture(it)
+                //#if MC>=11500
+                //$$ texture = UGraphics.getTexture(it)
+                //#else
+                texture?.uploadTexture()
+                //#endif
                 while (waiting.isEmpty().not())
                     waiting.poll().applyTexture(texture)
             }
