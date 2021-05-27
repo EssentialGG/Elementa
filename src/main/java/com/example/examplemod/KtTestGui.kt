@@ -93,10 +93,7 @@ class KtTestGui : WindowScreen() {
         Inspector(window) childOf window
     }
 
-    override fun onResize(mcIn: Minecraft, w: Int, h: Int) {
-        window.onWindowResize()
-        super.onResize(mcIn, w, h)
-    }
+
     override fun onDrawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
         super.onDrawScreen(mouseX, mouseY, partialTicks)
 
