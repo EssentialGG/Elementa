@@ -544,6 +544,19 @@ abstract class UIComponent : Observable() {
         fireScrollEvent(UIScrollEvent(delta, this, this))
     }
 
+    open fun onWindowResize() {
+        constraints.width.recalculate = true
+        constraints.height.recalculate = true
+        constraints.x.recalculate = true
+        constraints.y.recalculate = true
+        constraints.radius.recalculate = true
+        constraints.textScale.recalculate = true
+        constraints.color.recalculate = true
+        constraints.fontProvider.recalculate = true
+
+        children.forEach { it.onWindowResize() }
+    }
+
     protected fun fireScrollEvent(event: UIScrollEvent) {
         for (listener in mouseScrollListeners) {
             this.listener(event)

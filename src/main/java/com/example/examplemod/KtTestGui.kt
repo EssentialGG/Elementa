@@ -10,6 +10,7 @@ import gg.essential.elementa.constraints.*
 import gg.essential.elementa.constraints.animation.Animations
 import gg.essential.elementa.dsl.*
 import gg.essential.elementa.font.DefaultFonts
+import net.minecraft.client.Minecraft
 import java.awt.Color
 
 class KtTestGui : WindowScreen() {
@@ -92,6 +93,10 @@ class KtTestGui : WindowScreen() {
         Inspector(window) childOf window
     }
 
+    override fun onResize(mcIn: Minecraft, w: Int, h: Int) {
+        window.onWindowResize()
+        super.onResize(mcIn, w, h)
+    }
     override fun onDrawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
         super.onDrawScreen(mouseX, mouseY, partialTicks)
 
