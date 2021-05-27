@@ -84,7 +84,8 @@ class TextDrawable(
             if (splitPoint == styleChars)
                 return null
         }
-
+        if (splitPoint < 0)
+            splitPoint = 1
         val first = TextDrawable(md, plainText.substring(0, splitPoint), style)
         val second = TextDrawable(md, plainText.substring(splitPoint, plainText.length), style)
 
