@@ -8,6 +8,7 @@ import gg.essential.elementa.font.FontRenderer
 import gg.essential.universal.*
 import org.lwjgl.opengl.GL11
 import java.util.concurrent.ConcurrentLinkedQueue
+import java.util.concurrent.TimeUnit
 
 /**
  * "Root" component. All components MUST have a Window in their hierarchy in order to do any rendering
@@ -45,7 +46,7 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
         val startTime = System.nanoTime()
 
         val it = renderOperations.iterator()
-        while (it.hasNext() && System.nanoTime() - startTime < 5000) {
+        while (it.hasNext() && System.nanoTime() - startTime < TimeUnit.MILLISECONDS.toNanos(5)) {
             it.next()()
             it.remove()
         }
