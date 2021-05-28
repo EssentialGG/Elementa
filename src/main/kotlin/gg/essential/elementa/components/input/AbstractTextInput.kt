@@ -81,7 +81,7 @@ abstract class AbstractTextInput(
         onKeyType { typedChar, keyCode ->
             if (!active) return@onKeyType
 
-            if (keyCode == 1) {
+            if (keyCode == UKeyboard.KEY_ESCAPE) {
                 releaseWindowFocus()
             } else if (UKeyboard.isKeyComboCtrlA(keyCode)) {
                 selectAll()
@@ -106,7 +106,7 @@ abstract class AbstractTextInput(
                 undoStack.push(operationToRedo)
             } else if (typedChar in ' '..'~') { // Most of the ASCII characters
                 commitTextAddition(typedChar.toString())
-            } else if (keyCode == 203) { // Left Arrow
+            } else if (keyCode == UKeyboard.KEY_LEFT) {
                 val holdingShift = UKeyboard.isShiftKeyDown()
                 val holdingCtrl = UKeyboard.isCtrlKeyDown()
 
@@ -123,7 +123,7 @@ abstract class AbstractTextInput(
 
                 cursor = newCursorPosition
                 cursorNeedsRefocus = true
-            } else if (keyCode == 205) { // Right Arrow
+            } else if (keyCode == UKeyboard.KEY_RIGHT) {
                 val holdingShift = UKeyboard.isShiftKeyDown()
                 val holdingCtrl = UKeyboard.isCtrlKeyDown()
 
@@ -140,7 +140,7 @@ abstract class AbstractTextInput(
 
                 cursor = newCursorPosition
                 cursorNeedsRefocus = true
-            } else if (keyCode == 200) { // Up arrow
+            } else if (keyCode == UKeyboard.KEY_UP) {
                 val newVisualPos = if (cursor.line == 0) {
                     LinePosition(0, 0, isVisual = true)
                 } else {
@@ -154,7 +154,7 @@ abstract class AbstractTextInput(
                 } else {
                     setCursorPosition(newVisualPos)
                 }
-            } else if (keyCode == 208) { // Down arrow
+            } else if (keyCode == UKeyboard.KEY_DOWN) {
                 val newVisualPos = if (cursor.line == visualLines.lastIndex) {
                     LinePosition(visualLines.lastIndex, visualLines.last().length, isVisual = true)
                 } else {
@@ -168,7 +168,7 @@ abstract class AbstractTextInput(
                 } else {
                     setCursorPosition(newVisualPos)
                 }
-            } else if (keyCode == 14) { // Backspace
+            } else if (keyCode == UKeyboard.KEY_BACKSPACE) {
                 if (hasSelection()) {
                     deleteSelection()
                 } else if (!cursor.isAtAbsoluteStart) {
@@ -179,7 +179,7 @@ abstract class AbstractTextInput(
 
                     commitTextRemoval(startPos, endPos, selectAfterUndo = false)
                 }
-            } else if (keyCode == 211) { // Delete
+            } else if (keyCode == UKeyboard.KEY_DELETE) {
                 if (hasSelection()) {
                     deleteSelection()
                 } else if (!cursor.isAtAbsoluteEnd) {
@@ -190,14 +190,14 @@ abstract class AbstractTextInput(
 
                     commitTextRemoval(startPos, endPos, selectAfterUndo = false)
                 }
-            } else if (keyCode == 199) { // Home
+            } else if (keyCode == UKeyboard.KEY_HOME) {
                 if (UKeyboard.isShiftKeyDown()) {
                     cursor = cursor.withColumn(0)
                     cursorNeedsRefocus = true
                 } else {
                     setCursorPosition(cursor.withColumn(0))
                 }
-            } else if (keyCode == 207) { // End
+            } else if (keyCode == UKeyboard.KEY_END) {
                 cursor.withColumn(visualLines[cursor.line].length).also {
                     if (UKeyboard.isShiftKeyDown()) {
                         cursor = it
@@ -206,7 +206,7 @@ abstract class AbstractTextInput(
                         setCursorPosition(it)
                     }
                 }
-            } else if (keyCode == 28) { // Enter
+            } else if (keyCode == UKeyboard.KEY_ENTER) { // Enter
                 onEnterPressed()
             }
         }
