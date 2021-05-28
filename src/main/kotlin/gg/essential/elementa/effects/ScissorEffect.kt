@@ -1,11 +1,11 @@
 package gg.essential.elementa.effects
 
 import gg.essential.elementa.UIComponent
-import gg.essential.elementa.components.Window
 import gg.essential.universal.UResolution
 import org.lwjgl.opengl.GL11.*
 import kotlin.math.max
 import kotlin.math.min
+import kotlin.math.roundToInt
 
 /**
  * Enables GL Scissoring to restrict all drawing done by
@@ -20,9 +20,24 @@ class ScissorEffect @JvmOverloads constructor(
     private val scissorIntersection: Boolean = true
 ) : Effect() {
     private var oldState: ScissorState? = null
+    private var scissorBounds: ScissorBounds? = null
+
+    /**
+     * Create a custom bounding box using precise coordinates.
+     */
+    @JvmOverloads
+    constructor(
+        x1: Number,
+        y1: Number,
+        x2: Number,
+        y2: Number,
+        scissorIntersection: Boolean = true
+    ) : this(scissorIntersection = scissorIntersection) {
+        scissorBounds = ScissorBounds(x1.toInt(), y1.toInt(), x2.toInt(), y2.toInt())
+    }
 
     override fun beforeDraw() {
-        val boundingBox = customBoundingBox ?: boundComponent
+        val bounds = customBoundingBox?.getScissorBounds() ?: scissorBounds ?: boundComponent.getScissorBounds()
         val scaleFactor = UResolution.scaleFactor.toInt()
 
         if (currentScissorState == null) {
@@ -32,10 +47,10 @@ class ScissorEffect @JvmOverloads constructor(
         oldState = currentScissorState
         val state = oldState
 
-        var x = boundingBox.getLeft().toInt() * scaleFactor
-        var y = (UResolution.scaledHeight * scaleFactor) - (boundingBox.getBottom().toInt() * scaleFactor)
-        var width = boundingBox.getWidth().toInt() * scaleFactor
-        var height = boundingBox.getHeight().toInt() * scaleFactor
+        var x = bounds.x1 * scaleFactor
+        var y = (UResolution.scaledHeight * scaleFactor) - (bounds.y2 * scaleFactor)
+        var width = bounds.width * scaleFactor
+        var height = bounds.height * scaleFactor
 
         if (state != null && scissorIntersection) {
             val x2 = x + width
@@ -71,7 +86,21 @@ class ScissorEffect @JvmOverloads constructor(
         currentScissorState = state
     }
 
+    private fun UIComponent.getScissorBounds(): ScissorBounds = ScissorBounds(
+        getLeft().roundToInt(),
+        getTop().roundToInt(),
+        getRight().roundToInt(),
+        getBottom().roundToInt()
+    )
+
     data class ScissorState(val x: Int, val y: Int, val width: Int, val height: Int)
+
+    private data class ScissorBounds(val x1: Int, val y1: Int, val x2: Int, val y2: Int) {
+        val width: Int
+            get() = x2 - x1
+        val height: Int
+            get() = y2 - y1
+    }
 
     companion object {
         var currentScissorState: ScissorState? = null

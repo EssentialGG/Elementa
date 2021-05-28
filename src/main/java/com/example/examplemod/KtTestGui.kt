@@ -2,93 +2,40 @@ package com.example.examplemod
 
 import gg.essential.elementa.WindowScreen
 import gg.essential.elementa.components.*
-import gg.essential.elementa.components.image.MSDFComponent
-import gg.essential.elementa.components.input.UIMultilineTextInput
-import gg.essential.elementa.components.input.UITextInput
 import gg.essential.elementa.components.inspector.Inspector
 import gg.essential.elementa.constraints.*
 import gg.essential.elementa.constraints.animation.Animations
 import gg.essential.elementa.dsl.*
-import gg.essential.elementa.font.DefaultFonts
-import net.minecraft.client.Minecraft
+import gg.essential.elementa.effects.ScissorEffect
+import gg.essential.elementa.utils.withAlpha
 import java.awt.Color
 
 class KtTestGui : WindowScreen() {
     private val myTextBox = UIBlock(Color(0, 0, 0, 255))
 
     init {
-//        for (i in 0..100) {
-//            UIImage.ofResource("/cosmetics.png").constrain {
-//                width = 15.pixels()
-//                height = 15.pixels()
-//                x = CramSiblingConstraint()
-//                y = CramSiblingConstraint()
-//            } childOf window
-//        }
-
-//        var first = true
-//        val items = listOf(
-//            "cart",
-//            "add",
-//            "arrow-left",
-//            "search",
-//            "arrow-right",
-//            "kick",
-//            "featured",
-//            "hat",
-//            "friends",
-//            "chat"
-//        )
-//        UIContainer().constrain {
-//            x = CenterConstraint()
-//            y = RelativeConstraint(.25f)
-//        } childOf window
-//        for (j in 1..10) {
-//            val tmp = UIContainer().constrain {
-//                x = CenterConstraint()
-//                y = SiblingConstraint()
-//                width = RelativeConstraint(.5f)
-//                height = ChildBasedMaxSizeConstraint()
-//            } childOf window
-//            for (i in items) {
-//                UIImage.ofResourceCached("/${i}.png").constrain {
-//                    width = (2 * j).pixels()
-//                    height = (2 * j).pixels()
-//                    x = CramSiblingConstraint()
-//                    y = CramSiblingConstraint()
-//                    color = Color.white.toConstraint()
-//                } childOf tmp
-//            }
-//
-//        }
-//        val input by UIMultilineTextInput("Type something...").constrain {
-//            x = 15.pixels()
-//            y = CenterConstraint()
-//            width = 100.percent() - 63.pixels()
-//            color = Color(255,255,255,255).toConstraint()
-//            fontProvider = DefaultFonts.ELEMENTA_MINECRAFT_FONT_RENDERER
-//        }.setMaxLines(3) childOf window
-//
-//        input.onMouseClick {
-//            input.grabWindowFocus()
-//        }
-//        val searchInput by UITextInput("Search...", shadow = false).constrain {
-//            width = 90.percent()
-//            height = 100.percent()
-//            fontProvider = DefaultFonts.ELEMENTA_MINECRAFT_FONT_RENDERER
-//            x = CenterConstraint()
-//            y = CenterConstraint()
-//        } childOf window
-//        searchInput.onMouseClick {
-//            searchInput.grabWindowFocus()
-//
-//        }
-        UIText("\u00a7lAdd Outfit to Cart").constrain {
+        val hello = UIBlock(Color.BLACK).constrain {
             x = CenterConstraint()
             y = CenterConstraint()
-            textScale = 2.pixels()
-            fontProvider = DefaultFonts.ELEMENTA_MINECRAFT_FONT_RENDERER
+            height = 50.percent()
+            width = 50.percent()
         } childOf window
+        val hi = UIBlock(Color.PINK).constrain {
+            x = CenterConstraint()
+            y = CenterConstraint()
+            height = 100.pixels()
+            width = 100.pixels()
+        }.also {
+            it childOf hello
+            it effect ScissorEffect()//ScissorEffect(it.getLeft() - 10f, it.getTop() - 10f, it.getRight() + 10f, it.getBottom() + 10f)
+        }
+
+        UIBlock(Color.MAGENTA.withAlpha(100)).constrain {
+            x = (-50).pixels()
+            y = (-50).pixels()
+            height = 100.percent() + 100.pixels()
+            width = 100.percent() + 100.pixels()
+        } childOf hi
 
         Inspector(window) childOf window
     }
