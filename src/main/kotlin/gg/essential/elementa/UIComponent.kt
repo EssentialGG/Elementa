@@ -322,7 +322,11 @@ abstract class UIComponent : Observable() {
     protected fun getMousePosition(): Pair<Float, Float> {
         val scaledHeight = UResolution.scaledHeight
         val mouseX = UMouse.getScaledX().toFloat()
+        //#if MC>=11400
+        //$$ val mouseY = UMouse.getScaledY().toFloat()
+        //#else
         val mouseY = scaledHeight - UMouse.getTrueY().toFloat() * scaledHeight / UResolution.windowHeight - 1f
+        //#endif
         return mouseX to mouseY
     }
 
