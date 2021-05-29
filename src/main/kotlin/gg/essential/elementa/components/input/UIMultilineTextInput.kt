@@ -59,7 +59,7 @@ class UIMultilineTextInput @JvmOverloads constructor(
         if (maxHeight == null)
             return
 
-        setHeight((9 * visualLines.size).pixels().coerceAtMost(maxHeight!!))
+        setHeight((lineHeight * visualLines.size).pixels().coerceAtMost(maxHeight!!))
     }
 
     override fun onEnterPressed() {
@@ -93,8 +93,8 @@ class UIMultilineTextInput @JvmOverloads constructor(
         val (selectionStart, selectionEnd) = getSelection()
 
         for ((i, visualLine) in visualLines.withIndex()) {
-            val topOffset = (9 * i * getTextScale()) + verticalScrollingOffset
-            if (topOffset < -9 * getTextScale() || topOffset > getHeight() + 9 * getTextScale())
+            val topOffset = (lineHeight * i * getTextScale()) + verticalScrollingOffset
+            if (topOffset < -lineHeight * getTextScale() || topOffset > getHeight() + lineHeight * getTextScale())
                 continue
 
             if (!hasSelection() || i < selectionStart.line || i > selectionEnd.line) {
@@ -156,7 +156,7 @@ class UIMultilineTextInput @JvmOverloads constructor(
         if (realY <= 0)
             return LinePosition(0, 0, isVisual = true)
 
-        val line = (realY / (9 * getTextScale())).toInt()
+        val line = (realY / (lineHeight * getTextScale())).toInt()
         if (line > visualLines.lastIndex)
             return LinePosition(visualLines.lastIndex, visualLines.last().text.length, isVisual = true)
 
