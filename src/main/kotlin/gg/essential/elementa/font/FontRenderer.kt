@@ -148,11 +148,15 @@ class FontRenderer(
 
     }
 
-    private fun refreshColor() {
+    private fun refreshColor(pointSize: Float) {
         val current = if (drawingShadow) shadowColor else textColor
         val amt = Color.RGBtoHSB(current!!.red, current.green, current.blue, null)[2]
         hintAmountUniform.setValue(amt)
-        subpixelAmountUniform.setValue(amt)
+        if(pointSize < 7) {
+            subpixelAmountUniform.setValue(amt)
+        } else {
+            subpixelAmountUniform.setValue(0f)
+        }
     }
 
     private fun drawStringNow(string: String, color: Color, x: Float, y: Float, originalPointSize: Float) {
@@ -186,7 +190,7 @@ class FontRenderer(
         underline = false
         textColor = color
 
-        refreshColor()
+        refreshColor(originalPointSize)
 
         var currentX = x
         var i = 0
@@ -215,7 +219,7 @@ class FontRenderer(
                         }
                         currentPointSize = originalPointSize
                         doffsetUniform.setValue(3.5f / currentPointSize)
-                        refreshColor()
+                        refreshColor(originalPointSize)
                     }
                     j == 16 -> obfuscated = true
                     j == 17 -> {
@@ -238,7 +242,7 @@ class FontRenderer(
                         underline = false
                         textColor = color
                         shadowColor
-                        refreshColor()
+                        refreshColor(originalPointSize)
                     }
                 }
                 i += 2
