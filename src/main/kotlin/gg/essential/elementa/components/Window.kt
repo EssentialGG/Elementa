@@ -51,8 +51,8 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
             it.remove()
         }
 
-        UGraphics.glClear(GL11.GL_STENCIL_BUFFER_BIT)
-        UGraphics.glClearStencil(0)
+
+
 
         if (systemTime == -1L)
             systemTime = System.currentTimeMillis()
