@@ -49,7 +49,7 @@ class ScrollComponent @JvmOverloads constructor(
         y = SiblingConstraint() + 4.pixels()
     }
 
-    private val scrollSVGComponent = SVGComponent(scrollSVG).constrain {
+    private val scrollSVGComponent = getScrollImage().constrain {
         width = 24.pixels()
         height = 24.pixels()
 
@@ -684,6 +684,9 @@ class ScrollComponent @JvmOverloads constructor(
     }
 
     companion object {
-        private val scrollSVG = SVGParser.parseFromResource("/svg/scroll.svg")
+
+        fun getScrollImage(): UIImage {
+            return UIImage.ofResourceCached("/svg/scroll.png")
+        }
     }
 }
