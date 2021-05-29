@@ -26,7 +26,12 @@ abstract class AbstractTextInput(
     protected val cursorColor: Color
 ) : UIComponent() {
     protected var active = false
-
+    var lineHeight = 9f
+        set(value) {
+            cursorComponent.setHeight(value.pixels())
+            this.setHeight(value.pixels())
+            field = value
+        }
     protected var updateAction: (text: String) -> Unit = {}
     protected var activateAction: (text: String) -> Unit = {}
 
@@ -49,7 +54,7 @@ abstract class AbstractTextInput(
     protected var cursorComponent: UIComponent = UIBlock(Color(255, 255, 255, 0)).constrain {
         y = CenterConstraint() - 0.5f.pixels()
         width = 1.pixel()
-        height = 9f.pixels()
+        height = lineHeight.pixels()
     } childOf this
 
     protected var cursor = LinePosition(0, 0, isVisual = true)
@@ -71,7 +76,7 @@ abstract class AbstractTextInput(
 
     init {
 
-        setHeight(9.pixels())
+        setHeight(lineHeight.pixels())
 
         onKeyType { typedChar, keyCode ->
             if (!active) return@onKeyType
@@ -140,7 +145,7 @@ abstract class AbstractTextInput(
                     LinePosition(0, 0, isVisual = true)
                 } else {
                     val (currX, currY) = cursor.toScreenPos()
-                    screenPosToVisualPos(currX, currY - 9)
+                    screenPosToVisualPos(currX, currY - lineHeight)
                 }
 
                 if (UKeyboard.isShiftKeyDown()) {
@@ -154,7 +159,7 @@ abstract class AbstractTextInput(
                     LinePosition(visualLines.lastIndex, visualLines.last().length, isVisual = true)
                 } else {
                     val (currX, currY) = cursor.toScreenPos()
-                    screenPosToVisualPos(currX, currY + 9)
+                    screenPosToVisualPos(currX, currY + lineHeight)
                 }
 
                 if (UKeyboard.isShiftKeyDown()) {
@@ -207,11 +212,11 @@ abstract class AbstractTextInput(
         }
 
         onMouseScroll {
-            val heightDifference = getHeight() - visualLines.size * 9f
+            val heightDifference = getHeight() - visualLines.size * lineHeight
             if (heightDifference > 0)
                 return@onMouseScroll
             targetVerticalScrollingOffset =
-                (targetVerticalScrollingOffset + it.delta.toFloat() * 9f).coerceIn(heightDifference, 0f)
+                (targetVerticalScrollingOffset + it.delta.toFloat() * lineHeight).coerceIn(heightDifference, 0f)
             it.stopPropagation()
         }
 
@@ -300,12 +305,12 @@ abstract class AbstractTextInput(
             if (currentTime - lastSelectionMoveTimestamp > 50) {
                 if (mouseY <= 0) {
                     targetVerticalScrollingOffset =
-                        (targetVerticalScrollingOffset + 9 * getTextScale()).coerceAtMost(0f)
+                        (targetVerticalScrollingOffset + lineHeight * getTextScale()).coerceAtMost(0f)
                     lastSelectionMoveTimestamp = currentTime
                 } else if (mouseY >= getHeight()) {
-                    val heightDifference = getHeight() - visualLines.size * 9f * getTextScale()
+                    val heightDifference = getHeight() - visualLines.size * lineHeight * getTextScale()
                     targetVerticalScrollingOffset =
-                        (targetVerticalScrollingOffset - 9 * getTextScale()).coerceIn(heightDifference, 0f)
+                        (targetVerticalScrollingOffset - lineHeight * getTextScale()).coerceIn(heightDifference, 0f)
                     lastSelectionMoveTimestamp = currentTime
                 } else if (mouseX <= 0) {
                     scrollIntoView(draggedVisualPos.offsetColumn(-1))
@@ -347,7 +352,7 @@ abstract class AbstractTextInput(
 
     override fun draw() {
         cursorComponent.setHeight(
-            (9 * getTextScale()).pixels()
+            (lineHeight * getTextScale()).pixels()
         )
         super.draw()
     }
@@ -501,7 +506,7 @@ abstract class AbstractTextInput(
 
         recalculateAllVisualLines()
 
-        val heightDifference = getHeight() - visualLines.size * 9f
+        val heightDifference = getHeight() - visualLines.size * lineHeight
         if (verticalScrollingOffset < heightDifference)
             targetVerticalScrollingOffset = heightDifference.coerceAtMost(0f)
 
@@ -853,7 +858,7 @@ abstract class AbstractTextInput(
             val visualPos = toVisualPos()
             val x = visualLines[visualPos.line].text.substring(0, visualPos.column)
                 .width(getTextScale()) - horizontalScrollingOffset
-            val y = (9f * visualPos.line * getTextScale()) + verticalScrollingOffset
+            val y = (lineHeight * visualPos.line * getTextScale()) + verticalScrollingOffset
             return x to y
         }
 

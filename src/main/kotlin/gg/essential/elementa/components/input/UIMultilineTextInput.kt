@@ -34,7 +34,7 @@ class UIMultilineTextInput @JvmOverloads constructor(
     }
 
     fun setMaxLines(maxLines: Int) = apply {
-        this.maxHeight = (9 * maxLines).pixels()
+        this.maxHeight = (lineHeight * maxLines).pixels()
     }
 
     override fun getText() = textualLines.joinToString("\n") { it.text }
@@ -46,12 +46,12 @@ class UIMultilineTextInput @JvmOverloads constructor(
     override fun scrollIntoView(pos: LinePosition) {
         val visualPos = pos.toVisualPos()
 
-        val visualLineOffset = visualPos.line * -9f
+        val visualLineOffset = visualPos.line * -lineHeight
 
         if (targetVerticalScrollingOffset < visualLineOffset) {
             targetVerticalScrollingOffset = visualLineOffset
-        } else if (visualLineOffset - 9f < targetVerticalScrollingOffset - getHeight()) {
-            targetVerticalScrollingOffset += visualLineOffset - 9f - (targetVerticalScrollingOffset - getHeight())
+        } else if (visualLineOffset - lineHeight < targetVerticalScrollingOffset - getHeight()) {
+            targetVerticalScrollingOffset += visualLineOffset - lineHeight - (targetVerticalScrollingOffset - getHeight())
         }
     }
 
