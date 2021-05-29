@@ -43,7 +43,8 @@ class ScrollComponent @JvmOverloads constructor(
         height = RelativeConstraint(1f)
     }
 
-    private val emptyText = UIText(emptyString).constrain {
+    //Exposed so its position and value can be adjusted by user
+    val emptyText = UIText(emptyString).constrain {
         x = CenterConstraint()
         y = SiblingConstraint() + 4.pixels()
     }
