@@ -9,6 +9,7 @@ import gg.essential.elementa.state.pixels
 import gg.essential.elementa.utils.getStringSplitToWidth
 import gg.essential.elementa.utils.getStringSplitToWidthTruncated
 import gg.essential.universal.UGraphics
+import gg.essential.universal.UMatrixStack
 import java.awt.Color
 
 /**
@@ -78,8 +79,8 @@ open class UIWrappedText @JvmOverloads constructor(
      */
     fun getTextWidth() = textWidthState.get()
 
-    override fun draw() {
-        beforeDraw()
+    override fun draw(matrixStack: UMatrixStack) {
+        beforeDrawCompat(matrixStack)
 
         val textScale = getTextScale()
         val x = getLeft() / textScale
@@ -90,18 +91,19 @@ open class UIWrappedText @JvmOverloads constructor(
 
         // We aren't visible, don't draw
         if (color.alpha <= 10) {
-            return super.draw()
+            return super.draw(matrixStack)
         }
 
         if (scaledWidth <= charWidth) {
             // If we are smaller than a char, we can't physically split this string into
             // "width" strings, so we'll prefer a no-op to an error.
-            return super.draw()
+            return super.draw(matrixStack)
         }
 
         UGraphics.enableBlend()
 
-        UGraphics.translate(x.toDouble() * textScale, y.toDouble() * textScale, 0.0)
+        matrixStack.push()
+        matrixStack.translate(x.toDouble() * textScale, y.toDouble() * textScale, 0.0)
 
         val lines = if (trimText) {
             getStringSplitToWidthTruncated(
@@ -131,6 +133,7 @@ open class UIWrappedText @JvmOverloads constructor(
 //            println(textScale)
             if (shadow) {
                 getFontProvider().drawString(
+                    matrixStack,
                     line,
                     color,
                     xOffset,
@@ -141,12 +144,12 @@ open class UIWrappedText @JvmOverloads constructor(
                     shadowColor
                 )
             } else {
-                getFontProvider().drawString(line, color, xOffset, i * 9f, 10f, textScale, shadow = false)
+                getFontProvider().drawString(matrixStack, line, color, xOffset, i * 9f, 10f, textScale, shadow = false)
             }
         }
 
-        UGraphics.translate(-x.toDouble() * textScale, -y.toDouble() * textScale, 0.0)
+        matrixStack.pop()
 
-        super.draw()
+        super.draw(matrixStack)
     }
 }

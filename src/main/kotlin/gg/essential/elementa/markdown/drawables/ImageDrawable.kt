@@ -12,6 +12,7 @@ import gg.essential.elementa.dsl.toConstraint
 import gg.essential.elementa.markdown.DrawState
 import gg.essential.elementa.markdown.MarkdownComponent
 import gg.essential.elementa.markdown.selection.ImageCursor
+import gg.essential.universal.UMatrixStack
 import java.awt.Color
 import java.net.URL
 
@@ -50,9 +51,9 @@ class ImageDrawable(md: MarkdownComponent, val url: URL, private val fallback: D
         } else fallback.layout(x, y, width)
     }
 
-    override fun draw(state: DrawState) {
+    override fun draw(matrixStack: UMatrixStack, state: DrawState) {
         if (!image.isLoaded) {
-            fallback.draw(state)
+            fallback.drawCompat(matrixStack, state)
         } else {
             if (!hasLoaded) {
                 hasLoaded = true
@@ -61,7 +62,7 @@ class ImageDrawable(md: MarkdownComponent, val url: URL, private val fallback: D
 
             imageX.shift = state.xShift
             imageY.shift = state.yShift
-            image.draw()
+            image.drawCompat(matrixStack)
         }
     }
 

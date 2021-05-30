@@ -7,7 +7,7 @@ import gg.essential.elementa.shaders.FloatUniform
 import gg.essential.elementa.shaders.Shader
 import gg.essential.elementa.shaders.Vec2Uniform
 import gg.essential.elementa.utils.Vector2f
-import gg.essential.universal.UGraphics
+import gg.essential.universal.UMatrixStack
 import java.awt.Color
 
 class UICircle @JvmOverloads constructor(radius: Float = 0f, color: Color = Color.WHITE, var steps: Int = 40) :
@@ -37,19 +37,19 @@ class UICircle @JvmOverloads constructor(radius: Float = 0f, color: Color = Colo
         return true
     }
 
-    override fun draw() {
-        beforeDraw()
+    override fun draw(matrixStack: UMatrixStack) {
+        beforeDraw(matrixStack)
 
         val x = constraints.getX()
         val y = constraints.getY()
         val r = getRadius()
 
         val color = getColor()
-        if (color.alpha == 0) return super.draw()
+        if (color.alpha == 0) return super.draw(matrixStack)
 
-        drawCircle(x, y, r, color)
+        drawCircle(matrixStack, x, y, r, color)
 
-        super.draw()
+        super.draw(matrixStack)
     }
 
     companion object {
@@ -66,17 +66,23 @@ class UICircle @JvmOverloads constructor(radius: Float = 0f, color: Color = Colo
             shaderCenterPositionUniform = Vec2Uniform(shader.getUniformLocation("u_CenterPos"))
         }
 
-        fun drawCircle(centerX: Float, centerY: Float, radius: Float, color: Color) {
+        @Deprecated(
+            UMatrixStack.Compat.DEPRECATED,
+            ReplaceWith("drawCircle(matrixStack, centerX, centerY, radius, color)"),
+        )
+        fun drawCircle(centerX: Float, centerY: Float, radius: Float, color: Color) =
+            drawCircle(UMatrixStack(), centerX, centerY, radius, color)
+
+        fun drawCircle(matrixStack: UMatrixStack, centerX: Float, centerY: Float, radius: Float, color: Color) {
             if (!::shader.isInitialized)
                 return
-
-            UGraphics.pushMatrix()
 
             shader.bindIfUsable()
             shaderRadiusUniform.setValue(radius)
             shaderCenterPositionUniform.setValue(Vector2f(centerX, centerY))
 
             UIBlock.drawBlock(
+                matrixStack,
                 color,
                 (centerX - radius).toDouble(),
                 (centerY - radius).toDouble(),
@@ -85,8 +91,6 @@ class UICircle @JvmOverloads constructor(radius: Float = 0f, color: Color = Colo
             )
 
             shader.unbindIfUsable()
-
-            UGraphics.popMatrix()
         }
     }
 }

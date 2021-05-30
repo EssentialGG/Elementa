@@ -39,7 +39,7 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
         }
     }
 
-    override fun draw() {
+    override fun draw(matrixStack: UMatrixStack) {
         if (cancelDrawing)
             return
 
@@ -73,7 +73,7 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
             }
 
             mouseMove(this)
-            super.draw()
+            super.draw(matrixStack)
         } catch (e: Throwable) {
             cancelDrawing = true
 
@@ -110,7 +110,10 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
         }
     }
 
-    fun drawFloatingComponents() {
+    @Deprecated(UMatrixStack.Compat.DEPRECATED, ReplaceWith("drawFloatingComponents(matrixStack)"))
+    fun drawFloatingComponents() = drawFloatingComponents(UMatrixStack())
+
+    fun drawFloatingComponents(matrixStack: UMatrixStack) {
         val it = floatingComponents.iterator()
         while (it.hasNext()) {
             val component = it.next()
@@ -118,7 +121,7 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
                 it.remove()
                 continue
             }
-            component.draw()
+            component.drawCompat(matrixStack)
         }
     }
 

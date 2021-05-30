@@ -5,6 +5,7 @@ import gg.essential.elementa.markdown.MarkdownComponent
 import gg.essential.elementa.markdown.MarkdownConfig
 import gg.essential.elementa.markdown.selection.Cursor
 import gg.essential.elementa.markdown.selection.TextCursor
+import gg.essential.universal.UMatrixStack
 
 /**
  * A hard break is two or more line breaks between lines of
@@ -15,7 +16,7 @@ class HardBreakDrawable(md: MarkdownComponent) : Drawable(md) {
         TODO("Not yet implemented")
     }
 
-    override fun draw(state: DrawState) {
+    override fun draw(matrixStack: UMatrixStack, state: DrawState) {
         TODO("Not yet implemented")
     }
 

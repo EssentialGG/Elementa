@@ -8,6 +8,7 @@ import gg.essential.elementa.effects.OutlineEffect
 import gg.essential.elementa.utils.ObservableAddEvent
 import gg.essential.elementa.utils.ObservableClearEvent
 import gg.essential.elementa.utils.ObservableRemoveEvent
+import gg.essential.universal.UMatrixStack
 import gg.essential.universal.UMouse
 import gg.essential.universal.UResolution
 import java.awt.Color
@@ -167,7 +168,7 @@ class Inspector @JvmOverloads constructor(
         selectedNode = node
     }
 
-    override fun draw() {
+    override fun draw(matrixStack: UMatrixStack) {
         separator1.setWidth(container.getWidth().pixels())
         separator2.setWidth(container.getWidth().pixels())
 
@@ -185,6 +186,7 @@ class Inspector @JvmOverloads constructor(
             selectedNode?.targetComponent
         }?.also {
             UIBlock.drawBlock(
+                matrixStack,
                 Color(129, 212, 250, 100),
                 it.getLeft().toDouble(),
                 it.getTop().toDouble(),
@@ -193,7 +195,7 @@ class Inspector @JvmOverloads constructor(
             )
         }
 
-        super.draw()
+        super.draw(matrixStack)
     }
 
     companion object {

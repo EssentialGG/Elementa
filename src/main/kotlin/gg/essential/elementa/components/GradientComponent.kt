@@ -3,6 +3,7 @@ package gg.essential.elementa.components
 import gg.essential.elementa.state.BasicState
 import gg.essential.elementa.state.State
 import gg.essential.universal.UGraphics
+import gg.essential.universal.UMatrixStack
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats
 import org.lwjgl.opengl.GL11
 import java.awt.Color
@@ -40,16 +41,16 @@ open class GradientComponent @JvmOverloads constructor(
         directionState = newDirectionState
     }
 
-    override fun draw() {
-        beforeDraw()
+    override fun draw(matrixStack: UMatrixStack) {
+        beforeDrawCompat(matrixStack)
 
         val x = this.getLeft().toDouble()
         val y = this.getTop().toDouble()
         val x2 = this.getRight().toDouble()
         val y2 = this.getBottom().toDouble()
 
-        UGraphics.pushMatrix()
         drawGradientBlock(
+            matrixStack,
             x.toInt(),
             y.toInt(),
             x2.toInt(),
@@ -58,9 +59,8 @@ open class GradientComponent @JvmOverloads constructor(
             endColorState.get(),
             directionState.get()
         )
-        UGraphics.popMatrix()
 
-        super.draw()
+        super.draw(matrixStack)
     }
 
     enum class GradientDirection {
@@ -80,7 +80,22 @@ open class GradientComponent @JvmOverloads constructor(
     data class GradientColors(val topLeft: Color, val topRight: Color, val bottomLeft: Color, val bottomRight: Color)
 
     companion object {
+        @Deprecated(
+            UMatrixStack.Compat.DEPRECATED,
+            ReplaceWith("drawGradientBlock(matrixStack, x1, y1, x2, y2, startColor, endColor, direction)"),
+        )
         fun drawGradientBlock(
+            x1: Int,
+            y1: Int,
+            x2: Int,
+            y2: Int,
+            startColor: Color,
+            endColor: Color,
+            direction: GradientDirection
+        ) = drawGradientBlock(UMatrixStack(), x1, y1, x2, y2, startColor, endColor, direction)
+
+        fun drawGradientBlock(
+            matrixStack: UMatrixStack,
             x1: Int,
             y1: Int,
             x2: Int,
@@ -98,10 +113,10 @@ open class GradientComponent @JvmOverloads constructor(
             val colours = direction.getGradientColors(startColor, endColor)
             val tessellator = UGraphics.getFromTessellator()
             tessellator.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR)
-            tessellator.pos(x2.toDouble(), y1.toDouble(), 0.0).color(colours.topRight).endVertex()
-            tessellator.pos(x1.toDouble(), y1.toDouble(), 0.0).color(colours.topLeft).endVertex()
-            tessellator.pos(x1.toDouble(), y2.toDouble(), 0.0).color(colours.bottomLeft).endVertex()
-            tessellator.pos(x2.toDouble(), y2.toDouble(), 0.0).color(colours.bottomRight).endVertex()
+            tessellator.pos(matrixStack, x2.toDouble(), y1.toDouble(), 0.0).color(colours.topRight).endVertex()
+            tessellator.pos(matrixStack, x1.toDouble(), y1.toDouble(), 0.0).color(colours.topLeft).endVertex()
+            tessellator.pos(matrixStack, x1.toDouble(), y2.toDouble(), 0.0).color(colours.bottomLeft).endVertex()
+            tessellator.pos(matrixStack, x2.toDouble(), y2.toDouble(), 0.0).color(colours.bottomRight).endVertex()
             UGraphics.draw()
 
             UGraphics.shadeModel(GL11.GL_FLAT)

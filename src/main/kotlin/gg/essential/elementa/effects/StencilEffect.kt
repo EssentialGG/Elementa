@@ -1,6 +1,7 @@
 package gg.essential.elementa.effects
 
 import gg.essential.elementa.UIComponent
+import gg.essential.universal.UMatrixStack
 import net.minecraft.client.Minecraft
 import org.lwjgl.opengl.GL11.*
 
@@ -10,7 +11,7 @@ import org.lwjgl.opengl.GL11.*
  * In order to use, you must call [enableStencil] in mod initialization.
  */
 class StencilEffect : Effect() {
-    override fun beforeDraw() {
+    override fun beforeDraw(matrixStack: UMatrixStack) {
         glEnable(GL_STENCIL_TEST)
         // commented to make component still draw
         //glColorMask ( false, false, false, false)
@@ -18,13 +19,13 @@ class StencilEffect : Effect() {
         glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE)
     }
 
-    override fun beforeChildrenDraw() {
+    override fun beforeChildrenDraw(matrixStack: UMatrixStack) {
         //glColorMask (true, true, true, true)
         glStencilFunc(GL_EQUAL, 2, 0xffffffff.toInt())
         glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP)
     }
 
-    override fun afterDraw() {
+    override fun afterDraw(matrixStack: UMatrixStack) {
         glDisable(GL_STENCIL_TEST)
     }
 

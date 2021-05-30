@@ -5,6 +5,7 @@ import gg.essential.elementa.components.image.ImageProvider
 import gg.essential.elementa.svg.SVGParser
 import gg.essential.elementa.svg.data.SVG
 import gg.essential.universal.UGraphics
+import gg.essential.universal.UMatrixStack
 import org.lwjgl.BufferUtils
 import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL15
@@ -24,7 +25,7 @@ class SVGComponent(private var svg: SVG) : UIComponent(), ImageProvider {
         needsReload = true
     }
 
-    override fun drawImage(x: Double, y: Double, width: Double, height: Double, color: Color) {
+    override fun drawImage(matrixStack: UMatrixStack, x: Double, y: Double, width: Double, height: Double, color: Color) {
         if(true) return //TODO
 
         if (!::vboData.isInitialized || needsReload) {
@@ -36,14 +37,14 @@ class SVGComponent(private var svg: SVG) : UIComponent(), ImageProvider {
         val yScale = svg.height?.let { height / it } ?: 1.0
         val strokeWidth = (xScale * svg.strokeWidth).toFloat().coerceAtMost(10f)
 
-        UGraphics.GL.pushMatrix()
+        matrixStack.push()
 
         UGraphics.enableBlend()
         UGraphics.disableTexture2D()
 
         GL11.glColor4f(color.red / 255f, color.green / 255f, color.blue / 255f, 1f)
-        UGraphics.GL.translate(x, y, 0.0)
-        UGraphics.GL.scale(xScale, yScale, 0.0)
+        matrixStack.translate(x, y, 0.0)
+        matrixStack.scale(xScale, yScale, 0.0)
 
         GL11.glPointSize(strokeWidth)
         GL11.glLineWidth(strokeWidth)
@@ -54,13 +55,13 @@ class SVGComponent(private var svg: SVG) : UIComponent(), ImageProvider {
         GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY)
         GL11.glVertexPointer(2, GL11.GL_FLOAT, 0, 0)
 
-        vboData.forEach { (drawType, startIndex, vertexCount, drawPoints) ->
+        matrixStack.runWithGlobalState { vboData.forEach { (drawType, startIndex, vertexCount, drawPoints) ->
             GL11.glDrawArrays(drawType, startIndex, vertexCount)
 
             if (drawPoints && svg.roundLineJoins) {
                 GL11.glDrawArrays(GL11.GL_POINTS, startIndex, vertexCount)
             }
-        }
+        } }
 
         GL11.glDisable(GL11.GL_LINE_SMOOTH)
         GL11.glDisable(GL11.GL_POINT_SMOOTH)
@@ -69,11 +70,11 @@ class SVGComponent(private var svg: SVG) : UIComponent(), ImageProvider {
 
         UGraphics.enableTexture2D()
 
-        UGraphics.GL.popMatrix()
+        matrixStack.pop()
     }
 
-    override fun draw() {
-        beforeDraw()
+    override fun draw(matrixStack: UMatrixStack) {
+        beforeDraw(matrixStack)
 
         val x = this.getLeft().toDouble()
         val y = this.getTop().toDouble()
@@ -82,12 +83,12 @@ class SVGComponent(private var svg: SVG) : UIComponent(), ImageProvider {
         val color = this.getColor()
 
         if (color.alpha == 0) {
-            return super.draw()
+            return super.draw(matrixStack)
         }
 
-        drawImage(x, y, width, height, color)
+        drawImage(matrixStack, x, y, width, height, color)
 
-        super.draw()
+        super.draw(matrixStack)
     }
 
     private fun generateVBOData() {

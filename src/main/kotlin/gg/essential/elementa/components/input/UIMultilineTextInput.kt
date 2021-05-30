@@ -6,6 +6,7 @@ import gg.essential.elementa.dsl.pixels
 import gg.essential.elementa.dsl.width
 import gg.essential.elementa.utils.getStringSplitToWidthTruncated
 import gg.essential.universal.UKeyboard
+import gg.essential.universal.UMatrixStack
 import java.awt.Color
 
 class UIMultilineTextInput @JvmOverloads constructor(
@@ -71,14 +72,14 @@ class UIMultilineTextInput @JvmOverloads constructor(
         }
     }
 
-    override fun draw() {
-        beforeDraw()
+    override fun draw(matrixStack: UMatrixStack) {
+        beforeDraw(matrixStack)
 
         val textScale = getTextScale()
         if (!active && !hasText()) {
             val textToDraw = getStringSplitToWidthTruncated(placeholder, getWidth(), textScale, 1)[0]
-            drawUnselectedText(textToDraw, getLeft(), 0)
-            return super.draw()
+            drawUnselectedText(matrixStack, textToDraw, getLeft(), 0)
+            return super.draw(matrixStack)
         }
 
         if (hasSelection()) {
@@ -98,7 +99,7 @@ class UIMultilineTextInput @JvmOverloads constructor(
                 continue
 
             if (!hasSelection() || i < selectionStart.line || i > selectionEnd.line) {
-                drawUnselectedText(visualLine.text, getLeft(), i)
+                drawUnselectedText(matrixStack, visualLine.text, getLeft(), i)
             } else {
                 val startText = when {
                     i == selectionStart.line && selectionStart.column > 0 -> {
@@ -131,10 +132,11 @@ class UIMultilineTextInput @JvmOverloads constructor(
                 val newlinePadding = if (i < selectionEnd.line) ' '.width(textScale) else 0f
 
                 if (startText.isNotEmpty())
-                    drawUnselectedText(startText, getLeft(), i)
+                    drawUnselectedText(matrixStack, startText, getLeft(), i)
 
                 if (selectedText.isNotEmpty() || newlinePadding != 0f) {
                     drawSelectedText(
+                        matrixStack,
                         selectedText,
                         getLeft() + startTextWidth,
                         getLeft() + startTextWidth + selectedTextWidth + newlinePadding,
@@ -143,11 +145,11 @@ class UIMultilineTextInput @JvmOverloads constructor(
                 }
 
                 if (endText.isNotEmpty())
-                    drawUnselectedText(endText, getLeft() + startTextWidth + selectedTextWidth, i)
+                    drawUnselectedText(matrixStack, endText, getLeft() + startTextWidth + selectedTextWidth, i)
             }
         }
 
-        super.draw()
+        super.draw(matrixStack, )
     }
 
     override fun screenPosToVisualPos(x: Float, y: Float): LinePosition {

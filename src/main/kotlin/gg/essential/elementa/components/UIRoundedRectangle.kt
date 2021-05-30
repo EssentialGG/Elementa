@@ -6,7 +6,7 @@ import gg.essential.elementa.shaders.FloatUniform
 import gg.essential.elementa.shaders.Shader
 import gg.essential.elementa.shaders.Vec4Uniform
 import gg.essential.elementa.utils.Vector4f
-import gg.essential.universal.UGraphics
+import gg.essential.universal.UMatrixStack
 import java.awt.Color
 
 /**
@@ -17,16 +17,16 @@ open class UIRoundedRectangle(radius: Float) : UIComponent() {
         setRadius(radius.pixels())
     }
 
-    override fun draw() {
-        beforeDraw()
+    override fun draw(matrixStack: UMatrixStack) {
+        beforeDrawCompat(matrixStack)
 
         val radius = getRadius()
 
         val color = getColor()
         if (color.alpha != 0)
-            drawRoundedRectangle(getLeft(), getTop(), getRight(), getBottom(), radius, color)
+            drawRoundedRectangle(matrixStack, getLeft(), getTop(), getRight(), getBottom(), radius, color)
 
-        super.draw()
+        super.draw(matrixStack)
     }
 
     companion object {
@@ -43,21 +43,24 @@ open class UIRoundedRectangle(radius: Float) : UIComponent() {
             shaderInnerRectUniform = Vec4Uniform(shader.getUniformLocation("u_InnerRect"))
         }
 
-        fun drawRoundedRectangle(left: Float, top: Float, right: Float, bottom: Float, radius: Float, color: Color) {
+        @Deprecated(
+            UMatrixStack.Compat.DEPRECATED,
+            ReplaceWith("drawRoundedRectangle(matrixStack, left, top, right, bottom, radius, color)"),
+        )
+        fun drawRoundedRectangle(left: Float, top: Float, right: Float, bottom: Float, radius: Float, color: Color) =
+            drawRoundedRectangle(UMatrixStack(), left, top, right, bottom, radius, color)
+
+        fun drawRoundedRectangle(matrixStack: UMatrixStack, left: Float, top: Float, right: Float, bottom: Float, radius: Float, color: Color) {
             if (!::shader.isInitialized)
                 return
-
-            UGraphics.pushMatrix()
 
             shader.bindIfUsable()
             shaderRadiusUniform.setValue(radius)
             shaderInnerRectUniform.setValue(Vector4f(left + radius, top + radius, right - radius, bottom - radius))
 
-            UIBlock.drawBlock(color, left.toDouble(), top.toDouble(), right.toDouble(), bottom.toDouble())
+            UIBlock.drawBlock(matrixStack, color, left.toDouble(), top.toDouble(), right.toDouble(), bottom.toDouble())
 
             shader.unbindIfUsable()
-
-            UGraphics.popMatrix()
         }
     }
 }

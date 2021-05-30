@@ -8,6 +8,7 @@ import gg.essential.elementa.constraints.animation.Animations
 import gg.essential.elementa.dsl.*
 import gg.essential.elementa.effects.ScissorEffect
 import gg.essential.elementa.utils.withAlpha
+import gg.essential.universal.UMatrixStack
 import java.awt.Color
 
 class KtTestGui : WindowScreen() {
@@ -41,8 +42,8 @@ class KtTestGui : WindowScreen() {
     }
 
 
-    override fun onDrawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
-        super.onDrawScreen(mouseX, mouseY, partialTicks)
+    override fun onDrawScreen(matrixStack: UMatrixStack, mouseX: Int, mouseY: Int, partialTicks: Float) {
+        super.onDrawScreen(matrixStack, mouseX, mouseY, partialTicks)
 
 //        UIBlock.drawBlock(Color.GRAY, 10.0, 10.0, 500.0, 600.0)
 //

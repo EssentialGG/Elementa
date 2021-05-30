@@ -7,6 +7,7 @@ import gg.essential.elementa.state.BasicState
 import gg.essential.elementa.state.State
 import gg.essential.elementa.state.pixels
 import gg.essential.universal.UGraphics
+import gg.essential.universal.UMatrixStack
 import java.awt.Color
 
 /**
@@ -66,12 +67,12 @@ open class UIText @JvmOverloads constructor(
         return super.getHeight() * getTextScale()
     }
 
-    override fun draw() {
+    override fun draw(matrixStack: UMatrixStack) {
         val text = textState.get()
         if (text.isEmpty())
             return
 
-        beforeDraw()
+        beforeDrawCompat(matrixStack)
 
         val x = getLeft()
         val y = getTop()
@@ -81,7 +82,7 @@ open class UIText @JvmOverloads constructor(
 
         // We aren't visible, don't draw
         if (color.alpha <= 10) {
-            return super.draw()
+            return super.draw(matrixStack)
         }
 
         UGraphics.enableBlend()
@@ -89,9 +90,10 @@ open class UIText @JvmOverloads constructor(
         val shadow = shadowState.get()
         val shadowColor = shadowColorState.get()
         getFontProvider().drawString(
+            matrixStack,
             textState.get(), color, x, y,
             10f, width, shadow, shadowColor
         )
-        super.draw()
+        super.draw(matrixStack)
     }
 }

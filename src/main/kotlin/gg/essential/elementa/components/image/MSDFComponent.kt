@@ -9,6 +9,7 @@ import gg.essential.elementa.utils.ResourceCache
 import gg.essential.elementa.utils.Vector2f
 import gg.essential.elementa.utils.Vector4f
 import gg.essential.universal.UGraphics
+import gg.essential.universal.UMatrixStack
 import gg.essential.universal.utils.ReleasedDynamicTexture
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats
 import org.lwjgl.opengl.GL11
@@ -59,8 +60,8 @@ open class MSDFComponent @JvmOverloads constructor(
     constructor(imageFunction: () -> BufferedImage) : this(CompletableFuture.supplyAsync(imageFunction))
 
 
-    override fun draw() {
-        beforeDraw()
+    override fun draw(matrixStack: UMatrixStack) {
+        beforeDrawCompat(matrixStack)
 
         val x = this.getLeft().toDouble()
         val y = this.getTop().toDouble()
@@ -69,9 +70,9 @@ open class MSDFComponent @JvmOverloads constructor(
         val color = this.getColor()
 
         if (color.alpha == 0) {
-            return super.draw()
+            return super.draw(matrixStack)
         }
-        val tex = texture ?: return super.draw();
+        val tex = texture ?: return super.draw(matrixStack)
         while (waiting.isEmpty().not())
             waiting.poll().applyTexture(texture)
 
@@ -117,14 +118,14 @@ open class MSDFComponent @JvmOverloads constructor(
         worldRenderer.begin(7, DefaultVertexFormats.POSITION_TEX)
         val doubleX = x.toDouble()
         val doubleY = y.toDouble()
-        worldRenderer.pos(doubleX, doubleY + height, 0.0).tex(textureLeft, textureBottom).endVertex()
-        worldRenderer.pos(doubleX + width, doubleY + height, 0.0).tex(textureRight, textureBottom).endVertex()
-        worldRenderer.pos(doubleX + width, doubleY, 0.0).tex(textureRight, textureTop).endVertex()
-        worldRenderer.pos(doubleX, doubleY, 0.0).tex(textureLeft, textureTop).endVertex()
+        worldRenderer.pos(matrixStack, doubleX, doubleY + height, 0.0).tex(textureLeft, textureBottom).endVertex()
+        worldRenderer.pos(matrixStack, doubleX + width, doubleY + height, 0.0).tex(textureRight, textureBottom).endVertex()
+        worldRenderer.pos(matrixStack, doubleX + width, doubleY, 0.0).tex(textureRight, textureTop).endVertex()
+        worldRenderer.pos(matrixStack, doubleX, doubleY, 0.0).tex(textureLeft, textureTop).endVertex()
         UGraphics.draw()
 
         shader.unbindIfUsable()
-        super.draw()
+        super.draw(matrixStack)
 
     }
 

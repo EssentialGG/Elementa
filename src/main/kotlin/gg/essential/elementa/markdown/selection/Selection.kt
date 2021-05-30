@@ -4,6 +4,7 @@ import gg.essential.elementa.markdown.DrawState
 import gg.essential.elementa.markdown.drawables.Drawable
 import gg.essential.elementa.markdown.drawables.ImageDrawable
 import gg.essential.elementa.markdown.drawables.TextDrawable
+import gg.essential.universal.UMatrixStack
 
 class Selection private constructor(val start: Cursor<*>, val end: Cursor<*>) {
     val drawables = mutableListOf<Drawable>()
@@ -51,9 +52,12 @@ class Selection private constructor(val start: Cursor<*>, val end: Cursor<*>) {
         }
     }
 
-    fun draw(state: DrawState) {
-        start.draw(state)
-        end.draw(state)
+    @Deprecated(UMatrixStack.Compat.DEPRECATED, ReplaceWith("draw(matrixStack, state)"))
+    fun draw(state: DrawState) = draw(UMatrixStack(), state)
+
+    fun draw(matrixStack: UMatrixStack, state: DrawState) {
+        start.draw(matrixStack, state)
+        end.draw(matrixStack, state)
     }
 
     fun remove() {

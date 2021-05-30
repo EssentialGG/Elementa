@@ -9,6 +9,7 @@ import gg.essential.elementa.svg.SVGParser
 import gg.essential.elementa.utils.ResourceCache
 import gg.essential.elementa.utils.drawTexture
 import gg.essential.universal.UGraphics
+import gg.essential.universal.UMatrixStack
 import gg.essential.universal.UMinecraft
 import gg.essential.universal.utils.ReleasedDynamicTexture
 import java.awt.Color
@@ -69,16 +70,16 @@ open class UIImage @JvmOverloads constructor(
     )
     constructor(imageFunction: () -> BufferedImage) : this(CompletableFuture.supplyAsync(imageFunction))
 
-    override fun drawImage(x: Double, y: Double, width: Double, height: Double, color: Color) {
+    override fun drawImage(matrixStack: UMatrixStack, x: Double, y: Double, width: Double, height: Double, color: Color) {
         when {
-            texture != null -> drawTexture(texture!!, color, x, y, width, height)
-            imageFuture.isCompletedExceptionally -> failureImage.drawImage(x, y, width, height, color)
-            else -> loadingImage.drawImage(x, y, width, height, color)
+            texture != null -> drawTexture(matrixStack, texture!!, color, x, y, width, height)
+            imageFuture.isCompletedExceptionally -> failureImage.drawImageCompat(matrixStack, x, y, width, height, color)
+            else -> loadingImage.drawImageCompat(matrixStack, x, y, width, height, color)
         }
     }
 
-    override fun draw() {
-        beforeDraw()
+    override fun draw(matrixStack: UMatrixStack) {
+        beforeDrawCompat(matrixStack)
 
         val x = this.getLeft().toDouble()
         val y = this.getTop().toDouble()
@@ -87,12 +88,12 @@ open class UIImage @JvmOverloads constructor(
         val color = this.getColor()
 
         if (color.alpha == 0) {
-            return super.draw()
+            return super.draw(matrixStack)
         }
 
-        drawImage(x, y, width, height, color)
+        drawImage(matrixStack, x, y, width, height, color)
 
-        super.draw()
+        super.draw(matrixStack)
     }
 
     @Throws(Throwable::class)

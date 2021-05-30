@@ -5,6 +5,7 @@ import gg.essential.elementa.components.UIImage
 import gg.essential.elementa.utils.decodeBlurHash
 import gg.essential.elementa.utils.drawTexture
 import gg.essential.universal.UGraphics
+import gg.essential.universal.UMatrixStack
 import gg.essential.universal.utils.ReleasedDynamicTexture
 import java.awt.Color
 import java.io.File
@@ -26,7 +27,7 @@ open class BlurHashImage(private val hash: String) : UIComponent(), ImageProvide
         }
     }
 
-    override fun drawImage(x: Double, y: Double, width: Double, height: Double, color: Color) {
+    override fun drawImage(matrixStack: UMatrixStack, x: Double, y: Double, width: Double, height: Double, color: Color) {
         if (::texture.isInitialized) {
             if (width > 0 && height > 0) {
                 val sizeDifference = abs(dimensions.first * dimensions.second - width * height)
@@ -41,11 +42,11 @@ open class BlurHashImage(private val hash: String) : UIComponent(), ImageProvide
         }
 
 
-        drawTexture(texture, color, x, y, width, height)
+        drawTexture(matrixStack, texture, color, x, y, width, height)
     }
 
-    override fun draw() {
-        beforeDraw()
+    override fun draw(matrixStack: UMatrixStack) {
+        beforeDrawCompat(matrixStack)
 
         val x = this.getLeft().toDouble()
         val y = this.getTop().toDouble()
@@ -54,12 +55,12 @@ open class BlurHashImage(private val hash: String) : UIComponent(), ImageProvide
         val color = this.getColor()
 
         if (color.alpha == 0) {
-            return super.draw()
+            return super.draw(matrixStack)
         }
 
-        drawImage(x, y, width, height, color)
+        drawImageCompat(matrixStack, x, y, width, height, color)
 
-        super.draw()
+        super.draw(matrixStack)
     }
 
     @Throws(Throwable::class)

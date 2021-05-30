@@ -3,6 +3,7 @@ package gg.essential.elementa.components
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.dsl.toConstraint
 import gg.essential.universal.UGraphics
+import gg.essential.universal.UMatrixStack
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats
 import org.lwjgl.opengl.GL11
 import java.awt.Color
@@ -28,13 +29,12 @@ open class UIShape @JvmOverloads constructor(color: Color = Color.WHITE) : UICom
 
     fun getVertices() = vertices
 
-    override fun draw() {
-        beforeDraw()
+    override fun draw(matrixStack: UMatrixStack) {
+        beforeDrawCompat(matrixStack)
 
         val color = this.getColor()
-        if (color.alpha == 0) return super.draw()
+        if (color.alpha == 0) return super.draw(matrixStack)
 
-        UGraphics.pushMatrix()
         UGraphics.enableBlend()
         UGraphics.disableTexture2D()
         val red = color.red.toFloat() / 255f
@@ -48,7 +48,7 @@ open class UIShape @JvmOverloads constructor(color: Color = Color.WHITE) : UICom
         worldRenderer.begin(drawMode, DefaultVertexFormats.POSITION_COLOR)
         vertices.forEach {
             worldRenderer
-                .pos(it.absoluteX.toDouble(), it.absoluteY.toDouble(), 0.0)
+                .pos(matrixStack, it.absoluteX.toDouble(), it.absoluteY.toDouble(), 0.0)
                 .color(red, green, blue, alpha)
                 .endVertex()
         }
@@ -56,8 +56,7 @@ open class UIShape @JvmOverloads constructor(color: Color = Color.WHITE) : UICom
 
         UGraphics.enableTexture2D()
         UGraphics.disableBlend()
-        UGraphics.popMatrix()
 
-        super.draw()
+        super.draw(matrixStack)
     }
 }

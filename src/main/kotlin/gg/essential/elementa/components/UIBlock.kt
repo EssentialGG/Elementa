@@ -6,6 +6,7 @@ import gg.essential.elementa.dsl.toConstraint
 import gg.essential.elementa.state.State
 import gg.essential.elementa.state.toConstraint
 import gg.essential.universal.UGraphics
+import gg.essential.universal.UMatrixStack
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats
 import org.lwjgl.opengl.GL11
 import java.awt.Color
@@ -22,8 +23,8 @@ open class UIBlock(colorConstraint: ColorConstraint = Color.WHITE.toConstraint()
         setColor(colorConstraint)
     }
 
-    override fun draw() {
-        beforeDraw()
+    override fun draw(matrixStack: UMatrixStack) {
+        beforeDrawCompat(matrixStack)
 
         val x = this.getLeft().toDouble()
         val y = this.getTop().toDouble()
@@ -32,19 +33,22 @@ open class UIBlock(colorConstraint: ColorConstraint = Color.WHITE.toConstraint()
 
         val color = getColor()
         if (color.alpha == 0)
-            return super.draw()
+            return super.draw(matrixStack)
 
-        UGraphics.pushMatrix()
+        drawBlock(matrixStack, color, x, y, x2, y2)
 
-        drawBlock(color, x, y, x2, y2)
-
-        UGraphics.popMatrix()
-
-        super.draw()
+        super.draw(matrixStack)
     }
 
     companion object {
-        fun drawBlock(color: Color, x1: Double, y1: Double, x2: Double, y2: Double) {
+        @Deprecated(
+            "Pass UMatrixStack as first argument, required for 1.17",
+            ReplaceWith("drawBlock(matrixStack, color, x1, y1, x2, y2)")
+        )
+        fun drawBlock(color: Color, x1: Double, y1: Double, x2: Double, y2: Double) =
+            drawBlock(UMatrixStack(), color, x1, y1, x2, y2)
+
+        fun drawBlock(matrixStack: UMatrixStack, color: Color, x1: Double, y1: Double, x2: Double, y2: Double) {
             UGraphics.enableBlend()
             UGraphics.disableTexture2D()
             UGraphics.tryBlendFuncSeparate(770, 771, 1, 0)
@@ -57,10 +61,10 @@ open class UIBlock(colorConstraint: ColorConstraint = Color.WHITE.toConstraint()
             val alpha = color.alpha.toFloat() / 255f
 
             worldRenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR)
-            worldRenderer.pos(x1, y2, 0.0).color(red, green, blue, alpha).endVertex()
-            worldRenderer.pos(x2, y2, 0.0).color(red, green, blue, alpha).endVertex()
-            worldRenderer.pos(x2, y1, 0.0).color(red, green, blue, alpha).endVertex()
-            worldRenderer.pos(x1, y1, 0.0).color(red, green, blue, alpha).endVertex()
+            worldRenderer.pos(matrixStack, x1, y2, 0.0).color(red, green, blue, alpha).endVertex()
+            worldRenderer.pos(matrixStack, x2, y2, 0.0).color(red, green, blue, alpha).endVertex()
+            worldRenderer.pos(matrixStack, x2, y1, 0.0).color(red, green, blue, alpha).endVertex()
+            worldRenderer.pos(matrixStack, x1, y1, 0.0).color(red, green, blue, alpha).endVertex()
             UGraphics.draw()
 
 
@@ -68,8 +72,15 @@ open class UIBlock(colorConstraint: ColorConstraint = Color.WHITE.toConstraint()
             UGraphics.disableBlend()
         }
 
-        fun drawBlockSized(color: Color, x: Double, y: Double, width: Double, height: Double) {
-            drawBlock(color, x, y, x + width, y + height)
+        @Deprecated(
+            "Pass UMatrixStack as first argument, required for 1.17",
+            ReplaceWith("drawBlock(matrixStack, color, x1, y1, x2, y2)")
+        )
+        fun drawBlockSized(color: Color, x: Double, y: Double, width: Double, height: Double) =
+            drawBlockSized(UMatrixStack(), color, x, y, width, height)
+
+        fun drawBlockSized(matrixStack: UMatrixStack, color: Color, x: Double, y: Double, width: Double, height: Double) {
+            drawBlock(matrixStack, color, x, y, x + width, y + height)
         }
     }
 }

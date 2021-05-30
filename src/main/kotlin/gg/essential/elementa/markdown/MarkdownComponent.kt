@@ -12,6 +12,7 @@ import gg.essential.elementa.state.State
 import gg.essential.elementa.font.ElementaFonts
 import gg.essential.elementa.font.FontProvider
 import gg.essential.universal.UKeyboard
+import gg.essential.universal.UMatrixStack
 import java.awt.Toolkit
 import java.awt.datatransfer.StringSelection
 
@@ -136,13 +137,13 @@ class MarkdownComponent @JvmOverloads constructor(
         lastValues = constraintValues()
     }
 
-    override fun draw() {
+    override fun draw(matrixStack: UMatrixStack) {
         if (!isInitialized) {
             isInitialized = true
             afterInitialization()
         }
 
-        beforeChildrenDraw()
+        beforeChildrenDraw(matrixStack)
 
         // Re-layout if important constraint values have changed
         val currentValues = constraintValues()
@@ -152,10 +153,10 @@ class MarkdownComponent @JvmOverloads constructor(
 
         val drawState = DrawState(getLeft() - baseX, getTop() - baseY)
 
-        drawables.forEach { it.draw(drawState) }
-        selection?.draw(drawState) ?: cursor?.draw(drawState)
+        drawables.forEach { it.draw(matrixStack, drawState) }
+        selection?.draw(matrixStack, drawState) ?: cursor?.draw(matrixStack, drawState)
 
-        afterDraw()
+        afterDraw(matrixStack)
     }
 
     private fun constraintValues() = ConstraintValues(

@@ -9,6 +9,7 @@ import gg.essential.elementa.shaders.*
 import gg.essential.elementa.utils.Vector2f
 import gg.essential.elementa.utils.Vector4f
 import gg.essential.universal.UGraphics
+import gg.essential.universal.UMatrixStack
 import gg.essential.universal.UMinecraft
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats
 import org.lwjgl.opengl.GL11
@@ -112,6 +113,7 @@ class FontRenderer(
     }
 
     override fun drawString(
+        matrixStack: UMatrixStack,
         string: String,
         color: Color,
         x: Float,
@@ -136,12 +138,12 @@ class FontRenderer(
             }
             this.shadowColor = Color(baseColor)
             val shadowOffset = effectiveSize / 10
-            UGraphics.translate(shadowOffset, shadowOffset, 0f)
-            drawStringNow(string, Color(baseColor), x, adjustedY, effectiveSize)
-            UGraphics.translate(-shadowOffset, -shadowOffset, 0f)
+            matrixStack.translate(shadowOffset, shadowOffset, 0f)
+            drawStringNow(matrixStack, string, Color(baseColor), x, adjustedY, effectiveSize)
+            matrixStack.translate(-shadowOffset, -shadowOffset, 0f)
         }
         drawingShadow = false
-        drawStringNow(string, color, x, adjustedY, effectiveSize)
+        drawStringNow(matrixStack, string, color, x, adjustedY, effectiveSize)
     }
 
     override fun visitImpl(visitor: ConstraintVisitor, type: ConstraintType) {
@@ -159,7 +161,7 @@ class FontRenderer(
         }
     }
 
-    private fun drawStringNow(string: String, color: Color, x: Float, y: Float, originalPointSize: Float) {
+    private fun drawStringNow(matrixStack: UMatrixStack, string: String, color: Color, x: Float, y: Float, originalPointSize: Float) {
         if (!areShadersInitialized())
             return
 
@@ -287,6 +289,7 @@ class FontRenderer(
                 val hintedY = hintedBaseline - ceil(planeBounds.top * currentPointSize * guiScale) / guiScale
 
                 drawGlyph(
+                    matrixStack,
                     glyph,
                     color,
                     currentX,
@@ -305,7 +308,7 @@ class FontRenderer(
     }
 
 
-    private fun drawGlyph(glyph: Glyph, color: Color, x: Float, y: Float, width: Float, height: Float) {
+    private fun drawGlyph(matrixStack: UMatrixStack, glyph: Glyph, color: Color, x: Float, y: Float, width: Float, height: Float) {
         val atlasBounds = glyph.atlasBounds ?: return
         val atlas = activeFont.fontInfo.atlas
         val textureTop = 1.0 - (atlasBounds.top / atlas.height)
@@ -326,10 +329,10 @@ class FontRenderer(
         worldRenderer.begin(7, DefaultVertexFormats.POSITION_TEX)
         val doubleX = x.toDouble()
         val doubleY = y.toDouble()
-        worldRenderer.pos(doubleX, doubleY + height, 0.0).tex(textureLeft, textureBottom).endVertex()
-        worldRenderer.pos(doubleX + width, doubleY + height, 0.0).tex(textureRight, textureBottom).endVertex()
-        worldRenderer.pos(doubleX + width, doubleY, 0.0).tex(textureRight, textureTop).endVertex()
-        worldRenderer.pos(doubleX, doubleY, 0.0).tex(textureLeft, textureTop).endVertex()
+        worldRenderer.pos(matrixStack, doubleX, doubleY + height, 0.0).tex(textureLeft, textureBottom).endVertex()
+        worldRenderer.pos(matrixStack, doubleX + width, doubleY + height, 0.0).tex(textureRight, textureBottom).endVertex()
+        worldRenderer.pos(matrixStack, doubleX + width, doubleY, 0.0).tex(textureRight, textureTop).endVertex()
+        worldRenderer.pos(matrixStack, doubleX, doubleY, 0.0).tex(textureLeft, textureTop).endVertex()
         UGraphics.draw()
 
 //        if (underline) {

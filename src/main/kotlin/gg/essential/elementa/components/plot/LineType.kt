@@ -21,7 +21,7 @@ enum class LineType(private val drawFunc: (List<PlotPoint>) -> Unit) {
     }
 
     private fun beforeDraw(color: Color, width: Float) {
-        UGraphics.pushMatrix()
+        UGraphics.GL.pushMatrix()
         UGraphics.enableBlend()
         UGraphics.disableTexture2D()
 
@@ -31,6 +31,6 @@ enum class LineType(private val drawFunc: (List<PlotPoint>) -> Unit) {
 
     private fun afterDraw() {
         UGraphics.enableTexture2D()
-        UGraphics.popMatrix()
+        UGraphics.GL.popMatrix()
     }
 }

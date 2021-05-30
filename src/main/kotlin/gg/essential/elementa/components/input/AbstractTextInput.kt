@@ -8,6 +8,7 @@ import gg.essential.elementa.dsl.*
 import gg.essential.elementa.effects.ScissorEffect
 import gg.essential.elementa.utils.getStringSplitToWidth
 import gg.essential.universal.UKeyboard
+import gg.essential.universal.UMatrixStack
 import java.awt.Color
 import java.awt.Toolkit
 import java.awt.datatransfer.DataFlavor
@@ -350,11 +351,11 @@ abstract class AbstractTextInput(
         enableEffect(ScissorEffect())
     }
 
-    override fun draw() {
+    override fun draw(matrixStack: UMatrixStack) {
         cursorComponent.setHeight(
             (lineHeight * getTextScale()).pixels()
         )
-        super.draw()
+        super.draw(matrixStack)
     }
 
     abstract fun getText(): String
@@ -687,9 +688,18 @@ abstract class AbstractTextInput(
 
     protected open fun hasText() = textualLines.size > 1 || textualLines[0].text.isNotEmpty()
 
-    protected open fun drawUnselectedText(text: String, left: Float, row: Int) {
+    @Deprecated(UMatrixStack.Compat.DEPRECATED, ReplaceWith("drawUnselectedText(matrixStack, text, left, row)"))
+    protected open fun drawUnselectedText(text: String, left: Float, row: Int) =
+        drawUnselectedText(UMatrixStack.Compat.get(), text, left, row)
+
+    @Suppress("DEPRECATION")
+    protected fun drawUnselectedTextCompat(matrixStack: UMatrixStack, text: String, left: Float, row: Int) =
+        UMatrixStack.Compat.runLegacyMethod(matrixStack) { drawUnselectedText(text, left, row) }
+
+    protected open fun drawUnselectedText(matrixStack: UMatrixStack, text: String, left: Float, row: Int) {
         // TODO: Shadow color
         getFontProvider().drawString(
+            matrixStack,
             text,
             getColor(),
             left - horizontalScrollingOffset,
@@ -700,8 +710,17 @@ abstract class AbstractTextInput(
         )
     }
 
-    protected open fun drawSelectedText(text: String, left: Float, right: Float, row: Int) {
+    @Deprecated(UMatrixStack.Compat.DEPRECATED, ReplaceWith("drawSelectedText(matrixStack, text, left, right, row)"))
+    protected open fun drawSelectedText(text: String, left: Float, right: Float, row: Int) =
+        drawSelectedText(UMatrixStack.Compat.get(), text, left, right, row)
+
+    @Suppress("DEPRECATION")
+    protected fun drawSelectedTextCompat(matrixStack: UMatrixStack, text: String, left: Float, right: Float, row: Int) =
+        UMatrixStack.Compat.runLegacyMethod(matrixStack) { drawSelectedText(text, left, right, row) }
+
+    protected open fun drawSelectedText(matrixStack: UMatrixStack, text: String, left: Float, right: Float, row: Int) {
         UIBlock.drawBlock(
+            matrixStack,
             if (active) selectionBackgroundColor else inactiveSelectionBackgroundColor,
             left.toDouble() - horizontalScrollingOffset,
             getTop().toDouble() + (9 * row * getTextScale()) + verticalScrollingOffset,
@@ -710,6 +729,7 @@ abstract class AbstractTextInput(
         )
         if (text.isNotEmpty()) {
             getFontProvider().drawString(
+                matrixStack,
                 text,
                 if (active) selectionForegroundColor else inactiveSelectionForegroundColor,
                 left - horizontalScrollingOffset,
