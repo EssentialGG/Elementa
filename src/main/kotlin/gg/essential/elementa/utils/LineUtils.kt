@@ -14,6 +14,11 @@ object LineUtils {
 
     @JvmStatic
     fun drawLine(matrixStack: UMatrixStack, x1: Number, y1: Number, x2: Number, y2: Number, color: Color, width: Float) {
+        drawLineStrip(matrixStack, listOf(x1 to y1, x2 to y2), color, width)
+    }
+
+    @JvmStatic
+    fun drawLineStrip(matrixStack: UMatrixStack, points: List<Pair<Number, Number>>, color: Color, width: Float) {
         // TODO convert to shader for 1.17
         UGraphics.enableBlend()
         UGraphics.disableTexture2D()
@@ -23,9 +28,8 @@ object LineUtils {
 
         GL11.glEnable(GL11.GL_LINE_SMOOTH)
         matrixStack.runWithGlobalState {
-            GL11.glBegin(GL11.GL_LINES)
-            GL11.glVertex2f(x1.toFloat(), y1.toFloat())
-            GL11.glVertex2f(x2.toFloat(), y2.toFloat())
+            GL11.glBegin(GL11.GL_LINE_STRIP)
+            points.forEach { (x, y) -> GL11.glVertex2f(x.toFloat(), y.toFloat()) }
             GL11.glEnd()
         }
 
