@@ -1,6 +1,6 @@
 // For those who want the bleeding edge
 buildscript {
-    ext.kotlin_version = "1.3.72"
+    ext.kotlin_version = "1.5.0"
     ext.dokka_version = "0.10.0"
 
     def mcVersion

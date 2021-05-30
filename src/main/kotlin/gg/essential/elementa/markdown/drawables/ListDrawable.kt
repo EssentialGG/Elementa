@@ -66,7 +66,7 @@ class ListDrawable(
                 drawables[it] !is ListDrawable
             }.map {
                 it.toString().width() + dotWidth
-            }.max()!!
+            }.maxOrNull()!!
         } else {
             val symbols = config.listConfig.unorderedSymbols
             symbols[indentLevel % symbols.length].width()

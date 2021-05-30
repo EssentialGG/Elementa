@@ -28,6 +28,6 @@ class Bounds(
 
     companion object {
         fun fromPoints(points: List<Float>, numberOfGridLines: Int = 5) =
-            Bounds(points.min()!!, points.max()!!, numberOfGridLines)
+            Bounds(points.minOrNull()!!, points.maxOrNull()!!, numberOfGridLines)
     }
 }

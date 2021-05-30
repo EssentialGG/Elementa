@@ -223,7 +223,7 @@ class ParagraphDrawable(
         if (centered) {
             // Offset each text component by half of the space at the end of each line
             for (line in lines) {
-                val totalWidth = line.sumByDouble {
+                val totalWidth = line.sumOf {
                     (it as? TextDrawable)?.width()?.toDouble() ?: it.width.toDouble()
                 }.toFloat()
                 val shift = (width - totalWidth) / 2f

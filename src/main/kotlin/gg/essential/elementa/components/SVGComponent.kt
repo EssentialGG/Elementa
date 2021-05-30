@@ -93,7 +93,7 @@ class SVGComponent(private var svg: SVG) : UIComponent(), ImageProvider {
     private fun generateVBOData() {
         vboID = GL15.glGenBuffers()
 
-        val totalVertexCount = svg.elements.sumBy { it.getVertexCount() }
+        val totalVertexCount = svg.elements.sumOf { it.getVertexCount() }
         val vertexBuffer = BufferUtils.createFloatBuffer(totalVertexCount * 2)
 
         var currPos = 0
