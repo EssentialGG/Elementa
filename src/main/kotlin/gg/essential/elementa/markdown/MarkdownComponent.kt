@@ -11,10 +11,9 @@ import gg.essential.elementa.state.BasicState
 import gg.essential.elementa.state.State
 import gg.essential.elementa.font.ElementaFonts
 import gg.essential.elementa.font.FontProvider
+import gg.essential.universal.UDesktop
 import gg.essential.universal.UKeyboard
 import gg.essential.universal.UMatrixStack
-import java.awt.Toolkit
-import java.awt.datatransfer.StringSelection
 
 /**
  * Component that parses a string as Markdown and renders it.
@@ -82,8 +81,7 @@ class MarkdownComponent @JvmOverloads constructor(
 
         onKeyType { _, keyCode ->
             if (selection != null && keyCode == UKeyboard.KEY_C && UKeyboard.isCtrlKeyDown()) {
-                val selection = StringSelection(drawables.selectedText(UKeyboard.isShiftKeyDown()))
-                Toolkit.getDefaultToolkit().systemClipboard.setContents(selection, selection)
+                UDesktop.setClipboardString(drawables.selectedText(UKeyboard.isShiftKeyDown()))
             }
         }
     }

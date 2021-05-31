@@ -7,12 +7,10 @@ import gg.essential.elementa.constraints.animation.Animations
 import gg.essential.elementa.dsl.*
 import gg.essential.elementa.effects.ScissorEffect
 import gg.essential.elementa.utils.getStringSplitToWidth
+import gg.essential.universal.UDesktop
 import gg.essential.universal.UKeyboard
 import gg.essential.universal.UMatrixStack
 import java.awt.Color
-import java.awt.Toolkit
-import java.awt.datatransfer.DataFlavor
-import java.awt.datatransfer.StringSelection
 import java.util.*
 import kotlin.math.abs
 
@@ -92,7 +90,7 @@ abstract class AbstractTextInput(
                 copySelection()
                 deleteSelection()
             } else if (UKeyboard.isKeyComboCtrlV(keyCode)) {
-                commitTextAddition(Toolkit.getDefaultToolkit().systemClipboard.getData(DataFlavor.stringFlavor) as String)
+                commitTextAddition(UDesktop.getClipboardString())
             } else if (UKeyboard.isKeyComboCtrlZ(keyCode)) {
                 if (undoStack.isEmpty())
                     return@onKeyType
@@ -562,8 +560,7 @@ abstract class AbstractTextInput(
         if (visualSelectionStart == visualSelectionEnd)
             return
 
-        val string = StringSelection(getTextBetween(visualSelectionStart, visualSelectionEnd))
-        Toolkit.getDefaultToolkit().systemClipboard.setContents(string, string)
+        UDesktop.setClipboardString(getTextBetween(visualSelectionStart, visualSelectionEnd))
     }
 
     protected open fun charBefore(pos: LinePosition) = pos.toTextualPos().let {
