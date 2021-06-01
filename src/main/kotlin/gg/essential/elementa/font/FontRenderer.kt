@@ -11,6 +11,7 @@ import gg.essential.elementa.utils.Vector4f
 import gg.essential.universal.UGraphics
 import gg.essential.universal.UMatrixStack
 import gg.essential.universal.UMinecraft
+import gg.essential.universal.UResolution
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats
 import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL13
@@ -182,7 +183,7 @@ class FontRenderer(
         doffsetUniform.setValue(3.5f / currentPointSize)
 
 
-        val guiScale = UMinecraft.getMinecraft().gameSettings.guiScale
+        val guiScale = UResolution.scaleFactor.toFloat()
 
         //Reset
         obfuscated = false
