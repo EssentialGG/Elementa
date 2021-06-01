@@ -2,42 +2,66 @@ package com.example.examplemod
 
 import gg.essential.elementa.WindowScreen
 import gg.essential.elementa.components.*
+import gg.essential.elementa.components.input.UIMultilineTextInput
 import gg.essential.elementa.components.inspector.Inspector
 import gg.essential.elementa.constraints.*
 import gg.essential.elementa.constraints.animation.Animations
 import gg.essential.elementa.dsl.*
 import gg.essential.elementa.effects.ScissorEffect
+import gg.essential.elementa.font.DefaultFonts
+import gg.essential.elementa.font.ElementaFonts
 import gg.essential.elementa.utils.withAlpha
+import net.minecraft.util.text.TextFormatting
 import java.awt.Color
 
 class KtTestGui : WindowScreen() {
     private val myTextBox = UIBlock(Color(0, 0, 0, 255))
 
     init {
-        val hello = UIBlock(Color.BLACK).constrain {
+//        val hello = UIBlock(Color.BLACK).constrain {
+//            x = CenterConstraint()
+//            y = CenterConstraint()
+//            height = 50.percent()
+//            width = 50.percent()
+//        } childOf window
+//        val hi = UIBlock(Color.PINK).constrain {
+//            x = CenterConstraint()
+//            y = CenterConstraint()
+//            height = 100.pixels()
+//            width = 100.pixels()
+//        }.also {
+//            it childOf hello
+//            it effect ScissorEffect()//ScissorEffect(it.getLeft() - 10f, it.getTop() - 10f, it.getRight() + 10f, it.getBottom() + 10f)
+//        }
+//
+//        UIBlock(Color.MAGENTA.withAlpha(100)).constrain {
+//            x = (-50).pixels()
+//            y = (-50).pixels()
+//            height = 100.percent() + 100.pixels()
+//            width = 100.percent() + 100.pixels()
+//        } childOf hi
+//
+//        Inspector(window) childOf window
+//        val tmp = UIMultilineTextInput("Placeholder").constrain {
+//            x = CenterConstraint()
+//            y = CenterConstraint()
+//            width = 100.pixels()
+//            fontProvider = DefaultFonts.ELEMENTA_MINECRAFT_FONT_RENDERER
+//        } childOf window
+//        tmp.lineHeight = 10f
+//        tmp.grabWindowFocus()
+        val tmp = UIText("Hello World").constrain {
             x = CenterConstraint()
             y = CenterConstraint()
-            height = 50.percent()
-            width = 50.percent()
+            textScale = 4.pixels()
         } childOf window
-        val hi = UIBlock(Color.PINK).constrain {
-            x = CenterConstraint()
-            y = CenterConstraint()
-            height = 100.pixels()
-            width = 100.pixels()
-        }.also {
-            it childOf hello
-            it effect ScissorEffect()//ScissorEffect(it.getLeft() - 10f, it.getTop() - 10f, it.getRight() + 10f, it.getBottom() + 10f)
+
+        tmp.onMouseEnter {
+            tmp.setText(TextFormatting.BOLD.toString() + "Hello World");
         }
-
-        UIBlock(Color.MAGENTA.withAlpha(100)).constrain {
-            x = (-50).pixels()
-            y = (-50).pixels()
-            height = 100.percent() + 100.pixels()
-            width = 100.percent() + 100.pixels()
-        } childOf hi
-
-        Inspector(window) childOf window
+        tmp.onMouseLeave {
+            tmp.setText("Hello World");
+        }
     }
 
 
@@ -51,16 +75,16 @@ class KtTestGui : WindowScreen() {
 //        var y = 0
 //        for (i in 8..40) {
 //            if (i % 2 == 0)
-//                ElementaFonts.MINECRAFT
+//                DefaultFonts.ELEMENTA_MINECRAFT_FONT_RENDERER
 //                    .drawString(
 //                        "This is a TEST String! ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
-//                        Color(16777215), 20.0f, 10.0f + y, i.toFloat()/2
+//                        Color(16777215), 20.0f, 10.0f + y, 9f, i.toFloat()/20
 //                    )
 //            else
-//                ElementaFonts.MINECRAFT
+//                DefaultFonts.ELEMENTA_MINECRAFT_FONT_RENDERER
 //                    .drawString(
 //                        "§lThis is a TEST String! ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
-//                        Color(16777215), 20.0f, 10.0f + y, i.toFloat()/2
+//                        Color(16777215), 20.0f, 10.0f + y, 9f, i.toFloat()/20
 //                    )
 //
 //            y += i/2 + 1
