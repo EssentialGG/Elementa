@@ -182,11 +182,8 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
 
     override fun animationFrame() {
         if (currentMouseButton != -1) {
-            dragMouse(
-                UMouse.getScaledX().toInt(),
-                UResolution.scaledHeight - UMouse.getScaledY().toInt(),
-                currentMouseButton
-            )
+            val (mouseX, mouseY) = getMousePosition()
+            dragMouse(mouseX.toInt(), mouseY.toInt(), currentMouseButton)
         }
 
         if (componentRequestingFocus != null && componentRequestingFocus != focusedComponent) {
