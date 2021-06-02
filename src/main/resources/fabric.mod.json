@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "id": "elementa",
+  "version": "${version}",
+  "environment": "client",
+  "custom": {
+    "modmenu": {
+      "badges": [ "library" ]
+    }
+  }
+}

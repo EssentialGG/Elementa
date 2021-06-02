@@ -88,6 +88,15 @@ if (mcVersion >= 11400) {
     }
 }
 
+if (!FABRIC) {
+    configurations {
+        modApi
+        api.extendsFrom(modApi)
+        modImplementation
+        implementation.extendsFrom(modImplementation)
+    }
+}
+
 if (FABRIC) {
     minecraft {
         refmapName = 'mixins.replaymod.refmap.json'
@@ -150,13 +159,16 @@ if (FABRIC) {
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-    implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
-    implementation "gg.essential:UniversalCraft:next-127-${mcVersion}${FABRIC ? "-fabric" : ""}-SNAPSHOT"
-    implementation "org.commonmark:commonmark:0.17.1"
-    implementation "org.commonmark:commonmark-ext-gfm-strikethrough:0.17.1"
-    implementation "org.commonmark:commonmark-ext-ins:0.17.1"
-    implementation "org.dom4j:dom4j:2.1.1"
+    // Using the "mod" prefix will allow Loom to automatically remap the dependencies (to configured yarn mappings) and
+    // to configure the maven publication such that we externally still depend on the non-remapped dep.
+    // The Api/Implementation difference is the same as in Gradle.
+    modApi "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    modApi "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+    modApi "gg.essential:UniversalCraft:next-130-${mcVersion}${FABRIC ? "-fabric" : ""}-SNAPSHOT"
+    modImplementation "org.commonmark:commonmark:0.17.1"
+    modImplementation "org.commonmark:commonmark-ext-gfm-strikethrough:0.17.1"
+    modImplementation "org.commonmark:commonmark-ext-ins:0.17.1"
+    modImplementation "org.dom4j:dom4j:2.1.1"
 
     if (FABRIC) {
         minecraft 'com.mojang:minecraft:' + [
@@ -171,7 +183,7 @@ dependencies {
                 11601: '1.16.1+build.17:v2',
                 11602: '1.16.2+build.1:v2',
         ][mcVersion]
-        modCompile 'net.fabricmc:fabric-loader:' + [
+        modImplementation 'net.fabricmc:fabric-loader:' + [
                 11404: '0.7.8+build.189',
                 11502: '0.7.8+build.189',
                 11601: '0.8.8+build.202',
@@ -195,8 +207,8 @@ dependencies {
             fabricApiModules.add("key-binding-api-v1")
         }
         fabricApiModules.each { module ->
-            modCompile fabricApi.module("fabric-$module", fabricApiVersion)
-            include fabricApi.module("fabric-$module", fabricApiVersion)
+            // Using this combo to add it to our deps but not to our maven publication cause it's only for the example
+            modRuntime(modCompileOnly(fabricApi.module("fabric-$module", fabricApiVersion)))
         }
     }
 
@@ -210,8 +222,10 @@ dependencies {
 }
 
 processResources {
-    from(sourceSets.main.resources.srcDirs) {
-        include "mcmod.info"
+    inputs.property "version", project.version
+
+    filesMatching(['fabric.mod.json']) {
+        expand 'version': project.version
     }
 
     from(sourceSets.main.resources.srcDirs) {
@@ -260,6 +274,7 @@ publishing {
             def snapshotStr = this.properties.getOrDefault("IS_CI", false) ? "-SNAPSHOT" : ""
             version = "$branchStr${project.version}-$mcVersion$fabricStr$snapshotStr"
 
+            if (!FABRIC) // handled by Loom
             pom.withXml {
                 def dependenciesNode = asNode().appendNode('dependencies')
 
@@ -273,8 +288,17 @@ publishing {
                 }
             }
 
-            artifact jar
-            artifact sourcesJar
+            if (FABRIC) {
+                artifact(remapJar) {
+                    builtBy remapJar
+                }
+                artifact(sourcesJar) {
+                    builtBy remapSourcesJar
+                }
+            } else {
+                artifact jar
+                artifact sourcesJar
+            }
         }
     }
 
