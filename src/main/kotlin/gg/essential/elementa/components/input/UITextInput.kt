@@ -131,7 +131,7 @@ open class UITextInput @JvmOverloads constructor(
             }
         } else {
             cursorComponent.setY(basicYConstraint {
-                getTop()  + 1f
+                getTop()
             })
             setCursorPos()
 
