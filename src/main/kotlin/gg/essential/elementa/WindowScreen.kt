@@ -75,6 +75,8 @@ abstract class WindowScreen(
     }
 
     override fun initScreen(width: Int, height: Int) {
+        window.onWindowResize()
+
         super.initScreen(width, height)
 
         // Since we want our users to be able to hold a key
