@@ -5,12 +5,14 @@ import gg.essential.elementa.components.Window
 import gg.essential.elementa.constraints.*
 import gg.essential.elementa.constraints.animation.*
 import gg.essential.elementa.dsl.animate
+import gg.essential.elementa.dsl.toConstraint
 import gg.essential.elementa.effects.Effect
 import gg.essential.elementa.effects.ScissorEffect
 import gg.essential.elementa.events.UIClickEvent
 import gg.essential.elementa.events.UIScrollEvent
 import gg.essential.elementa.font.FontProvider
 import gg.essential.elementa.utils.TriConsumer
+import gg.essential.elementa.utils.elementaDebug
 import gg.essential.elementa.utils.observable
 import gg.essential.universal.UMouse
 import gg.essential.universal.UResolution
@@ -283,6 +285,8 @@ abstract class UIComponent : Observable() {
         this.constraints.withColor(constraint)
     }
 
+    fun setColor(color: Color) = setColor(color.toConstraint())
+
     open fun getLeft() = constraints.getX()
 
     open fun getTop() = constraints.getY()
@@ -377,7 +381,7 @@ abstract class UIComponent : Observable() {
         }
 
         // Draw colored outline around the components
-        if (IS_DEBUG) {
+        if (elementaDebug) {
             if (ScissorEffect.currentScissorState != null) {
                 GL11.glDisable(GL11.GL_SCISSOR_TEST)
             }
@@ -1075,8 +1079,6 @@ abstract class UIComponent : Observable() {
     }
 
     companion object {
-        val IS_DEV = System.getProperty("elementa.dev")?.toBoolean() ?: false
-        val IS_DEBUG = System.getProperty("elementa.debug")?.toBoolean() ?: false
         val DEBUG_OUTLINE_WIDTH = System.getProperty("elementa.debug.width")?.toDoubleOrNull() ?: 2.0
 
         private fun getDebugColor(depth: Int, offset: Double): Color {
