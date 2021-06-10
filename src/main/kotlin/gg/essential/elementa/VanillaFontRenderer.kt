@@ -3,6 +3,7 @@ package gg.essential.elementa
 import gg.essential.elementa.constraints.ConstraintType
 import gg.essential.elementa.constraints.resolution.ConstraintVisitor
 import gg.essential.elementa.font.FontProvider
+import gg.essential.elementa.utils.roundToRealPixels
 import gg.essential.universal.UGraphics
 import gg.essential.universal.UMinecraft.getFontRenderer
 import java.awt.Color
@@ -31,11 +32,14 @@ class VanillaFontRenderer : FontProvider {
         shadow: Boolean,
         shadowColor: Color?
     ) {
+        val scaledX = x.roundToRealPixels() / scale
+        val scaledY = y.roundToRealPixels() / scale
+
         UGraphics.scale(scale, scale, 1f)
         if (shadowColor == null) {
-            UGraphics.drawString(string, x / scale, y / scale, color.rgb, shadow)
+            UGraphics.drawString(string, scaledX, scaledY, color.rgb, shadow)
         } else {
-            UGraphics.drawString(string, x / scale, y / scale, color.rgb, shadowColor.rgb)
+            UGraphics.drawString(string, scaledX, scaledY, color.rgb, shadowColor.rgb)
         }
         UGraphics.scale(1 / scale, 1 / scale, 1f)
     }

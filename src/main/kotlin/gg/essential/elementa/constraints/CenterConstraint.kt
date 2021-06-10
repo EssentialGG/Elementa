@@ -2,6 +2,7 @@ package gg.essential.elementa.constraints
 
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.constraints.resolution.ConstraintVisitor
+import gg.essential.elementa.utils.roundToRealPixels
 
 /**
  * Centers this box on the X or Y axis.
@@ -15,9 +16,9 @@ class CenterConstraint : PositionConstraint {
         val parent = constrainTo ?: component.parent
 
         return if (component.isPositionCenter()) {
-            parent.getLeft() + parent.getWidth() / 2
+            parent.getLeft() + (parent.getWidth() / 2).roundToRealPixels()
         } else {
-            parent.getLeft() + parent.getWidth() / 2 - component.getWidth() / 2
+            parent.getLeft() + (parent.getWidth() / 2 - component.getWidth() / 2).roundToRealPixels()
         }
     }
 
@@ -25,9 +26,9 @@ class CenterConstraint : PositionConstraint {
         val parent = constrainTo ?: component.parent
 
         return if (component.isPositionCenter()) {
-            parent.getTop() + parent.getHeight() / 2
+            parent.getTop() + (parent.getHeight() / 2).roundToRealPixels()
         } else {
-            parent.getTop() + parent.getHeight() / 2 - component.getHeight() / 2
+            parent.getTop() + (parent.getHeight() / 2 - component.getHeight() / 2).roundToRealPixels()
         }
     }
 

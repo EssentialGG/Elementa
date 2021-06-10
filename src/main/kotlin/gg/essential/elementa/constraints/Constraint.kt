@@ -3,6 +3,7 @@ package gg.essential.elementa.constraints
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.constraints.animation.AnimationComponent
 import gg.essential.elementa.constraints.resolution.ConstraintVisitor
+import gg.essential.elementa.utils.roundToRealPixels
 import java.awt.Color
 
 /**
@@ -72,7 +73,7 @@ interface XConstraint : SuperConstraint<Float> {
 
     fun getXPosition(component: UIComponent): Float {
         if (recalculate) {
-            cachedValue = getXPositionImpl(component)
+            cachedValue = getXPositionImpl(component).roundToRealPixels()
             recalculate = false
         }
 
@@ -85,7 +86,7 @@ interface YConstraint : SuperConstraint<Float> {
 
     fun getYPosition(component: UIComponent): Float {
         if (recalculate) {
-            cachedValue = getYPositionImpl(component)
+            cachedValue = getYPositionImpl(component).roundToRealPixels()
             recalculate = false
         }
 
@@ -113,7 +114,7 @@ interface WidthConstraint : SuperConstraint<Float> {
 
     fun getWidth(component: UIComponent): Float {
         if (recalculate) {
-            cachedValue = getWidthImpl(component)
+            cachedValue = getWidthImpl(component).roundToRealPixels()
             recalculate = false
         }
 
@@ -126,7 +127,7 @@ interface HeightConstraint : SuperConstraint<Float> {
 
     fun getHeight(component: UIComponent): Float {
         if (recalculate) {
-            cachedValue = getHeightImpl(component)
+            cachedValue = getHeightImpl(component).roundToRealPixels()
             recalculate = false
         }
 
