@@ -91,7 +91,11 @@ abstract class AbstractTextInput(
                 copySelection()
                 deleteSelection()
             } else if (UKeyboard.isKeyComboCtrlV(keyCode)) {
-                commitTextAddition(Toolkit.getDefaultToolkit().systemClipboard.getData(DataFlavor.stringFlavor) as String)
+                runCatching {
+                    commitTextAddition(
+                        Toolkit.getDefaultToolkit().systemClipboard.getData(DataFlavor.stringFlavor) as String
+                    )
+                }
             } else if (UKeyboard.isKeyComboCtrlZ(keyCode)) {
                 if (undoStack.isEmpty())
                     return@onKeyType
@@ -713,7 +717,7 @@ abstract class AbstractTextInput(
                 text,
                 if (active) selectionForegroundColor else inactiveSelectionForegroundColor,
                 left - horizontalScrollingOffset,
-                getTop() + ((9 * row +1) * getTextScale()) + verticalScrollingOffset,
+                getTop() + ((9 * row + 1) * getTextScale()) + verticalScrollingOffset,
                 10f,
                 getTextScale(),
                 shadow = false
