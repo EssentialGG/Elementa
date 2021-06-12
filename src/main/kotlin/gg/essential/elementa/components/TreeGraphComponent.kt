@@ -35,7 +35,7 @@ abstract class TreeGraphNode {
                 component.getWidth().toDouble()
             } else {
                 max(
-                    children.sumByDouble { it.width(style) } + (children.size - 1) * style.widthBetweenNodes,
+                    children.sumOf { it.width(style) } + (children.size - 1) * style.widthBetweenNodes,
                     component.getWidth().toDouble()
                 )
             }
@@ -50,7 +50,7 @@ abstract class TreeGraphNode {
                 component.getHeight().toDouble()
             } else {
                 max(
-                    children.sumByDouble { it.height(style) } + (children.size - 1) * style.heightBetweenRows,
+                    children.sumOf { it.height(style) } + (children.size - 1) * style.heightBetweenRows,
                     component.getHeight().toDouble()
                 )
             }
@@ -95,8 +95,8 @@ abstract class TreeGraphNode {
             return
 
         if (style.isHorizontal) {
-            val totalHeight = children.sumByDouble { it.height(style) } + (children.size - 1) * style.heightBetweenRows
-            val maxWidth = children.map { it.component.getWidth().toDouble() }.max()!!
+            val totalHeight = children.sumOf { it.height(style) } + (children.size - 1) * style.heightBetweenRows
+            val maxWidth = children.maxOf { it.component.getWidth().toDouble() }
 
             var y = y_ - totalHeight / 2.0
 
@@ -114,8 +114,8 @@ abstract class TreeGraphNode {
                 y += node.height(style) / 2f + style.heightBetweenRows
             }
         } else {
-            val totalWidth = children.sumByDouble { it.width(style) } + (children.size - 1) * style.widthBetweenNodes
-            val maxHeight = children.map { it.component.getHeight().toDouble() }.max()!!
+            val totalWidth = children.sumOf { it.width(style) } + (children.size - 1) * style.widthBetweenNodes
+            val maxHeight = children.maxOf { it.component.getHeight().toDouble() }
 
             var x = x_ - totalWidth / 2.0
 

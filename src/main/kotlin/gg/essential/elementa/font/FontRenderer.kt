@@ -67,7 +67,7 @@ class FontRenderer(
                 continue
             }
 
-            val glyph = activeFont.fontInfo.glyphs[char.toInt()]
+            val glyph = activeFont.fontInfo.glyphs[char.code]
             if (glyph == null) {
                 i++
                 continue
@@ -253,7 +253,7 @@ class FontRenderer(
             }
 
 
-            var glyph = activeFont.fontInfo.glyphs[char.toInt()]
+            var glyph = activeFont.fontInfo.glyphs[char.code]
             if (glyph == null) {
                 i++
                 continue
@@ -265,8 +265,8 @@ class FontRenderer(
                 for (iter in 1..100) { //100 tries max
 
                     val tmp = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".random()
-                    if (advance == activeFont.fontInfo.glyphs[tmp.toInt()]?.advance ?: continue) {
-                        glyph = activeFont.fontInfo.glyphs[tmp.toInt()]
+                    if (advance == activeFont.fontInfo.glyphs[tmp.code]?.advance ?: continue) {
+                        glyph = activeFont.fontInfo.glyphs[tmp.code]
                         break
                     }
                 }

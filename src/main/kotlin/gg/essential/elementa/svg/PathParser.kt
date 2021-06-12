@@ -15,8 +15,8 @@ class PathParser(private var dataString: String) {
 
         while (!isDone()) {
             val command = consume()
-            val absolute = command.toUpperCase() == command
-            when (command.toUpperCase()) {
+            val absolute = command.uppercaseChar() == command
+            when (command.uppercaseChar()) {
                 'M' -> {
                     parseWhitespace()
                     parseCoordinatePairSequence().forEach { (x, y) ->
@@ -52,7 +52,7 @@ class PathParser(private var dataString: String) {
                 }
                 'H', 'V' -> {
                     parseWhitespace()
-                    val field = if (command.toUpperCase() == 'H') currentPos::x else currentPos::y
+                    val field = if (command.uppercaseChar() == 'H') currentPos::x else currentPos::y
 
                     parseCoordinateSequence().forEach {
                         val originalPoint = currentPos.copy()

@@ -229,7 +229,7 @@ class ConstraintResolutionGui(
 
             scrollComponent.constrain {
                 width = basicWidthConstraint {
-                    pathItems.map { it.getWidth() }.max()!!
+                    pathItems.maxOf { it.getWidth() }
                 }
                 height = 100.percent()
             }

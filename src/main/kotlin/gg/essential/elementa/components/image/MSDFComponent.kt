@@ -21,7 +21,7 @@ import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ConcurrentLinkedQueue
 import javax.imageio.ImageIO
 
-open class MSDFComponent @JvmOverloads constructor(
+open class MSDFComponent constructor(
     private val imageFuture: CompletableFuture<BufferedImage>
 ) : UIComponent(), CacheableImage {
     private var texture: ReleasedDynamicTexture? = null
@@ -95,7 +95,6 @@ open class MSDFComponent @JvmOverloads constructor(
         doffsetUniform.setValue((3.5f / height).toFloat())
 
         val current = getColor()
-        val amt = Color.RGBtoHSB(current.red, current.green, current.blue, null)[2]
         subpixelAmountUniform.setValue(0f)
         hintAmountUniform.setValue(0f)
 

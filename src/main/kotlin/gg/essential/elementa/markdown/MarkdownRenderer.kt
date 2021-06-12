@@ -117,7 +117,7 @@ class MarkdownRenderer(private val text: String, private val md: MarkdownCompone
     }
 
     override fun visit(fencedCodeBlock: FencedCodeBlock) {
-        TODO("Not yet implemented")
+        //TODO("Not yet implemented")
     }
 
     override fun visit(hardLineBreak: HardLineBreak) {
@@ -134,7 +134,7 @@ class MarkdownRenderer(private val text: String, private val md: MarkdownCompone
     }
 
     override fun visit(thematicBreak: ThematicBreak) {
-        TODO("Not yet implemented")
+        //TODO("Not yet implemented")
     }
 
     override fun visit(htmlInline: HtmlInline) {
@@ -154,7 +154,7 @@ class MarkdownRenderer(private val text: String, private val md: MarkdownCompone
     }
 
     override fun visit(indentedCodeBlock: IndentedCodeBlock) {
-        TODO("Not yet implemented")
+        //TODO("Not yet implemented")
     }
 
     override fun visit(link: Link) {
@@ -170,11 +170,11 @@ class MarkdownRenderer(private val text: String, private val md: MarkdownCompone
     }
 
     override fun visit(linkReferenceDefinition: LinkReferenceDefinition) {
-        TODO("Not yet implemented")
+        //TODO("Not yet implemented")
     }
 
     override fun visit(customBlock: CustomBlock) {
-        TODO("Not yet implemented")
+        //TODO("Not yet implemented")
     }
 
     override fun visit(customNode: CustomNode) {

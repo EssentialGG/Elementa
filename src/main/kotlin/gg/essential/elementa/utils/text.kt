@@ -166,8 +166,8 @@ fun sizeStringToWidth(string: String, width: Float): Int {
             '\u00a7' -> if (k < i - 1) {
                 k++
                 val c1 = string[k]
-                if (c1.toInt() != 108 && c1.toInt() != 76) {
-                    if (c1.toInt() == 114 || c1.toInt() == 82 || isFormatColor(c1.toInt())) {
+                if (c1.code != 108 && c1.code != 76) {
+                    if (c1.code == 114 || c1.code == 82 || isFormatColor(c1.code)) {
                         flag = false
                     }
                 } else {
@@ -181,7 +181,7 @@ fun sizeStringToWidth(string: String, width: Float): Int {
             }
         }
 
-        if (c0.toInt() == 10) {
+        if (c0.code == 10) {
             k++
             l = k
             break
