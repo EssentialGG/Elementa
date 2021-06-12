@@ -8,6 +8,7 @@ import gg.essential.elementa.dsl.*
 import gg.essential.elementa.effects.ScissorEffect
 import gg.essential.elementa.utils.getStringSplitToWidth
 import gg.essential.universal.UKeyboard
+import net.minecraft.util.ChatAllowedCharacters
 import java.awt.Color
 import java.awt.Toolkit
 import java.awt.datatransfer.DataFlavor
@@ -108,7 +109,7 @@ abstract class AbstractTextInput(
                 val operationToRedo = redoStack.pop()
                 operationToRedo.redo()
                 undoStack.push(operationToRedo)
-            } else if (typedChar in ' '..'~') { // Most of the ASCII characters
+            } else if (ChatAllowedCharacters.isAllowedCharacter(typedChar)) { // Most of the ASCII characters
                 commitTextAddition(typedChar.toString())
             } else if (keyCode == 203) { // Left Arrow
                 val holdingShift = UKeyboard.isShiftKeyDown()
