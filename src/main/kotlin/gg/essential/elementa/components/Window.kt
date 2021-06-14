@@ -5,6 +5,7 @@ import gg.essential.elementa.constraints.resolution.ConstraintResolutionGui
 import gg.essential.elementa.constraints.resolution.ConstraintResolver
 import gg.essential.elementa.effects.ScissorEffect
 import gg.essential.elementa.font.FontRenderer
+import gg.essential.elementa.utils.elementaDev
 import gg.essential.universal.*
 import org.lwjgl.opengl.GL11
 import java.util.concurrent.ConcurrentLinkedQueue
@@ -80,7 +81,7 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
             if (e is StackOverflowError) {
                 val guiName = UMinecraft.getMinecraft().currentScreen?.javaClass?.simpleName ?: "<unknown>"
 
-                if (IS_DEV) {
+                if (elementaDev) {
                     val cyclicNodes = ConstraintResolver(this).getCyclicNodes()
 
                     UMinecraft.getMinecraft().displayGuiScreen(

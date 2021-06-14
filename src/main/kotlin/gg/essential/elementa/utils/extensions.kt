@@ -1,10 +1,21 @@
 package gg.essential.elementa.utils
 
 import gg.essential.elementa.UIComponent
+import gg.essential.universal.UResolution
 import java.awt.Color
+import kotlin.math.round
 
 fun Float.guiHint(roundDown: Boolean) = UIComponent.guiHint(this, roundDown)
 fun Double.guiHint(roundDown: Boolean) = UIComponent.guiHint(this, roundDown)
+
+fun Float.roundToRealPixels(): Float {
+    val factor = UResolution.scaleFactor.toFloat()
+    return round(this * factor) / factor
+}
+fun Double.roundToRealPixels(): Double {
+    val factor = UResolution.scaleFactor
+    return round(this * factor) / factor
+}
 
 fun Color.withAlpha(alpha: Int) = Color(this.red, this.green, this.blue, alpha)
 fun Color.withAlpha(alpha: Float) = Color(this.red, this.green, this.blue, (alpha * 255).toInt())

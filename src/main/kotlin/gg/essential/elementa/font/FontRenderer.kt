@@ -47,7 +47,7 @@ class FontRenderer(
     private fun getStringInformation(string: String, pointSize: Float): Pair<Float, Float> {
         var width = 0f
         var height = 0f
-        var currentPointSize = pointSize
+        var currentPointSize = pointSize * 1.3623059867f
 
         var i = 0
         while (i < string.length) {
@@ -58,7 +58,7 @@ class FontRenderer(
                 val j = ("0123456789abcdefklm" +
                     "nor").indexOf(string[i + 1])
                 if (j == 17) {
-                    currentPointSize = pointSize * 1.075f //Adjust bold being smaller
+//                    currentPointSize = pointSize * 1.1081f //Adjust bold being smaller
                     activeFont = boldFont
                 } else {
                     currentPointSize = pointSize
@@ -124,7 +124,7 @@ class FontRenderer(
         shadow: Boolean,
         shadowColor: Color?
     ) {
-        val effectiveSize = originalPointSize * scale
+        val effectiveSize = originalPointSize * scale * 1.3623059867f
         val adjustedY = y - effectiveSize / 5
         if (shadow) {
             drawingShadow = true
@@ -154,12 +154,14 @@ class FontRenderer(
     private fun refreshColor(pointSize: Float) {
         val current = if (drawingShadow) shadowColor else textColor
         val amt = Color.RGBtoHSB(current!!.red, current.green, current.blue, null)[2]
-        hintAmountUniform.setValue(amt)
-        if(pointSize < 7) {
-            subpixelAmountUniform.setValue(amt)
-        } else {
-            subpixelAmountUniform.setValue(0f)
-        }
+        hintAmountUniform.setValue(0f)
+        subpixelAmountUniform.setValue(0f)
+
+//        if(pointSize < 7) {
+//            subpixelAmountUniform.setValue(amt)
+//        } else {
+//            subpixelAmountUniform.setValue(0f)
+//        }
     }
 
     private fun drawStringNow(matrixStack: UMatrixStack, string: String, color: Color, x: Float, y: Float, originalPointSize: Float) {
@@ -227,7 +229,7 @@ class FontRenderer(
                     j == 16 -> obfuscated = true
                     j == 17 -> {
                         switchFont(2)
-                        currentPointSize = originalPointSize * 1.075f //Adjust bold being smaller
+//                        currentPointSize = originalPointSize * 1.1081f //Adjust bold being smaller
                         doffsetUniform.setValue(3.5f / currentPointSize)
                         bold = true
                     }

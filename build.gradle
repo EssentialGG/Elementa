@@ -1,6 +1,6 @@
 // For those who want the bleeding edge
 buildscript {
-    ext.kotlin_version = "1.5.0"
+    ext.kotlin_version = "1.5.10"
     ext.dokka_version = "0.10.0"
 
     def mcVersion
@@ -132,7 +132,7 @@ if (FABRIC) {
                     11100: '1.11-13.19.1.2188',
                     11002: '1.10.2-12.18.2.2099',
                     10904: '1.9.4-12.17.0.1976',
-                    10809: '1.8.9-11.15.1.1722',
+                    10809: '1.8.9-11.15.1.2318-1.8.9',
                     10800: '1.8-11.14.4.1563',
                     10710: '1.7.10-10.13.4.1558-1.7.10',
             ][mcVersion]
@@ -164,7 +164,7 @@ dependencies {
     // The Api/Implementation difference is the same as in Gradle.
     modApi "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     modApi "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
-    modApi "gg.essential:UniversalCraft:next-130-${mcVersion}${FABRIC ? "-fabric" : ""}-SNAPSHOT"
+    modApi "gg.essential:UniversalCraft:next-133-${mcVersion}${FABRIC ? "-fabric" : ""}-SNAPSHOT"
     modImplementation "org.commonmark:commonmark:0.17.1"
     modImplementation "org.commonmark:commonmark-ext-gfm-strikethrough:0.17.1"
     modImplementation "org.commonmark:commonmark-ext-ins:0.17.1"
@@ -261,6 +261,12 @@ jar {
         attributes(
                 'FMLModType': 'LIBRARY'
         )
+    }
+}
+
+compileKotlin {
+    kotlinOptions {
+        jvmTarget = "1.8"
     }
 }
 

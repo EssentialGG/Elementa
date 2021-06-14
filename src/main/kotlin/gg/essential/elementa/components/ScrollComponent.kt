@@ -423,7 +423,7 @@ class ScrollComponent @JvmOverloads constructor(
         if (actualHolder.children.isEmpty()) return 0f
 
         return actualHolder.children.let { c ->
-            c.map { it.getRight() }.maxOrNull()!! - c.map { it.getLeft() }.minOrNull()!!
+            c.maxOf { it.getRight() } - c.minOf { it.getLeft() }
         }
     }
 
@@ -431,7 +431,7 @@ class ScrollComponent @JvmOverloads constructor(
         if (actualHolder.children.isEmpty()) return 0f
 
         return actualHolder.children.let { c ->
-            c.map { it.getBottom() }.maxOrNull()!! - c.map { it.getTop() }.minOrNull()!!
+            c.maxOf { it.getBottom() } - c.minOf { it.getTop() }
         }
     }
 

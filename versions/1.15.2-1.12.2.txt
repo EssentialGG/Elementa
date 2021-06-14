@@ -11,3 +11,4 @@ net.minecraft.client.network.play.ClientPlayNetHandler net.minecraft.client.netw
 net.minecraft.potion.EffectInstance net.minecraft.potion.PotionEffect
 net.minecraft.util.text.StringTextComponent net.minecraft.util.text.TextComponentString
 net.minecraft.client.renderer.texture.Texture net.minecraft.client.renderer.texture.AbstractTexture
+net.minecraft.util.SharedConstants net.minecraft.util.ChatAllowedCharacters

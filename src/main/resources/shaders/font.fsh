@@ -55,7 +55,7 @@ void main() {
 
     float alpha       = smoother( 0.5 - res_doffset, 0.5 + res_doffset, sdf );
     // Additional contrast
-    alpha             = pow( alpha, 1.0 + 0.2 * vgrad * hint_amount );
+//    alpha             = pow( alpha, 1.0 + 0.2 * vgrad * hint_amount );
 
     // Discarding pixels beyond a threshold to minimise possible artifacts.
     if ( alpha < 20.0 / 256.0 ) discard;

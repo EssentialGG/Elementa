@@ -65,9 +65,9 @@ class ListDrawable(
             val dotWidth = '.'.width()
             drawables.indices.filter {
                 drawables[it] !is ListDrawable
-            }.map {
+            }.maxOf {
                 it.toString().width() + dotWidth
-            }.maxOrNull()!!
+            }
         } else {
             val symbols = config.listConfig.unorderedSymbols
             symbols[indentLevel % symbols.length].width()

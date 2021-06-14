@@ -10,6 +10,7 @@ import gg.essential.elementa.utils.getStringSplitToWidth
 import gg.essential.universal.UDesktop
 import gg.essential.universal.UKeyboard
 import gg.essential.universal.UMatrixStack
+import net.minecraft.util.ChatAllowedCharacters
 import java.awt.Color
 import java.util.*
 import kotlin.math.abs
@@ -103,7 +104,7 @@ abstract class AbstractTextInput(
                 val operationToRedo = redoStack.pop()
                 operationToRedo.redo()
                 undoStack.push(operationToRedo)
-            } else if (typedChar in ' '..'~') { // Most of the ASCII characters
+            } else if (ChatAllowedCharacters.isAllowedCharacter(typedChar)) { // Most of the ASCII characters
                 commitTextAddition(typedChar.toString())
             } else if (keyCode == UKeyboard.KEY_LEFT) {
                 val holdingShift = UKeyboard.isShiftKeyDown()
@@ -700,7 +701,7 @@ abstract class AbstractTextInput(
             text,
             getColor(),
             left - horizontalScrollingOffset,
-            getTop() + ((9 * row + (if (this is UIMultilineTextInput) 0 else 1)) * getTextScale()) + verticalScrollingOffset,
+            getTop() + ((9 * row + 1) * getTextScale()) + verticalScrollingOffset,
             10f,
             getTextScale(),
             shadow = false
@@ -730,7 +731,7 @@ abstract class AbstractTextInput(
                 text,
                 if (active) selectionForegroundColor else inactiveSelectionForegroundColor,
                 left - horizontalScrollingOffset,
-                getTop() + ((9 * row + (if (this is UIMultilineTextInput) 0 else 1)) * getTextScale()) + verticalScrollingOffset,
+                getTop() + ((9 * row + 1) * getTextScale()) + verticalScrollingOffset,
                 10f,
                 getTextScale(),
                 shadow = false

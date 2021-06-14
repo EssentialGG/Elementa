@@ -3,6 +3,7 @@ package gg.essential.elementa
 import gg.essential.elementa.constraints.ConstraintType
 import gg.essential.elementa.constraints.resolution.ConstraintVisitor
 import gg.essential.elementa.font.FontProvider
+import gg.essential.elementa.utils.roundToRealPixels
 import gg.essential.universal.UGraphics
 import gg.essential.universal.UMatrixStack
 import gg.essential.universal.UMinecraft.getFontRenderer
@@ -33,11 +34,14 @@ class VanillaFontRenderer : FontProvider {
         shadow: Boolean,
         shadowColor: Color?
     ) {
+        val scaledX = x.roundToRealPixels() / scale
+        val scaledY = y.roundToRealPixels() / scale
+
         matrixStack.scale(scale, scale, 1f)
         if (shadowColor == null) {
-            UGraphics.drawString(matrixStack, string, x / scale, y / scale, color.rgb, shadow)
+            UGraphics.drawString(matrixStack, string, scaledX, scaledY, color.rgb, shadow)
         } else {
-            UGraphics.drawString(matrixStack, string, x / scale, y / scale, color.rgb, shadowColor.rgb)
+            UGraphics.drawString(matrixStack, string, scaledX, scaledY, color.rgb, shadowColor.rgb)
         }
         matrixStack.scale(1 / scale, 1 / scale, 1f)
     }

@@ -97,7 +97,7 @@ abstract class TreeGraphNode {
 
         if (style.isHorizontal) {
             val totalHeight = children.sumOf { it.height(style) } + (children.size - 1) * style.heightBetweenRows
-            val maxWidth = children.map { it.component.getWidth().toDouble() }.maxOrNull()!!
+            val maxWidth = children.maxOf { it.component.getWidth().toDouble() }
 
             var y = y_ - totalHeight / 2.0
 
@@ -116,7 +116,7 @@ abstract class TreeGraphNode {
             }
         } else {
             val totalWidth = children.sumOf { it.width(style) } + (children.size - 1) * style.widthBetweenNodes
-            val maxHeight = children.map { it.component.getHeight().toDouble() }.maxOrNull()!!
+            val maxHeight = children.maxOf { it.component.getHeight().toDouble() }
 
             var x = x_ - totalWidth / 2.0
 
