@@ -11,12 +11,14 @@ plugins {
 configurations.register("compileClasspath")
 
 preprocess {
+    val fabric11700 = createNode("1.17-fabric", 11700, "yarn")
     val fabric11602 = createNode("1.16.2-fabric", 11602, "yarn")
     val forge11602 = createNode("1.16.2", 11602, "srg")
     val forge11502 = createNode("1.15.2", 11502, "srg")
     val forge11202 = createNode("1.12.2", 11202, "srg")
     val forge10809 = createNode("1.8.9", 10809, "srg")
 
+    fabric11700.link(fabric11602)
     fabric11602.link(forge11602)
     forge11602.link(forge11502)
     forge11502.link(forge11202, file("versions/1.15.2-1.12.2.txt"))

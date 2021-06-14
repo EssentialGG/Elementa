@@ -75,10 +75,10 @@ version = this.properties.getOrDefault("BUILD_ID", "LOCAL") //BUILD_ID
 group = "gg.essential" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "Elementa" + project.name
 
-sourceCompatibility = targetCompatibility = 1.8
+sourceCompatibility = targetCompatibility = mcVersion >= 11700 ? 16 : 1.8
 compileJava.options.encoding = 'UTF-8'
 compileKotlin.kotlinOptions {
-    jvmTarget = "1.8"
+    jvmTarget = mcVersion >= 11700 ? "16" : "1.8"
     freeCompilerArgs = ["-Xjvm-default=all"]
 }
 
@@ -178,24 +178,22 @@ dependencies {
                 11502: '1.15.2',
                 11601: '1.16.1',
                 11602: '1.16.2',
+                11700: '1.17',
         ][mcVersion]
         mappings 'net.fabricmc:yarn:' + [
                 11404: '1.14.4+build.16',
                 11502: '1.15.2+build.14',
                 11601: '1.16.1+build.17:v2',
                 11602: '1.16.2+build.1:v2',
+                11700: '1.17+build.11:v2',
         ][mcVersion]
-        modImplementation 'net.fabricmc:fabric-loader:' + [
-                11404: '0.7.8+build.189',
-                11502: '0.7.8+build.189',
-                11601: '0.8.8+build.202',
-                11602: '0.9.1+build.205',
-        ][mcVersion]
+        modImplementation 'net.fabricmc:fabric-loader:0.11.3'
         def fabricApiVersion = [
                 11404: '0.4.3+build.247-1.14',
                 11502: '0.5.1+build.294-1.15',
                 11601: '0.14.0+build.371-1.16',
                 11602: '0.17.1+build.394-1.16',
+                11700: '0.35.1+1.17',
         ][mcVersion]
         def fabricApiModules = [
                 "api-base",
