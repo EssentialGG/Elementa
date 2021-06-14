@@ -200,7 +200,6 @@ dependencies {
                 "networking-v0",
                 "keybindings-v0",
                 "resource-loader-v0",
-                "command-api-v1",
                 "lifecycle-events-v1",
         ]
         if (mcVersion >= 11600) {

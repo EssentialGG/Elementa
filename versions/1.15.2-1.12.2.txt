@@ -1,3 +1,4 @@
+net.minecraft.client.gui.screen.MainMenuScreen net.minecraft.client.gui.GuiMainMenu
 net.minecraft.client.gui.screen.Screen net.minecraft.client.gui.GuiScreen
 net.minecraft.client.gui.widget.Widget net.minecraft.client.gui.GuiButton
 net.minecraft.client.renderer.entity.RenderPlayer net.minecraft.client.renderer.entity.PlayerRenderer
