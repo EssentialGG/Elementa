@@ -22,7 +22,7 @@ buildscript {
     dependencies {
         classpath "org.jetbrains.dokka:dokka-gradle-plugin:${dokka_version}"
         if (fabric) {
-            classpath 'fabric-loom:fabric-loom.gradle.plugin:0.4-SNAPSHOT'
+            classpath 'fabric-loom:fabric-loom.gradle.plugin:0.5-SNAPSHOT'
         } else if (mcVersion >= 11400) {
             classpath('net.minecraftforge.gradle:ForgeGradle:4.+') {
                 exclude group: 'trove', module: 'trove' // preprocessor/idea requires more recent one
@@ -225,6 +225,7 @@ processResources {
 
     filesMatching(['fabric.mod.json']) {
         expand 'version': project.version
+        filter { it.replace('"com.example.examplemod.ExampleMod"', '') }
     }
 
     from(sourceSets.main.resources.srcDirs) {

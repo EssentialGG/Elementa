@@ -21,13 +21,13 @@ import net.minecraftforge.fml.common.gameevent.TickEvent
 //#endif
 //#else
 //#if FABRIC
-//$$ import net.fabricmc.api.ModInitializer
+//$$ import net.fabricmc.api.ClientModInitializer
 //$$ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 //#endif
 //#endif
 
 //#if FABRIC
-//$$ class ExampleMod : ModInitializer {
+//$$ class ExampleMod : ClientModInitializer {
 //#else
 //#if MC<=11202
 @Mod(modid = ExampleMod.MOD_ID, version = ExampleMod.MOD_VERSION)
@@ -37,7 +37,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent
 class ExampleMod {
 //#endif
     //#if FABRIC
-    //$$ override fun onInitialize() {
+    //$$ override fun onInitializeClient() {
     //$$     StencilEffect.enableStencil()
     //$$     ClientTickEvents.START_CLIENT_TICK.register { tick() }
     //$$ }

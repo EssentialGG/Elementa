@@ -3,6 +3,9 @@
   "id": "elementa",
   "version": "${version}",
   "environment": "client",
+  "entrypoints": {
+    "client": ["com.example.examplemod.ExampleMod"]
+  },
   "custom": {
     "modmenu": {
       "badges": [ "library" ]
