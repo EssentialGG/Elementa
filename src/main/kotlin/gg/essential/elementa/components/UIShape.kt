@@ -9,6 +9,7 @@ import org.lwjgl.opengl.GL11
 import java.awt.Color
 
 // feeling cute, might delete this class later
+@Deprecated("Currently only supports convex polygons. Use with care! Or better, create a dedicated component for your use case.")
 open class UIShape @JvmOverloads constructor(color: Color = Color.WHITE) : UIComponent() {
     private var vertices = mutableListOf<UIPoint>()
     @Deprecated("Only supports GL_POLYGON on 1.17+, implemented as TRIANGEL_FAN.")
