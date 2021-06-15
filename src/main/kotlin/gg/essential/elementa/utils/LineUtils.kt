@@ -25,7 +25,7 @@ object LineUtils {
         UGraphics.disableTexture2D()
 
         val buffer = UGraphics.getFromTessellator()
-        buffer.begin(GL11.GL_QUAD_STRIP, DefaultVertexFormats.POSITION_COLOR);
+        buffer.beginWithDefaultShader(UGraphics.DrawMode.TRIANGLE_STRIP, DefaultVertexFormats.POSITION_COLOR);
         points.forEachIndexed { index, curr ->
             val (x, y) = curr
             val prev = points.getOrNull(index - 1)
@@ -45,7 +45,7 @@ object LineUtils {
                 .color(color.red, color.green, color.blue, color.alpha)
                 .endVertex()
         }
-        UGraphics.draw()
+        buffer.drawDirect()
 
         UGraphics.enableTexture2D()
     }
