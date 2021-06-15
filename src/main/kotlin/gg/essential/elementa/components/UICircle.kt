@@ -81,7 +81,7 @@ class UICircle @JvmOverloads constructor(radius: Float = 0f, color: Color = Colo
             shaderRadiusUniform.setValue(radius)
             shaderCenterPositionUniform.setValue(Vector2f(centerX, centerY))
 
-            UIBlock.drawBlock(
+            UIBlock.drawBlockWithActiveShader(
                 matrixStack,
                 color,
                 (centerX - radius).toDouble(),

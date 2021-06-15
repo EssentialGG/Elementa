@@ -58,7 +58,7 @@ open class UIRoundedRectangle(radius: Float) : UIComponent() {
             shaderRadiusUniform.setValue(radius)
             shaderInnerRectUniform.setValue(Vector4f(left + radius, top + radius, right - radius, bottom - radius))
 
-            UIBlock.drawBlock(matrixStack, color, left.toDouble(), top.toDouble(), right.toDouble(), bottom.toDouble())
+            UIBlock.drawBlockWithActiveShader(matrixStack, color, left.toDouble(), top.toDouble(), right.toDouble(), bottom.toDouble())
 
             shader.unbindIfUsable()
         }

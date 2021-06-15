@@ -49,23 +49,32 @@ open class UIBlock(colorConstraint: ColorConstraint = Color.WHITE.toConstraint()
             drawBlock(UMatrixStack(), color, x1, y1, x2, y2)
 
         fun drawBlock(matrixStack: UMatrixStack, color: Color, x1: Double, y1: Double, x2: Double, y2: Double) {
+            val buffer = UGraphics.getFromTessellator()
+            buffer.beginWithDefaultShader(UGraphics.DrawMode.QUADS, DefaultVertexFormats.POSITION_COLOR)
+            drawBlock(buffer, matrixStack, color, x1, y1, x2, y2)
+        }
+
+        fun drawBlockWithActiveShader(matrixStack: UMatrixStack, color: Color, x1: Double, y1: Double, x2: Double, y2: Double) {
+            val buffer = UGraphics.getFromTessellator()
+            buffer.beginWithActiveShader(UGraphics.DrawMode.QUADS, DefaultVertexFormats.POSITION_COLOR)
+            drawBlock(buffer, matrixStack, color, x1, y1, x2, y2)
+        }
+
+        private fun drawBlock(worldRenderer: UGraphics, matrixStack: UMatrixStack, color: Color, x1: Double, y1: Double, x2: Double, y2: Double) {
             UGraphics.enableBlend()
             UGraphics.disableTexture2D()
             UGraphics.tryBlendFuncSeparate(770, 771, 1, 0)
-
-            val worldRenderer = UGraphics.getFromTessellator()
 
             val red = color.red.toFloat() / 255f
             val green = color.green.toFloat() / 255f
             val blue = color.blue.toFloat() / 255f
             val alpha = color.alpha.toFloat() / 255f
 
-            worldRenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR)
             worldRenderer.pos(matrixStack, x1, y2, 0.0).color(red, green, blue, alpha).endVertex()
             worldRenderer.pos(matrixStack, x2, y2, 0.0).color(red, green, blue, alpha).endVertex()
             worldRenderer.pos(matrixStack, x2, y1, 0.0).color(red, green, blue, alpha).endVertex()
             worldRenderer.pos(matrixStack, x1, y1, 0.0).color(red, green, blue, alpha).endVertex()
-            UGraphics.draw()
+            worldRenderer.drawDirect()
 
 
             UGraphics.enableTexture2D()

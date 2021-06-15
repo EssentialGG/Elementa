@@ -329,14 +329,14 @@ class FontRenderer(
             )
         )
         val worldRenderer = UGraphics.getFromTessellator()
-        worldRenderer.begin(7, DefaultVertexFormats.POSITION_TEX)
+        worldRenderer.beginWithActiveShader(UGraphics.DrawMode.QUADS, DefaultVertexFormats.POSITION_TEX)
         val doubleX = x.toDouble()
         val doubleY = y.toDouble()
         worldRenderer.pos(matrixStack, doubleX, doubleY + height, 0.0).tex(textureLeft, textureBottom).endVertex()
         worldRenderer.pos(matrixStack, doubleX + width, doubleY + height, 0.0).tex(textureRight, textureBottom).endVertex()
         worldRenderer.pos(matrixStack, doubleX + width, doubleY, 0.0).tex(textureRight, textureTop).endVertex()
         worldRenderer.pos(matrixStack, doubleX, doubleY, 0.0).tex(textureLeft, textureTop).endVertex()
-        UGraphics.draw()
+        worldRenderer.drawDirect()
 
 //        if (underline) {
 //            TODO()
