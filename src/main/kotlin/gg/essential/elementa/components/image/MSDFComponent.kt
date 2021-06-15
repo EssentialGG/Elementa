@@ -3,18 +3,20 @@ package gg.essential.elementa.components.image
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.components.UIImage
 import gg.essential.elementa.components.Window
-import gg.essential.elementa.shaders.*
-import gg.essential.elementa.svg.SVGParser
+import gg.essential.elementa.font.FontRenderer.Companion.doffsetUniform
+import gg.essential.elementa.font.FontRenderer.Companion.fgColorUniform
+import gg.essential.elementa.font.FontRenderer.Companion.hintAmountUniform
+import gg.essential.elementa.font.FontRenderer.Companion.initShaders
+import gg.essential.elementa.font.FontRenderer.Companion.samplerUniform
+import gg.essential.elementa.font.FontRenderer.Companion.sdfTexel
+import gg.essential.elementa.font.FontRenderer.Companion.shader
+import gg.essential.elementa.font.FontRenderer.Companion.subpixelAmountUniform
 import gg.essential.elementa.utils.ResourceCache
-import gg.essential.elementa.utils.Vector2f
-import gg.essential.elementa.utils.Vector4f
 import gg.essential.universal.UGraphics
 import gg.essential.universal.UMatrixStack
 import gg.essential.universal.utils.ReleasedDynamicTexture
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats
 import org.lwjgl.opengl.GL11
-import org.lwjgl.opengl.GL13
-import java.awt.Color
 import java.awt.image.BufferedImage
 import java.io.File
 import java.net.URL
@@ -84,13 +86,14 @@ open class MSDFComponent constructor(
             GL11.GL_SRC_ALPHA,
             GL11.GL_ONE_MINUS_SRC_ALPHA
         )
-        shader.bindIfUsable()
+        shader.bind()
 
-        UGraphics.bindTexture(tex.glTextureId)
+        samplerUniform.setValue(tex.glTextureId)
         UGraphics.configureTexture(tex.glTextureId) {
             GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR)
             GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR)
         }
+        sdfTexel.setValue(1f / 128, 1f / 128)
         doffsetUniform.setValue((3.5f / height).toFloat())
 
         val current = getColor()
@@ -104,12 +107,10 @@ open class MSDFComponent constructor(
         val textureRight = (1).toDouble()
 
         fgColorUniform.setValue(
-            Vector4f(
-                current.red / 255F,
-                current.green / 255F,
-                current.blue / 255F,
-                1f
-            )
+            current.red / 255F,
+            current.green / 255F,
+            current.blue / 255F,
+            1f
         )
         val worldRenderer = UGraphics.getFromTessellator()
         worldRenderer.beginWithActiveShader(UGraphics.DrawMode.QUADS, DefaultVertexFormats.POSITION_TEX)
@@ -121,7 +122,7 @@ open class MSDFComponent constructor(
         worldRenderer.pos(matrixStack, doubleX, doubleY, 0.0).tex(textureLeft, textureTop).endVertex()
         worldRenderer.drawDirect()
 
-        shader.unbindIfUsable()
+        shader.unbind()
         super.draw(matrixStack)
 
     }
@@ -185,32 +186,6 @@ open class MSDFComponent constructor(
         fun ofResourceCached(path: String, resourceCache: ResourceCache): MSDFComponent {
             return resourceCache.getMSDFComponent(path)
         }
-
-        private lateinit var shader: Shader
-        private lateinit var samplerUniform: IntUniform
-        private lateinit var doffsetUniform: FloatUniform
-        private lateinit var hintAmountUniform: FloatUniform
-        private lateinit var subpixelAmountUniform: FloatUniform
-        private lateinit var sdfTexel: Vec2Uniform
-        private lateinit var fgColorUniform: Vec4Uniform
-        //private lateinit var shadowColorUniform: Vec4Uniform
-
-        fun areShadersInitialized() = ::shader.isInitialized
-
-        fun initShaders() {
-            if (areShadersInitialized())
-                return
-
-            shader = Shader("font", "font")
-            samplerUniform = IntUniform(shader.getUniformLocation("msdf"))
-            doffsetUniform = FloatUniform(shader.getUniformLocation("doffset"))
-            hintAmountUniform = FloatUniform(shader.getUniformLocation("hint_amount"))
-            subpixelAmountUniform = FloatUniform(shader.getUniformLocation("subpixel_amount"))
-            sdfTexel = Vec2Uniform(shader.getUniformLocation("sdf_texel"))
-            fgColorUniform = Vec4Uniform(shader.getUniformLocation("fgColor"))
-            //shadowColorUniform = Vec4Uniform(shader.getUniformLocation("shadowColor"))
-        }
-
 
     }
 

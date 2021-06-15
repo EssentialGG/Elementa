@@ -2,11 +2,12 @@ package gg.essential.elementa.components
 
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.dsl.pixels
-import gg.essential.elementa.shaders.FloatUniform
-import gg.essential.elementa.shaders.Shader
-import gg.essential.elementa.shaders.Vec4Uniform
-import gg.essential.elementa.utils.Vector4f
+import gg.essential.elementa.utils.readFromLegacyShader
 import gg.essential.universal.UMatrixStack
+import gg.essential.universal.shader.BlendState
+import gg.essential.universal.shader.Float4Uniform
+import gg.essential.universal.shader.FloatUniform
+import gg.essential.universal.shader.UShader
 import java.awt.Color
 
 /**
@@ -30,17 +31,21 @@ open class UIRoundedRectangle(radius: Float) : UIComponent() {
     }
 
     companion object {
-        private lateinit var shader: Shader
+        private lateinit var shader: UShader
         private lateinit var shaderRadiusUniform: FloatUniform
-        private lateinit var shaderInnerRectUniform: Vec4Uniform
+        private lateinit var shaderInnerRectUniform: Float4Uniform
 
         fun initShaders() {
             if (::shader.isInitialized)
                 return
 
-            shader = Shader("rect", "rounded_rect")
-            shaderRadiusUniform = FloatUniform(shader.getUniformLocation("u_Radius"))
-            shaderInnerRectUniform = Vec4Uniform(shader.getUniformLocation("u_InnerRect"))
+            shader = UShader.readFromLegacyShader("rect", "rounded_rect", BlendState.NORMAL)
+            if (!shader.usable) {
+                println("Failed to load Elementa UIRoundedRectangle shader")
+                return
+            }
+            shaderRadiusUniform = shader.getFloatUniform("u_Radius")
+            shaderInnerRectUniform = shader.getFloat4Uniform("u_InnerRect")
         }
 
         @Deprecated(
@@ -51,16 +56,16 @@ open class UIRoundedRectangle(radius: Float) : UIComponent() {
             drawRoundedRectangle(UMatrixStack(), left, top, right, bottom, radius, color)
 
         fun drawRoundedRectangle(matrixStack: UMatrixStack, left: Float, top: Float, right: Float, bottom: Float, radius: Float, color: Color) {
-            if (!::shader.isInitialized)
+            if (!::shader.isInitialized || !shader.usable)
                 return
 
-            shader.bindIfUsable()
+            shader.bind()
             shaderRadiusUniform.setValue(radius)
-            shaderInnerRectUniform.setValue(Vector4f(left + radius, top + radius, right - radius, bottom - radius))
+            shaderInnerRectUniform.setValue(left + radius, top + radius, right - radius, bottom - radius)
 
             UIBlock.drawBlockWithActiveShader(matrixStack, color, left.toDouble(), top.toDouble(), right.toDouble(), bottom.toDouble())
 
-            shader.unbindIfUsable()
+            shader.unbind()
         }
     }
 }
