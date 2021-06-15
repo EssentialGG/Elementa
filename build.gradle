@@ -228,11 +228,9 @@ processResources {
         filter { it.replace('"com.example.examplemod.ExampleMod"', '') }
     }
 
-    from(sourceSets.main.resources.srcDirs) {
-        exclude "mcmod.info"
-        exclude "mods.toml"
-        exclude "META-INF/mods.toml"
-    }
+    exclude "mcmod.info"
+    exclude "mods.toml"
+    exclude "META-INF/mods.toml"
 }
 
 
