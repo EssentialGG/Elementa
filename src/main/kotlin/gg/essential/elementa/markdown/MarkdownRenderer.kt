@@ -9,7 +9,11 @@ import org.commonmark.node.*
 import org.commonmark.parser.Parser
 import java.net.URL
 
-class MarkdownRenderer(private val text: String, private val md: MarkdownComponent) : AbstractVisitor() {
+class MarkdownRenderer @JvmOverloads constructor(
+    private val text: String,
+    private val md: MarkdownComponent,
+    private val config: MarkdownConfig = MarkdownConfig()) : AbstractVisitor() {
+
     private val drawables = mutableListOf<Drawable>()
     private val style = MutableStyle()
 
@@ -20,15 +24,20 @@ class MarkdownRenderer(private val text: String, private val md: MarkdownCompone
     }
 
     fun render(): DrawableList {
+        val enabledBlockTypes = mutableSetOf<Class<out Block>>()
+        with(enabledBlockTypes) {
+            if (config.headerConfig.enabled) add(Heading::class.java)
+            if (config.codeBlockConfig.enabled) {
+                add(FencedCodeBlock::class.java)
+                add(IndentedCodeBlock::class.java)
+            }
+            if (config.blockquoteConfig.enabled) add(BlockQuote::class.java)
+            if (config.listConfig.enabled) add(ListBlock::class.java)
+        }
+
         val document = Parser.builder()
             .extensions(extensions)
-            .enabledBlockTypes(setOf(
-                Heading::class.java,
-                FencedCodeBlock::class.java,
-                IndentedCodeBlock::class.java,
-                BlockQuote::class.java,
-                ListBlock::class.java
-            ))
+            .enabledBlockTypes(enabledBlockTypes)
             .build()
             .parse(text)
         document.accept(this)
