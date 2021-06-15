@@ -11,6 +11,7 @@ import java.awt.Color
 // feeling cute, might delete this class later
 open class UIShape @JvmOverloads constructor(color: Color = Color.WHITE) : UIComponent() {
     private var vertices = mutableListOf<UIPoint>()
+    @Deprecated("Only supports GL_POLYGON on 1.17+, implemented as TRIANGEL_FAN.")
     var drawMode = GL11.GL_POLYGON
 
     init {
@@ -45,14 +46,18 @@ open class UIShape @JvmOverloads constructor(color: Color = Color.WHITE) : UICom
         val worldRenderer = UGraphics.getFromTessellator()
         UGraphics.tryBlendFuncSeparate(770, 771, 1, 0)
 
+        //#if MC>=11700
+        //$$ worldRenderer.beginWithDefaultShader(UGraphics.DrawMode.TRIANGLE_FAN, VertexFormats.POSITION_COLOR)
+        //#else
         worldRenderer.begin(drawMode, DefaultVertexFormats.POSITION_COLOR)
+        //#endif
         vertices.forEach {
             worldRenderer
                 .pos(matrixStack, it.absoluteX.toDouble(), it.absoluteY.toDouble(), 0.0)
                 .color(red, green, blue, alpha)
                 .endVertex()
         }
-        UGraphics.draw()
+        worldRenderer.drawDirect()
 
         UGraphics.enableTexture2D()
         UGraphics.disableBlend()
