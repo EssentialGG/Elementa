@@ -112,12 +112,12 @@ open class GradientComponent @JvmOverloads constructor(
 
             val colours = direction.getGradientColors(startColor, endColor)
             val tessellator = UGraphics.getFromTessellator()
-            tessellator.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR)
+            tessellator.beginWithDefaultShader(UGraphics.DrawMode.QUADS, DefaultVertexFormats.POSITION_COLOR)
             tessellator.pos(matrixStack, x2.toDouble(), y1.toDouble(), 0.0).color(colours.topRight).endVertex()
             tessellator.pos(matrixStack, x1.toDouble(), y1.toDouble(), 0.0).color(colours.topLeft).endVertex()
             tessellator.pos(matrixStack, x1.toDouble(), y2.toDouble(), 0.0).color(colours.bottomLeft).endVertex()
             tessellator.pos(matrixStack, x2.toDouble(), y2.toDouble(), 0.0).color(colours.bottomRight).endVertex()
-            UGraphics.draw()
+            tessellator.drawDirect()
 
             UGraphics.shadeModel(GL11.GL_FLAT)
             UGraphics.disableBlend()

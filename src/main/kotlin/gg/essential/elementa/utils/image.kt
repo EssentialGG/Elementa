@@ -47,13 +47,13 @@ internal fun drawTexture(
     val worldRenderer = UGraphics.getFromTessellator()
     GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
 
-    worldRenderer.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR)
+    worldRenderer.beginWithDefaultShader(UGraphics.DrawMode.QUADS, DefaultVertexFormats.POSITION_TEX_COLOR)
 
     worldRenderer.pos(matrixStack, x, y + height, 0.0).tex(0.0, 1.0).color(red, green, blue, alpha).endVertex()
     worldRenderer.pos(matrixStack, x + width, y + height, 0.0).tex(1.0, 1.0).color(red, green, blue, alpha).endVertex()
     worldRenderer.pos(matrixStack, x + width, y, 0.0).tex(1.0, 0.0).color(red, green, blue, alpha).endVertex()
     worldRenderer.pos(matrixStack, x, y, 0.0).tex(0.0, 0.0).color(red, green, blue, alpha).endVertex()
-    UGraphics.draw()
+    worldRenderer.drawDirect()
 
     matrixStack.pop()
 }
