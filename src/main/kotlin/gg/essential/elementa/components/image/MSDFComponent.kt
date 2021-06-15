@@ -86,13 +86,11 @@ open class MSDFComponent constructor(
         )
         shader.bindIfUsable()
 
-        GL13.glActiveTexture(GL13.GL_TEXTURE0)
-
         UGraphics.bindTexture(tex.glTextureId)
-        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR)
-        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR)
-        sdfTexel.setValue(Vector2f(1f / 128, 1f / 128))
-        samplerUniform.setValue(0)
+        UGraphics.configureTexture(tex.glTextureId) {
+            GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR)
+            GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR)
+        }
         doffsetUniform.setValue((3.5f / height).toFloat())
 
         val current = getColor()
