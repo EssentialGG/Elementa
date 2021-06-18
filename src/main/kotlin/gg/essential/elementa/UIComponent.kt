@@ -14,6 +14,8 @@ import gg.essential.elementa.font.FontProvider
 import gg.essential.elementa.utils.TriConsumer
 import gg.essential.elementa.utils.elementaDebug
 import gg.essential.elementa.utils.observable
+import gg.essential.elementa.utils.requireMainThread
+import gg.essential.elementa.utils.requireState
 import gg.essential.universal.UMouse
 import gg.essential.universal.UResolution
 import org.lwjgl.opengl.GL11
@@ -34,6 +36,11 @@ abstract class UIComponent : Observable() {
     var componentName: String = this.javaClass.simpleName
     open val children = CopyOnWriteArrayList<UIComponent>().observable()
     val effects = mutableListOf<Effect>()
+
+    private var childrenLocked = 0
+    init {
+        children.addObserver { _, _ -> requireChildrenUnlocked() }
+    }
 
     open lateinit var parent: UIComponent
 
@@ -87,6 +94,10 @@ abstract class UIComponent : Observable() {
 
     protected var isInitialized = false
     private var isFloating = false
+
+    protected fun requireChildrenUnlocked() {
+        requireState(childrenLocked == 0, "Cannot modify children while iterating over them.")
+    }
 
     /**
      * Adds [component] to this component's children tree,
@@ -426,6 +437,7 @@ abstract class UIComponent : Observable() {
 
         val parentWindow = Window.of(this)
 
+        childrenLocked++
         this.children.filterNot {
             it.isFloating
         }.forEach { child ->
@@ -440,6 +452,7 @@ abstract class UIComponent : Observable() {
 
             child.draw()
         }
+        childrenLocked--
 
         if (this is Window)
             drawFloatingComponents()
@@ -474,7 +487,9 @@ abstract class UIComponent : Observable() {
             currentlyHovered = false
         }
 
+        childrenLocked++
         this.children.forEach { it.mouseMove(window) }
+        childrenLocked--
     }
 
     /**
@@ -526,7 +541,9 @@ abstract class UIComponent : Observable() {
         lastDraggedMouseX = null
         lastDraggedMouseY = null
 
+        childrenLocked++
         this.children.forEach { it.mouseRelease() }
+        childrenLocked--
     }
 
     /**
@@ -558,7 +575,9 @@ abstract class UIComponent : Observable() {
         constraints.color.recalculate = true
         constraints.fontProvider.recalculate = true
 
+        childrenLocked++
         children.forEach { it.onWindowResize() }
+        childrenLocked--
     }
 
     protected fun fireScrollEvent(event: UIScrollEvent) {
@@ -600,7 +619,9 @@ abstract class UIComponent : Observable() {
         for (listener in mouseDragListeners)
             this.listener(relativeX, relativeY, button)
 
+        childrenLocked++
         children.forEach { it.dragMouse(mouseX, mouseY, button) }
+        childrenLocked--
     }
 
     open fun keyType(typedChar: Char, keyCode: Int) {
@@ -778,6 +799,10 @@ abstract class UIComponent : Observable() {
      */
     @JvmOverloads
     fun hide(instantly: Boolean = false) {
+        if (isInitialized) {
+            requireMainThread()
+        }
+
         if (instantly) {
             indexInParent = parent.children.indexOf(this@UIComponent)
             parent.removeChild(this@UIComponent)
@@ -803,6 +828,10 @@ abstract class UIComponent : Observable() {
      * to the hierarchy, underneath the same parent.
      */
     fun unhide(useLastPosition: Boolean = true) {
+        if (isInitialized) {
+            requireMainThread()
+        }
+
         if (parent.children.contains(this)) {
             return
         }

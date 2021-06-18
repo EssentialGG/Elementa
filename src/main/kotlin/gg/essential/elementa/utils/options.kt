@@ -14,5 +14,5 @@ var elementaDebug: Boolean = false
         }
     }
 
-private val devPropSet = System.getProperty("elementa.dev")?.toBoolean() ?: false
+internal val devPropSet = System.getProperty("elementa.dev")?.toBoolean() ?: false
 private val debugPropSet = System.getProperty("elementa.debug")?.toBoolean() ?: false

@@ -6,6 +6,7 @@ import gg.essential.elementa.constraints.resolution.ConstraintResolver
 import gg.essential.elementa.effects.ScissorEffect
 import gg.essential.elementa.font.FontRenderer
 import gg.essential.elementa.utils.elementaDev
+import gg.essential.elementa.utils.requireMainThread
 import gg.essential.universal.*
 import org.lwjgl.opengl.GL11
 import java.util.concurrent.ConcurrentLinkedQueue
@@ -43,6 +44,8 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
     override fun draw() {
         if (cancelDrawing)
             return
+
+        requireMainThread()
 
         val startTime = System.nanoTime()
 
@@ -112,6 +115,8 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
     }
 
     fun drawFloatingComponents() {
+        requireMainThread()
+
         val it = floatingComponents.iterator()
         while (it.hasNext()) {
             val component = it.next()
@@ -124,6 +129,8 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
     }
 
     override fun mouseScroll(delta: Double) {
+        requireMainThread()
+
         val (mouseX, mouseY) = getMousePosition()
         for (floatingComponent in floatingComponents.reversed()) {
             if (floatingComponent.isPointInside(mouseX, mouseY)) {
@@ -136,6 +143,8 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
     }
 
     override fun mouseClick(mouseX: Double, mouseY: Double, button: Int) {
+        requireMainThread()
+
         currentMouseButton = button
 
         for (floatingComponent in floatingComponents.reversed()) {
@@ -165,12 +174,16 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
     }
 
     override fun mouseRelease() {
+        requireMainThread()
+
         super.mouseRelease()
 
         currentMouseButton = -1
     }
 
     override fun keyType(typedChar: Char, keyCode: Int) {
+        requireMainThread()
+
         if (focusedComponent != null) {
             focusedComponent?.keyType(typedChar, keyCode)
         } else {
@@ -245,12 +258,20 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
      */
 
     fun addFloatingComponent(component: UIComponent) {
+        if (isInitialized) {
+            requireMainThread()
+        }
+
         if (floatingComponents.contains(component)) return
 
         floatingComponents.add(component)
     }
 
     fun removeFloatingComponent(component: UIComponent) {
+        if (isInitialized) {
+            requireMainThread()
+        }
+
         floatingComponents.remove(component)
     }
 
@@ -264,6 +285,10 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
      * NOT have to be a direct child of this component.
      */
     fun focus(component: UIComponent) {
+        if (isInitialized) {
+            requireMainThread()
+        }
+
         componentRequestingFocus = component
     }
 
@@ -272,6 +297,10 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
      * keyboard events until another component is focused.
      */
     fun unfocus() {
+        if (isInitialized) {
+            requireMainThread()
+        }
+
         focusedComponent?.loseFocus()
         focusedComponent = null
     }
