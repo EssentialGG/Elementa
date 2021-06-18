@@ -139,7 +139,6 @@ class ScrollComponent @JvmOverloads constructor(
                 setXAnimation(Animations.IN_SIN, 0.1f, horizontalOffset.pixels())
                 setYAnimation(Animations.IN_SIN, 0.1f, verticalOffset.pixels())
             }
-
             // Run our scroll adjust event, normally updating [scrollBarGrip]
             var percent = abs(horizontalOffset) / horizontalRange.width()
             var percentageOfParent = this.getWidth() / calculateActualWidth()
@@ -382,10 +381,10 @@ class ScrollComponent @JvmOverloads constructor(
 
         if ((isHorizontal && horizontalHideScrollWhenUseless) || (!isHorizontal && verticalHideScrollWhenUseless)) {
             if (clampedPercentage == 1f) {
-                component.hide()
+                Window.enqueueRenderOperation(component::hide)
                 return
             } else {
-                component.unhide()
+                Window.enqueueRenderOperation(component::unhide)
             }
         }
 
