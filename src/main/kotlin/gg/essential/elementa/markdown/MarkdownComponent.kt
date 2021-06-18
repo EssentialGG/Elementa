@@ -108,7 +108,7 @@ class MarkdownComponent @JvmOverloads constructor(
      * by a call to layout().
      */
     private fun reparse() {
-        drawables.setDrawables(MarkdownRenderer(textState.get(), this).render())
+        drawables.setDrawables(MarkdownRenderer(textState.get(), this, config).render())
     }
 
     /**
