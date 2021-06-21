@@ -85,7 +85,6 @@ open class UIWrappedText @JvmOverloads constructor(
         val x = getLeft() / textScale
         val y = getTop() / textScale
         val width = getWidth()
-        val scaledWidth = width / textScale
         val color = getColor()
 
         // We aren't visible, don't draw
@@ -93,7 +92,7 @@ open class UIWrappedText @JvmOverloads constructor(
             return super.draw()
         }
 
-        if (scaledWidth <= charWidth) {
+        if (width / textScale <= charWidth) {
             // If we are smaller than a char, we can't physically split this string into
             // "width" strings, so we'll prefer a no-op to an error.
             return super.draw()
@@ -125,7 +124,7 @@ open class UIWrappedText @JvmOverloads constructor(
 
         lines.forEachIndexed { i, line ->
             val xOffset = if (centered) {
-                (scaledWidth - line.width(textScale)) / 2f
+                (width - line.width(textScale)) / 2f
             } else 0f
 
 //            println(textScale)
@@ -141,7 +140,7 @@ open class UIWrappedText @JvmOverloads constructor(
                     shadowColor
                 )
             } else {
-                getFontProvider().drawString(line, color, xOffset, i * 9f, 10f, textScale, shadow = false)
+                getFontProvider().drawString(line, color, xOffset, i * 9f * textScale, 10f, textScale, shadow = false)
             }
         }
 
