@@ -293,9 +293,6 @@ class ParagraphDrawable(
 
             // The mouse isn't in this drawable, and it isn't before this
             // drawable, so it must be after this drawable
-            if (mouseY <= drawables.last().let { it.y + it.height + linePadding })
-                throw IllegalStateException()
-
             return cursorAtEnd()
         }
 
