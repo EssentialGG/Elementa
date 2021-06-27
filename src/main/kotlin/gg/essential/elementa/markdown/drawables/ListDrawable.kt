@@ -126,7 +126,7 @@ class ListDrawable(
         listItems.forEach { it.draw(state) }
     }
 
-    override fun cursorAt(mouseX: Float, mouseY: Float, dragged: Boolean) = drawables.cursorAt(mouseX, mouseY, dragged)
+    override fun cursorAt(mouseX: Float, mouseY: Float, dragged: Boolean, mouseButton: Int) = drawables.cursorAt(mouseX, mouseY, dragged, mouseButton)
     override fun cursorAtStart() = drawables.cursorAtStart()
     override fun cursorAtEnd() = drawables.cursorAtEnd()
 
@@ -174,8 +174,8 @@ class ListDrawable(
             drawable.draw(state)
         }
 
-        override fun cursorAt(mouseX: Float, mouseY: Float, dragged: Boolean) =
-            drawable.cursorAt(mouseX, mouseY, dragged)
+        override fun cursorAt(mouseX: Float, mouseY: Float, dragged: Boolean, mouseButton: Int) =
+            drawable.cursorAt(mouseX, mouseY, dragged, mouseButton)
 
         override fun cursorAtStart() = drawable.cursorAtStart()
         override fun cursorAtEnd() = drawable.cursorAtEnd()

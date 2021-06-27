@@ -48,7 +48,7 @@ class DrawableList(
         return Layout(x, y, width, height)
     }
 
-    override fun cursorAt(mouseX: Float, mouseY: Float, dragged: Boolean): Cursor<*> {
+    override fun cursorAt(mouseX: Float, mouseY: Float, dragged: Boolean, mouseButton: Int): Cursor<*> {
         // Used for positioning the cursor in-between drawables if no
         // drawable is being directly hovered
         var closestDrawable: Drawable? = null
@@ -57,7 +57,7 @@ class DrawableList(
 
         for (drawable in drawables) {
             if (drawable.isHovered(mouseX, mouseY)) {
-                return drawable.cursorAt(mouseX, mouseY, dragged)
+                return drawable.cursorAt(mouseX, mouseY, dragged, mouseButton)
             } else {
                 if (mouseY < drawable.y) {
                     if (drawable.y - mouseY < closestDistance) {
@@ -90,7 +90,7 @@ class DrawableList(
             Direction.Up -> closestDrawable.cursorAtStart()
             Direction.Down -> closestDrawable.cursorAtEnd()
             Direction.Left, Direction.Right ->
-                closestDrawable.cursorAt(mouseX, mouseY, dragged)
+                closestDrawable.cursorAt(mouseX, mouseY, dragged, mouseButton)
         }
     }
 

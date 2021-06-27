@@ -66,7 +66,7 @@ class ImageDrawable(md: MarkdownComponent, val url: URL, private val fallback: D
     }
 
     // ImageDrawable mouse selection is managed by ParagraphDrawable#select
-    override fun cursorAt(mouseX: Float, mouseY: Float, dragged: Boolean) = throw IllegalStateException("never called")
+    override fun cursorAt(mouseX: Float, mouseY: Float, dragged: Boolean, mouseButton: Int) = throw IllegalStateException("never called")
     override fun cursorAtStart() = ImageCursor(this)
     override fun cursorAtEnd() = ImageCursor(this)
 

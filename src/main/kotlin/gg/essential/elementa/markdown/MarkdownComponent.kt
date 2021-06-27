@@ -49,7 +49,7 @@ class MarkdownComponent @JvmOverloads constructor(
         onMouseClick {
             val xShift = getLeft() - baseX
             val yShift = getTop() - baseY
-            cursor = drawables.cursorAt(it.absoluteX - xShift, it.absoluteY - yShift, dragged = false)
+            cursor = drawables.cursorAt(it.absoluteX - xShift, it.absoluteY - yShift, dragged = false, it.mouseButton)
 
             selection?.remove()
             selection = null
@@ -69,7 +69,7 @@ class MarkdownComponent @JvmOverloads constructor(
             val x = baseX + mouseX.coerceIn(0f, getWidth())
             val y = baseY + mouseY.coerceIn(0f, getHeight())
 
-            val otherEnd = drawables.cursorAt(x, y, dragged = true)
+            val otherEnd = drawables.cursorAt(x, y, dragged = true, mouseButton)
 
             if (cursor == otherEnd)
                 return@onMouseDrag

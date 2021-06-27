@@ -268,7 +268,7 @@ class ParagraphDrawable(
         }
     }
 
-    override fun cursorAt(mouseX: Float, mouseY: Float, dragged: Boolean): Cursor<*> {
+    override fun cursorAt(mouseX: Float, mouseY: Float, dragged: Boolean, mouseButton: Int): Cursor<*> {
         // Account for padding between lines
         // TODO: Don't account for this padding for the first and last lines?
         val linePadding = config.paragraphConfig.spaceBetweenLines / 2f
@@ -349,7 +349,7 @@ class ParagraphDrawable(
         // Step 4: If the current text is linked, open it (only if we're not dragging though)
         // TODO: Confirmation modal somehow?
 
-        if (!dragged && currentDrawable.style.linkLocation != null) {
+        if (!dragged && currentDrawable.style.linkLocation != null && mouseButton == 0) {
             try {
                 UDesktop.browse(URI(currentDrawable.style.linkLocation!!))
             } catch (e: URISyntaxException) {
