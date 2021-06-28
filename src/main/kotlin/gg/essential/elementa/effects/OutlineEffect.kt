@@ -4,6 +4,7 @@ import gg.essential.elementa.components.UIBlock
 import gg.essential.elementa.state.BasicState
 import gg.essential.elementa.state.State
 import gg.essential.elementa.utils.guiHint
+import gg.essential.elementa.utils.roundToRealPixels
 import java.awt.Color
 
 /**
@@ -82,10 +83,10 @@ class OutlineEffect @JvmOverloads constructor(
         val top = boundComponent.getTop().toDouble()
         val bottom = boundComponent.getBottom().toDouble()
 
-        val leftHinted = left.guiHint(true)
-        val rightHinted = right.guiHint(false)
-        val topHinted = top.guiHint(true)
-        val bottomHinted = bottom.guiHint(false)
+        val leftHinted = left.roundToRealPixels()
+        val rightHinted = right.roundToRealPixels()
+        val topHinted = top.roundToRealPixels()
+        val bottomHinted = bottom.roundToRealPixels()
 
         val leftBounds = if (drawInsideChildren) {
             leftHinted to (left + width).guiHint(true)
