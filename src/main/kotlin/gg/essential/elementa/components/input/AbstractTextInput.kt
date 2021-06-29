@@ -315,7 +315,7 @@ abstract class AbstractTextInput(
                 } else if (mouseY >= getHeight()) {
                     val heightDifference = getHeight() - visualLines.size * lineHeight * getTextScale()
                     targetVerticalScrollingOffset =
-                        (targetVerticalScrollingOffset - lineHeight * getTextScale()).coerceIn(heightDifference, 0f)
+                        (targetVerticalScrollingOffset - lineHeight * getTextScale()).coerceIn(0f, heightDifference)
                     lastSelectionMoveTimestamp = currentTime
                 } else if (mouseX <= 0) {
                     scrollIntoView(draggedVisualPos.offsetColumn(-1))
