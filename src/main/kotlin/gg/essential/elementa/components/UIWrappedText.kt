@@ -24,7 +24,8 @@ open class UIWrappedText @JvmOverloads constructor(
      * Keeps the rendered text without the bounds of the component,
      * inserting an ellipsis ("...") if text is trimmed
      */
-    private val trimText: Boolean = false
+    private val trimText: Boolean = false,
+    private val lineSpacing: Float = 9f
 ) : UIComponent() {
     private var textState: State<String> = BasicState(text)
     private var shadowState: State<Boolean> = BasicState(shadow)
@@ -44,7 +45,7 @@ open class UIWrappedText @JvmOverloads constructor(
                 fontProvider = super.getFontProvider()
             )
 
-            lines.size * 9f * getTextScale()
+            lines.size * lineSpacing * getTextScale()
         })
         Window.enqueueRenderOperation {
             textWidthState.rebind(textState) //Needed so that the text scale and font provider are now present
@@ -107,7 +108,7 @@ open class UIWrappedText @JvmOverloads constructor(
                 textState.get(),
                 width,
                 textScale,
-                (getHeight() / 9f / textScale).toInt(),
+                (getHeight() / lineSpacing / textScale).toInt(),
                 ensureSpaceAtEndOfLines = false,
                 fontProvider = getFontProvider()
             )
@@ -133,14 +134,14 @@ open class UIWrappedText @JvmOverloads constructor(
                     line,
                     color,
                     xOffset,
-                    i * 9f * textScale,
+                    i * lineSpacing * textScale,
                     10f,
                     textScale,
                     true,
                     shadowColor
                 )
             } else {
-                getFontProvider().drawString(line, color, xOffset, i * 9f * textScale, 10f, textScale, shadow = false)
+                getFontProvider().drawString(line, color, xOffset, i * lineSpacing * textScale, 10f, textScale, shadow = false)
             }
         }
 
