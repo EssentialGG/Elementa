@@ -6,7 +6,7 @@ import gg.essential.elementa.effects.Effect
 import kotlin.properties.Delegates
 import kotlin.reflect.KProperty
 
-fun <T : UIComponent> T.constrain(config: UIConstraints.() -> Unit) = apply {
+inline fun <T : UIComponent> T.constrain(config: UIConstraints.() -> Unit) = apply {
     constraints.config()
 }
 
