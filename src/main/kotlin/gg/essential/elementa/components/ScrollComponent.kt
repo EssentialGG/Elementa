@@ -319,6 +319,10 @@ class ScrollComponent @JvmOverloads constructor(
         }
     }
 
+    fun sortChildren(comparator: Comparator<UIComponent>) {
+        actualHolder.children.sortWith(comparator)
+    }
+
     private fun updateGrip(component: UIComponent, mouseCoord: Float, isHorizontal: Boolean) {
         if (isHorizontal) {
             val minCoord = component.parent.getLeft()
