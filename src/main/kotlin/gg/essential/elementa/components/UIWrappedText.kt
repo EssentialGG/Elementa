@@ -1,6 +1,9 @@
 package gg.essential.elementa.components
 
 import gg.essential.elementa.UIComponent
+import gg.essential.elementa.components.UIText.Companion.BELOW_LINE_HEIGHT
+import gg.essential.elementa.components.UIText.Companion.SHADOW_HEIGHT
+import gg.essential.elementa.constraints.CenterConstraint
 import gg.essential.elementa.dsl.basicHeightConstraint
 import gg.essential.elementa.dsl.width
 import gg.essential.elementa.state.BasicState
@@ -34,6 +37,19 @@ open class UIWrappedText @JvmOverloads constructor(
 
     private val charWidth = UGraphics.getCharWidth('x')
 
+    /** Guess on whether we should be trying to center or top-align this component. See [BELOW_LINE_HEIGHT]. */
+    private val verticallyCenteredState = BasicState(constraints.y is CenterConstraint).also {
+        constraints.addObserver { _, _ -> it.set(constraints.y is CenterConstraint) }
+    }
+
+    /**
+     * Balances out space required below the line by adding empty space above the first one.
+     * Also, if there are no shadows, the last line can be shorter so it looks more centered overall.
+     */
+    private val extraHeightState = verticallyCenteredState.zip(shadowState).map { (verticallyCentered, shadow) ->
+        (if (verticallyCentered) BELOW_LINE_HEIGHT else 0f) + (if (shadow) 0f else -SHADOW_HEIGHT)
+    }
+
     init {
         setWidth(textWidthState.pixels())
         setHeight(basicHeightConstraint {
@@ -45,7 +61,7 @@ open class UIWrappedText @JvmOverloads constructor(
                 fontProvider = super.getFontProvider()
             )
 
-            lines.size * lineSpacing * getTextScale()
+            (lines.size * lineSpacing + extraHeightState.get()) * getTextScale()
         })
         Window.enqueueRenderOperation {
             textWidthState.rebind(textState) //Needed so that the text scale and font provider are now present
@@ -84,7 +100,7 @@ open class UIWrappedText @JvmOverloads constructor(
 
         val textScale = getTextScale()
         val x = getLeft()
-        val y = getTop()
+        val y = getTop() + (if (verticallyCenteredState.get()) BELOW_LINE_HEIGHT * textScale else 0f)
         val width = getWidth()
         val color = getColor()
 
@@ -106,7 +122,7 @@ open class UIWrappedText @JvmOverloads constructor(
                 textState.get(),
                 width,
                 textScale,
-                (getHeight() / lineSpacing / textScale).toInt(),
+                ((getHeight() / textScale - extraHeightState.get()) / lineSpacing).toInt(),
                 ensureSpaceAtEndOfLines = false,
                 fontProvider = getFontProvider()
             )
