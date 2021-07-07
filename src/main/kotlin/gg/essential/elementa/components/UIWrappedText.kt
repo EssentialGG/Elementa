@@ -126,7 +126,6 @@ open class UIWrappedText @JvmOverloads constructor(
                 (width - line.width(textScale)) / 2f
             } else 0f
 
-//            println(textScale)
             getFontProvider().drawString(
                 line,
                 color,
