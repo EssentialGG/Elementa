@@ -129,20 +129,16 @@ open class UIWrappedText @JvmOverloads constructor(
             } else 0f
 
 //            println(textScale)
-            if (shadow) {
-                getFontProvider().drawString(
-                    line,
-                    color,
-                    xOffset,
-                    i * lineSpacing * textScale,
-                    10f,
-                    textScale,
-                    true,
-                    shadowColor
-                )
-            } else {
-                getFontProvider().drawString(line, color, xOffset, i * lineSpacing * textScale, 10f, textScale, shadow = false)
-            }
+            getFontProvider().drawString(
+                line,
+                color,
+                xOffset,
+                i * lineSpacing * textScale,
+                10f,
+                textScale,
+                shadow,
+                if (shadow) shadowColor else null,
+            )
         }
 
         UGraphics.translate(-x.toDouble() * textScale, -y.toDouble() * textScale, 0.0)
