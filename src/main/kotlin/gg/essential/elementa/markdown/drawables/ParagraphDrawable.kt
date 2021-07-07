@@ -176,11 +176,17 @@ class ParagraphDrawable(
 
                 // If we can't split the text in a way that doesn't break
                 // a word, we'll just draw the whole thing on the next line.
+                // Only need to advance onto the next line, if there is
+                // actually something on this one. Otherwise we're already
+                // good to take the whole line.
+                if (currentLine.isNotEmpty()) {
+                    gotoNextLine()
+                }
+
                 // Before we do that though, we have to make sure that its
                 // width isn't greater than the width of the entire component.
                 // If it is, we need to split it on the overall width and
                 // continue this splitting loop
-                gotoNextLine()
 
                 if (targetWidth > width) {
                     val splitResult2 = target.split(width)
