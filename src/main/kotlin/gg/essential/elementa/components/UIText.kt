@@ -73,10 +73,9 @@ open class UIText @JvmOverloads constructor(
 
         beforeDraw()
 
+        val scale = getWidth() / textWidthState.get()
         val x = getLeft()
         val y = getTop()
-        val width = getWidth() / textWidthState.get()
-        val height = getHeight() / 9f
         val color = getColor()
 
         // We aren't visible, don't draw
@@ -90,7 +89,7 @@ open class UIText @JvmOverloads constructor(
         val shadowColor = shadowColorState.get()
         getFontProvider().drawString(
             textState.get(), color, x, y,
-            10f, width, shadow, shadowColor
+            10f, scale, shadow, shadowColor
         )
         super.draw()
     }
