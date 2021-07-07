@@ -83,8 +83,8 @@ open class UIWrappedText @JvmOverloads constructor(
         beforeDraw()
 
         val textScale = getTextScale()
-        val x = getLeft() / textScale
-        val y = getTop() / textScale
+        val x = getLeft()
+        val y = getTop()
         val width = getWidth()
         val color = getColor()
 
@@ -100,8 +100,6 @@ open class UIWrappedText @JvmOverloads constructor(
         }
 
         UGraphics.enableBlend()
-
-        UGraphics.translate(x.toDouble() * textScale, y.toDouble() * textScale, 0.0)
 
         val lines = if (trimText) {
             getStringSplitToWidthTruncated(
@@ -132,16 +130,14 @@ open class UIWrappedText @JvmOverloads constructor(
             getFontProvider().drawString(
                 line,
                 color,
-                xOffset,
-                i * lineSpacing * textScale,
+                x + xOffset,
+                y + i * lineSpacing * textScale,
                 10f,
                 textScale,
                 shadow,
                 if (shadow) shadowColor else null,
             )
         }
-
-        UGraphics.translate(-x.toDouble() * textScale, -y.toDouble() * textScale, 0.0)
 
         super.draw()
     }
