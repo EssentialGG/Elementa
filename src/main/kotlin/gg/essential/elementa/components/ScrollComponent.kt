@@ -45,7 +45,7 @@ class ScrollComponent @JvmOverloads constructor(
     }
 
     //Exposed so its position and value can be adjusted by user
-    val emptyText = UIText(emptyString).constrain {
+    val emptyText = UIWrappedText(emptyString, centered = true).constrain {
         x = CenterConstraint()
         y = SiblingConstraint() + 4.pixels()
     }
@@ -318,6 +318,10 @@ class ScrollComponent @JvmOverloads constructor(
         } else {
             actualHolder.children.sortBy(comparator)
         }
+    }
+
+    fun sortChildren(comparator: Comparator<UIComponent>) {
+        actualHolder.children.sortWith(comparator)
     }
 
     private fun updateGrip(component: UIComponent, mouseCoord: Float, isHorizontal: Boolean) {

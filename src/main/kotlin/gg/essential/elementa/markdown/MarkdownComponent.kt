@@ -49,7 +49,7 @@ class MarkdownComponent @JvmOverloads constructor(
         onMouseClick {
             val xShift = getLeft() - baseX
             val yShift = getTop() - baseY
-            cursor = drawables.cursorAt(it.absoluteX - xShift, it.absoluteY - yShift, dragged = false)
+            cursor = drawables.cursorAt(it.absoluteX - xShift, it.absoluteY - yShift, dragged = false, it.mouseButton)
 
             selection?.remove()
             selection = null
@@ -69,7 +69,7 @@ class MarkdownComponent @JvmOverloads constructor(
             val x = baseX + mouseX.coerceIn(0f, getWidth())
             val y = baseY + mouseY.coerceIn(0f, getHeight())
 
-            val otherEnd = drawables.cursorAt(x, y, dragged = true)
+            val otherEnd = drawables.cursorAt(x, y, dragged = true, mouseButton)
 
             if (cursor == otherEnd)
                 return@onMouseDrag
@@ -117,6 +117,15 @@ class MarkdownComponent @JvmOverloads constructor(
      * @see Drawable.layout
      */
     fun layout() {
+        // TODO: ParagraphDrawable currently directly mutates its drawables, splitting them as necessary. This will
+        //       however cause text to actually be layed out differently if layout is called more than once, cause
+        //       the answer to "does this drawable fit into the current line" changes.
+        //       Such behavior causes inconsistent layout result and makes it difficult to reason about bugs in code
+        //       which changes behavior upon re-layout, so for now we'll completely re-parse on re-layout so we always
+        //       start from the same drawables and get the same result.
+        //       For performance reasons, this should be removed once it no longer mutate the drawables list.
+        reparse()
+
         baseX = getLeft()
         baseY = getTop()
         var currY = baseY

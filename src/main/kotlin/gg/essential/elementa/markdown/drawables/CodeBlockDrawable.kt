@@ -16,7 +16,7 @@ class CodeBlockDrawable(md: MarkdownComponent) : Drawable(md) {
         TODO("Not yet implemented")
     }
 
-    override fun cursorAt(mouseX: Float, mouseY: Float, dragged: Boolean): Cursor<*> {
+    override fun cursorAt(mouseX: Float, mouseY: Float, dragged: Boolean, mouseButton: Int): Cursor<*> {
         TODO("Not yet implemented")
     }
 

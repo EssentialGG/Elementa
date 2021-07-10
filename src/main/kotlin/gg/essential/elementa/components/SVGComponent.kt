@@ -26,8 +26,6 @@ class SVGComponent(private var svg: SVG) : UIComponent(), ImageProvider {
     }
 
     override fun drawImage(matrixStack: UMatrixStack, x: Double, y: Double, width: Double, height: Double, color: Color) {
-        if(true) return //TODO
-
         if (!::vboData.isInitialized || needsReload) {
             generateVBOData()
             needsReload = false

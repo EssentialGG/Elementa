@@ -87,7 +87,7 @@ abstract class Drawable(val md: MarkdownComponent) {
      * delegates to a lower-level drawable (DrawableList and
      * ParagraphDrawable).
      */
-    abstract fun cursorAt(mouseX: Float, mouseY: Float, dragged: Boolean): Cursor<*>
+    abstract fun cursorAt(mouseX: Float, mouseY: Float, dragged: Boolean, mouseButton: Int): Cursor<*>
 
     /**
      * Produces a TextCursor for the start of this drawable

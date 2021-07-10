@@ -1,6 +1,9 @@
 package gg.essential.elementa.components
 
 import gg.essential.elementa.UIComponent
+import gg.essential.elementa.components.UIText.Companion.BELOW_LINE_HEIGHT
+import gg.essential.elementa.components.UIText.Companion.SHADOW_HEIGHT
+import gg.essential.elementa.constraints.CenterConstraint
 import gg.essential.elementa.dsl.basicHeightConstraint
 import gg.essential.elementa.dsl.width
 import gg.essential.elementa.state.BasicState
@@ -25,7 +28,8 @@ open class UIWrappedText @JvmOverloads constructor(
      * Keeps the rendered text without the bounds of the component,
      * inserting an ellipsis ("...") if text is trimmed
      */
-    private val trimText: Boolean = false
+    private val trimText: Boolean = false,
+    private val lineSpacing: Float = 9f
 ) : UIComponent() {
     private var textState: State<String> = BasicState(text)
     private var shadowState: State<Boolean> = BasicState(shadow)
@@ -33,6 +37,19 @@ open class UIWrappedText @JvmOverloads constructor(
     private var textWidthState = textState.map { it.width(getTextScale(), getFontProvider()) / getTextScale() }
 
     private val charWidth = UGraphics.getCharWidth('x')
+
+    /** Guess on whether we should be trying to center or top-align this component. See [BELOW_LINE_HEIGHT]. */
+    private val verticallyCenteredState = BasicState(constraints.y is CenterConstraint).also {
+        constraints.addObserver { _, _ -> it.set(constraints.y is CenterConstraint) }
+    }
+
+    /**
+     * Balances out space required below the line by adding empty space above the first one.
+     * Also, if there are no shadows, the last line can be shorter so it looks more centered overall.
+     */
+    private val extraHeightState = verticallyCenteredState.zip(shadowState).map { (verticallyCentered, shadow) ->
+        (if (verticallyCentered) BELOW_LINE_HEIGHT else 0f) + (if (shadow) 0f else -SHADOW_HEIGHT)
+    }
 
     init {
         setWidth(textWidthState.pixels())
@@ -45,7 +62,7 @@ open class UIWrappedText @JvmOverloads constructor(
                 fontProvider = super.getFontProvider()
             )
 
-            lines.size * 9f * getTextScale()
+            (lines.size * lineSpacing + extraHeightState.get()) * getTextScale()
         })
         Window.enqueueRenderOperation {
             textWidthState.rebind(textState) //Needed so that the text scale and font provider are now present
@@ -83,8 +100,8 @@ open class UIWrappedText @JvmOverloads constructor(
         beforeDrawCompat(matrixStack)
 
         val textScale = getTextScale()
-        val x = getLeft() / textScale
-        val y = getTop() / textScale
+        val x = getLeft()
+        val y = getTop() + (if (verticallyCenteredState.get()) BELOW_LINE_HEIGHT * textScale else 0f)
         val width = getWidth()
         val color = getColor()
 
@@ -101,15 +118,12 @@ open class UIWrappedText @JvmOverloads constructor(
 
         UGraphics.enableBlend()
 
-        matrixStack.push()
-        matrixStack.translate(x.toDouble() * textScale, y.toDouble() * textScale, 0.0)
-
         val lines = if (trimText) {
             getStringSplitToWidthTruncated(
                 textState.get(),
                 width,
                 textScale,
-                (getHeight() / 9f / textScale).toInt(),
+                ((getHeight() / textScale - extraHeightState.get()) / lineSpacing).toInt(),
                 ensureSpaceAtEndOfLines = false,
                 fontProvider = getFontProvider()
             )
@@ -129,25 +143,18 @@ open class UIWrappedText @JvmOverloads constructor(
                 (width - line.width(textScale)) / 2f
             } else 0f
 
-//            println(textScale)
-            if (shadow) {
-                getFontProvider().drawString(
-                    matrixStack,
-                    line,
-                    color,
-                    xOffset,
-                    i * 9f * textScale,
-                    10f,
-                    textScale,
-                    true,
-                    shadowColor
-                )
-            } else {
-                getFontProvider().drawString(matrixStack, line, color, xOffset, i * 9f * textScale, 10f, textScale, shadow = false)
-            }
+            getFontProvider().drawString(
+                matrixStack,
+                line,
+                color,
+                x + xOffset,
+                y + i * lineSpacing * textScale,
+                10f,
+                textScale,
+                shadow,
+                if (shadow) shadowColor else null,
+            )
         }
-
-        matrixStack.pop()
 
         super.draw(matrixStack)
     }

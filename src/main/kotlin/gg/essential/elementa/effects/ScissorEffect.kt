@@ -1,6 +1,7 @@
 package gg.essential.elementa.effects
 
 import gg.essential.elementa.UIComponent
+import gg.essential.elementa.utils.roundToRealPixels
 import gg.essential.universal.UMatrixStack
 import gg.essential.universal.UResolution
 import org.lwjgl.opengl.GL11.*
@@ -34,7 +35,12 @@ class ScissorEffect @JvmOverloads constructor(
         y2: Number,
         scissorIntersection: Boolean = true
     ) : this(scissorIntersection = scissorIntersection) {
-        scissorBounds = ScissorBounds(x1.toInt(), y1.toInt(), x2.toInt(), y2.toInt())
+        scissorBounds = ScissorBounds(
+            x1.toFloat().roundToRealPixels(),
+            y1.toFloat().roundToRealPixels(),
+            x2.toFloat().roundToRealPixels(),
+            y2.toFloat().roundToRealPixels(),
+        )
     }
 
     override fun beforeDraw(matrixStack: UMatrixStack) {
@@ -50,10 +56,10 @@ class ScissorEffect @JvmOverloads constructor(
 
         // TODO ideally we should respect matrixStack offset and maybe scale, though we do not currently care about
         //      global gl state either, so not really important until someone needs it
-        var x = bounds.x1 * scaleFactor
-        var y = (UResolution.scaledHeight * scaleFactor) - (bounds.y2 * scaleFactor)
-        var width = bounds.width * scaleFactor
-        var height = bounds.height * scaleFactor
+        var x = (bounds.x1 * scaleFactor).roundToInt()
+        var y = ((UResolution.scaledHeight * scaleFactor) - (bounds.y2 * scaleFactor)).roundToInt()
+        var width = (bounds.width * scaleFactor).roundToInt()
+        var height = (bounds.height * scaleFactor).roundToInt()
 
         if (state != null && scissorIntersection) {
             val x2 = x + width
@@ -90,18 +96,18 @@ class ScissorEffect @JvmOverloads constructor(
     }
 
     private fun UIComponent.getScissorBounds(): ScissorBounds = ScissorBounds(
-        getLeft().roundToInt(),
-        getTop().roundToInt(),
-        getRight().roundToInt(),
-        getBottom().roundToInt()
+        getLeft().roundToRealPixels(),
+        getTop().roundToRealPixels(),
+        getRight().roundToRealPixels(),
+        getBottom().roundToRealPixels(),
     )
 
     data class ScissorState(val x: Int, val y: Int, val width: Int, val height: Int)
 
-    private data class ScissorBounds(val x1: Int, val y1: Int, val x2: Int, val y2: Int) {
-        val width: Int
+    private data class ScissorBounds(val x1: Float, val y1: Float, val x2: Float, val y2: Float) {
+        val width: Float
             get() = x2 - x1
-        val height: Int
+        val height: Float
             get() = y2 - y1
     }
 
