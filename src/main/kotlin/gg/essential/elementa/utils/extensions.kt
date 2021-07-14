@@ -7,17 +7,18 @@ import gg.essential.universal.shader.BlendState
 import gg.essential.universal.shader.UShader
 import java.awt.Color
 import kotlin.math.round
+import kotlin.math.sign
 
 fun Float.guiHint(roundDown: Boolean) = UIComponent.guiHint(this, roundDown)
 fun Double.guiHint(roundDown: Boolean) = UIComponent.guiHint(this, roundDown)
 
 fun Float.roundToRealPixels(): Float {
     val factor = UResolution.scaleFactor.toFloat()
-    return round(this * factor) / factor
+    return round(this * factor).let { if (it == 0f && this != 0f) sign(this) else it } / factor
 }
 fun Double.roundToRealPixels(): Double {
     val factor = UResolution.scaleFactor
-    return round(this * factor) / factor
+    return round(this * factor).let { if (it == 0.0 && this != 0.0) sign(this) else it } / factor
 }
 
 fun Color.withAlpha(alpha: Int) = Color(this.red, this.green, this.blue, alpha)
