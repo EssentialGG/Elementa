@@ -54,7 +54,7 @@ class ScissorEffect @JvmOverloads constructor(
         val state = oldState
 
         var x = (bounds.x1 * scaleFactor).roundToInt()
-        var y = ((UResolution.scaledHeight * scaleFactor) - (bounds.y2 * scaleFactor)).roundToInt()
+        var y = UResolution.windowHeight - (bounds.y2 * scaleFactor).roundToInt()
         var width = (bounds.width * scaleFactor).roundToInt()
         var height = (bounds.height * scaleFactor).roundToInt()
 
