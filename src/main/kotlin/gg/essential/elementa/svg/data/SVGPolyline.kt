@@ -23,7 +23,7 @@ data class SVGPolyline(val points: List<Point>) : SVGElement() {
     }
 
     companion object {
-        fun from(element: Element): SVGPolyline {
+        internal fun from(element: Element): SVGPolyline {
             val points = element.attributeValue("points")
                 .split(" ")
                 .zipWithNext()

@@ -31,7 +31,7 @@ class SVGRect(
     }
 
     companion object {
-        fun from(element: Element): SVGRect {
+        internal fun from(element: Element): SVGRect {
             val topLeft = Point(element.attributeValue("x").toFloat(), element.attributeValue("y").toFloat())
             val width = element.attributeValue("width").toFloat()
             val height = element.attributeValue("height").toFloat()

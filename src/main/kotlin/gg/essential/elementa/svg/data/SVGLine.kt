@@ -25,7 +25,7 @@ data class SVGLine(val point1: Point, val point2: Point) : SVGElement() {
     }
 
     companion object {
-        fun from(element: Element): SVGLine {
+        internal fun from(element: Element): SVGLine {
             return SVGLine(
                 Point(element.attributeValue("x1").toFloat(), element.attributeValue("y1").toFloat()),
                 Point(element.attributeValue("x2").toFloat(), element.attributeValue("y2").toFloat())
