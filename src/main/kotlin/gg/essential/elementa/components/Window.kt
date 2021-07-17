@@ -62,6 +62,13 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
             systemTime = System.currentTimeMillis()
 
         try {
+
+            //If this Window is more than 5 seconds behind, reset it be only 5 seconds.
+            //This will drop missed frames but avoid the game freezing as the Window tries
+            //to catch after a period of inactivity
+            if (System.currentTimeMillis() - this.systemTime < TimeUnit.SECONDS.toMillis(5))
+                this.systemTime = System.currentTimeMillis() - TimeUnit.SECONDS.toMillis(5)
+
             while (this.systemTime < System.currentTimeMillis() + 1000 / animationFPS) {
                 animationFrame()
                 this.systemTime += 1000 / animationFPS
@@ -248,9 +255,9 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
         val realHeight = currentScissor.height / sf
 
         return right > realX &&
-            left < realX + realWidth &&
-            bottom >= bottomY - realHeight &&
-            top <= bottomY
+                left < realX + realWidth &&
+                bottom >= bottomY - realHeight &&
+                top <= bottomY
     }
 
     /*
