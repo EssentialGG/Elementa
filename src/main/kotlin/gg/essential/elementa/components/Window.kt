@@ -66,7 +66,7 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
             //If this Window is more than 5 seconds behind, reset it be only 5 seconds.
             //This will drop missed frames but avoid the game freezing as the Window tries
             //to catch after a period of inactivity
-            if (System.currentTimeMillis() - this.systemTime < TimeUnit.SECONDS.toMillis(5))
+            if (System.currentTimeMillis() - this.systemTime > TimeUnit.SECONDS.toMillis(5))
                 this.systemTime = System.currentTimeMillis() - TimeUnit.SECONDS.toMillis(5)
 
             while (this.systemTime < System.currentTimeMillis() + 1000 / animationFPS) {
