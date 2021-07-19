@@ -698,7 +698,7 @@ abstract class AbstractTextInput(
             text,
             getColor(),
             left - horizontalScrollingOffset,
-            getTop() + ((9 * row + 1) * getTextScale()) + verticalScrollingOffset,
+            getTop() + ((lineHeight * row + 1) * getTextScale()) + verticalScrollingOffset,
             10f,
             getTextScale(),
             shadow = false
@@ -709,16 +709,16 @@ abstract class AbstractTextInput(
         UIBlock.drawBlock(
             if (active) selectionBackgroundColor else inactiveSelectionBackgroundColor,
             left.toDouble() - horizontalScrollingOffset,
-            getTop().toDouble() + (9 * row * getTextScale()) + verticalScrollingOffset,
+            getTop().toDouble() + (lineHeight * row * getTextScale()) + verticalScrollingOffset,
             right.toDouble() - horizontalScrollingOffset,
-            getTop().toDouble() + (9 * ((row + 1) * getTextScale())) + verticalScrollingOffset
+            getTop().toDouble() + (lineHeight * ((row + 1) * getTextScale())) + verticalScrollingOffset
         )
         if (text.isNotEmpty()) {
             getFontProvider().drawString(
                 text,
                 if (active) selectionForegroundColor else inactiveSelectionForegroundColor,
                 left - horizontalScrollingOffset,
-                getTop() + ((9 * row + 1) * getTextScale()) + verticalScrollingOffset,
+                getTop() + ((lineHeight * row + 1) * getTextScale()) + verticalScrollingOffset,
                 10f,
                 getTextScale(),
                 shadow = false
