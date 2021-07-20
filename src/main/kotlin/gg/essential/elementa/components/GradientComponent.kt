@@ -50,10 +50,10 @@ open class GradientComponent @JvmOverloads constructor(
 
         UGraphics.pushMatrix()
         drawGradientBlock(
-            x.toInt(),
-            y.toInt(),
-            x2.toInt(),
-            y2.toInt(),
+            x,
+            y,
+            x2,
+            y2,
             startColorState.get(),
             endColorState.get(),
             directionState.get()
@@ -80,11 +80,26 @@ open class GradientComponent @JvmOverloads constructor(
     data class GradientColors(val topLeft: Color, val topRight: Color, val bottomLeft: Color, val bottomRight: Color)
 
     companion object {
+
+        @Deprecated(
+            "This method does not allow for gradients to be rendered at sub-pixel positions. Use the Double variant instead and do not cast to Int.",
+            ReplaceWith("drawGradientBlock(x1.toDouble(), y1.toDouble(), x2.toDouble(), y2.toDouble(), startColor, endColor, direction)")
+        )
         fun drawGradientBlock(
             x1: Int,
             y1: Int,
             x2: Int,
             y2: Int,
+            startColor: Color,
+            endColor: Color,
+            direction: GradientDirection
+        ) = drawGradientBlock(x1.toDouble(), y1.toDouble(), x2.toDouble(), y2.toDouble(), startColor, endColor, direction)
+
+        fun drawGradientBlock(
+            x1: Double,
+            y1: Double,
+            x2: Double,
+            y2: Double,
             startColor: Color,
             endColor: Color,
             direction: GradientDirection
@@ -98,10 +113,10 @@ open class GradientComponent @JvmOverloads constructor(
             val colours = direction.getGradientColors(startColor, endColor)
             val tessellator = UGraphics.getFromTessellator()
             tessellator.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR)
-            tessellator.pos(x2.toDouble(), y1.toDouble(), 0.0).color(colours.topRight).endVertex()
-            tessellator.pos(x1.toDouble(), y1.toDouble(), 0.0).color(colours.topLeft).endVertex()
-            tessellator.pos(x1.toDouble(), y2.toDouble(), 0.0).color(colours.bottomLeft).endVertex()
-            tessellator.pos(x2.toDouble(), y2.toDouble(), 0.0).color(colours.bottomRight).endVertex()
+            tessellator.pos(x2, y1, 0.0).color(colours.topRight).endVertex()
+            tessellator.pos(x1, y1, 0.0).color(colours.topLeft).endVertex()
+            tessellator.pos(x1, y2, 0.0).color(colours.bottomLeft).endVertex()
+            tessellator.pos(x2, y2, 0.0).color(colours.bottomRight).endVertex()
             UGraphics.draw()
 
             UGraphics.shadeModel(GL11.GL_FLAT)
