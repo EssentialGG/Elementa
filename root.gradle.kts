@@ -4,6 +4,7 @@ plugins {
     id("com.replaymod.preprocess") version "e4476a6"
 }
 
+version = determineVersion()
 
 // Loom tries to find the active mixin version by recursing up to the root project and checking each project's
 // compileClasspath and build script classpath (in that order). Since we've loom in our root project's classpath,
@@ -22,3 +23,22 @@ preprocess {
 //    }
 }
 
+fun determineVersion(): String {
+    val branch = branch()
+    var version = buildId() ?: return "$branch-SNAPSHOT"
+    if (branch != "master") {
+        version += "+$branch"
+    }
+    return version
+}
+fun buildId(): String? = project.properties["BUILD_ID"]?.toString()
+fun branch(): String = project.properties["branch"]?.toString() ?: try {
+    val stdout = java.io.ByteArrayOutputStream()
+    exec {
+        commandLine("git", "rev-parse", "--abbrev-ref", "HEAD")
+        standardOutput = stdout
+    }
+    stdout.toString().trim()
+} catch (e: Throwable) {
+    "unknown"
+}

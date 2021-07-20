@@ -3,11 +3,13 @@ buildscript {
     ext.kotlin_version = "1.5.10"
     ext.dokka_version = "0.10.0"
 
-    def mcVersion
-    def (major, minor, patch) = project.name.tokenize('-')[0].tokenize('.')
-    mcVersion = "${major}${minor.padLeft(2, '0')}${(patch ?: '').padLeft(2, '0')}" as int
+    def mcVersionStr = project.name.tokenize('-')[0]
+    def (major, minor, patch) = mcVersionStr.tokenize('.')
+    def mcVersion = "${major}${minor.padLeft(2, '0')}${(patch ?: '').padLeft(2, '0')}" as int
     def fabric = mcVersion >= 11400 && project.name.endsWith("-fabric")
     project.ext.mcVersion = mcVersion
+    project.ext.mcVersionStr = mcVersionStr
+    project.ext.mcPlatform = fabric ? 'fabric' : 'forge'
     project.ext.fabric = fabric
 
     repositories {
@@ -71,7 +73,7 @@ preprocess {
     vars.put("FORGE", project.fabric ? 0 : 1)
 }
 
-version = this.properties.getOrDefault("BUILD_ID", "LOCAL") //BUILD_ID
+version = project.parent.version
 group = "gg.essential" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "Elementa" + project.name
 
@@ -148,7 +150,7 @@ if (FABRIC) {
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
-    implementation "gg.essential:UniversalCraft:138-${mcVersion}${FABRIC ? "-fabric" : ""}-SNAPSHOT"
+    implementation "gg.essential:universalcraft-${mcVersionStr}-${mcPlatform}:145"
     implementation "org.commonmark:commonmark:0.17.1"
     implementation "org.commonmark:commonmark-ext-gfm-strikethrough:0.17.1"
     implementation "org.commonmark:commonmark-ext-ins:0.17.1"
@@ -253,12 +255,7 @@ compileKotlin {
 publishing {
     publications {
         maven(MavenPublication) {
-            artifactId = "Elementa"
-
-            def branchStr = this.properties.getOrDefault("branch", "master") != "master" ? this.properties.getOrDefault("branch", "master") + "-" : ""
-            def fabricStr = FABRIC ? "-fabric" : ""
-            def snapshotStr = this.properties.getOrDefault("IS_CI", false) ? "-SNAPSHOT" : ""
-            version = "$branchStr${project.version}-$mcVersion$fabricStr$snapshotStr"
+            artifactId = "elementa-$mcVersionStr-$mcPlatform"
 
             pom.withXml {
                 def dependenciesNode = asNode().appendNode('dependencies')
@@ -282,7 +279,7 @@ publishing {
         repositories {
             maven {
                 name 'nexus'
-                url "https://repo.sk1er.club/repository/maven-${this.properties.getOrDefault("IS_CI", false) ? "snapshots" : "releases"}/"
+                url "https://repo.sk1er.club/repository/maven-releases/"
 
                 credentials {
                     username project.nexus_user
