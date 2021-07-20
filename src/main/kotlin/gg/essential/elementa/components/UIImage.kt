@@ -48,15 +48,11 @@ open class UIImage @JvmOverloads constructor(
             //In versions before 1.15, we make the bufferedImage.getRGB call without the upload in the
             // constructor since that takes most of the CPU time and we upload the actual texture during the
             // first call to uploadTexture or getGlTextureId
-            //#if MC<11502
+            // Same for 1.15+ actually, except that it is not getRGB but serialization to byte[] (so we can re-parse it
+            // as a NativeImage) which is slow.
             texture = UGraphics.getTexture(it)
-            //#endif
             Window.enqueueRenderOperation {
-                //#if MC>=11500
-                //$$ texture = UGraphics.getTexture(it)
-                //#else
                 texture?.uploadTexture()
-                //#endif
                 while (waiting.isEmpty().not())
                     waiting.poll().applyTexture(texture)
             }

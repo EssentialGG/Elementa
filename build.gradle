@@ -166,7 +166,7 @@ dependencies {
     // The Api/Implementation difference is the same as in Gradle.
     modApi "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     modApi "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
-    modApi "gg.essential:UniversalCraft:next-134-${mcVersion}${FABRIC ? "-fabric" : ""}-SNAPSHOT"
+    modApi "gg.essential:UniversalCraft:next-143-${mcVersion}${FABRIC ? "-fabric" : ""}-SNAPSHOT"
     modImplementation "org.commonmark:commonmark:0.17.1"
     modImplementation "org.commonmark:commonmark-ext-gfm-strikethrough:0.17.1"
     modImplementation "org.commonmark:commonmark-ext-ins:0.17.1"
