@@ -72,8 +72,8 @@ open class GradientComponent @JvmOverloads constructor(
         fun getGradientColors(startColor: Color, endColor: Color): GradientColors = when (this) {
             TOP_TO_BOTTOM -> GradientColors(startColor, startColor, endColor, endColor)
             BOTTOM_TO_TOP -> GradientColors(endColor, endColor, startColor, startColor)
-            LEFT_TO_RIGHT -> GradientColors(startColor, endColor, endColor, startColor)
-            RIGHT_TO_LEFT -> GradientColors(endColor, startColor, startColor, endColor)
+            LEFT_TO_RIGHT -> GradientColors(startColor, endColor, startColor, endColor)
+            RIGHT_TO_LEFT -> GradientColors(endColor, startColor, endColor, startColor)
         }
     }
 
