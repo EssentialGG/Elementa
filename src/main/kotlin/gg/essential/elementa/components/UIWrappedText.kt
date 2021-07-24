@@ -28,7 +28,8 @@ open class UIWrappedText @JvmOverloads constructor(
      * inserting an ellipsis ("...") if text is trimmed
      */
     private val trimText: Boolean = false,
-    private val lineSpacing: Float = 9f
+    private val lineSpacing: Float = 9f,
+    private val trimmedTextSuffix: String = "..."
 ) : UIComponent() {
     private var textState: State<String> = BasicState(text)
     private var shadowState: State<Boolean> = BasicState(shadow)
@@ -124,15 +125,18 @@ open class UIWrappedText @JvmOverloads constructor(
                 textScale,
                 ((getHeight() / textScale - extraHeightState.get()) / lineSpacing).toInt(),
                 ensureSpaceAtEndOfLines = false,
+                fontProvider = getFontProvider(),
+                trimmedTextSuffix = trimmedTextSuffix
+            )
+        } else {
+            getStringSplitToWidth(
+                textState.get(),
+                width,
+                textScale,
+                ensureSpaceAtEndOfLines = false,
                 fontProvider = getFontProvider()
             )
-        } else getStringSplitToWidth(
-            textState.get(),
-            width,
-            textScale,
-            ensureSpaceAtEndOfLines = false,
-            fontProvider = getFontProvider()
-        )
+        }.map { it.trimEnd() }
 
         val shadow = shadowState.get()
         val shadowColor = shadowColorState.get()
