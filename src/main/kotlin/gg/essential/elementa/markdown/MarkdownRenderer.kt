@@ -10,9 +10,22 @@ import org.commonmark.parser.Parser
 import java.net.URL
 
 class MarkdownRenderer @JvmOverloads constructor(
+    text: String,
+    md: MarkdownComponent,
+    config: MarkdownConfig = MarkdownConfig(),
+) {
+
+    private val impl = MarkdownRendererImpl(text, md, config)
+
+    fun render(): DrawableList = impl.render()
+}
+
+// Separate as to not expose the CommonMark implementation detail
+private class MarkdownRendererImpl(
     private val text: String,
     private val md: MarkdownComponent,
-    private val config: MarkdownConfig = MarkdownConfig()) : AbstractVisitor() {
+    private val config: MarkdownConfig,
+) : AbstractVisitor() {
 
     private val drawables = mutableListOf<Drawable>()
     private val style = MutableStyle()

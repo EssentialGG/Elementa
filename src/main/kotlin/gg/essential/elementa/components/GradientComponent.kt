@@ -51,10 +51,10 @@ open class GradientComponent @JvmOverloads constructor(
 
         drawGradientBlock(
             matrixStack,
-            x.toInt(),
-            y.toInt(),
-            x2.toInt(),
-            y2.toInt(),
+            x,
+            y,
+            x2,
+            y2,
             startColorState.get(),
             endColorState.get(),
             directionState.get()
@@ -72,8 +72,8 @@ open class GradientComponent @JvmOverloads constructor(
         fun getGradientColors(startColor: Color, endColor: Color): GradientColors = when (this) {
             TOP_TO_BOTTOM -> GradientColors(startColor, startColor, endColor, endColor)
             BOTTOM_TO_TOP -> GradientColors(endColor, endColor, startColor, startColor)
-            LEFT_TO_RIGHT -> GradientColors(startColor, endColor, endColor, startColor)
-            RIGHT_TO_LEFT -> GradientColors(endColor, startColor, startColor, endColor)
+            LEFT_TO_RIGHT -> GradientColors(startColor, endColor, startColor, endColor)
+            RIGHT_TO_LEFT -> GradientColors(endColor, startColor, endColor, startColor)
         }
     }
 
@@ -81,8 +81,8 @@ open class GradientComponent @JvmOverloads constructor(
 
     companion object {
         @Deprecated(
-            UMatrixStack.Compat.DEPRECATED,
-            ReplaceWith("drawGradientBlock(matrixStack, x1, y1, x2, y2, startColor, endColor, direction)"),
+            "This method does not allow for gradients to be rendered at sub-pixel positions. Use the Double variant instead and do not cast to Int.",
+            ReplaceWith("drawGradientBlock(x1.toDouble(), y1.toDouble(), x2.toDouble(), y2.toDouble(), startColor, endColor, direction)")
         )
         fun drawGradientBlock(
             x1: Int,
@@ -92,14 +92,28 @@ open class GradientComponent @JvmOverloads constructor(
             startColor: Color,
             endColor: Color,
             direction: GradientDirection
+        ) = drawGradientBlock(x1.toDouble(), y1.toDouble(), x2.toDouble(), y2.toDouble(), startColor, endColor, direction)
+
+        @Deprecated(
+            UMatrixStack.Compat.DEPRECATED,
+            ReplaceWith("drawGradientBlock(matrixStack, x1, y1, x2, y2, startColor, endColor, direction)"),
+        )
+        fun drawGradientBlock(
+            x1: Double,
+            y1: Double,
+            x2: Double,
+            y2: Double,
+            startColor: Color,
+            endColor: Color,
+            direction: GradientDirection
         ) = drawGradientBlock(UMatrixStack(), x1, y1, x2, y2, startColor, endColor, direction)
 
         fun drawGradientBlock(
             matrixStack: UMatrixStack,
-            x1: Int,
-            y1: Int,
-            x2: Int,
-            y2: Int,
+            x1: Double,
+            y1: Double,
+            x2: Double,
+            y2: Double,
             startColor: Color,
             endColor: Color,
             direction: GradientDirection
@@ -113,10 +127,10 @@ open class GradientComponent @JvmOverloads constructor(
             val colours = direction.getGradientColors(startColor, endColor)
             val tessellator = UGraphics.getFromTessellator()
             tessellator.beginWithDefaultShader(UGraphics.DrawMode.QUADS, DefaultVertexFormats.POSITION_COLOR)
-            tessellator.pos(matrixStack, x2.toDouble(), y1.toDouble(), 0.0).color(colours.topRight).endVertex()
-            tessellator.pos(matrixStack, x1.toDouble(), y1.toDouble(), 0.0).color(colours.topLeft).endVertex()
-            tessellator.pos(matrixStack, x1.toDouble(), y2.toDouble(), 0.0).color(colours.bottomLeft).endVertex()
-            tessellator.pos(matrixStack, x2.toDouble(), y2.toDouble(), 0.0).color(colours.bottomRight).endVertex()
+            tessellator.pos(matrixStack, x2, y1, 0.0).color(colours.topRight).endVertex()
+            tessellator.pos(matrixStack, x1, y1, 0.0).color(colours.topLeft).endVertex()
+            tessellator.pos(matrixStack, x1, y2, 0.0).color(colours.bottomLeft).endVertex()
+            tessellator.pos(matrixStack, x2, y2, 0.0).color(colours.bottomRight).endVertex()
             tessellator.drawDirect()
 
             UGraphics.shadeModel(GL11.GL_FLAT)

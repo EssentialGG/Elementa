@@ -29,7 +29,7 @@ data class SVGCircle(val cx: Float, val cy: Float, val r: Float) : SVGElement() 
     companion object {
         const val VERTEX_COUNT = 25
 
-        fun from(element: Element): SVGCircle {
+        internal fun from(element: Element): SVGCircle {
             return SVGCircle(
                 element.attributeValue("cx").toFloat(),
                 element.attributeValue("cy").toFloat(),
