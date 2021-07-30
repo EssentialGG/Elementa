@@ -5,11 +5,14 @@ import gg.essential.elementa.components.*
 import gg.essential.elementa.constraints.*
 import gg.essential.elementa.dsl.*
 import gg.essential.elementa.effects.OutlineEffect
+import gg.essential.elementa.effects.ScissorEffect
 import gg.essential.elementa.utils.ObservableAddEvent
 import gg.essential.elementa.utils.ObservableClearEvent
 import gg.essential.elementa.utils.ObservableRemoveEvent
+import gg.essential.universal.UGraphics
 import gg.essential.universal.UMouse
 import gg.essential.universal.UResolution
+import org.lwjgl.opengl.GL11
 import java.awt.Color
 import java.text.NumberFormat
 
@@ -199,14 +202,31 @@ class Inspector @JvmOverloads constructor(
             else hitComponent
         } else {
             selectedNode?.targetComponent
-        }?.also {
-            UIBlock.drawBlock(
-                Color(129, 212, 250, 100),
-                it.getLeft().toDouble(),
-                it.getTop().toDouble(),
-                it.getRight().toDouble(),
-                it.getBottom().toDouble()
-            )
+        }?.also { component ->
+            val scissors = generateSequence(component) { if (it.parent != it) it.parent else null }
+                .flatMap { it.effects.filterIsInstance<ScissorEffect>().asReversed() }
+                .toList()
+                .reversed()
+
+            val x1 = component.getLeft().toDouble()
+            val y1 = component.getTop().toDouble()
+            val x2 = component.getRight().toDouble()
+            val y2 = component.getBottom().toDouble()
+
+            // Clear the depth buffer cause we will be using it to draw our outside-of-scissor-bounds block
+            UGraphics.glClear(GL11.GL_DEPTH_BUFFER_BIT)
+
+            // Draw a highlight on the element respecting its scissor effects
+            scissors.forEach { it.beforeDraw() }
+            UIBlock.drawBlock(Color(129, 212, 250, 100), x1, y1, x2, y2)
+            scissors.forEach { it.afterDraw() }
+
+            // Then draw another highlight (with depth testing such that we do not overwrite the previous one)
+            // which does not respect the scissor effects and thereby indicates where the element is drawn outside of
+            // its scissor bounds.
+            UGraphics.depthFunc(GL11.GL_LESS)
+            UIBlock.drawBlock(Color(255, 100, 100, 100), x1, y1, x2, y2)
+            UGraphics.depthFunc(GL11.GL_LEQUAL)
         }
 
         super.draw()
