@@ -142,14 +142,30 @@ class Inspector @JvmOverloads constructor(
         } as InspectorNode
 
         component.children.addObserver { _, event ->
+            val (index, childComponent) = when (event) {
+                is ObservableAddEvent<*> -> event.element
+                is ObservableRemoveEvent<*> -> event.element
+                is ObservableClearEvent<*> -> {
+                    node.clearChildren()
+                    return@addObserver
+                }
+                else -> return@addObserver
+            }
+
+            // We do not want to show the inspector itself
+            if (childComponent == this) {
+                return@addObserver
+            }
+
+            // So we also need to offset any indices after it
+            val offset = -(0 until index).count { component.children[it] == this }
+
             when (event) {
                 is ObservableAddEvent<*> -> {
-                    val newComponent = event.element.value as UIComponent
-                    if (newComponent != this)
-                        node.addChild(InspectorNode(this, newComponent))
+                    val childNode = InspectorNode(this, childComponent as UIComponent)
+                    node.addChildAt(index + offset, childNode)
                 }
-                is ObservableRemoveEvent<*> -> node.removeChildAt(event.element.index)
-                is ObservableClearEvent<*> -> node.clearChildren()
+                is ObservableRemoveEvent<*> -> node.removeChildAt(index + offset)
             }
         }
 
