@@ -219,7 +219,7 @@ class Inspector @JvmOverloads constructor(
             // Draw a highlight on the element respecting its scissor effects
             scissors.forEach { it.beforeDraw() }
             UIBlock.drawBlock(Color(129, 212, 250, 100), x1, y1, x2, y2)
-            scissors.forEach { it.afterDraw() }
+            scissors.asReversed().forEach { it.afterDraw() }
 
             // Then draw another highlight (with depth testing such that we do not overwrite the previous one)
             // which does not respect the scissor effects and thereby indicates where the element is drawn outside of
