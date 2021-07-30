@@ -162,7 +162,7 @@ class Inspector @JvmOverloads constructor(
 
             when (event) {
                 is ObservableAddEvent<*> -> {
-                    val childNode = InspectorNode(this, childComponent as UIComponent)
+                    val childNode = componentToNode(childComponent as UIComponent)
                     node.addChildAt(index + offset, childNode)
                 }
                 is ObservableRemoveEvent<*> -> node.removeChildAt(index + offset)
