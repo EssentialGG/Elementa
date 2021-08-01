@@ -150,7 +150,7 @@ if (FABRIC) {
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
-    implementation "gg.essential:universalcraft-${mcVersionStr}-${mcPlatform}:145"
+    implementation "gg.essential:universalcraft-${mcVersionStr}-${mcPlatform}:146"
     implementation "org.commonmark:commonmark:0.17.1"
     implementation "org.commonmark:commonmark-ext-gfm-strikethrough:0.17.1"
     implementation "org.commonmark:commonmark-ext-ins:0.17.1"
