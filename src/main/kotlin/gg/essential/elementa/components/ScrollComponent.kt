@@ -97,8 +97,8 @@ class ScrollComponent @JvmOverloads constructor(
 
     init {
         this.constrain {
-            width = ScrollChildConstraint()
-            height = ScrollChildConstraint()
+            width = ScrollChildConstraint() coerceAtMost 100.percentOfWindow()
+            height = ScrollChildConstraint() coerceAtMost 100.percentOfWindow()
         }
 
         if (!horizontalScrollEnabled && !verticalScrollEnabled)
