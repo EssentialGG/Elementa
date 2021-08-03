@@ -1,13 +1,11 @@
 package gg.essential.elementa.components
 
 import gg.essential.elementa.UIComponent
-import gg.essential.elementa.constraints.CenterConstraint
-import gg.essential.elementa.constraints.RelativeConstraint
-import gg.essential.elementa.constraints.SiblingConstraint
+import gg.essential.elementa.constraints.*
 import gg.essential.elementa.constraints.animation.Animations
+import gg.essential.elementa.constraints.resolution.ConstraintVisitor
 import gg.essential.elementa.dsl.*
 import gg.essential.elementa.effects.ScissorEffect
-import gg.essential.elementa.svg.SVGParser
 import gg.essential.elementa.utils.bindLast
 import gg.essential.universal.UKeyboard
 import gg.essential.universal.UMouse
@@ -98,6 +96,10 @@ class ScrollComponent @JvmOverloads constructor(
         get() = max(0f, calculateActualHeight() - getHeight())
 
     init {
+        this.constrain {
+            width = ScrollChildConstraint()
+            height = ScrollChildConstraint()
+        }
 
         if (!horizontalScrollEnabled && !verticalScrollEnabled)
             throw IllegalArgumentException("ScrollComponent must have at least one direction of scrolling enabled")
@@ -684,6 +686,70 @@ class ScrollComponent @JvmOverloads constructor(
                 } childOf container
             }
         }
+    }
+
+    /**
+     * Constrains a scroll component to either the widest/tallest child or to the sum of their widths/heights and
+     * padding. If [horizontalScrollEnabled] or [verticalScrollEnabled] are true, they will change the constraint to
+     * use the total of their children's corresponding measurements and padding. Otherwise, it will use the maximum
+     * measurement for the corresponding direction.
+     *
+     * This is the default width and height constraint for scroll components.
+     *
+     * @param padding Pixels of padding to add to each component
+     */
+    inner class ScrollChildConstraint(val padding: Float = 0f) : WidthConstraint, HeightConstraint {
+        override var cachedValue = 0f
+        override var recalculate = true
+        override var constrainTo: UIComponent? = null
+
+        override fun getWidthImpl(component: UIComponent): Float {
+            if (horizontalScrollEnabled) {
+                val holder = constrainTo ?: actualHolder
+                var totalPadding = (holder.children.size - 1) * padding
+                holder.children.forEach { child ->
+                    if (child.constraints.y is PaddingConstraint) {
+                        totalPadding += (child.constraints.y as PaddingConstraint).getVerticalPadding(child)
+                    }
+                }
+                return (holder.children
+                    .sumOf { it.getHeight().toDouble() } + totalPadding).toFloat()
+
+            } else {
+                return (constrainTo ?: actualHolder).children.maxByOrNull {
+                    if(it.constraints.x is PaddingConstraint)
+                        return@maxByOrNull it.getWidth() + (it.constraints.x as PaddingConstraint).getHorizontalPadding(it)
+                    it.getWidth() }?.getWidth() ?: 0f
+            }
+        }
+
+        override fun getHeightImpl(component: UIComponent): Float {
+            if (verticalScrollEnabled) {
+                val holder = constrainTo ?: actualHolder
+                var totalPadding = (holder.children.size - 1) * padding
+                holder.children.forEach { child ->
+                    if (child.constraints.y is PaddingConstraint) {
+                        totalPadding += (child.constraints.y as PaddingConstraint).getVerticalPadding(child)
+                    }
+                }
+                return (holder.children
+                    .sumOf { it.getHeight().toDouble() } + totalPadding).toFloat()
+            } else {
+                return (constrainTo ?: actualHolder).children.maxByOrNull {
+                    if(it.constraints.y is PaddingConstraint)
+                        return@maxByOrNull it.getHeight() + (it.constraints.y as PaddingConstraint).getVerticalPadding(it)
+                    it.getHeight() }?.getHeight() ?: 0f
+            }
+        }
+
+        override fun visitImpl(visitor: ConstraintVisitor, type: ConstraintType) {
+            when (type) {
+                ConstraintType.WIDTH -> visitor.visitChildren(ConstraintType.WIDTH)
+                ConstraintType.HEIGHT -> visitor.visitChildren(ConstraintType.HEIGHT)
+                else -> throw IllegalArgumentException(type.prettyName)
+            }
+        }
+
     }
 
     companion object {
