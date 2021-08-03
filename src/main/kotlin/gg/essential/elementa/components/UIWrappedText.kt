@@ -55,7 +55,7 @@ open class UIWrappedText @JvmOverloads constructor(
         setWidth(textWidthState.pixels())
         setHeight(basicHeightConstraint {
             val lines = getStringSplitToWidth(
-                text,
+                getText(),
                 getWidth(),
                 getTextScale(),
                 ensureSpaceAtEndOfLines = false,
