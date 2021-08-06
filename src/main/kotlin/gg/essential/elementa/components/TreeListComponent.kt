@@ -53,6 +53,10 @@ abstract class TreeNode {
         displayComponent.addNodeChild(node.displayComponent)
     }
 
+    fun addChildAt(index: Int, node: TreeNode) = apply {
+        displayComponent.addNodeChildAt(index, node.displayComponent)
+    }
+
     fun removeChildAt(index: Int) = apply {
         displayComponent.removeNodeChildAt(index)
     }
@@ -118,6 +122,10 @@ abstract class TreeNode {
 
         fun addNodeChild(component: UIComponent) = apply {
             childContainer.addChild(component)
+        }
+
+        fun addNodeChildAt(index: Int, component: UIComponent) = apply {
+            childContainer.insertChildAt(component, index)
         }
 
         fun removeNodeChildAt(index: Int) = apply {

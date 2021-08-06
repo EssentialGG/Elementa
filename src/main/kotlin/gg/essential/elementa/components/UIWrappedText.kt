@@ -25,7 +25,7 @@ open class UIWrappedText @JvmOverloads constructor(
     shadowColor: Color? = null,
     private var centered: Boolean = false,
     /**
-     * Keeps the rendered text without the bounds of the component,
+     * Keeps the rendered text within the bounds of the component,
      * inserting an ellipsis ("...") if text is trimmed
      */
     private val trimText: Boolean = false,
@@ -56,7 +56,7 @@ open class UIWrappedText @JvmOverloads constructor(
         setWidth(textWidthState.pixels())
         setHeight(basicHeightConstraint {
             val lines = getStringSplitToWidth(
-                text,
+                getText(),
                 getWidth(),
                 getTextScale(),
                 ensureSpaceAtEndOfLines = false,
