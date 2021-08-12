@@ -38,6 +38,7 @@ class SVGComponent(private var svg: SVG) : UIComponent(), ImageProvider {
         matrixStack.push()
 
         UGraphics.enableBlend()
+        @Suppress("DEPRECATION")
         UGraphics.disableTexture2D()
 
         GL11.glColor4f(color.red / 255f, color.green / 255f, color.blue / 255f, 1f)
@@ -66,6 +67,7 @@ class SVGComponent(private var svg: SVG) : UIComponent(), ImageProvider {
         GL11.glDisableClientState(GL11.GL_VERTEX_ARRAY)
         GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0)
 
+        @Suppress("DEPRECATION")
         UGraphics.enableTexture2D()
 
         matrixStack.pop()

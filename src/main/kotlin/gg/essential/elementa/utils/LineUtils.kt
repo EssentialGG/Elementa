@@ -22,7 +22,6 @@ object LineUtils {
     @JvmStatic
     fun drawLineStrip(matrixStack: UMatrixStack, points: List<Pair<Number, Number>>, color: Color, width: Float) {
         UGraphics.enableBlend()
-        UGraphics.disableTexture2D()
 
         val buffer = UGraphics.getFromTessellator()
         buffer.beginWithDefaultShader(UGraphics.DrawMode.TRIANGLE_STRIP, DefaultVertexFormats.POSITION_COLOR);
@@ -46,8 +45,6 @@ object LineUtils {
                 .endVertex()
         }
         buffer.drawDirect()
-
-        UGraphics.enableTexture2D()
     }
 
     private fun Pair<Number, Number>.sub(other: Pair<Number, Number>): Pair<Double, Double> {

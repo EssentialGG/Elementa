@@ -35,17 +35,19 @@ internal fun drawTexture(
     UGraphics.enableAlpha()
     matrixStack.scale(1f, 1f, 50f)
     //#if MC<=11202
-    UGraphics.bindTexture(texture.glTextureId)
+    val glId = texture.glTextureId
     //#else
-    //$$ UGraphics.bindTexture(texture.getGlTextureId())
+    //$$ val glId = texture.getGlTextureId()
     //#endif
-    UGraphics.enableTexture2D()
+    UGraphics.bindTexture(0, glId)
     val red = color.red.toFloat() / 255f
     val green = color.green.toFloat() / 255f
     val blue = color.blue.toFloat() / 255f
     val alpha = color.alpha.toFloat() / 255f
     val worldRenderer = UGraphics.getFromTessellator()
-    GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
+    UGraphics.configureTexture(glId) {
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST)
+    }
 
     worldRenderer.beginWithDefaultShader(UGraphics.DrawMode.QUADS, DefaultVertexFormats.POSITION_TEX_COLOR)
 

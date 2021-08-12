@@ -50,14 +50,12 @@ open class UIBlock(colorConstraint: ColorConstraint = Color.WHITE.toConstraint()
 
         fun drawBlock(matrixStack: UMatrixStack, color: Color, x1: Double, y1: Double, x2: Double, y2: Double) {
             UGraphics.enableBlend()
-            UGraphics.disableTexture2D()
             UGraphics.tryBlendFuncSeparate(770, 771, 1, 0)
 
             val buffer = UGraphics.getFromTessellator()
             buffer.beginWithDefaultShader(UGraphics.DrawMode.QUADS, DefaultVertexFormats.POSITION_COLOR)
             drawBlock(buffer, matrixStack, color, x1, y1, x2, y2)
 
-            UGraphics.enableTexture2D()
             UGraphics.disableBlend()
         }
 

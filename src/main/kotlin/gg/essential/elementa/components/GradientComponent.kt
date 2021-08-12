@@ -118,7 +118,6 @@ open class GradientComponent @JvmOverloads constructor(
             endColor: Color,
             direction: GradientDirection
         ) {
-            UGraphics.disableTexture2D()
             UGraphics.enableBlend()
             UGraphics.disableAlpha()
             UGraphics.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO)
@@ -136,7 +135,6 @@ open class GradientComponent @JvmOverloads constructor(
             UGraphics.shadeModel(GL11.GL_FLAT)
             UGraphics.disableBlend()
             UGraphics.enableAlpha()
-            UGraphics.enableTexture2D()
         }
     }
 }
