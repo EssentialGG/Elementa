@@ -1,7 +1,7 @@
 plugins {
     kotlin("jvm") version "1.5.10" apply false
     id("fabric-loom") version "0.8-SNAPSHOT" apply false
-    id("com.replaymod.preprocess") version "4b4dfe5"
+    id("com.replaymod.preprocess") version "ff216cd"
 }
 
 version = determineVersion()
