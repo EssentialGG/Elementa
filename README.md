@@ -17,25 +17,47 @@ maven {
     url = "https://repo.sk1er.club/repository/maven-public"
 }
 ```
+To use the latest builds, use the following dependency:
 
+```groovy
+implementation "gg.essential:elementa-$mcVersion-$mcPlatform:$buildNumber"
+```
+<details><summary>Build Reference</summary>
+    <table>
+      <tbody>
+        <tr>
+          <th>mcVersion</th>
+          <th>mcPlatform</th>
+          <th>buildNumber</th>
+        </tr>
+        <tr>
+          <td>1.12.2</td>
+          <td>forge</td>
+          <td>
+            <img alt="1.12.2-forge" src="https://img.shields.io/maven-metadata/v?color=A97BFF&label=&metadataUrl=https%3A%2F%2Frepo.sk1er.club%2Frepository%2Fmaven-releases%2Fgg%2Fessential%2Felementa-1.12.2-forge%2Fmaven-metadata.xml">
+          </td>
+        </tr>
+        <tr>
+          <td>1.8.9</td>
+          <td>forge</td>
+          <td><img alt="1.8.9-forge" src="https://img.shields.io/maven-metadata/v?color=A97BFF&label=&metadataUrl=https%3A%2F%2Frepo.sk1er.club%2Frepository%2Fmaven-releases%2Fgg%2Fessential%2Felementa-1.8.9-forge%2Fmaven-metadata.xml"></td>
+        </tr>
+      </tbody>
+    </table>
+
+</details>
+
+If you were previously using v1.7.1 of Elementa and are now on the v2.0.0 builds, please refer to the
+[migration](docs/migration.md) document to know what has changed.
+
+To learn about all the new features in v2.0.0, please read the [what's new](docs/whatsnew.md) document.
+
+## Legacy Builds
 In your dependencies block, add:
 
 ```groovy
 implementation "club.sk1er:Elementa:1.7.1-$mcVersion"
 ```
-
-## 2.0.0 Snapshots
-
-To use the latest snapshot, use the following dependency:
-
-```groovy
-implementation "club.sk1er:Elementa:129-$mcVersion-SNAPSHOT"
-```
-
-If you were previously using v1.7.1 of Elementa and are now on the v2.0.0 snapshots, please refer to the
-[migration](docs/migration.md) document to know what has changed.
-
-To learn about all the new features in v2.0.0, please read the [what's new](docs/whatsnew.md) document.
 
 ## Components
 
@@ -97,7 +119,7 @@ Anything drawn outside of that area will simply be cut off. Any component that i
 of the component where the effect is enabled will not have their rendering affected.
 
 ```kotlin
-val box = UIBlock() effect ScissorEffect()
+val box = UIBlock().enableEffects(ScissorEffect())
 ```
 
 ## Animations
