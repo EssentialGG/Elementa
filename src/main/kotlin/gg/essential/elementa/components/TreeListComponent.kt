@@ -6,6 +6,7 @@ import gg.essential.elementa.dsl.basicWidthConstraint
 import gg.essential.elementa.dsl.childOf
 import gg.essential.elementa.dsl.constrain
 import gg.essential.elementa.dsl.pixels
+import gg.essential.universal.UKeyboard
 import kotlin.math.max
 
 abstract class TreeArrowComponent : UIComponent() {
@@ -108,16 +109,29 @@ abstract class TreeNode {
 
             arrowComponent.onMouseClick { event ->
                 event.stopImmediatePropagation()
+                val isRecursive = UKeyboard.isShiftKeyDown()
 
                 if (opened) {
-                    arrowComponent.close()
-                    childContainer.hide()
+                    close(isRecursive)
                 } else {
-                    arrowComponent.open()
-                    childContainer.unhide()
+                    open(isRecursive)
                 }
                 opened = !opened
             }
+        }
+
+        fun open(isRecursive: Boolean = false) {
+            arrowComponent.open()
+            childContainer.unhide()
+            if (isRecursive)
+                recursivelyApplyToChildNodes(this@TreeNodeComponent, TreeNodeComponent::open)
+        }
+
+        fun close(isRecursive: Boolean = false) {
+            arrowComponent.close()
+            childContainer.hide()
+            if (isRecursive)
+                recursivelyApplyToChildNodes(this@TreeNodeComponent, TreeNodeComponent::close)
         }
 
         fun addNodeChild(component: UIComponent) = apply {
@@ -134,6 +148,13 @@ abstract class TreeNode {
 
         fun clearNodeChildren() = apply {
             childContainer.clearChildren()
+        }
+
+        private fun recursivelyApplyToChildNodes(node: TreeNodeComponent, method: (TreeNodeComponent) -> Unit) {
+            node.childContainer.children.filterIsInstance<TreeNodeComponent>().forEach {
+                method(it)
+                recursivelyApplyToChildNodes(it, method)
+            }
         }
     }
 }
