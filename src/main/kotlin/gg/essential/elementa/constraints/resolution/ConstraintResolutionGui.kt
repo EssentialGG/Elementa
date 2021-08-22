@@ -263,7 +263,10 @@ class ConstraintResolutionGui(
             right childOf this
 
             if (index != nodes!!.lastIndex) {
-                UIText("§7Component: §r${node.component.componentName}@${Integer.toHexString(node.component.hashCode())}").constrain {
+                val componentClassName = node.component.javaClass.simpleName.ifEmpty { "UnknownType" }
+                val componentDisplayName = node.component.componentName.let { if (it == componentClassName) it else "$componentClassName: $it" }
+
+                UIText("§7Component: §r$componentDisplayName").constrain {
                     y = SiblingConstraint()
                 } childOf right
 
