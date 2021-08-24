@@ -19,8 +19,12 @@ import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.max
 
+/**
+ * [MSDF](https://github.com/Chlumsky/msdfgen) Font Renderer
+ */
 class FontRenderer(
-    private val regularFont: Font, private val boldFont: Font = regularFont
+    private val regularFont: Font,
+    private val boldFont: Font = regularFont
 ) : FontProvider {
     private var underline: Boolean = false
     private var strikethrough: Boolean = false

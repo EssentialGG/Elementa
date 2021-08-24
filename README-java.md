@@ -10,8 +10,8 @@ or extend `UIComponent` yourself.
 ```java
 // Manually create and store a window instance. The Window is the entry point for Elementa's event system,
 // in that you must call events on the window instance manually, the most common of which would be Window#draw.
-// This call must be made every frame or else the library will never render your components. In the case of
-// drawing in a GuiScreen, you would call this method from your overriden GuiScreen#drawScreen method.
+// This call must be made every frame or else the library will never render your components. If your Gui extends
+// Elementa's WindowScreen, this step will already be done and a window will be provided.
 Window window = new Window();
 
 // Here we are creating an instance of one of the simplest components available, a UIBlock.
@@ -44,9 +44,9 @@ UIComponent box = new UIBlock()
 ## Effects
 
 Additionally, a component can have a list of effects, special modifiers that can affect the rendering of
-a component or its children. The most commonly used effect as of now is the `ScissorEffect`. When enabled for
-an arbitrary component, this effect restricts all of it's children to be drawn inside of its own boundaries.
-Anything drawn outside of that area will simply be cut off. Any component that is not a child (direct or indirect)
+a component or its children. One of the most common effects is the `ScissorEffect`. When enabled for
+an arbitrary component, this effect restricts all of its children to be drawn inside its own boundaries.
+Anything drawn outside that area will simply be cut off. Any component that is not a child (direct or indirect)
 of the component where the effect is enabled will not have their rendering affected.
 
 ```java
@@ -55,12 +55,12 @@ UIComponent box = new UIBlock().enableEffect(new ScissorEffect());
 
 ## Animations
 
-Elementa also provides a strong animation API. When you make an animation, you set all of the
+Elementa also provides a strong animation API. When you make an animation, you set all the
 new constraints you would like to animate to, as well as the length (and optionally, delay)
 of the animation.
 
-When animating, you have a wide variety of animation algorithms to choose from, and you can
-feel free to implement custom ones yourself. All of the built-in animation algorithms come from
+When animating, you have a wide variety of animation strategies (algorithms) to choose from, and you can
+of course implement more yourself. All the built-in animation strategies come from
 the `Animations` enum.
 
 ```java
@@ -104,18 +104,16 @@ method.
 ## All together
 
 This is a basic excerpt of code from an Elementa GUI. To see a more fleshed out
-example, look to the `SettingsGui` class.
+example, look to the `JavaTestGui` class.
 
 ```java
-public class TestGui extends GuiScreen {
-    Window window = new Window();
-
+public class TestGui extends WindowScreen {
     UIComponent box = new UIBlock()
         .setX(new CenterConstraint())
         .setY(new PixelConstraint(10f))
         .setWidth(new PixelConstraint(0f))
         .setHeight(new PixelConstraint(36f))
-        .setChildOf(window)
+        .setChildOf(getWindow())
         .enableEffect(new ScissorEffect());
 
     public TestGui() {

@@ -7,6 +7,10 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats
 import org.lwjgl.opengl.GL11
 import java.awt.Color
 
+/**
+ * Variant of [UIBlock] with two colours that fade into each other in a
+ * gradient pattern.
+ */
 open class GradientComponent @JvmOverloads constructor(
     startColor: Color = Color.WHITE,
     endColor: Color = Color.WHITE,
@@ -93,8 +97,11 @@ open class GradientComponent @JvmOverloads constructor(
             startColor: Color,
             endColor: Color,
             direction: GradientDirection
-        ) = drawGradientBlock(x1.toDouble(), y1.toDouble(), x2.toDouble(), y2.toDouble(), startColor, endColor, direction)
+        ): Unit = drawGradientBlock(x1.toDouble(), y1.toDouble(), x2.toDouble(), y2.toDouble(), startColor, endColor, direction)
 
+        /**
+         * Draw a rectangle with a gradient effect.
+         */
         fun drawGradientBlock(
             x1: Double,
             y1: Double,

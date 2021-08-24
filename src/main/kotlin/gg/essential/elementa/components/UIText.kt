@@ -10,7 +10,7 @@ import gg.essential.universal.UGraphics
 import java.awt.Color
 
 /**
- * Simple text component that draws its given [text] at the scale determined by
+ * Simple text component that draws its given `text` at the scale determined by
  * this component's width & height constraints.
  */
 open class UIText @JvmOverloads constructor(

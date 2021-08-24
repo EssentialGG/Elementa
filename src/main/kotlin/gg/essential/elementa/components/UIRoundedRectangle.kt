@@ -10,7 +10,9 @@ import gg.essential.universal.UGraphics
 import java.awt.Color
 
 /**
- * Draws a rounded rectangle
+ * Alternative to [UIBlock] with rounded corners.
+ *
+ * @param radius corner radius.
  */
 open class UIRoundedRectangle(radius: Float) : UIComponent() {
     init {
@@ -43,6 +45,9 @@ open class UIRoundedRectangle(radius: Float) : UIComponent() {
             shaderInnerRectUniform = Vec4Uniform(shader.getUniformLocation("u_InnerRect"))
         }
 
+        /**
+         * Draws a rounded rectangle
+         */
         fun drawRoundedRectangle(left: Float, top: Float, right: Float, bottom: Float, radius: Float, color: Color) {
             if (!::shader.isInitialized)
                 return

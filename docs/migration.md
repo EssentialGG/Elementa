@@ -46,7 +46,7 @@ only the component with focus will ever receive keyboard events, not even the fo
 
 ## Window
 
-A couple things have changed with the `Window` class.
+A couple of things have changed with the `Window` class.
 
 For one, you no longer need to call `mouseDrag` on your Window instance, mouse dragging is handled internally
 by Elementa now to provide higher quality drag animations.

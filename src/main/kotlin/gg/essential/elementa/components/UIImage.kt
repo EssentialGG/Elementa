@@ -20,6 +20,12 @@ import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ConcurrentLinkedQueue
 import javax.imageio.ImageIO
 
+/**
+ * Component for drawing arbitrary images from [BufferedImage].
+ *
+ * There are companion functions available to get [UIImage]s from other sources,
+ * such as URLs: [Companion.ofURL], [Companion.ofFile] and [Companion.ofResource].
+ */
 open class UIImage @JvmOverloads constructor(
     private val imageFuture: CompletableFuture<BufferedImage>,
     private val loadingImage: ImageProvider = DefaultLoadingImage,
@@ -139,7 +145,6 @@ open class UIImage @JvmOverloads constructor(
             })
         }
 
-
         @JvmStatic
         fun ofResource(path: String): UIImage {
             return UIImage(CompletableFuture.supplyAsync {
@@ -168,9 +173,5 @@ open class UIImage @JvmOverloads constructor(
 
             return ImageIO.read(connection.inputStream)
         }
-
-
     }
-
-
 }

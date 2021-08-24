@@ -71,19 +71,24 @@ or extend `UIComponent` yourself.
 ```kotlin
 // Manually create and store a window instance. The Window is the entry point for Elementa's event system,
 // in that you must call events on the window instance manually, the most common of which would be Window#draw.
-// This call must be made every frame or else the library will never render your components. In the case of
-// drawing in a GuiScreen, you would call this method from your overriden GuiScreen#drawScreen method.
+// This call must be made every frame or else the library will never render your components. If your Gui extends
+// Elementa's WindowScreen, this step will already be done and a window will be provided.
 val window = Window()
 
 // Here we are creating an instance of one of the simplest components available, a UIBlock.
-// Next, we have to add it to our hierarchy in some way, and in this instance we want it to be
+// Next, we must give it positions to tell the library where to draw the component. Here we
+// simply give it a 10 pixel width and height.
+// Finally, we have to add it to our hierarchy in some way, and in this instance we want it to be
 // a child of the Window. Now that it is in the hierarchy, it will be drawn when we render our Window.
-val box = UIBlock(Color.RED /* java.awt.Color */).childOf(window)
+val box = UIBlock(Color.RED /* java.awt.Color */).constrain {
+    width = 10.pixels()
+    height = 10.pixels()
+} childOf window
 ```
 
 A showcase of all the components provided by Elementa:
 
-![Playground GUI Photo](https://i.imgur.com/z9eJPik.png)
+![Components GUI Photo](https://i.imgur.com/bw2VLua.png)
 
 Read more about all of these components [here](docs/components.md).
 
@@ -101,35 +106,34 @@ to be in the center of our parent, and that is all we need to do. No code to fig
 no code to calculate. We simply describe exactly what we want, and Elementa will do the rest for you.
 
 ```kotlin
-val box = UIBlock()
-    .constrain {
-      x = CenterConstraint()
-      y = PixelConstraint(10f)
-      width = PixelConstraint(0f)
-      height = PixelConstraint(36f)
-    }
+val box = UIBlock().constrain {
+    x = CenterConstraint()
+    y = 10.pixels()
+    width = 20.pixels()
+    height = 36.pixels()
+}
 ```
 
 ## Effects
 
 Additionally, a component can have a list of effects, special modifiers that can affect the rendering of
-a component or its children. The most commonly used effect as of now is the `ScissorEffect`. When enabled for
-an arbitrary component, this effect restricts all of it's children to be drawn inside of its own boundaries.
-Anything drawn outside of that area will simply be cut off. Any component that is not a child (direct or indirect)
+a component or its children. One of the most common effects is the `ScissorEffect`. When enabled for
+an arbitrary component, this effect restricts all of its children to be drawn inside its own boundaries.
+Anything drawn outside that area will simply be cut off. Any component that is not a child (direct or indirect)
 of the component where the effect is enabled will not have their rendering affected.
 
 ```kotlin
-val box = UIBlock().enableEffects(ScissorEffect())
+val box = UIBlock() effect ScissorEffect()
 ```
 
 ## Animations
 
-Elementa also provides a strong animation API. When you make an animation, you set all of the
+Elementa also provides a strong animation API. When you make an animation, you set all the
 new constraints you would like to animate to, as well as the length (and optionally, delay)
 of the animation.
 
-When animating, you have a wide variety of animation algorithms to choose from, and you can
-feel free to implement custom ones yourself. All of the built-in animation algorithms come from
+When animating, you have a wide variety of animation strategies (algorithms) to choose from, and you can
+of course implement more yourself. All the built-in animation strategies come from
 the `Animations` enum.
 
 ```kotlin
@@ -165,8 +169,7 @@ box.onMouseEnter {
 There are many more events than solely those two, and they can be found throughout `UIComponent`.
 Keep in mind that all events stem from the Window component, and events must be manually
 called on the Window. For example, in order to receive an `onMouseClick` event,
-you MUST call Window#mouseClick. In a GuiScreen, this would be done by overriding the `mouseClicked`
-method.
+you MUST call Window#mouseClick. This is also all handled by Elementa's WindowScreen.
 
 ## All together
 
@@ -176,15 +179,12 @@ example, look to the [ExampleGui class](src/main/java/com/example/examplemod/Exa
 ```kotlin
 val window = Window()
 
-val box = UIBlock()
-    .constrain {
-      x = CenterConstraint()
-      y = PixelConstraint(10f)
-      width = PixelConstraint(0f)
-      height = PixelConstraint(36f)
-    }
-    .childOf(window)
-    .enableEffects(ScissorEffect())
+val box = UIBlock().constrain {
+    x = CenterConstraint()
+    y = 10f.pixels()
+    width = 10f.pixels()
+    height = 36f.pixels()
+} effect ScissorEffect() childOf window
 
 box.animate {
     setWidthAnimation(Animations.OUT_EXP, 0.5f, ChildBasedSizeConstraint(2f))

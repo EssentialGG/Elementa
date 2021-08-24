@@ -8,6 +8,11 @@ import org.lwjgl.opengl.GL11
 import java.awt.Color
 
 // feeling cute, might delete this class later
+//   (he did not delete the class later)
+
+/**
+ * Component for drawing arbitrary shapes.
+ */
 open class UIShape @JvmOverloads constructor(color: Color = Color.WHITE) : UIComponent() {
     private var vertices = mutableListOf<UIPoint>()
     var drawMode = GL11.GL_POLYGON

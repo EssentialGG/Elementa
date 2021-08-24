@@ -10,7 +10,15 @@ import gg.essential.elementa.utils.Vector2f
 import gg.essential.universal.UGraphics
 import java.awt.Color
 
-class UICircle @JvmOverloads constructor(radius: Float = 0f, color: Color = Color.WHITE, var steps: Int = 40) :
+/**
+ * Simple component that uses shaders to draw a circle. This component
+ * takes a radius instead of a height/width!
+ *
+ * @param radius circle radius
+ * @param color circle color
+ * @param steps unused, kept for backwards compatibility
+ */
+class UICircle @JvmOverloads constructor(radius: Float = 0f, color: Color = Color.WHITE, var steps: Int = 0) :
     UIComponent() {
     init {
         setColor(color.toConstraint())

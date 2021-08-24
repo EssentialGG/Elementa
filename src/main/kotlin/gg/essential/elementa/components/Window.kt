@@ -55,9 +55,6 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
             it.remove()
         }
 
-
-
-
         if (systemTime == -1L)
             systemTime = System.currentTimeMillis()
 

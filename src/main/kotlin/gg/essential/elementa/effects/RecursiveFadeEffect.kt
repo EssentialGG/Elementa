@@ -12,6 +12,9 @@ import gg.essential.elementa.utils.withAlpha
 import java.awt.Color
 import kotlin.math.roundToInt
 
+/**
+ * Fades a component's color as well as all of its children.
+ */
 class RecursiveFadeEffect(
     private var isOverridden: State<Boolean> = BasicState(false),
     private var overriddenAlphaPercentage: State<Float> = BasicState(1f)
