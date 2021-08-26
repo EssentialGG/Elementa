@@ -10,8 +10,6 @@ import gg.essential.elementa.utils.ObservableAddEvent
 import gg.essential.elementa.utils.ObservableClearEvent
 import gg.essential.elementa.utils.ObservableRemoveEvent
 import gg.essential.universal.UGraphics
-import gg.essential.universal.UMouse
-import gg.essential.universal.UResolution
 import org.lwjgl.opengl.GL11
 import java.awt.Color
 import java.text.NumberFormat
@@ -39,6 +37,8 @@ class Inspector @JvmOverloads constructor(
     private var isClickSelecting = false
 
     init {
+        val rootWindow = Window.of(rootComponent)
+
         constrain {
             width = ChildBasedSizeConstraint()
             height = ChildBasedSizeConstraint()
@@ -80,16 +80,25 @@ class Inspector @JvmOverloads constructor(
             height = 14.pixels()
         } childOf titleBlock
 
-        // TODO: Fix click selecting
-//        SVGComponent.ofResource("/svg/click.svg").constrain {
-//            x = SiblingConstraint(10f)
-//            y = CenterConstraint()
-//            width = AspectConstraint(1f)
-//            height = RelativeConstraint(1f).to(title) as HeightConstraint
-//        }.onMouseClick { event ->
-//            event.stopPropagation()
-//            isClickSelecting = true
-//        } childOf titleBlock
+        SVGComponent.ofResource("/svg/click.svg").constrain {
+            x = SiblingConstraint(10f)
+            y = CenterConstraint()
+            width = AspectConstraint(1f)
+            height = RelativeConstraint(1f).to(title) as HeightConstraint
+        }.onMouseClick { event ->
+            event.stopPropagation()
+            isClickSelecting = true
+            rootWindow.clickInterceptor = { mouseX, mouseY, _ ->
+                rootWindow.clickInterceptor = null
+                isClickSelecting = false
+
+                val targetComponent = getClickSelectTarget(mouseX.toFloat(), mouseY.toFloat())
+                if (targetComponent != null) {
+                    findAndSelect(targetComponent)
+                }
+                true
+            }
+        } childOf titleBlock
 
         separator1 = UIBlock(outlineColor).constrain {
             y = SiblingConstraint()
@@ -100,8 +109,6 @@ class Inspector @JvmOverloads constructor(
             width = ChildBasedSizeConstraint() + 10.pixels()
             height = ChildBasedSizeConstraint() + 10.pixels()
         }
-
-        val rootWindow = Window.of(rootComponent)
 
         val treeBlockScroller = ScrollComponent().constrain {
             y = SiblingConstraint()
@@ -186,6 +193,35 @@ class Inspector @JvmOverloads constructor(
         selectedNode = node
     }
 
+    private fun getClickSelectTarget(mouseX: Float, mouseY: Float): UIComponent? {
+        val rootComponent = rootNode.targetComponent
+        val hitComponent = (rootComponent as? Window)?.hoveredFloatingComponent?.hitTest(mouseX, mouseY)
+            ?: rootComponent.hitTest(mouseX, mouseY)
+
+        return if (hitComponent == this || hitComponent.isChildOf(this)) null
+        else hitComponent
+    }
+
+    private fun findAndSelect(component: UIComponent) {
+        fun findNodeAndExpandParents(component: UIComponent): InspectorNode? {
+            if (component == rootNode.targetComponent) {
+                return rootNode
+            }
+            if (component.parent == component) {
+                return null
+            }
+            val parentNode = findNodeAndExpandParents(component.parent) ?: return null
+            val parentDisplay = parentNode.displayComponent
+            parentDisplay.opened = true
+            return parentDisplay.childNodes.filterIsInstance<InspectorNode>().find { it.targetComponent == component }
+        }
+
+        val node = findNodeAndExpandParents(component) ?: return
+        if (selectedNode != node) {
+            node.toggleSelection()
+        }
+    }
+
     override fun animationFrame() {
         super.animationFrame()
 
@@ -201,15 +237,8 @@ class Inspector @JvmOverloads constructor(
         separator2.setWidth(container.getWidth().pixels())
 
         if (isClickSelecting) {
-            val scaledHeight = UResolution.scaledHeight
-            val mouseX = UMouse.getScaledX().toFloat()
-            val mouseY = scaledHeight - UMouse.getTrueY().toFloat() * scaledHeight / UResolution.windowHeight - 1f
-            val hitComponent = rootNode.targetComponent.hitTest(mouseX, mouseY)
-
-            // TODO: Implement some kind of way to hook into a UIComponent to intercept events,
-            //  allowing for us to stop clicks when in the selecting mode.
-            if (hitComponent == this || hitComponent.isChildOf(this)) null
-            else hitComponent
+            val (mouseX, mouseY) = getMousePosition()
+            getClickSelectTarget(mouseX, mouseY)
         } else {
             selectedNode?.targetComponent
         }?.also { component ->

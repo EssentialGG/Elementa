@@ -29,6 +29,8 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
 
     private var cancelDrawing = false
 
+    internal var clickInterceptor: ((mouseX: Double, mouseY: Double, button: Int) -> Boolean)? = null
+
     init {
         super.parent = this
     }
@@ -150,6 +152,12 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
         requireMainThread()
 
         currentMouseButton = button
+
+        clickInterceptor?.let {
+            if (it(mouseX, mouseY, button)) {
+                return
+            }
+        }
 
         for (floatingComponent in floatingComponents.reversed()) {
             if (floatingComponent.isPointInside(mouseX.toFloat(), mouseY.toFloat())) {

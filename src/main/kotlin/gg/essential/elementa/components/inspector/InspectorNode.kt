@@ -44,14 +44,17 @@ class InspectorNode(private val inspector: Inspector, val targetComponent: UICom
         height = ChildBasedSizeConstraint()
     }.onMouseClick { event ->
         event.stopImmediatePropagation()
+        toggleSelection()
+    }
 
+    internal fun toggleSelection() {
         inspector.selectedNode?.component?.setColor(Color(0, 0, 0, 0).toConstraint())
 
         if (inspector.selectedNode == this@InspectorNode) {
             inspector.setSelectedNode(null)
         } else {
             inspector.setSelectedNode(this@InspectorNode)
-            setColor(Color(32, 78, 138).toConstraint())
+            component.setColor(Color(32, 78, 138).toConstraint())
         }
     }
 

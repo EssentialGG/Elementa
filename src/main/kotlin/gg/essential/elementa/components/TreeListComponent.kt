@@ -73,8 +73,23 @@ abstract class TreeNode {
     }
 
     inner class TreeNodeComponent : UIContainer() {
+        private val node: TreeNode = this@TreeNode
         private val arrowComponent = getArrowComponent()
-        private var opened = false
+        internal var opened = false
+            set(value) {
+                if (value == field) {
+                    return
+                }
+                field = value
+                if (value) {
+                    arrowComponent.open()
+                    childContainer.unhide()
+                } else {
+                    arrowComponent.close()
+                    childContainer.hide()
+                    close()
+                }
+            }
         private val childContainer = UIContainer().constrain {
             x = indentationOffset.pixels()
             y = SiblingConstraint()
@@ -116,20 +131,17 @@ abstract class TreeNode {
                 } else {
                     open(isRecursive)
                 }
-                opened = !opened
             }
         }
 
         fun open(isRecursive: Boolean = false) {
-            arrowComponent.open()
-            childContainer.unhide()
+            opened = true
             if (isRecursive)
                 recursivelyApplyToChildNodes(this@TreeNodeComponent, TreeNodeComponent::open)
         }
 
         fun close(isRecursive: Boolean = false) {
-            arrowComponent.close()
-            childContainer.hide()
+            opened = false
             if (isRecursive)
                 recursivelyApplyToChildNodes(this@TreeNodeComponent, TreeNodeComponent::close)
         }
@@ -156,6 +168,9 @@ abstract class TreeNode {
                 recursivelyApplyToChildNodes(it, method)
             }
         }
+
+        internal val childNodes
+            get() = childContainer.children.mapNotNull { (it as? TreeNodeComponent)?.node }
     }
 }
 
