@@ -16,7 +16,7 @@ import gg.essential.universal.UMatrixStack
 import java.awt.Color
 
 /**
- * Simple text component that draws its given [text] at the scale determined by
+ * Simple text component that draws its given `text` at the scale determined by
  * this component's width & height constrains.
  */
 open class UIWrappedText @JvmOverloads constructor(

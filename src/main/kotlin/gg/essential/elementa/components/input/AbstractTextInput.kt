@@ -401,7 +401,7 @@ abstract class AbstractTextInput(
         activateAction = listener
     }
 
-    protected fun commitTextOperation(operation: TextOperation) {
+    protected open fun commitTextOperation(operation: TextOperation) {
         operation.redo()
         undoStack.push(operation)
         redoStack.clear()

@@ -11,6 +11,13 @@ import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL15
 import java.awt.Color
 
+/**
+ * Component with native SVG rendering for high-res icons.
+ *
+ * Note that Elementa's SVG Renderer is quite primitive and only supports
+ * basic SVGs. To ensure compatibility, we recommend using icons from
+ * [Tabler](https://github.com/tabler/tabler-icons)
+ */
 class SVGComponent(private var svg: SVG) : UIComponent(), ImageProvider {
     private var vboID = -1
     private lateinit var vboData: List<VBOData>
@@ -117,9 +124,7 @@ class SVGComponent(private var svg: SVG) : UIComponent(), ImageProvider {
     }
 
     companion object {
-        fun ofResource(resourcePath: String): SVGComponent {
-            return SVGComponent(SVGParser.parseFromResource(resourcePath))
-        }
+        fun ofResource(resourcePath: String): SVGComponent = SVGComponent(SVGParser.parseFromResource(resourcePath))
 
         private data class VBOData(val drawType: Int, val startIndex: Int, val count: Int, val drawPoints: Boolean)
     }

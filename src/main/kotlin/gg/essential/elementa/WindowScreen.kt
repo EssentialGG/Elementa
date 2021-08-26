@@ -13,6 +13,10 @@ import gg.essential.universal.UScreen
 import java.awt.Color
 import kotlin.reflect.KMutableProperty0
 
+/**
+ * Version of [UScreen] with a [Window] provided and a few useful
+ * functions for Elementa Gui programming.
+ */
 abstract class WindowScreen(
     private val enableRepeatKeys: Boolean = true,
     private val drawDefaultBackground: Boolean = true,

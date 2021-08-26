@@ -89,7 +89,11 @@ open class UITextInput @JvmOverloads constructor(
 
     override fun recalculateDimensions() {
         if (minWidth != null && maxWidth != null) {
-            val width = if (!hasText() && !this.active) placeholderWidth else getTextForRender().width(getTextScale())
+            val width = if (!hasText() && !this.active) {
+                placeholderWidth
+            } else {
+                getTextForRender().width(getTextScale()) + 1 /* cursor */
+            }
             setWidth(width.pixels().coerceIn(minWidth!!, maxWidth!!))
         }
     }

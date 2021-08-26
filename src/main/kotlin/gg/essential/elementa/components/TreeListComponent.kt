@@ -6,6 +6,7 @@ import gg.essential.elementa.dsl.basicWidthConstraint
 import gg.essential.elementa.dsl.childOf
 import gg.essential.elementa.dsl.constrain
 import gg.essential.elementa.dsl.pixels
+import gg.essential.universal.UKeyboard
 import kotlin.math.max
 
 abstract class TreeArrowComponent : UIComponent() {
@@ -72,8 +73,23 @@ abstract class TreeNode {
     }
 
     inner class TreeNodeComponent : UIContainer() {
+        private val node: TreeNode = this@TreeNode
         private val arrowComponent = getArrowComponent()
-        private var opened = false
+        internal var opened = false
+            set(value) {
+                if (value == field) {
+                    return
+                }
+                field = value
+                if (value) {
+                    arrowComponent.open()
+                    childContainer.unhide()
+                } else {
+                    arrowComponent.close()
+                    childContainer.hide()
+                    close()
+                }
+            }
         private val childContainer = UIContainer().constrain {
             x = indentationOffset.pixels()
             y = SiblingConstraint()
@@ -108,16 +124,26 @@ abstract class TreeNode {
 
             arrowComponent.onMouseClick { event ->
                 event.stopImmediatePropagation()
+                val isRecursive = UKeyboard.isShiftKeyDown()
 
                 if (opened) {
-                    arrowComponent.close()
-                    childContainer.hide()
+                    close(isRecursive)
                 } else {
-                    arrowComponent.open()
-                    childContainer.unhide()
+                    open(isRecursive)
                 }
-                opened = !opened
             }
+        }
+
+        fun open(isRecursive: Boolean = false) {
+            opened = true
+            if (isRecursive)
+                recursivelyApplyToChildNodes(this@TreeNodeComponent, TreeNodeComponent::open)
+        }
+
+        fun close(isRecursive: Boolean = false) {
+            opened = false
+            if (isRecursive)
+                recursivelyApplyToChildNodes(this@TreeNodeComponent, TreeNodeComponent::close)
         }
 
         fun addNodeChild(component: UIComponent) = apply {
@@ -135,6 +161,16 @@ abstract class TreeNode {
         fun clearNodeChildren() = apply {
             childContainer.clearChildren()
         }
+
+        private fun recursivelyApplyToChildNodes(node: TreeNodeComponent, method: (TreeNodeComponent) -> Unit) {
+            node.childContainer.children.filterIsInstance<TreeNodeComponent>().forEach {
+                method(it)
+                recursivelyApplyToChildNodes(it, method)
+            }
+        }
+
+        internal val childNodes
+            get() = childContainer.children.mapNotNull { (it as? TreeNodeComponent)?.node }
     }
 }
 

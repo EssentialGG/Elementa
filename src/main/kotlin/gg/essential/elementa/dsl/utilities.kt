@@ -17,22 +17,33 @@ fun ITextComponent.width(textScale: Float = 1f, fontProvider: FontProvider = Def
     UTextComponent(this).formattedText.width(textScale, fontProvider)
 
 @JvmOverloads
-fun Number.pixels(alignOpposite: Boolean = false, alignOutside: Boolean = false): PixelConstraint {
-    return PixelConstraint(this.toFloat(), alignOpposite, alignOutside)
-}
+fun Number.pixels(alignOpposite: Boolean = false, alignOutside: Boolean = false): PixelConstraint =
+    PixelConstraint(this.toFloat(), alignOpposite, alignOutside)
 
-// For 1.pixel()
+val Number.pixels: PixelConstraint
+    get() = pixels(alignOpposite = false, alignOutside = false)
+
+// For 1 pixel
 @JvmOverloads
 fun Number.pixel(alignOpposite: Boolean = false, alignOutside: Boolean = false) = pixels(alignOpposite, alignOutside)
+val Number.pixel: PixelConstraint
+    get() = pixels
 
 fun Number.percent() = RelativeConstraint(this.toFloat() / 100f)
+val Number.percent: RelativeConstraint
+    get() = this.percent()
+
 fun Number.percentOfWindow() = RelativeWindowConstraint(this.toFloat() / 100f)
+val Number.percentOfWindow: RelativeWindowConstraint
+    get() = this.percentOfWindow()
 
 fun SuperConstraint<Float>.floor() = RoundingConstraint(this, RoundingConstraint.Mode.Floor)
 fun SuperConstraint<Float>.ceil() = RoundingConstraint(this, RoundingConstraint.Mode.Ceil)
 fun SuperConstraint<Float>.round() = RoundingConstraint(this, RoundingConstraint.Mode.Round)
 
 fun Color.toConstraint() = ConstantColorConstraint(this)
+val Color.constraint: ConstantColorConstraint
+    get() = this.toConstraint()
 
 operator fun Color.component1() = red
 operator fun Color.component2() = green

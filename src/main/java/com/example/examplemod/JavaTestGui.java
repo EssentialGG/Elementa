@@ -1,25 +1,22 @@
 package com.example.examplemod;
 
 import gg.essential.elementa.UIComponent;
+import gg.essential.elementa.WindowScreen;
 import gg.essential.elementa.components.UIBlock;
-import gg.essential.elementa.components.Window;
 import gg.essential.elementa.constraints.CenterConstraint;
 import gg.essential.elementa.constraints.ChildBasedSizeConstraint;
 import gg.essential.elementa.constraints.PixelConstraint;
 import gg.essential.elementa.constraints.animation.AnimatingConstraints;
 import gg.essential.elementa.constraints.animation.Animations;
 import gg.essential.elementa.effects.ScissorEffect;
-import gg.essential.universal.UScreen;
 
-public class JavaTestGui extends UScreen {
-    Window window = new Window();
-
+public class JavaTestGui extends WindowScreen {
     UIComponent box = new UIBlock()
         .setX(new CenterConstraint())
         .setY(new PixelConstraint(10f))
-        .setWidth(new PixelConstraint(0f))
+        .setWidth(new PixelConstraint(10f))
         .setHeight(new PixelConstraint(36f))
-        .setChildOf(window)
+        .setChildOf(getWindow())
         .enableEffect(new ScissorEffect());
 
     public JavaTestGui() {

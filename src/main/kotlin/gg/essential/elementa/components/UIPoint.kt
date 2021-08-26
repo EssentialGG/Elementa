@@ -4,6 +4,11 @@ import gg.essential.elementa.UIComponent
 import gg.essential.elementa.constraints.PositionConstraint
 import gg.essential.elementa.dsl.pixels
 
+/**
+ * "Component" with no width/height and therefore no visible rendering.
+ *
+ * Used primarily for [UIShape]
+ */
 class UIPoint(
     val x: PositionConstraint,
     val y: PositionConstraint

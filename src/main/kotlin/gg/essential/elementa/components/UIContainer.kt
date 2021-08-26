@@ -4,7 +4,7 @@ import gg.essential.elementa.UIComponent
 import gg.essential.universal.UMatrixStack
 
 /**
- * Bare bones component that does no drawing and simply offers a bounding box.
+ * Bare-bones component that does no rendering and simply offers a bounding box.
  */
 open class UIContainer : UIComponent() {
     override fun draw(matrixStack: UMatrixStack) {

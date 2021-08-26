@@ -8,7 +8,7 @@ that can be played around with and modified to see how each component works.
 
 What the entire playground GUI looks like:
 
-![Playground GUI Photo](https://i.imgur.com/z9eJPik.png)
+![Components GUI Photo](https://i.imgur.com/bw2VLua.png)
 
 - [UIContainer](#uicontainer)
 - [UIBlock](#uiblock)
@@ -30,7 +30,7 @@ What the entire playground GUI looks like:
 
 ### UIContainer
 
-The [UIContainer](../src/main/kotlin/club/sk1er/elementa/components/UIContainer.kt) component is the simplest of
+The [UIContainer](../src/main/kotlin/gg/essential/elementa/components/UIContainer.kt) component is the simplest of
 all components as it does not do any rendering whatsoever. It simply serves to be a "holder" or 
 parent to a group of children components. It can be considered analogous
 to a `<div>` element in the HTML world.
@@ -72,7 +72,7 @@ With the UIContainer's bounding box outlined:
 
 ### UIBlock
 
-[UIBlock](../src/main/kotlin/club/sk1er/elementa/components/UIBlock.kt) is another extremely basic, but frequently used 
+[UIBlock](../src/main/kotlin/gg/essential/elementa/components/UIBlock.kt) is another extremely basic, but frequently used 
 component. It simply renders a monochromatic rectangle (with the color white by default).
 
 ```kotlin
@@ -90,7 +90,7 @@ UIBlock().constrain {
 
 Text can be found in almost every GUI ever, and therefore has thorough support in Elementa.
 In fact, we provide two different types of text displays, with
-[UIText](../src/main/kotlin/club/sk1er/elementa/components/UIText.kt) being the simpler,
+[UIText](../src/main/kotlin/gg/essential/elementa/components/UIText.kt) being the simpler,
 non-wrapping version. This means that text will not respect new-lines, nor will it wrap
 around when the text is longer than its bounding width.
 
@@ -138,7 +138,7 @@ past the boundaries.
 ### UIWrappedText
 
 Sometimes however, you may wish to have text wrap or respect new-lines. In these cases,
-the [UIWrappedText](../src/main/kotlin/club/sk1er/elementa/components/UIWrappedText.kt) component will do the trick.
+the [UIWrappedText](../src/main/kotlin/gg/essential/elementa/components/UIWrappedText.kt) component will do the trick.
 UIWrappedText should have an explicit width constraint provided to it, otherwise it will behave as a normal
 `UIText` component. Wrapped text support text scaling and disabling shadow just as normal text components do.
 
@@ -167,7 +167,7 @@ UIWrappedText("I'm going to wrap at 50 pixels, but centered :)", centered = true
 
 ### UIRoundedRectangle
 
-[UIRoundedRectangle](../src/main/kotlin/club/sk1er/elementa/components/UIRoundedRectangle.kt)s are an alternative
+[UIRoundedRectangle](../src/main/kotlin/gg/essential/elementa/components/UIRoundedRectangle.kt)s are an alternative
 to simple `UIBlock` components that can provide a little flair if needed. All rounded rectangles take
 a `radius` parameter to determine how much to round the corners of the rectangle.
 Higher values indicate more rounded corners as seen below.
@@ -193,7 +193,7 @@ UIRoundedRectangle(10f).constrain {
 ![UIRoundedRectangle Example](https://i.imgur.com/FL5R68P.png)
 
 ### Gradient
-[GradientComponent](../src/main/kotlin/club/sk1er/elementa/components/GradientComponent.kt)s are another alternative 
+[GradientComponent](../src/main/kotlin/gg/essential/elementa/components/GradientComponent.kt)s are another alternative 
 to `UIBlock` components that take two colours instead of one and will fade from one to the other in a 
 [gradient](https://en.wikipedia.org/wiki/Gradient) style. Additionally, the component can optionally 
 take a fade direction.
@@ -211,7 +211,7 @@ GradientComponent(Color.ORANGE, Color.BLACK).constrain {
 
 ### UICircle
 
-[UICircle](../src/main/kotlin/club/sk1er/elementa/components/UICircle.kt)s are an interesting component in that they
+[UICircle](../src/main/kotlin/gg/essential/elementa/components/UICircle.kt)s are an interesting component in that they
 do not use the width & height constraints. Instead, they deal with the x, y, and radius constraints.
 The `x` and `y` position of the circle specifies the center of the circle rather than the top-left corner
 like most other components. The radius constraint can have the value of any other size (width/height) constraint.
@@ -248,9 +248,9 @@ With outlines enabled to show the bounding box of the circles:
 
 ### UIShape
 
-The [UIShape](../src/main/kotlin/club/sk1er/elementa/components/UIShape.kt) component also works differently from
+The [UIShape](../src/main/kotlin/gg/essential/elementa/components/UIShape.kt) component also works differently from
 most other components. A shape itself has no position, nor a size. Instead, it has a series of
-[UIPoint](../src/main/kotlin/club/sk1er/elementa/components/UIPoint.kt) elements that describe the shape it should draw.
+[UIPoint](../src/main/kotlin/gg/essential/elementa/components/UIPoint.kt) elements that describe the shape it should draw.
 UIPoints are also interesting because they are an infinitesimally small point with no size, only a position.
 
 Note: `UIPoint`s can be animated just like any other component, which means the shape itself is animatable.
@@ -298,13 +298,13 @@ val shapeHolder = UIContainer().constrain {
 ### UIImage
 
 Elementa also provides first-class support for all types of images. The simplest of these is the basic
-[UIImage](../src/main/kotlin/club/sk1er/elementa/components/UIImage.kt) that can render a simple png, jpeg, etc.
+[UIImage](../src/main/kotlin/gg/essential/elementa/components/UIImage.kt) that can render a simple png, jpeg, etc.
 The semantics of this component are basically the same as those of the `UIBlock`.
 
 There are multiple ways to load images, including from URL, from a file, or from a jar resource. All image
 loading is asynchronous and will not pause the GUI while loading. Until they have loaded, a placeholder
 loading image will render in place of the image. It is possible to provide a custom placeholder image by
-providing a custom [ImageProvider](../src/main/kotlin/club/sk1er/elementa/components/image/ImageProvider.kt).
+providing a custom [ImageProvider](../src/main/kotlin/gg/essential/elementa/components/image/ImageProvider.kt).
 A good, pre-existing placeholder option is a [BlurHashImage](#blurhashimage).
 
 ```kotlin
@@ -335,7 +335,7 @@ UIImage.ofURL(URL("https://i.imgur.com/Pc6iMw3.png")).constrain {
 
 ### BlurHashImage
 
-A [BlurHashImage](../src/main/kotlin/club/sk1er/elementa/components/image/BlurHashImage.kt) is a placeholder or
+A [BlurHashImage](../src/main/kotlin/gg/essential/elementa/components/image/BlurHashImage.kt) is a placeholder or
 thumbnail style image that comes from the [BlurHash](https://blurha.sh) project.
 You can read more about BlurHashes on their website, but in short, they are a simple blurred image that can be
 described by a 20-30 character string, making them very efficient to pass along the network before loading an image.
@@ -375,8 +375,8 @@ top and bottom images looked identical. To see this dynamic loading in action, r
 ### TextInput
 
 Plenty of GUIs will require the user to provide keyboard input, often in the form of a text input.
-To fulfill this need, Elementa provides [UITextInput](../src/main/kotlin/club/sk1er/elementa/components/input/UITextInput.kt)
-and [UIMultilineTextInput](../src/main/kotlin/club/sk1er/elementa/components/input/UIMultilineTextInput.kt). Both
+To fulfill this need, Elementa provides [UITextInput](../src/main/kotlin/gg/essential/elementa/components/input/UITextInput.kt)
+and [UIMultilineTextInput](../src/main/kotlin/gg/essential/elementa/components/input/UIMultilineTextInput.kt). Both
 of these input components are extremely powerful: they support cursor movement, selection via both keyboard and mouse,
 copy/paste, undo/redo, and so much more! In order to activate these components, simply give them window focus,
 and they will handle the rest. Pressing `<esc>`, on these components or clicking off of them will automatically
@@ -429,7 +429,7 @@ box2.onMouseClick { textInput2.grabWindowFocus() }
 ```
 
 Note: Make sure you are passing mouse & keyboard events to your window if your inputs are not working. (Or just use 
-[WindowScreen](../src/main/kotlin/club/sk1er/elementa/WindowScreen.kt)!)
+[WindowScreen](../src/main/kotlin/gg/essential/elementa/WindowScreen.kt)!)
 
 The inputs before selecting or typing:
 
@@ -446,7 +446,7 @@ It's worth booting up the `ComponentsGui` playground to see how these inputs wor
 Oftentimes we will need to put an arbitrary amount of components into a certain area, and in
 order to make sure they are all visible, we need to be able to scroll in that area. Luckily, Elementa
 again provides an extremely easy way to accomplish this, a
-[ScrollComponent](../src/main/kotlin/club/sk1er/elementa/components/ScrollComponent.kt). Scroll components have a fixed
+[ScrollComponent](../src/main/kotlin/gg/essential/elementa/components/ScrollComponent.kt). Scroll components have a fixed
 height, and you can add children to them just like any other component. In theory, they should be treated just
 like a `UIContainer`.
 
@@ -499,7 +499,7 @@ What the scroll components look like with debug outlines enabled:
 
 ### Markdown
 
-A [MarkdownComponent](../src/main/kotlin/club/sk1er/elementa/markdown/MarkdownComponent.kt) is used to render
+A [MarkdownComponent](../src/main/kotlin/gg/essential/elementa/markdown/MarkdownComponent.kt) is used to render
 any Markdown document natively. This is a great way to display rich text in your GUI, whether it be changelogs or
 whatever you require. Simply pass your markdown document to the `MarkdownComponent`'s constructor, where it is then
 parsed and ready to be rendered!
@@ -529,7 +529,7 @@ parsed and ready to be rendered!
 
 ### SVG
 
-An [SVGComponent](../src/main/kotlin/club/sk1er/elementa/components/SVGComponent.kt) is used to render
+An [SVGComponent](../src/main/kotlin/gg/essential/elementa/components/SVGComponent.kt) is used to render
 (simple!) SVG documents natively. This is extremely useful for high resolution icons in your GUI, though keep in mind,
 the Elementa SVG parser/renderer are very simple, and support an extremely limited subset of the SVG standard. To ensure
 your icon will properly render, please use icons from [TablerIcons](https://github.com/tabler/tabler-icons).
@@ -574,7 +574,7 @@ and `stroke-linejoin` attributes from the topmost `<svg>` element in your SVG fi
 
 ### PlotComponent
 
-The [PlotComponent](../src/main/kotlin/club/sk1er/elementa/components/graph/PlotComponent.kt), as its name implies,
+The [PlotComponent](../src/main/kotlin/gg/essential/elementa/components/graph/PlotComponent.kt), as its name implies,
 allow the user to display a graph of information to the user. The great thing about this component is that it is
 extremely customizable. Everything can be changed, from the axis labels to the line widths. Lets look at a basic 
 example:
@@ -622,17 +622,17 @@ Now we can see the true power of this component -- with only six lines of stylin
 ![cool graph component](https://i.imgur.com/KqTlBZ1.png)
 
 The `GraphStyle` class has many more configuration options that aren't shown above. Check it out 
-[here](../src/main/kotlin/club/sk1er/elementa/components/graph/GraphStyle.kt)!
+[here](../src/main/kotlin/gg/essential/elementa/components/graph/GraphStyle.kt)!
 
 ### TreeListComponent
 
-The [TreeListComponent](../src/main/kotlin/club/sk1er/elementa/components/TreeListComponent.kt) is a component which 
+The [TreeListComponent](../src/main/kotlin/gg/essential/elementa/components/TreeListComponent.kt) is a component which 
 allows the display of information in a tree. It allows the user to provide a tree-like UIComponent hierarchy, as well as 
 a component to use as the "arrow" (the icon that is clicked to expand or contract a node), and takes care of the 
 component layout. 
 
 To start, you will need a class that inherits from the abstract 
-[TreeNode](../src/main/kotlin/club/sk1er/elementa/components/TreeListComponent.kt) class. A node that simply displays 
+[TreeNode](../src/main/kotlin/gg/essential/elementa/components/TreeListComponent.kt) class. A node that simply displays 
 some text
 would look like the following:
 
@@ -651,7 +651,7 @@ class TextNode(private val text: String) : TreeNode() {
 ```
 
 Note that we also have to provide a component to serve as the clickable open/close button of the tree -- which we call 
-the [TreeArrowComponent](../src/main/kotlin/club/sk1er/elementa/components/TreeListComponent.kt) -- in the method 
+the [TreeArrowComponent](../src/main/kotlin/gg/essential/elementa/components/TreeListComponent.kt) -- in the method 
 `getArrowComponent`. A `TreeArrowComponent` is simply a component with two abstract functions: `open` and `close`, which
 are called when the user changes the state of that particular `TreeNode`. This is important for showing the user which 
 nodes are expanded and which nodes are not. Note that no arrow component will be rendered if a node has no children
@@ -690,16 +690,16 @@ initially called.
 
 ### TreeGraphComponent 
 
-The [TreeGraphComponent](../src/main/kotlin/club/sk1er/elementa/components/TreeGraphComponent.kt) has a similar API as 
+The [TreeGraphComponent](../src/main/kotlin/gg/essential/elementa/components/TreeGraphComponent.kt) has a similar API as 
 the `TreeListComponent`, and the exact same use case, however it displays information in a top-down visual style instead
 of a collapsible list. It can be used in place of the `TreeListComponent` when there is ample room to display it, as it 
 takes up quite a bit of space. 
 
 ### Inspector
 
-The [Inspector](../src/main/kotlin/club/sk1er/elementa/components/inspector/Inspector.kt) is a very handy tool used for
+The [Inspector](../src/main/kotlin/gg/essential/elementa/components/inspector/Inspector.kt) is a very handy tool used for
 debugging/inspecting your Elementa GUIs. It is meant to be similar to a browser's "Inspect Element" tool. It uses a
-[TreeListComponent](../src/main/kotlin/club/sk1er/elementa/components/TreeListComponent.kt) to display the component hierarchy starting
+[TreeListComponent](../src/main/kotlin/gg/essential/elementa/components/TreeListComponent.kt) to display the component hierarchy starting
 from a specific root component. The `Inspector` can also be used to show the current position, size, color, etc.
 constraints of components, as well as their value as of the current frame.
 

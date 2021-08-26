@@ -4,5 +4,5 @@ import gg.essential.universal.UGraphics
 
 @Deprecated("Use UniversalCraft's UShader instead.")
 object Shaders {
-    val newShaders = UGraphics.areShadersSupported()
+    val newShaders: Boolean get() = UGraphics.areShadersSupported()
 }
