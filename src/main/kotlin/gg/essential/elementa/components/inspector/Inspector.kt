@@ -186,6 +186,16 @@ class Inspector @JvmOverloads constructor(
         selectedNode = node
     }
 
+    override fun animationFrame() {
+        super.animationFrame()
+
+        // Make sure we are the top-most component (last to draw and first to receive input)
+        Window.enqueueRenderOperation {
+            setFloating(false)
+            setFloating(true)
+        }
+    }
+
     override fun draw() {
         separator1.setWidth(container.getWidth().pixels())
         separator2.setWidth(container.getWidth().pixels())
