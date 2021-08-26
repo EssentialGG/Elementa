@@ -336,14 +336,7 @@ abstract class UIComponent : Observable() {
     }
 
     protected fun getMousePosition(): Pair<Float, Float> {
-        val scaledHeight = UResolution.scaledHeight
-        val mouseX = UMouse.getScaledX().toFloat()
-        //#if MC>=11400
-        //$$ val mouseY = UMouse.getScaledY().toFloat()
-        //#else
-        val mouseY = scaledHeight - UMouse.getTrueY().toFloat() * scaledHeight / UResolution.windowHeight - 1f
-        //#endif
-        return mouseX to mouseY
+        return UIComponent.getMouseX() to UIComponent.getMouseY()
     }
 
     open fun isPointInside(x: Float, y: Float): Boolean {
@@ -1168,6 +1161,19 @@ abstract class UIComponent : Observable() {
             return (number * factor).let {
                 if (roundDown) floor(it) else ceil(it)
             } / factor
+        }
+
+        internal fun getMouseX(): Float {
+            return UMouse.getScaledX().toFloat()
+        }
+
+        internal fun getMouseY(): Float {
+            val scaledHeight = UResolution.scaledHeight
+            //#if MC>=11400
+            //$$ return UMouse.getScaledY().toFloat()
+            //#else
+            return scaledHeight - UMouse.getTrueY().toFloat() * scaledHeight / UResolution.windowHeight - 1f
+            //#endif
         }
     }
 }
