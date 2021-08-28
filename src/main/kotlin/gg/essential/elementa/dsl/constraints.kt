@@ -21,6 +21,10 @@ operator fun SuperConstraint<Float>.plus(other: SuperConstraint<Float>) =
 operator fun SuperConstraint<Float>.minus(other: SuperConstraint<Float>) =
     SubtractiveConstraint(this, other)
 
+operator fun SuperConstraint<Float>.times(factor: Number) = ScaleConstraint(this, factor.toFloat())
+
+operator fun SuperConstraint<Float>.div(factor: Number) = ScaleConstraint(this, 1f / factor.toFloat())
+
 fun max(first: SuperConstraint<Float>, second: SuperConstraint<Float>) = MaxConstraint(first, second)
 
 fun min(first: SuperConstraint<Float>, second: SuperConstraint<Float>) = MinConstraint(first, second)
