@@ -197,8 +197,9 @@ class ParagraphDrawable(
                         // boundary. In this case we opt to split again, breaking
                         // words if we have to. We run split twice here, but as
                         // this is a rare edge case, it's not a problem.
-                        val splitResult3 = target.split(width, breakWords = true)
-                            ?: throw IllegalStateException("not possible")
+                        val splitResult3 = target.split(width, breakWords = true) ?: throw IllegalStateException(
+                            "MarkdownComponent's width (${md.getWidth()}) is too small to render its content"
+                        )
 
                         layout(splitResult3.first, splitResult3.first.width())
                         gotoNextLine()
