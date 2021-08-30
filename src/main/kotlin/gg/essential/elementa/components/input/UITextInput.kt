@@ -134,10 +134,12 @@ open class UITextInput @JvmOverloads constructor(
                 drawUnselectedText(lineText.substring(selectionEnd().column), currentX, row = 0)
             }
         } else {
-            cursorComponent.setY(basicYConstraint {
-                getTop()
-            })
-            setCursorPos()
+            if (active) {
+                cursorComponent.setY(basicYConstraint {
+                    getTop()
+                })
+                setCursorPos()
+            }
 
             drawUnselectedText(lineText, getLeft(), 0)
         }

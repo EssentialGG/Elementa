@@ -83,7 +83,7 @@ class UIMultilineTextInput @JvmOverloads constructor(
 
         if (hasSelection()) {
             cursorComponent.hide(instantly = true)
-        } else {
+        } else if (active) {
             cursorComponent.unhide()
             val (cursorPosX, cursorPosY) = cursor.toScreenPos()
             cursorComponent.setX((cursorPosX ).pixels())
