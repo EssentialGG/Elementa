@@ -106,10 +106,9 @@ class FontRenderer(
             }
         }
 
-        if (activeFont != tmp) { //Font context switch
-            GL13.glActiveTexture(GL13.GL_TEXTURE0)
+        UGraphics.bindTexture(activeFont.getTexture().glTextureId)
 
-            UGraphics.bindTexture(activeFont.getTexture().glTextureId)
+        if (activeFont != tmp) { //Font context switch
             GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR)
             GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR)
             sdfTexel.setValue(Vector2f(1f / activeFont.fontInfo.atlas.width, 1f / activeFont.fontInfo.atlas.height))
