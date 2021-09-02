@@ -18,6 +18,9 @@ import java.awt.Color
  * basic SVGs. To ensure compatibility, we recommend using icons from
  * [Tabler](https://github.com/tabler/tabler-icons)
  */
+//#if MC>=11700
+//$$ @Deprecated("Not currently supported on GL3 Core / 1.17+, needs updating")
+//#endif
 class SVGComponent(private var svg: SVG) : UIComponent(), ImageProvider {
     private var vboID = -1
     private lateinit var vboData: List<VBOData>
@@ -33,6 +36,11 @@ class SVGComponent(private var svg: SVG) : UIComponent(), ImageProvider {
     }
 
     override fun drawImage(matrixStack: UMatrixStack, x: Double, y: Double, width: Double, height: Double, color: Color) {
+        //#if MC>=11700
+        //$$ // TODO heavily relies on legacy gl, at least need to use per-vertex color and convert lines/points to tris
+        //$$ if (true) return
+        //#endif
+
         if (!::vboData.isInitialized || needsReload) {
             generateVBOData()
             needsReload = false
