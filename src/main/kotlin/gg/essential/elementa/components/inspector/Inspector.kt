@@ -254,6 +254,7 @@ class Inspector @JvmOverloads constructor(
 
             // Clear the depth buffer cause we will be using it to draw our outside-of-scissor-bounds block
             UGraphics.glClear(GL11.GL_DEPTH_BUFFER_BIT)
+            UGraphics.enableDepth()
 
             // Draw a highlight on the element respecting its scissor effects
             scissors.forEach { it.beforeDraw() }
@@ -266,6 +267,8 @@ class Inspector @JvmOverloads constructor(
             UGraphics.depthFunc(GL11.GL_LESS)
             UIBlock.drawBlock(Color(255, 100, 100, 100), x1, y1, x2, y2)
             UGraphics.depthFunc(GL11.GL_LEQUAL)
+
+            UGraphics.disableDepth()
         }
 
         super.draw()
