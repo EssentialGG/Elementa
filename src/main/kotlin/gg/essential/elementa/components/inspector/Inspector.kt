@@ -265,11 +265,13 @@ class Inspector @JvmOverloads constructor(
             // Then draw another highlight (with depth testing such that we do not overwrite the previous one)
             // which does not respect the scissor effects and thereby indicates where the element is drawn outside of
             // its scissor bounds.
+            UGraphics.enableDepth()
             UGraphics.depthFunc(GL11.GL_LESS)
             ElementaVersion.v0.enableFor { // need the custom depth testing
                 UIBlock.drawBlock(matrixStack, Color(255, 100, 100, 100), x1, y1, x2, y2)
             }
             UGraphics.depthFunc(GL11.GL_LEQUAL)
+            UGraphics.disableDepth()
         }
 
         super.draw(matrixStack)
