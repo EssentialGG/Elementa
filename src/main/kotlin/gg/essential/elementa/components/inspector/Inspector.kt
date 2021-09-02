@@ -1,5 +1,6 @@
 package gg.essential.elementa.components.inspector
 
+import gg.essential.elementa.ElementaVersion
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.components.*
 import gg.essential.elementa.constraints.*
@@ -265,7 +266,9 @@ class Inspector @JvmOverloads constructor(
             // which does not respect the scissor effects and thereby indicates where the element is drawn outside of
             // its scissor bounds.
             UGraphics.depthFunc(GL11.GL_LESS)
-            UIBlock.drawBlock(matrixStack, Color(255, 100, 100, 100), x1, y1, x2, y2)
+            ElementaVersion.v0.enableFor { // need the custom depth testing
+                UIBlock.drawBlock(matrixStack, Color(255, 100, 100, 100), x1, y1, x2, y2)
+            }
             UGraphics.depthFunc(GL11.GL_LEQUAL)
         }
 

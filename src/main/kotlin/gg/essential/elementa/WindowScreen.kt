@@ -17,14 +17,24 @@ import kotlin.reflect.KMutableProperty0
  * Version of [UScreen] with a [Window] provided and a few useful
  * functions for Elementa Gui programming.
  */
-abstract class WindowScreen(
+abstract class WindowScreen @JvmOverloads constructor(
+    version: ElementaVersion,
     private val enableRepeatKeys: Boolean = true,
     private val drawDefaultBackground: Boolean = true,
     restoreCurrentGuiOnClose: Boolean = false,
     newGuiScale: Int = -1
 ) : UScreen(restoreCurrentGuiOnClose, newGuiScale) {
-    val window = Window()
+    val window = Window(version)
     private var isInitialized = false
+
+    @Deprecated("Add ElementaVersion as the first argument to opt-in to improved behavior.")
+    @JvmOverloads
+    constructor(
+        enableRepeatKeys: Boolean = true,
+        drawDefaultBackground: Boolean = true,
+        restoreCurrentGuiOnClose: Boolean = false,
+        newGuiScale: Int = -1
+    ) : this(ElementaVersion.v0, enableRepeatKeys, drawDefaultBackground, restoreCurrentGuiOnClose, newGuiScale)
 
     init {
         window.onKeyType { typedChar, keyCode ->
