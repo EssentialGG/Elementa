@@ -27,7 +27,8 @@ class MarkdownComponent @JvmOverloads constructor(
     text: String,
     val config: MarkdownConfig = MarkdownConfig(),
     private val codeFontPointSize: Float = 10f,
-    private val codeFontRenderer: FontProvider = ElementaFonts.JETBRAINS_MONO
+    private val codeFontRenderer: FontProvider = ElementaFonts.JETBRAINS_MONO,
+    private val disableSelection: Boolean = false,
 ) : UIComponent() {
     private var textState: State<String> = BasicState(text)
     private var removeListener = textState.onSetValue {
@@ -46,42 +47,45 @@ class MarkdownComponent @JvmOverloads constructor(
     private var canDrag = false
 
     init {
-        onMouseClick {
-            val xShift = getLeft() - baseX
-            val yShift = getTop() - baseY
-            cursor = drawables.cursorAt(it.absoluteX - xShift, it.absoluteY - yShift, dragged = false, it.mouseButton)
+        if (!disableSelection) {
+            onMouseClick {
+                val xShift = getLeft() - baseX
+                val yShift = getTop() - baseY
+                cursor =
+                    drawables.cursorAt(it.absoluteX - xShift, it.absoluteY - yShift, dragged = false, it.mouseButton)
 
-            selection?.remove()
-            selection = null
-            releaseWindowFocus()
+                selection?.remove()
+                selection = null
+                releaseWindowFocus()
 
-            canDrag = true
-        }
+                canDrag = true
+            }
 
-        onMouseRelease {
-            canDrag = false
-        }
+            onMouseRelease {
+                canDrag = false
+            }
 
-        onMouseDrag { mouseX, mouseY, mouseButton ->
-            if (mouseButton != 0 || !canDrag)
-                return@onMouseDrag
+            onMouseDrag { mouseX, mouseY, mouseButton ->
+                if (mouseButton != 0 || !canDrag)
+                    return@onMouseDrag
 
-            val x = baseX + mouseX.coerceIn(0f, getWidth())
-            val y = baseY + mouseY.coerceIn(0f, getHeight())
+                val x = baseX + mouseX.coerceIn(0f, getWidth())
+                val y = baseY + mouseY.coerceIn(0f, getHeight())
 
-            val otherEnd = drawables.cursorAt(x, y, dragged = true, mouseButton)
+                val otherEnd = drawables.cursorAt(x, y, dragged = true, mouseButton)
 
-            if (cursor == otherEnd)
-                return@onMouseDrag
+                if (cursor == otherEnd)
+                    return@onMouseDrag
 
-            selection?.remove()
-            selection = Selection.fromCursors(cursor!!, otherEnd)
-            grabWindowFocus()
-        }
+                selection?.remove()
+                selection = Selection.fromCursors(cursor!!, otherEnd)
+                grabWindowFocus()
+            }
 
-        onKeyType { _, keyCode ->
-            if (selection != null && keyCode == UKeyboard.KEY_C && UKeyboard.isCtrlKeyDown()) {
-                UDesktop.setClipboardString(drawables.selectedText(UKeyboard.isShiftKeyDown()))
+            onKeyType { _, keyCode ->
+                if (selection != null && keyCode == UKeyboard.KEY_C && UKeyboard.isCtrlKeyDown()) {
+                    UDesktop.setClipboardString(drawables.selectedText(UKeyboard.isShiftKeyDown()))
+                }
             }
         }
     }
@@ -152,14 +156,15 @@ class MarkdownComponent @JvmOverloads constructor(
         val drawState = DrawState(getLeft() - baseX, getTop() - baseY)
 
         drawables.forEach { it.draw(matrixStack, drawState) }
-        selection?.draw(matrixStack, drawState) ?: cursor?.draw(matrixStack, drawState)
+        if (!disableSelection)
+            selection?.draw(matrixStack, drawState) ?: cursor?.draw(matrixStack, drawState)
 
         afterDraw(matrixStack)
     }
 
     private fun constraintValues() = ConstraintValues(
         getWidth(),
-        getTextScale()
+        getTextScale(),
     )
 
     /**
@@ -169,7 +174,7 @@ class MarkdownComponent @JvmOverloads constructor(
      */
     data class ConstraintValues(
         val width: Float,
-        val textScale: Float
+        val textScale: Float,
     )
 
     companion object {
