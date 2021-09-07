@@ -1,6 +1,7 @@
 package gg.essential.elementa.components
 
 import gg.essential.elementa.UIComponent
+import gg.essential.elementa.UIConstraints
 import gg.essential.elementa.constraints.CenterConstraint
 import gg.essential.elementa.dsl.width
 import gg.essential.elementa.state.BasicState
@@ -22,11 +23,18 @@ open class UIText @JvmOverloads constructor(
     private val textState = BasicState(text).map { it } // extra map so we can easily rebind it
     private var shadowState: State<Boolean> = BasicState(shadow)
     private var shadowColorState: State<Color?> = BasicState(shadowColor)
-    private var textWidthState = textState.map { it.width(getTextScale(), getFontProvider()) / getTextScale() }
+    private val textScaleState = constraints.asState { getTextScale() }
+    private val fontProviderState = constraints.asState { fontProvider }
+    private var textWidthState = textState.zip(textScaleState.zip(fontProviderState)).map { (text, opts) ->
+        val (textScale, fontProvider) = opts
+        text.width(textScale, fontProvider) / textScale
+    }
 
     /** Guess on whether we should be trying to center or top-align this component. See [BELOW_LINE_HEIGHT]. */
-    private val verticallyCenteredState = BasicState(constraints.y is CenterConstraint).also {
-        constraints.addObserver { _, _ -> it.set(constraints.y is CenterConstraint) }
+    private val verticallyCenteredState = constraints.asState { y is CenterConstraint }
+
+    private fun <T> UIConstraints.asState(selector: UIConstraints.() -> T) = BasicState(selector(constraints)).also {
+        constraints.addObserver { _, _ -> it.set(selector(constraints)) }
     }
 
     init {
@@ -37,9 +45,6 @@ open class UIText @JvmOverloads constructor(
             val below = BELOW_LINE_HEIGHT + (if (shadow) SHADOW_HEIGHT else 0f)
             above + center + below
         }.pixels())
-        Window.enqueueRenderOperation {
-            textWidthState.rebind(textState) //Needed so that the text scale and font provider are now present
-        }
     }
 
     fun bindText(newTextState: State<String>) = apply {

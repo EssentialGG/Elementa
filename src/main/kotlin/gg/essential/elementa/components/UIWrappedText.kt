@@ -1,6 +1,7 @@
 package gg.essential.elementa.components
 
 import gg.essential.elementa.UIComponent
+import gg.essential.elementa.UIConstraints
 import gg.essential.elementa.components.UIText.Companion.BELOW_LINE_HEIGHT
 import gg.essential.elementa.components.UIText.Companion.SHADOW_HEIGHT
 import gg.essential.elementa.constraints.CenterConstraint
@@ -35,13 +36,20 @@ open class UIWrappedText @JvmOverloads constructor(
     private val textState = BasicState(text).map { it } // extra map so we can easily rebind it
     private var shadowState: State<Boolean> = BasicState(shadow)
     private var shadowColorState: State<Color?> = BasicState(shadowColor)
-    private var textWidthState = textState.map { it.width(getTextScale(), getFontProvider()) / getTextScale() }
+    private val textScaleState = constraints.asState { getTextScale() }
+    private val fontProviderState = constraints.asState { fontProvider }
+    private var textWidthState = textState.zip(textScaleState.zip(fontProviderState)).map { (text, opts) ->
+        val (textScale, fontProvider) = opts
+        text.width(textScale, fontProvider) / textScale
+    }
 
     private val charWidth = UGraphics.getCharWidth('x')
 
     /** Guess on whether we should be trying to center or top-align this component. See [BELOW_LINE_HEIGHT]. */
-    private val verticallyCenteredState = BasicState(constraints.y is CenterConstraint).also {
-        constraints.addObserver { _, _ -> it.set(constraints.y is CenterConstraint) }
+    private val verticallyCenteredState = constraints.asState { y is CenterConstraint }
+
+    private fun <T> UIConstraints.asState(selector: UIConstraints.() -> T) = BasicState(selector(constraints)).also {
+        constraints.addObserver { _, _ -> it.set(selector(constraints)) }
     }
 
     /**
@@ -65,9 +73,6 @@ open class UIWrappedText @JvmOverloads constructor(
 
             (lines.size * lineSpacing + extraHeightState.get()) * getTextScale()
         })
-        Window.enqueueRenderOperation {
-            textWidthState.rebind(textState) //Needed so that the text scale and font provider are now present
-        }
     }
 
     fun bindText(newTextState: State<String>) = apply {
