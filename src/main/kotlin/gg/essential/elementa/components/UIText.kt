@@ -19,7 +19,7 @@ open class UIText @JvmOverloads constructor(
     shadow: Boolean = true,
     shadowColor: Color? = null
 ) : UIComponent() {
-    private var textState: State<String> = BasicState(text)
+    private val textState = BasicState(text).map { it } // extra map so we can easily rebind it
     private var shadowState: State<Boolean> = BasicState(shadow)
     private var shadowColorState: State<Color?> = BasicState(shadowColor)
     private var textWidthState = textState.map { it.width(getTextScale(), getFontProvider()) / getTextScale() }
@@ -43,8 +43,7 @@ open class UIText @JvmOverloads constructor(
     }
 
     fun bindText(newTextState: State<String>) = apply {
-        textState = newTextState
-        textWidthState.rebind(newTextState)
+        textState.rebind(newTextState)
     }
 
     fun bindShadow(newShadowState: State<Boolean>) = apply {

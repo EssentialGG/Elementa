@@ -32,7 +32,7 @@ open class UIWrappedText @JvmOverloads constructor(
     private val lineSpacing: Float = 9f,
     private val trimmedTextSuffix: String = "..."
 ) : UIComponent() {
-    private var textState: State<String> = BasicState(text)
+    private val textState = BasicState(text).map { it } // extra map so we can easily rebind it
     private var shadowState: State<Boolean> = BasicState(shadow)
     private var shadowColorState: State<Color?> = BasicState(shadowColor)
     private var textWidthState = textState.map { it.width(getTextScale(), getFontProvider()) / getTextScale() }
@@ -71,8 +71,7 @@ open class UIWrappedText @JvmOverloads constructor(
     }
 
     fun bindText(newTextState: State<String>) = apply {
-        textState = newTextState
-        textWidthState.rebind(newTextState)
+        textState.rebind(newTextState)
     }
 
     fun bindShadow(newShadowState: State<Boolean>) = apply {
