@@ -57,7 +57,7 @@ class ScissorEffect @JvmOverloads constructor(
         // TODO ideally we should respect matrixStack offset and maybe scale, though we do not currently care about
         //      global gl state either, so not really important until someone needs it
         var x = (bounds.x1 * scaleFactor).roundToInt()
-        var y = UResolution.windowHeight - (bounds.y2 * scaleFactor).roundToInt()
+        var y = UResolution.viewportHeight - (bounds.y2 * scaleFactor).roundToInt()
         var width = (bounds.width * scaleFactor).roundToInt()
         var height = (bounds.height * scaleFactor).roundToInt()
 
