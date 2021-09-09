@@ -118,15 +118,6 @@ class MarkdownComponent @JvmOverloads constructor(
      * @see Drawable.layout
      */
     fun layout() {
-        // TODO: ParagraphDrawable currently directly mutates its drawables, splitting them as necessary. This will
-        //       however cause text to actually be layed out differently if layout is called more than once, cause
-        //       the answer to "does this drawable fit into the current line" changes.
-        //       Such behavior causes inconsistent layout result and makes it difficult to reason about bugs in code
-        //       which changes behavior upon re-layout, so for now we'll completely re-parse on re-layout so we always
-        //       start from the same drawables and get the same result.
-        //       For performance reasons, this should be removed once it no longer mutate the drawables list.
-        reparse()
-
         baseX = getLeft()
         baseY = getTop()
         var currY = baseY
