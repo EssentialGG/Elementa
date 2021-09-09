@@ -99,8 +99,8 @@ class ParagraphDrawable(
         }
 
         for ((index, text) in originalDrawables.withIndex()) {
-            if (text is SoftBreakDrawable) {
-                if (config.paragraphConfig.softBreakIsNewline) {
+            if (text is SoftBreakDrawable || text is HardBreakDrawable) {
+                if (config.paragraphConfig.softBreakIsNewline || text is HardBreakDrawable) {
                     gotoNextLine()
                 } else {
                     val previousStyle = (newDrawables.lastOrNull { it is TextDrawable } as? TextDrawable)?.let {
@@ -131,10 +131,6 @@ class ParagraphDrawable(
                     trimNextText = true
                 }
                 continue
-            }
-
-            if (text is HardBreakDrawable) {
-                TODO("I don't think this should ever happen, but I'm not 100% sure")
             }
 
             if (text is ImageDrawable) {
