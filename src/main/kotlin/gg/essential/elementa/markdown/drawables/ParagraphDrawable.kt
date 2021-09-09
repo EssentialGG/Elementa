@@ -23,6 +23,8 @@ class ParagraphDrawable(
 
     override val children: List<Drawable>
         get() = drawables
+    val textDrawables: List<TextDrawable>
+        get() = children.filterIsInstance<TextDrawable>()
 
     // Used by HeaderDrawable
     var scaleModifier = 1f
