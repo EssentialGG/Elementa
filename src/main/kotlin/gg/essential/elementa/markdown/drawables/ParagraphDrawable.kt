@@ -19,7 +19,8 @@ class ParagraphDrawable(
     md: MarkdownComponent,
     private val originalDrawables: DrawableList,
 ) : Drawable(md) {
-    private val drawables = DrawableList(md, emptyList())
+    @Deprecated("Use children instead", ReplaceWith("children"))
+    val drawables = DrawableList(md, emptyList())
 
     override val children: List<Drawable>
         get() = drawables
