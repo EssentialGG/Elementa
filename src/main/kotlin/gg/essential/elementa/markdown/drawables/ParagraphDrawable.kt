@@ -20,7 +20,7 @@ class ParagraphDrawable(
     private val originalDrawables: DrawableList,
 ) : Drawable(md) {
     @Deprecated("Use children instead", ReplaceWith("children"))
-    val drawables = DrawableList(md, emptyList())
+    val drawables = DrawableList(md, originalDrawables)
 
     override val children: List<Drawable>
         get() = drawables
