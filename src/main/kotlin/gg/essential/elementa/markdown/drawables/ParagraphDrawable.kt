@@ -18,29 +18,27 @@ import kotlin.math.floor
 
 class ParagraphDrawable(
     md: MarkdownComponent,
-    drawables: DrawableList
+    private val originalDrawables: DrawableList,
 ) : Drawable(md) {
+    @Deprecated("Use children instead", ReplaceWith("children"))
+    val drawables = DrawableList(md, originalDrawables)
+
+    override val children: List<Drawable>
+        get() = drawables
     val textDrawables: List<TextDrawable>
-        get() = drawables.filterIsInstance<TextDrawable>()
-
-    var drawables = drawables
-        private set(value) {
-            field = value
-            value.forEach { it.parent = this }
-        }
-
-    override val children: List<Drawable> get() = drawables
+        get() = children.filterIsInstance<TextDrawable>()
 
     // Used by HeaderDrawable
     var scaleModifier = 1f
         set(value) {
             field = value
-            textDrawables.forEach {
+            drawables.filterIsInstance<TextDrawable>().forEach {
                 it.scaleModifier = value
             }
         }
 
     init {
+        originalDrawables.parent = this
         drawables.parent = this
     }
 
@@ -104,20 +102,21 @@ class ParagraphDrawable(
             newDrawables.add(drawable)
         }
 
-        for ((index, text) in drawables.withIndex()) {
-            if (text is SoftBreakDrawable) {
-                if (config.paragraphConfig.softBreakIsNewline) {
+        for ((index, text) in originalDrawables.withIndex()) {
+            if (text is SoftBreakDrawable || text is HardBreakDrawable) {
+                if (config.paragraphConfig.softBreakIsNewline || text is HardBreakDrawable) {
                     gotoNextLine()
                 } else {
-                    val previousStyle = (newDrawables.lastOrNull { it is TextDrawable } as? TextDrawable)?.style
-                        ?: TextDrawable.Style.EMPTY
+                    val previousStyle = (newDrawables.lastOrNull { it is TextDrawable } as? TextDrawable)?.let {
+                        it.style.copy(isCode = false)
+                    } ?: TextDrawable.Style.EMPTY
                     val newText = TextDrawable(md, " ", previousStyle)
 
                     // Do this before laying out newText, so that newText isn't in the
                     // newDrawables list yet
-                    if (newDrawables.isNotEmpty() && index != drawables.lastIndex) {
+                    if (newDrawables.isNotEmpty() && index != originalDrawables.lastIndex) {
                         val previous = newDrawables.last()
-                        val next = drawables[index + 1]
+                        val next = originalDrawables[index + 1]
                         if (previous is TextDrawable && next is TextDrawable && previous.style == next.style) {
                             // Link the two texts together, as a soft break (when not
                             // treated as a new line) should not interrupt a link
@@ -136,10 +135,6 @@ class ParagraphDrawable(
                     trimNextText = true
                 }
                 continue
-            }
-
-            if (text is HardBreakDrawable) {
-                TODO("I don't think this should ever happen, but I'm not 100% sure")
             }
 
             if (text is ImageDrawable) {
@@ -198,8 +193,9 @@ class ParagraphDrawable(
                         // boundary. In this case we opt to split again, breaking
                         // words if we have to. We run split twice here, but as
                         // this is a rare edge case, it's not a problem.
-                        val splitResult3 = target.split(width, breakWords = true)
-                            ?: throw IllegalStateException("not possible")
+                        val splitResult3 = target.split(width, breakWords = true) ?: throw IllegalStateException(
+                            "MarkdownComponent's width (${md.getWidth()}) is too small to render its content"
+                        )
 
                         layout(splitResult3.first, splitResult3.first.width())
                         gotoNextLine()
@@ -240,11 +236,12 @@ class ParagraphDrawable(
             }
         }
 
-        // TODO: We probably shouldn't mutate drawables directly, as if the
-        // MarkdownComponent re-layouts many times and causes a bunch of text
-        // splits, we'll have many, many small text drawables instead of a few
-        // large text drawables, which requires more work to deal with.
-        drawables = DrawableList(md, newDrawables)
+        newDrawables.forEach {
+            if (it is TextDrawable)
+                it.scaleModifier = scaleModifier
+        }
+
+        drawables.setDrawables(newDrawables)
 
         val height = currY - y + 9f * scaleModifier + if (insertSpaceAfter) {
             config.paragraphConfig.spaceAfter
@@ -260,7 +257,7 @@ class ParagraphDrawable(
     }
 
     override fun draw(matrixStack: UMatrixStack, state: DrawState) {
-        textDrawables.forEach { it.beforeDraw(state) }
+        drawables.filterIsInstance<TextDrawable>().forEach { it.beforeDraw(state) }
         drawables.forEach { it.drawCompat(matrixStack, state) }
 
         // TODO: Remove

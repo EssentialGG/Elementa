@@ -6,8 +6,12 @@ import gg.essential.elementa.effects.Effect
 import kotlin.properties.Delegates
 import kotlin.reflect.KProperty
 
-inline fun <T : UIComponent> T.constrain(config: UIConstraints.() -> Unit) = apply {
+inline infix fun <T : UIComponent> T.constrain(config: UIConstraints.() -> Unit) = apply {
     constraints.config()
+}
+
+inline infix fun <T : UIComponent> T.addChild(child: T.() -> UIComponent) = apply {
+    addChild(child())
 }
 
 infix fun <T : UIComponent> T.childOf(parent: UIComponent) = apply {
