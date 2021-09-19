@@ -81,7 +81,7 @@ sourceCompatibility = targetCompatibility = mcVersion >= 11700 ? 16 : 1.8
 compileJava.options.encoding = 'UTF-8'
 compileKotlin.kotlinOptions {
     jvmTarget = mcVersion >= 11700 ? "16" : "1.8"
-    freeCompilerArgs = ["-Xjvm-default=all"]
+    freeCompilerArgs = [mcVersion >= 11400 ? "-Xjvm-default=all" : "-Xjvm-default=all-compatibility"]
 }
 
 if (mcVersion >= 11400) {
