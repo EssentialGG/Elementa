@@ -6,7 +6,6 @@ import gg.essential.elementa.components.Window
 import gg.essential.elementa.font.FontRenderer.Companion.doffsetUniform
 import gg.essential.elementa.font.FontRenderer.Companion.fgColorUniform
 import gg.essential.elementa.font.FontRenderer.Companion.hintAmountUniform
-import gg.essential.elementa.font.FontRenderer.Companion.initShaders
 import gg.essential.elementa.font.FontRenderer.Companion.samplerUniform
 import gg.essential.elementa.font.FontRenderer.Companion.sdfTexel
 import gg.essential.elementa.font.FontRenderer.Companion.shader
@@ -187,6 +186,8 @@ open class MSDFComponent constructor(
             return resourceCache.getMSDFComponent(path)
         }
 
+        fun areShadersInitialized() = gg.essential.elementa.font.FontRenderer.areShadersInitialized()
+        fun initShaders() = gg.essential.elementa.font.FontRenderer.initShaders()
     }
 
 
