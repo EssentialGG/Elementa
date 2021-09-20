@@ -8,6 +8,7 @@ import gg.essential.elementa.dsl.*
 import gg.essential.elementa.effects.ScissorEffect
 import gg.essential.elementa.utils.bindLast
 import gg.essential.universal.UKeyboard
+import gg.essential.universal.UMatrixStack
 import gg.essential.universal.UMouse
 import gg.essential.universal.UResolution
 import java.awt.Color
@@ -126,7 +127,7 @@ class ScrollComponent @JvmOverloads constructor(
         }
     }
 
-    override fun draw() {
+    override fun draw(matrixStack: UMatrixStack) {
         if (needsUpdate) {
             needsUpdate = false
             val horizontalRange = calculateOffsetRange(isHorizontal = true)
@@ -151,7 +152,7 @@ class ScrollComponent @JvmOverloads constructor(
             verticalScrollAdjustEvents.forEach { it(percent, percentageOfParent) }
         }
 
-        super.draw()
+        super.draw(matrixStack)
     }
 
     override fun afterInitialization() {

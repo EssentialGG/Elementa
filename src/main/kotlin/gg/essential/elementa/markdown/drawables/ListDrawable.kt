@@ -3,6 +3,7 @@ package gg.essential.elementa.markdown.drawables
 import gg.essential.elementa.dsl.width
 import gg.essential.elementa.markdown.DrawState
 import gg.essential.elementa.markdown.MarkdownComponent
+import gg.essential.universal.UMatrixStack
 
 class ListDrawable(
     md: MarkdownComponent,
@@ -122,8 +123,8 @@ class ListDrawable(
         )
     }
 
-    override fun draw(state: DrawState) {
-        listItems.forEach { it.draw(state) }
+    override fun draw(matrixStack: UMatrixStack, state: DrawState) {
+        listItems.forEach { it.drawCompat(matrixStack, state) }
     }
 
     override fun cursorAt(mouseX: Float, mouseY: Float, dragged: Boolean, mouseButton: Int) = drawables.cursorAt(mouseX, mouseY, dragged, mouseButton)
@@ -167,11 +168,11 @@ class ListDrawable(
             return Layout(x, y, width, drawable.height)
         }
 
-        override fun draw(state: DrawState) {
+        override fun draw(matrixStack: UMatrixStack, state: DrawState) {
             val newX = x + symbolWidth - actualSymbolWidth
             if (drawable !is ListDrawable)
-                TextDrawable.drawString(config, md.getFontProvider(), symbol, newX + state.xShift, y + state.yShift)
-            drawable.draw(state)
+                TextDrawable.drawString(matrixStack, config, md.getFontProvider(), symbol, newX + state.xShift, y + state.yShift)
+            drawable.drawCompat(matrixStack, state)
         }
 
         override fun cursorAt(mouseX: Float, mouseY: Float, dragged: Boolean, mouseButton: Int) =

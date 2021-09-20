@@ -1,5 +1,6 @@
 package com.example.examplemod
 
+import gg.essential.elementa.ElementaVersion
 import gg.essential.elementa.WindowScreen
 import gg.essential.elementa.components.*
 import gg.essential.elementa.components.image.BlurHashImage
@@ -13,7 +14,7 @@ import gg.essential.elementa.markdown.MarkdownComponent
 import java.awt.Color
 import java.net.URL
 
-class ComponentsGui : WindowScreen() {
+class ComponentsGui : WindowScreen(ElementaVersion.V1) {
     init {
         ComponentType("UIContainer") {
             val bar = UIBlock().constrain {

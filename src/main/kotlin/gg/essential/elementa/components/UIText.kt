@@ -1,12 +1,14 @@
 package gg.essential.elementa.components
 
 import gg.essential.elementa.UIComponent
+import gg.essential.elementa.UIConstraints
 import gg.essential.elementa.constraints.CenterConstraint
 import gg.essential.elementa.dsl.width
 import gg.essential.elementa.state.BasicState
 import gg.essential.elementa.state.State
 import gg.essential.elementa.state.pixels
 import gg.essential.universal.UGraphics
+import gg.essential.universal.UMatrixStack
 import java.awt.Color
 
 /**
@@ -18,14 +20,21 @@ open class UIText @JvmOverloads constructor(
     shadow: Boolean = true,
     shadowColor: Color? = null
 ) : UIComponent() {
-    private var textState: State<String> = BasicState(text)
+    private val textState = BasicState(text).map { it } // extra map so we can easily rebind it
     private var shadowState: State<Boolean> = BasicState(shadow)
     private var shadowColorState: State<Color?> = BasicState(shadowColor)
-    private var textWidthState = textState.map { it.width(getTextScale(), getFontProvider()) / getTextScale() }
+    private val textScaleState = constraints.asState { getTextScale() }
+    private val fontProviderState = constraints.asState { fontProvider }
+    private var textWidthState = textState.zip(textScaleState.zip(fontProviderState)).map { (text, opts) ->
+        val (textScale, fontProvider) = opts
+        text.width(textScale, fontProvider) / textScale
+    }
 
     /** Guess on whether we should be trying to center or top-align this component. See [BELOW_LINE_HEIGHT]. */
-    private val verticallyCenteredState = BasicState(constraints.y is CenterConstraint).also {
-        constraints.addObserver { _, _ -> it.set(constraints.y is CenterConstraint) }
+    private val verticallyCenteredState = constraints.asState { y is CenterConstraint }
+
+    private fun <T> UIConstraints.asState(selector: UIConstraints.() -> T) = BasicState(selector(constraints)).also {
+        constraints.addObserver { _, _ -> it.set(selector(constraints)) }
     }
 
     init {
@@ -36,14 +45,10 @@ open class UIText @JvmOverloads constructor(
             val below = BELOW_LINE_HEIGHT + (if (shadow) SHADOW_HEIGHT else 0f)
             above + center + below
         }.pixels())
-        Window.enqueueRenderOperation {
-            textWidthState.rebind(textState) //Needed so that the text scale and font provider are now present
-        }
     }
 
     fun bindText(newTextState: State<String>) = apply {
-        textState = newTextState
-        textWidthState.rebind(newTextState)
+        textState.rebind(newTextState)
     }
 
     fun bindShadow(newShadowState: State<Boolean>) = apply {
@@ -76,12 +81,12 @@ open class UIText @JvmOverloads constructor(
         return super.getHeight() * getTextScale()
     }
 
-    override fun draw() {
+    override fun draw(matrixStack: UMatrixStack) {
         val text = textState.get()
         if (text.isEmpty())
             return
 
-        beforeDraw()
+        beforeDrawCompat(matrixStack)
 
         val scale = getWidth() / textWidthState.get()
         val x = getLeft()
@@ -90,7 +95,7 @@ open class UIText @JvmOverloads constructor(
 
         // We aren't visible, don't draw
         if (color.alpha <= 10) {
-            return super.draw()
+            return super.draw(matrixStack)
         }
 
         UGraphics.enableBlend()
@@ -98,10 +103,11 @@ open class UIText @JvmOverloads constructor(
         val shadow = shadowState.get()
         val shadowColor = shadowColorState.get()
         getFontProvider().drawString(
+            matrixStack,
             textState.get(), color, x, y,
             10f, scale, shadow, shadowColor
         )
-        super.draw()
+        super.draw(matrixStack)
     }
 
     companion object {

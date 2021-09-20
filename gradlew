@@ -1,5 +1,10 @@
 #!/usr/bin/env sh
 
+# Need Java 16, and this seems to be the easiest way to do that per-branch for TeamCity
+if [ -n "$IS_CI" ]; then
+    JAVA_HOME=/usr/lib/jvm/java-16-oracle
+fi
+
 #
 # Copyright 2015 the original author or authors.
 #

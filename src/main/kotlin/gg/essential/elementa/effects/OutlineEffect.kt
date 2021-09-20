@@ -3,6 +3,7 @@ package gg.essential.elementa.effects
 import gg.essential.elementa.components.UIBlock
 import gg.essential.elementa.state.BasicState
 import gg.essential.elementa.state.State
+import gg.essential.universal.UMatrixStack
 import java.awt.Color
 
 /**
@@ -62,17 +63,17 @@ class OutlineEffect @JvmOverloads constructor(
         sides = sides - side
     }
 
-    override fun beforeChildrenDraw() {
+    override fun beforeChildrenDraw(matrixStack: UMatrixStack) {
         if (!drawAfterChildren)
-            drawOutline()
+            drawOutline(matrixStack)
     }
 
-    override fun afterDraw() {
+    override fun afterDraw(matrixStack: UMatrixStack) {
         if (drawAfterChildren)
-            drawOutline()
+            drawOutline(matrixStack)
     }
 
-    private fun drawOutline() {
+    private fun drawOutline(matrixStack: UMatrixStack) {
         val color = colorState.get()
         val width = widthState.get()
 
@@ -99,36 +100,36 @@ class OutlineEffect @JvmOverloads constructor(
 
         // Left outline block
         if (hasLeft)
-            UIBlock.drawBlock(color, leftBounds.first, top, leftBounds.second, bottom)
+            UIBlock.drawBlock(matrixStack, color, leftBounds.first, top, leftBounds.second, bottom)
 
         // Top outline block
         if (hasTop)
-            UIBlock.drawBlock(color, left, topBounds.first, right, topBounds.second)
+            UIBlock.drawBlock(matrixStack, color, left, topBounds.first, right, topBounds.second)
 
         // Right outline block
         if (hasRight)
-            UIBlock.drawBlock(color, rightBounds.first, top, rightBounds.second, bottom)
+            UIBlock.drawBlock(matrixStack, color, rightBounds.first, top, rightBounds.second, bottom)
 
         // Bottom outline block
         if (hasBottom)
-            UIBlock.drawBlock(color, left, bottomBounds.first, right, bottomBounds.second)
+            UIBlock.drawBlock(matrixStack, color, left, bottomBounds.first, right, bottomBounds.second)
 
         if (!drawInsideChildren) {
             // Top left square
             if (hasLeft && hasTop)
-                UIBlock.drawBlock(color, leftBounds.first, topBounds.first, left, top)
+                UIBlock.drawBlock(matrixStack, color, leftBounds.first, topBounds.first, left, top)
 
             // Top right square
             if (hasRight && hasTop)
-                UIBlock.drawBlock(color, right, topBounds.first, rightBounds.second, top)
+                UIBlock.drawBlock(matrixStack, color, right, topBounds.first, rightBounds.second, top)
 
             // Bottom right square
             if (hasRight && hasBottom)
-                UIBlock.drawBlock(color, right, bottom, rightBounds.second, bottomBounds.second)
+                UIBlock.drawBlock(matrixStack, color, right, bottom, rightBounds.second, bottomBounds.second)
 
             // Bottom left square
             if (hasBottom && hasLeft)
-                UIBlock.drawBlock(color, leftBounds.first, bottom, left, bottomBounds.second)
+                UIBlock.drawBlock(matrixStack, color, leftBounds.first, bottom, left, bottomBounds.second)
         }
     }
 

@@ -5,6 +5,7 @@ import gg.essential.elementa.markdown.MarkdownComponent
 import gg.essential.elementa.markdown.MarkdownConfig
 import gg.essential.elementa.markdown.selection.Cursor
 import gg.essential.elementa.markdown.selection.TextCursor
+import gg.essential.universal.UMatrixStack
 import kotlin.reflect.KMutableProperty0
 import kotlin.reflect.KProperty
 
@@ -66,7 +67,14 @@ abstract class Drawable(val md: MarkdownComponent) {
      */
     protected abstract fun layoutImpl(x: Float, y: Float, width: Float): Layout
 
-    abstract fun draw(state: DrawState)
+    @Deprecated(UMatrixStack.Compat.DEPRECATED, ReplaceWith("draw(matrixStack, state)"))
+    open fun draw(state: DrawState) = draw(UMatrixStack.Compat.get(), state)
+
+    @Suppress("DEPRECATION")
+    fun drawCompat(matrixStack: UMatrixStack, state: DrawState) = UMatrixStack.Compat.runLegacyMethod(matrixStack) { draw(state) }
+
+    open fun draw(matrixStack: UMatrixStack, state: DrawState) {
+    }
 
     fun isHovered(mouseX: Float, mouseY: Float): Boolean {
         return mouseX in layout.left..layout.right && mouseY in layout.top..layout.bottom

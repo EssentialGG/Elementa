@@ -5,6 +5,7 @@ import gg.essential.elementa.components.UIContainer
 import gg.essential.elementa.components.UIText
 import gg.essential.elementa.constraints.*
 import gg.essential.elementa.dsl.*
+import gg.essential.universal.UMatrixStack
 
 class PlotComponent(
     private val points: List<PlotPoint>,
@@ -147,8 +148,8 @@ class PlotComponent(
         return PlotPoint(newX, newY)
     }
 
-    override fun draw() {
-        super.draw()
+    override fun draw(matrixStack: UMatrixStack) {
+        super.draw(matrixStack)
 
         drawWidth = if (yBounds.showLabels) {
             container.getWidth() - yLabelContainer.getWidth()
@@ -167,9 +168,12 @@ class PlotComponent(
 
         drawTop = container.getTop() + if (yBounds.showLabels) 3f else 0f
 
-        drawGrid(xBounds, isX = true)
-        drawGrid(yBounds, isX = false)
-        drawPoints()
-        drawLines()
+        // TODO propagate matrix stack and switch to line shader for 1.17
+        matrixStack.runWithGlobalState {
+            drawGrid(xBounds, isX = true)
+            drawGrid(yBounds, isX = false)
+            drawPoints()
+            drawLines()
+        }
     }
 }

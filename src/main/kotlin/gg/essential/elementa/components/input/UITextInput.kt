@@ -2,6 +2,7 @@ package gg.essential.elementa.components.input
 
 import gg.essential.elementa.constraints.WidthConstraint
 import gg.essential.elementa.dsl.*
+import gg.essential.universal.UMatrixStack
 import java.awt.Color
 
 open class UITextInput @JvmOverloads constructor(
@@ -105,12 +106,12 @@ open class UITextInput @JvmOverloads constructor(
         activateAction(getText())
     }
 
-    override fun draw() {
-        beforeDraw()
+    override fun draw(matrixStack: UMatrixStack) {
+        beforeDrawCompat(matrixStack)
 
         if (!active && !hasText()) {
-            getFontProvider().drawString(placeholder, getColor(), getLeft(), getTop(), 10f, getTextScale())
-            return super.draw()
+            getFontProvider().drawString(matrixStack, placeholder, getColor(), getLeft(), getTop(), 10f, getTextScale())
+            return super.draw(matrixStack)
         }
 
         val lineText = getTextForRender()
@@ -121,17 +122,17 @@ open class UITextInput @JvmOverloads constructor(
 
             if (!selectionStart().isAtLineStart) {
                 val preSelectionText = lineText.substring(0, selectionStart().column)
-                drawUnselectedText(preSelectionText, currentX, row = 0)
+                drawUnselectedTextCompat(matrixStack, preSelectionText, currentX, row = 0)
                 currentX += preSelectionText.width(getTextScale())
             }
 
             val selectedText = lineText.substring(selectionStart().column, selectionEnd().column)
             val selectedTextWidth = selectedText.width(getTextScale())
-            drawSelectedText(selectedText, currentX, currentX + selectedTextWidth, row = 0)
+            drawSelectedTextCompat(matrixStack, selectedText, currentX, currentX + selectedTextWidth, row = 0)
             currentX += selectedTextWidth
 
             if (!selectionEnd().isAtLineEnd) {
-                drawUnselectedText(lineText.substring(selectionEnd().column), currentX, row = 0)
+                drawUnselectedTextCompat(matrixStack, lineText.substring(selectionEnd().column), currentX, row = 0)
             }
         } else {
             if (active) {
@@ -141,9 +142,9 @@ open class UITextInput @JvmOverloads constructor(
                 setCursorPos()
             }
 
-            drawUnselectedText(lineText, getLeft(), 0)
+            drawUnselectedTextCompat(matrixStack, lineText, getLeft(), 0)
         }
 
-        super.draw()
+        super.draw(matrixStack)
     }
 }

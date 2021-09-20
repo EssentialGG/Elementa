@@ -2,6 +2,7 @@ package gg.essential.elementa.effects
 
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.utils.roundToRealPixels
+import gg.essential.universal.UMatrixStack
 import gg.essential.universal.UResolution
 import org.lwjgl.opengl.GL11.*
 import kotlin.math.max
@@ -42,7 +43,7 @@ class ScissorEffect @JvmOverloads constructor(
         )
     }
 
-    override fun beforeDraw() {
+    override fun beforeDraw(matrixStack: UMatrixStack) {
         val bounds = customBoundingBox?.getScissorBounds() ?: scissorBounds ?: boundComponent.getScissorBounds()
         val scaleFactor = UResolution.scaleFactor.toInt()
 
@@ -53,8 +54,10 @@ class ScissorEffect @JvmOverloads constructor(
         oldState = currentScissorState
         val state = oldState
 
+        // TODO ideally we should respect matrixStack offset and maybe scale, though we do not currently care about
+        //      global gl state either, so not really important until someone needs it
         var x = (bounds.x1 * scaleFactor).roundToInt()
-        var y = UResolution.windowHeight - (bounds.y2 * scaleFactor).roundToInt()
+        var y = UResolution.viewportHeight - (bounds.y2 * scaleFactor).roundToInt()
         var width = (bounds.width * scaleFactor).roundToInt()
         var height = (bounds.height * scaleFactor).roundToInt()
 
@@ -78,7 +81,7 @@ class ScissorEffect @JvmOverloads constructor(
         currentScissorState = ScissorState(x, y, width.coerceAtLeast(0), height.coerceAtLeast(0))
     }
 
-    override fun afterDraw() {
+    override fun afterDraw(matrixStack: UMatrixStack) {
         val state = oldState
 
         if (state != null) {

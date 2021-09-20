@@ -9,6 +9,7 @@ import gg.essential.elementa.components.UIText
 import gg.essential.elementa.constraints.*
 import gg.essential.elementa.constraints.animation.*
 import gg.essential.elementa.dsl.*
+import gg.essential.universal.UMatrixStack
 import java.awt.Color
 
 class InfoBlock(private val inspector: Inspector) : UIContainer() {
@@ -272,8 +273,8 @@ class InfoBlock(private val inspector: Inspector) : UIContainer() {
         }
     }
 
-    override fun draw() {
-        super.draw()
+    override fun draw(matrixStack: UMatrixStack) {
+        super.draw(matrixStack)
 
         if (cachedComponent != inspector.selectedNode?.targetComponent) {
             cachedComponent = inspector.selectedNode?.targetComponent

@@ -8,7 +8,7 @@ import gg.essential.elementa.markdown.DrawState
 import gg.essential.elementa.markdown.MarkdownComponent
 import gg.essential.elementa.markdown.MarkdownConfig
 import gg.essential.elementa.markdown.selection.TextCursor
-import gg.essential.universal.UGraphics
+import gg.essential.universal.UMatrixStack
 import gg.essential.universal.UMouse
 import gg.essential.universal.UResolution
 import java.awt.Color
@@ -172,7 +172,7 @@ class TextDrawable(
         } else false
     }
 
-    override fun draw(state: DrawState) {
+    override fun draw(matrixStack: UMatrixStack, state: DrawState) {
         val hovered = isHovered || (linkedTexts?.isHovered() ?: false)
 
         if (style.isCode) {
@@ -183,6 +183,7 @@ class TextDrawable(
             val outlineWidth = config.inlineCodeConfig.outlineWidth
 
             UIRoundedRectangle.drawRoundedRectangle(
+                matrixStack,
                 x1,
                 y1,
                 x2,
@@ -192,6 +193,7 @@ class TextDrawable(
             )
 
             UIRoundedRectangle.drawRoundedRectangle(
+                matrixStack,
                 x1 + outlineWidth,
                 y1 + outlineWidth,
                 x2 - outlineWidth,
@@ -205,8 +207,9 @@ class TextDrawable(
         val yShift = state.yShift + if (style.isCode) config.inlineCodeConfig.verticalPadding else 0f
 
         texts.forEach {
-            UGraphics.scale(scaleModifier, scaleModifier, 1f)
+            matrixStack.scale(scaleModifier, scaleModifier, 1f)
             drawString(
+                matrixStack,
                 config,
                 md.getFontProvider(),
                 it.string,
@@ -216,7 +219,7 @@ class TextDrawable(
                 style.linkLocation != null,
                 hovered
             )
-            UGraphics.scale(1f / scaleModifier, 1f / scaleModifier, 1f)
+            matrixStack.scale(1f / scaleModifier, 1f / scaleModifier, 1f)
         }
     }
 
@@ -325,7 +328,23 @@ class TextDrawable(
     }
 
     companion object {
+        @Deprecated(
+            UMatrixStack.Compat.DEPRECATED,
+            ReplaceWith("drawString(matrixStack, config, fontProvider, string, x, y, selected, isLink, isHovered)"),
+        )
         fun drawString(
+            config: MarkdownConfig,
+            fontProvider: FontProvider,
+            string: String,
+            x: Float,
+            y: Float,
+            selected: Boolean = false,
+            isLink: Boolean = false,
+            isHovered: Boolean = false
+        ) = drawString(UMatrixStack(), config, fontProvider, string, x, y, selected, isLink, isHovered)
+
+        fun drawString(
+            matrixStack: UMatrixStack,
             config: MarkdownConfig,
             fontProvider: FontProvider,
             string: String,
@@ -337,6 +356,7 @@ class TextDrawable(
         ) {
             if (selected) {
                 UIBlock.drawBlockSized(
+                    matrixStack,
                     config.textConfig.selectionBackgroundColor,
                     x.toDouble(),
                     y.toDouble(),
@@ -353,6 +373,7 @@ class TextDrawable(
 
             if (config.textConfig.hasShadow) {
                 fontProvider.drawString(
+                    matrixStack,
                     string,
                     Color(foregroundColor),
                     x,
@@ -364,6 +385,7 @@ class TextDrawable(
                 )
             } else {
                 fontProvider.drawString(
+                    matrixStack,
                     string,
                     Color(foregroundColor),
                     x,
@@ -376,6 +398,7 @@ class TextDrawable(
 
             if (isLink && isHovered) {
                 UIBlock.drawBlockSized(
+                    matrixStack,
                     config.textConfig.linkColor,
                     x.toDouble(),
                     y.toDouble() + 8,

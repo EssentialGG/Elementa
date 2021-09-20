@@ -1,6 +1,7 @@
 package gg.essential.elementa.components
 
 import gg.essential.elementa.UIComponent
+import gg.essential.elementa.UIConstraints
 import gg.essential.elementa.components.UIText.Companion.BELOW_LINE_HEIGHT
 import gg.essential.elementa.components.UIText.Companion.SHADOW_HEIGHT
 import gg.essential.elementa.constraints.CenterConstraint
@@ -12,6 +13,7 @@ import gg.essential.elementa.state.pixels
 import gg.essential.elementa.utils.getStringSplitToWidth
 import gg.essential.elementa.utils.getStringSplitToWidthTruncated
 import gg.essential.universal.UGraphics
+import gg.essential.universal.UMatrixStack
 import java.awt.Color
 
 /**
@@ -31,16 +33,23 @@ open class UIWrappedText @JvmOverloads constructor(
     private val lineSpacing: Float = 9f,
     private val trimmedTextSuffix: String = "..."
 ) : UIComponent() {
-    private var textState: State<String> = BasicState(text)
+    private val textState = BasicState(text).map { it } // extra map so we can easily rebind it
     private var shadowState: State<Boolean> = BasicState(shadow)
     private var shadowColorState: State<Color?> = BasicState(shadowColor)
-    private var textWidthState = textState.map { it.width(getTextScale(), getFontProvider()) / getTextScale() }
+    private val textScaleState = constraints.asState { getTextScale() }
+    private val fontProviderState = constraints.asState { fontProvider }
+    private var textWidthState = textState.zip(textScaleState.zip(fontProviderState)).map { (text, opts) ->
+        val (textScale, fontProvider) = opts
+        text.width(textScale, fontProvider) / textScale
+    }
 
     private val charWidth = UGraphics.getCharWidth('x')
 
     /** Guess on whether we should be trying to center or top-align this component. See [BELOW_LINE_HEIGHT]. */
-    private val verticallyCenteredState = BasicState(constraints.y is CenterConstraint).also {
-        constraints.addObserver { _, _ -> it.set(constraints.y is CenterConstraint) }
+    private val verticallyCenteredState = constraints.asState { y is CenterConstraint }
+
+    private fun <T> UIConstraints.asState(selector: UIConstraints.() -> T) = BasicState(selector(constraints)).also {
+        constraints.addObserver { _, _ -> it.set(selector(constraints)) }
     }
 
     /**
@@ -64,14 +73,10 @@ open class UIWrappedText @JvmOverloads constructor(
 
             (lines.size * lineSpacing + extraHeightState.get()) * getTextScale()
         })
-        Window.enqueueRenderOperation {
-            textWidthState.rebind(textState) //Needed so that the text scale and font provider are now present
-        }
     }
 
     fun bindText(newTextState: State<String>) = apply {
-        textState = newTextState
-        textWidthState.rebind(newTextState)
+        textState.rebind(newTextState)
     }
 
     fun bindShadow(newShadowState: State<Boolean>) = apply {
@@ -96,8 +101,8 @@ open class UIWrappedText @JvmOverloads constructor(
      */
     fun getTextWidth() = textWidthState.get()
 
-    override fun draw() {
-        beforeDraw()
+    override fun draw(matrixStack: UMatrixStack) {
+        beforeDrawCompat(matrixStack)
 
         val textScale = getTextScale()
         val x = getLeft()
@@ -107,13 +112,13 @@ open class UIWrappedText @JvmOverloads constructor(
 
         // We aren't visible, don't draw
         if (color.alpha <= 10) {
-            return super.draw()
+            return super.draw(matrixStack)
         }
 
         if (width / textScale <= charWidth) {
             // If we are smaller than a char, we can't physically split this string into
             // "width" strings, so we'll prefer a no-op to an error.
-            return super.draw()
+            return super.draw(matrixStack)
         }
 
         UGraphics.enableBlend()
@@ -147,6 +152,7 @@ open class UIWrappedText @JvmOverloads constructor(
             } else 0f
 
             getFontProvider().drawString(
+                matrixStack,
                 line,
                 color,
                 x + xOffset,
@@ -158,6 +164,6 @@ open class UIWrappedText @JvmOverloads constructor(
             )
         }
 
-        super.draw()
+        super.draw(matrixStack)
     }
 }

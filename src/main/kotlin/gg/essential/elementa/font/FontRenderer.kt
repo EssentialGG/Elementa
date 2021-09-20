@@ -5,15 +5,18 @@ import gg.essential.elementa.constraints.ConstraintType
 import gg.essential.elementa.constraints.resolution.ConstraintVisitor
 import gg.essential.elementa.font.data.Font
 import gg.essential.elementa.font.data.Glyph
-import gg.essential.elementa.shaders.*
-import gg.essential.elementa.utils.Vector2f
-import gg.essential.elementa.utils.Vector4f
+import gg.essential.elementa.utils.readFromLegacyShader
 import gg.essential.universal.UGraphics
-import gg.essential.universal.UMinecraft
+import gg.essential.universal.UMatrixStack
 import gg.essential.universal.UResolution
+import gg.essential.universal.shader.BlendState
+import gg.essential.universal.shader.Float2Uniform
+import gg.essential.universal.shader.Float4Uniform
+import gg.essential.universal.shader.FloatUniform
+import gg.essential.universal.shader.SamplerUniform
+import gg.essential.universal.shader.UShader
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats
 import org.lwjgl.opengl.GL11
-import org.lwjgl.opengl.GL13
 import java.awt.Color
 import kotlin.math.ceil
 import kotlin.math.floor
@@ -106,16 +109,19 @@ class FontRenderer(
             }
         }
 
-        UGraphics.bindTexture(activeFont.getTexture().glTextureId)
+        samplerUniform.setValue(activeFont.getTexture().glTextureId)
 
         if (activeFont != tmp) { //Font context switch
-            GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR)
-            GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR)
-            sdfTexel.setValue(Vector2f(1f / activeFont.fontInfo.atlas.width, 1f / activeFont.fontInfo.atlas.height))
+            UGraphics.configureTexture(activeFont.getTexture().glTextureId) {
+                GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR)
+                GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR)
+            }
+            sdfTexel.setValue(1f / activeFont.fontInfo.atlas.width, 1f / activeFont.fontInfo.atlas.height)
         }
     }
 
     override fun drawString(
+        matrixStack: UMatrixStack,
         string: String,
         color: Color,
         x: Float,
@@ -140,12 +146,12 @@ class FontRenderer(
             }
             this.shadowColor = Color(baseColor)
             val shadowOffset = effectiveSize / 10
-            UGraphics.translate(shadowOffset, shadowOffset, 0f)
-            drawStringNow(string, Color(baseColor), x, adjustedY, effectiveSize)
-            UGraphics.translate(-shadowOffset, -shadowOffset, 0f)
+            matrixStack.translate(shadowOffset, shadowOffset, 0f)
+            drawStringNow(matrixStack, string, Color(baseColor), x, adjustedY, effectiveSize)
+            matrixStack.translate(-shadowOffset, -shadowOffset, 0f)
         }
         drawingShadow = false
-        drawStringNow(string, color, x, adjustedY, effectiveSize)
+        drawStringNow(matrixStack, string, color, x, adjustedY, effectiveSize)
     }
 
     override fun visitImpl(visitor: ConstraintVisitor, type: ConstraintType) {
@@ -156,7 +162,7 @@ class FontRenderer(
         val current = if (drawingShadow) shadowColor else textColor
         val amt = Color.RGBtoHSB(current!!.red, current.green, current.blue, null)[2]
         hintAmountUniform.setValue(0f)
-        subpixelAmountUniform.setValue(0f)
+//        subpixelAmountUniform.setValue(0f)
 
 //        if(pointSize < 7) {
 //            subpixelAmountUniform.setValue(amt)
@@ -165,22 +171,14 @@ class FontRenderer(
 //        }
     }
 
-    private fun drawStringNow(string: String, color: Color, x: Float, y: Float, originalPointSize: Float) {
-        if (!areShadersInitialized())
+    private fun drawStringNow(matrixStack: UMatrixStack, string: String, color: Color, x: Float, y: Float, originalPointSize: Float) {
+        if (!areShadersInitialized() || !shader.usable)
             return
 
         var currentPointSize = originalPointSize
 
-        UGraphics.enableBlend()
-        UGraphics.tryBlendFuncSeparate(
-            GL11.GL_SRC_ALPHA,
-            GL11.GL_ONE_MINUS_SRC_ALPHA,
-            GL11.GL_SRC_ALPHA,
-            GL11.GL_ONE_MINUS_SRC_ALPHA
-        )
-        shader.bindIfUsable()
+        shader.bind()
         switchFont(1)
-        samplerUniform.setValue(0)
         //shadowColorUniform.setValue(Vector4f(0.1f, 0.1f, 0.1f, 1f))
 
         doffsetUniform.setValue(3.5f / currentPointSize)
@@ -293,6 +291,7 @@ class FontRenderer(
                 val hintedY = hintedBaseline - ceil(planeBounds.top * currentPointSize * guiScale) / guiScale
 
                 drawGlyph(
+                    matrixStack,
                     glyph,
                     color,
                     currentX,
@@ -306,12 +305,12 @@ class FontRenderer(
             i++
         }
 
-        shader.unbindIfUsable()
+        shader.unbind()
         activeFont = boldFont
     }
 
 
-    private fun drawGlyph(glyph: Glyph, color: Color, x: Float, y: Float, width: Float, height: Float) {
+    private fun drawGlyph(matrixStack: UMatrixStack, glyph: Glyph, color: Color, x: Float, y: Float, width: Float, height: Float) {
         val atlasBounds = glyph.atlasBounds ?: return
         val atlas = activeFont.fontInfo.atlas
         val textureTop = 1.0 - (atlasBounds.top / atlas.height)
@@ -321,22 +320,20 @@ class FontRenderer(
 
         val drawColor = if (drawingShadow) (shadowColor ?: color) else (textColor ?: color)
         fgColorUniform.setValue(
-            Vector4f(
-                drawColor.red / 255f,
-                drawColor.green / 255f,
-                drawColor.blue / 255f,
-                1f
-            )
+            drawColor.red / 255f,
+            drawColor.green / 255f,
+            drawColor.blue / 255f,
+            1f
         )
         val worldRenderer = UGraphics.getFromTessellator()
-        worldRenderer.begin(7, DefaultVertexFormats.POSITION_TEX)
+        worldRenderer.beginWithActiveShader(UGraphics.DrawMode.QUADS, DefaultVertexFormats.POSITION_TEX)
         val doubleX = x.toDouble()
         val doubleY = y.toDouble()
-        worldRenderer.pos(doubleX, doubleY + height, 0.0).tex(textureLeft, textureBottom).endVertex()
-        worldRenderer.pos(doubleX + width, doubleY + height, 0.0).tex(textureRight, textureBottom).endVertex()
-        worldRenderer.pos(doubleX + width, doubleY, 0.0).tex(textureRight, textureTop).endVertex()
-        worldRenderer.pos(doubleX, doubleY, 0.0).tex(textureLeft, textureTop).endVertex()
-        UGraphics.draw()
+        worldRenderer.pos(matrixStack, doubleX, doubleY + height, 0.0).tex(textureLeft, textureBottom).endVertex()
+        worldRenderer.pos(matrixStack, doubleX + width, doubleY + height, 0.0).tex(textureRight, textureBottom).endVertex()
+        worldRenderer.pos(matrixStack, doubleX + width, doubleY, 0.0).tex(textureRight, textureTop).endVertex()
+        worldRenderer.pos(matrixStack, doubleX, doubleY, 0.0).tex(textureLeft, textureTop).endVertex()
+        worldRenderer.drawDirect()
 
 //        if (underline) {
 //            TODO()
@@ -387,14 +384,14 @@ class FontRenderer(
             31 to Color(63, 63, 63)
         )
 
-        private lateinit var shader: Shader
-        private lateinit var samplerUniform: IntUniform
-        private lateinit var doffsetUniform: FloatUniform
-        private lateinit var hintAmountUniform: FloatUniform
-        private lateinit var subpixelAmountUniform: FloatUniform
-        private lateinit var sdfTexel: Vec2Uniform
-        private lateinit var fgColorUniform: Vec4Uniform
-        //private lateinit var shadowColorUniform: Vec4Uniform
+        internal lateinit var shader: UShader
+        internal lateinit var samplerUniform: SamplerUniform
+        internal lateinit var doffsetUniform: FloatUniform
+        internal lateinit var hintAmountUniform: FloatUniform
+        internal lateinit var subpixelAmountUniform: FloatUniform
+        internal lateinit var sdfTexel: Float2Uniform
+        internal lateinit var fgColorUniform: Float4Uniform
+        //internal lateinit var shadowColorUniform: Float4Uniform
 
         fun areShadersInitialized() = ::shader.isInitialized
 
@@ -402,14 +399,18 @@ class FontRenderer(
             if (areShadersInitialized())
                 return
 
-            shader = Shader("font", "font")
-            samplerUniform = IntUniform(shader.getUniformLocation("msdf"))
-            doffsetUniform = FloatUniform(shader.getUniformLocation("doffset"))
-            hintAmountUniform = FloatUniform(shader.getUniformLocation("hint_amount"))
-            subpixelAmountUniform = FloatUniform(shader.getUniformLocation("subpixel_amount"))
-            sdfTexel = Vec2Uniform(shader.getUniformLocation("sdf_texel"))
-            fgColorUniform = Vec4Uniform(shader.getUniformLocation("fgColor"))
-            //shadowColorUniform = Vec4Uniform(shader.getUniformLocation("shadowColor"))
+            shader = UShader.readFromLegacyShader("font", "font", BlendState.NORMAL)
+            if (!shader.usable) {
+                println("Failed to load Elementa font shader")
+                return
+            }
+            samplerUniform = shader.getSamplerUniform("msdf")
+            doffsetUniform = shader.getFloatUniform("doffset")
+            hintAmountUniform = shader.getFloatUniform("hint_amount")
+            // subpixelAmountUniform = shader.getFloatUniform("subpixel_amount")
+            sdfTexel = shader.getFloat2Uniform("sdf_texel")
+            fgColorUniform = shader.getFloat4Uniform("fgColor")
+            //shadowColorUniform = shader.getFloat4Uniform("shadowColor")
         }
     }
 }

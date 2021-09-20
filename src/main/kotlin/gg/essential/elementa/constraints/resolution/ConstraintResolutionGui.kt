@@ -1,5 +1,6 @@
 package gg.essential.elementa.constraints.resolution
 
+import gg.essential.elementa.ElementaVersion
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.WindowScreen
 import gg.essential.elementa.components.*
@@ -14,7 +15,7 @@ class ConstraintResolutionGui(
     private val guiName: String,
     private val gui: UIComponent,
     private val nodes: List<ResolverNode>?
-) : WindowScreen() {
+) : WindowScreen(ElementaVersion.V1) {
     init {
         UIBlock(Color(22, 22, 24)).constrain {
             width = 100.percent()

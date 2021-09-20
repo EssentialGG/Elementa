@@ -7,6 +7,7 @@ package gg.essential.elementa
 import gg.essential.elementa.components.Window
 import gg.essential.elementa.constraints.animation.*
 import gg.essential.universal.UKeyboard
+import gg.essential.universal.UMatrixStack
 import gg.essential.universal.UScreen
 
 import java.awt.Color
@@ -16,14 +17,24 @@ import kotlin.reflect.KMutableProperty0
  * Version of [UScreen] with a [Window] provided and a few useful
  * functions for Elementa Gui programming.
  */
-abstract class WindowScreen(
+abstract class WindowScreen @JvmOverloads constructor(
+    version: ElementaVersion,
     private val enableRepeatKeys: Boolean = true,
     private val drawDefaultBackground: Boolean = true,
     restoreCurrentGuiOnClose: Boolean = false,
     newGuiScale: Int = -1
 ) : UScreen(restoreCurrentGuiOnClose, newGuiScale) {
-    val window = Window()
+    val window = Window(version)
     private var isInitialized = false
+
+    @Deprecated("Add ElementaVersion as the first argument to opt-in to improved behavior.")
+    @JvmOverloads
+    constructor(
+        enableRepeatKeys: Boolean = true,
+        drawDefaultBackground: Boolean = true,
+        restoreCurrentGuiOnClose: Boolean = false,
+        newGuiScale: Int = -1
+    ) : this(ElementaVersion.v0, enableRepeatKeys, drawDefaultBackground, restoreCurrentGuiOnClose, newGuiScale)
 
     init {
         window.onKeyType { typedChar, keyCode ->
@@ -33,26 +44,22 @@ abstract class WindowScreen(
 
     open fun afterInitialization() { }
 
-    override fun onDrawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
+    override fun onDrawScreen(matrixStack: UMatrixStack, mouseX: Int, mouseY: Int, partialTicks: Float) {
         if (!isInitialized) {
             isInitialized = true
             afterInitialization()
         }
 
-        super.onDrawScreen(mouseX, mouseY, partialTicks)
-
-        //#if MC>=11602
-        //$$ UGraphics.setStack(matrixStack)
-        //#endif
+        super.onDrawScreen(matrixStack, mouseX, mouseY, partialTicks)
 
         if (drawDefaultBackground)
-            super.onDrawBackground(0)
+            super.onDrawBackground(matrixStack, 0)
 
         // Now, we need to hook up Elementa to this GuiScreen. In practice, Elementa
         // is not constrained to being used solely inside of a GuiScreen, all the programmer
         // needs to do is call the [Window] events when appropriate, whenever that may be.
         // In our example, it is in the overridden [GuiScreen#drawScreen] method.
-        window.draw()
+        window.draw(matrixStack)
     }
 
     override fun onMouseClicked(mouseX: Double, mouseY: Double, mouseButton: Int) {
@@ -82,6 +89,8 @@ abstract class WindowScreen(
     }
 
     override fun initScreen(width: Int, height: Int) {
+        window.onWindowResize()
+
         super.initScreen(width, height)
 
         // Since we want our users to be able to hold a key

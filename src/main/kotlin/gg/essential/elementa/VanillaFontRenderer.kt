@@ -5,6 +5,7 @@ import gg.essential.elementa.constraints.resolution.ConstraintVisitor
 import gg.essential.elementa.font.FontProvider
 import gg.essential.elementa.utils.roundToRealPixels
 import gg.essential.universal.UGraphics
+import gg.essential.universal.UMatrixStack
 import gg.essential.universal.UMinecraft.getFontRenderer
 import java.awt.Color
 
@@ -23,6 +24,7 @@ class VanillaFontRenderer : FontProvider {
         getFontRenderer().FONT_HEIGHT.toFloat()
 
     override fun drawString(
+        matrixStack: UMatrixStack,
         string: String,
         color: Color,
         x: Float,
@@ -35,12 +37,12 @@ class VanillaFontRenderer : FontProvider {
         val scaledX = x.roundToRealPixels() / scale
         val scaledY = y.roundToRealPixels() / scale
 
-        UGraphics.scale(scale, scale, 1f)
+        matrixStack.scale(scale, scale, 1f)
         if (shadowColor == null) {
-            UGraphics.drawString(string, scaledX, scaledY, color.rgb, shadow)
+            UGraphics.drawString(matrixStack, string, scaledX, scaledY, color.rgb, shadow)
         } else {
-            UGraphics.drawString(string, scaledX, scaledY, color.rgb, shadowColor.rgb)
+            UGraphics.drawString(matrixStack, string, scaledX, scaledY, color.rgb, shadowColor.rgb)
         }
-        UGraphics.scale(1 / scale, 1 / scale, 1f)
+        matrixStack.scale(1 / scale, 1 / scale, 1f)
     }
 }

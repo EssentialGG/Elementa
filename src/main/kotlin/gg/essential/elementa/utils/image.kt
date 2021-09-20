@@ -6,6 +6,7 @@ import net.minecraft.client.renderer.texture.AbstractTexture
 //$$ import net.minecraft.client.renderer.texture.Texture
 //#endif
 import gg.essential.universal.UGraphics
+import gg.essential.universal.UMatrixStack
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats
 import org.lwjgl.opengl.GL11
 import java.awt.Color
@@ -16,6 +17,7 @@ import kotlin.math.pow
 import kotlin.math.withSign
 
 internal fun drawTexture(
+    matrixStack: UMatrixStack,
     //#if MC<=11202
     texture: AbstractTexture,
     //#else
@@ -27,33 +29,35 @@ internal fun drawTexture(
     width: Double,
     height: Double
 ) {
-    UGraphics.pushMatrix()
+    matrixStack.push()
 
     UGraphics.enableBlend()
     UGraphics.enableAlpha()
-    UGraphics.scale(1f, 1f, 50f)
+    matrixStack.scale(1f, 1f, 50f)
     //#if MC<=11202
-    UGraphics.bindTexture(texture.glTextureId)
+    val glId = texture.glTextureId
     //#else
-    //$$ UGraphics.bindTexture(texture.getGlTextureId())
+    //$$ val glId = texture.getGlTextureId()
     //#endif
-    UGraphics.enableTexture2D()
+    UGraphics.bindTexture(0, glId)
     val red = color.red.toFloat() / 255f
     val green = color.green.toFloat() / 255f
     val blue = color.blue.toFloat() / 255f
     val alpha = color.alpha.toFloat() / 255f
     val worldRenderer = UGraphics.getFromTessellator()
-    GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
+    UGraphics.configureTexture(glId) {
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST)
+    }
 
-    worldRenderer.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR)
+    worldRenderer.beginWithDefaultShader(UGraphics.DrawMode.QUADS, DefaultVertexFormats.POSITION_TEX_COLOR)
 
-    worldRenderer.pos(x, y + height, 0.0).tex(0.0, 1.0).color(red, green, blue, alpha).endVertex()
-    worldRenderer.pos(x + width, y + height, 0.0).tex(1.0, 1.0).color(red, green, blue, alpha).endVertex()
-    worldRenderer.pos(x + width, y, 0.0).tex(1.0, 0.0).color(red, green, blue, alpha).endVertex()
-    worldRenderer.pos(x, y, 0.0).tex(0.0, 0.0).color(red, green, blue, alpha).endVertex()
-    UGraphics.draw()
+    worldRenderer.pos(matrixStack, x, y + height, 0.0).tex(0.0, 1.0).color(red, green, blue, alpha).endVertex()
+    worldRenderer.pos(matrixStack, x + width, y + height, 0.0).tex(1.0, 1.0).color(red, green, blue, alpha).endVertex()
+    worldRenderer.pos(matrixStack, x + width, y, 0.0).tex(1.0, 0.0).color(red, green, blue, alpha).endVertex()
+    worldRenderer.pos(matrixStack, x, y, 0.0).tex(0.0, 0.0).color(red, green, blue, alpha).endVertex()
+    worldRenderer.drawDirect()
 
-    UGraphics.popMatrix()
+    matrixStack.pop()
 }
 
 fun decodeBlurHash(blurHash: String?, width: Int, height: Int, punch: Float = 1f): BufferedImage? {

@@ -3,6 +3,7 @@ package gg.essential.elementa.components
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.dsl.toConstraint
 import gg.essential.universal.UGraphics
+import gg.essential.universal.UMatrixStack
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats
 import org.lwjgl.opengl.GL11
 import java.awt.Color
@@ -13,8 +14,10 @@ import java.awt.Color
 /**
  * Component for drawing arbitrary shapes.
  */
+@Deprecated("Currently only supports convex polygons. Use with care! Or better, create a dedicated component for your use case.")
 open class UIShape @JvmOverloads constructor(color: Color = Color.WHITE) : UIComponent() {
     private var vertices = mutableListOf<UIPoint>()
+    @Deprecated("Only supports GL_POLYGON on 1.17+, implemented as TRIANGEL_FAN.")
     var drawMode = GL11.GL_POLYGON
 
     init {
@@ -33,13 +36,12 @@ open class UIShape @JvmOverloads constructor(color: Color = Color.WHITE) : UICom
 
     fun getVertices() = vertices
 
-    override fun draw() {
-        beforeDraw()
+    override fun draw(matrixStack: UMatrixStack) {
+        beforeDrawCompat(matrixStack)
 
         val color = this.getColor()
-        if (color.alpha == 0) return super.draw()
+        if (color.alpha == 0) return super.draw(matrixStack)
 
-        UGraphics.pushMatrix()
         UGraphics.enableBlend()
         UGraphics.disableTexture2D()
         val red = color.red.toFloat() / 255f
@@ -50,19 +52,22 @@ open class UIShape @JvmOverloads constructor(color: Color = Color.WHITE) : UICom
         val worldRenderer = UGraphics.getFromTessellator()
         UGraphics.tryBlendFuncSeparate(770, 771, 1, 0)
 
+        //#if MC>=11700
+        //$$ worldRenderer.beginWithDefaultShader(UGraphics.DrawMode.TRIANGLE_FAN, VertexFormats.POSITION_COLOR)
+        //#else
         worldRenderer.begin(drawMode, DefaultVertexFormats.POSITION_COLOR)
+        //#endif
         vertices.forEach {
             worldRenderer
-                .pos(it.absoluteX.toDouble(), it.absoluteY.toDouble(), 0.0)
+                .pos(matrixStack, it.absoluteX.toDouble(), it.absoluteY.toDouble(), 0.0)
                 .color(red, green, blue, alpha)
                 .endVertex()
         }
-        UGraphics.draw()
+        worldRenderer.drawDirect()
 
         UGraphics.enableTexture2D()
         UGraphics.disableBlend()
-        UGraphics.popMatrix()
 
-        super.draw()
+        super.draw(matrixStack)
     }
 }

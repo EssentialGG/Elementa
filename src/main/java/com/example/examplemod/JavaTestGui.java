@@ -1,5 +1,6 @@
 package com.example.examplemod;
 
+import gg.essential.elementa.ElementaVersion;
 import gg.essential.elementa.UIComponent;
 import gg.essential.elementa.WindowScreen;
 import gg.essential.elementa.components.UIBlock;
@@ -20,6 +21,7 @@ public class JavaTestGui extends WindowScreen {
         .enableEffect(new ScissorEffect());
 
     public JavaTestGui() {
+        super(ElementaVersion.V1);
         box.onMouseEnterRunnable(() -> {
             // Animate, set color, etc.
             AnimatingConstraints anim = box.makeAnimation();

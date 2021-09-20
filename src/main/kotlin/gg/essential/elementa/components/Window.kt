@@ -1,5 +1,6 @@
 package gg.essential.elementa.components
 
+import gg.essential.elementa.ElementaVersion
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.constraints.resolution.ConstraintResolutionGui
 import gg.essential.elementa.constraints.resolution.ConstraintResolver
@@ -16,7 +17,10 @@ import java.util.concurrent.TimeUnit
  * "Root" component. All components MUST have a Window in their hierarchy in order to do any rendering
  * or animating.
  */
-class Window(val animationFPS: Int = 244) : UIComponent() {
+class Window @JvmOverloads constructor(
+    private val version: ElementaVersion,
+    val animationFPS: Int = 244
+) : UIComponent() {
     private var systemTime = -1L
     private var currentMouseButton = -1
 
@@ -31,6 +35,10 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
 
     internal var clickInterceptor: ((mouseX: Double, mouseY: Double, button: Int) -> Boolean)? = null
 
+    @Deprecated("Add ElementaVersion as the first argument to opt-in to improved behavior.")
+    @JvmOverloads
+    constructor(animationFPS: Int = 244) : this(ElementaVersion.v0, animationFPS)
+
     init {
         super.parent = this
     }
@@ -43,7 +51,10 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
         }
     }
 
-    override fun draw() {
+    override fun draw(matrixStack: UMatrixStack) =
+        version.enableFor { doDraw(matrixStack) }
+
+    private fun doDraw(matrixStack: UMatrixStack) {
         if (cancelDrawing)
             return
 
@@ -83,7 +94,7 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
             }
 
             mouseMove(this)
-            super.draw()
+            super.draw(matrixStack)
         } catch (e: Throwable) {
             cancelDrawing = true
 
@@ -120,7 +131,10 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
         }
     }
 
-    fun drawFloatingComponents() {
+    @Deprecated(UMatrixStack.Compat.DEPRECATED, ReplaceWith("drawFloatingComponents(matrixStack)"))
+    fun drawFloatingComponents() = drawFloatingComponents(UMatrixStack())
+
+    fun drawFloatingComponents(matrixStack: UMatrixStack) {
         requireMainThread()
 
         val it = floatingComponents.iterator()
@@ -130,7 +144,7 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
                 it.remove()
                 continue
             }
-            component.draw()
+            component.drawCompat(matrixStack)
         }
     }
 
@@ -205,11 +219,8 @@ class Window(val animationFPS: Int = 244) : UIComponent() {
 
     override fun animationFrame() {
         if (currentMouseButton != -1) {
-            dragMouse(
-                UMouse.getScaledX().toInt(),
-                UResolution.scaledHeight - UMouse.getScaledY().toInt(),
-                currentMouseButton
-            )
+            val (mouseX, mouseY) = getMousePosition()
+            dragMouse(mouseX.toInt(), mouseY.toInt(), currentMouseButton)
         }
 
         if (componentRequestingFocus != null && componentRequestingFocus != focusedComponent) {

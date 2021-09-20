@@ -4,6 +4,7 @@ import gg.essential.universal.UGraphics
 import org.lwjgl.opengl.ARBShaderObjects
 import org.lwjgl.opengl.GL20
 
+@Deprecated("Use UniversalCraft's UShader instead.")
 open class Shader(private val vertName: String, private val fragName: String) {
     protected var vertShader: Int = 0
     protected var fragShader: Int = 0

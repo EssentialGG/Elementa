@@ -31,6 +31,13 @@ implementation "gg.essential:elementa-$mcVersion-$mcPlatform:$buildNumber"
           <th>buildNumber</th>
         </tr>
         <tr>
+          <td>1.17.1</td>
+          <td>fabric</td>
+          <td>
+            <img alt="1.17.1-forge" src="https://img.shields.io/maven-metadata/v?color=A97BFF&label=&metadataUrl=https%3A%2F%2Frepo.sk1er.club%2Frepository%2Fmaven-releases%2Fgg%2Fessential%2Felementa-1.17.1-fabric%2Fmaven-metadata.xml">
+          </td>
+        </tr>
+        <tr>
           <td>1.12.2</td>
           <td>forge</td>
           <td>

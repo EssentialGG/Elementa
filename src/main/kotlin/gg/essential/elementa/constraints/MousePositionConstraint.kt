@@ -2,8 +2,6 @@ package gg.essential.elementa.constraints
 
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.constraints.resolution.ConstraintVisitor
-import gg.essential.universal.UMouse
-import gg.essential.universal.UResolution
 
 class MousePositionConstraint : PositionConstraint {
     override var cachedValue = 0f
@@ -11,11 +9,11 @@ class MousePositionConstraint : PositionConstraint {
     override var constrainTo: UIComponent? = null
 
     override fun getXPositionImpl(component: UIComponent): Float {
-        return UMouse.getScaledX().toFloat()
+        return UIComponent.getMouseX()
     }
 
     override fun getYPositionImpl(component: UIComponent): Float {
-        return UResolution.scaledHeight - UMouse.getScaledY().toFloat()
+        return UIComponent.getMouseY()
     }
 
     override fun visitImpl(visitor: ConstraintVisitor, type: ConstraintType) { }

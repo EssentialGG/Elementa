@@ -1,5 +1,6 @@
 package gg.essential.elementa.components.inspector
 
+import gg.essential.elementa.ElementaVersion
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.components.*
 import gg.essential.elementa.constraints.*
@@ -10,6 +11,7 @@ import gg.essential.elementa.utils.ObservableAddEvent
 import gg.essential.elementa.utils.ObservableClearEvent
 import gg.essential.elementa.utils.ObservableRemoveEvent
 import gg.essential.universal.UGraphics
+import gg.essential.universal.UMatrixStack
 import org.lwjgl.opengl.GL11
 import java.awt.Color
 import java.text.NumberFormat
@@ -232,7 +234,7 @@ class Inspector @JvmOverloads constructor(
         }
     }
 
-    override fun draw() {
+    override fun draw(matrixStack: UMatrixStack) {
         separator1.setWidth(container.getWidth().pixels())
         separator2.setWidth(container.getWidth().pixels())
 
@@ -254,24 +256,25 @@ class Inspector @JvmOverloads constructor(
 
             // Clear the depth buffer cause we will be using it to draw our outside-of-scissor-bounds block
             UGraphics.glClear(GL11.GL_DEPTH_BUFFER_BIT)
-            UGraphics.enableDepth()
 
             // Draw a highlight on the element respecting its scissor effects
-            scissors.forEach { it.beforeDraw() }
-            UIBlock.drawBlock(Color(129, 212, 250, 100), x1, y1, x2, y2)
-            scissors.asReversed().forEach { it.afterDraw() }
+            scissors.forEach { it.beforeDraw(matrixStack) }
+            UIBlock.drawBlock(matrixStack, Color(129, 212, 250, 100), x1, y1, x2, y2)
+            scissors.asReversed().forEach { it.afterDraw(matrixStack) }
 
             // Then draw another highlight (with depth testing such that we do not overwrite the previous one)
             // which does not respect the scissor effects and thereby indicates where the element is drawn outside of
             // its scissor bounds.
+            UGraphics.enableDepth()
             UGraphics.depthFunc(GL11.GL_LESS)
-            UIBlock.drawBlock(Color(255, 100, 100, 100), x1, y1, x2, y2)
+            ElementaVersion.v0.enableFor { // need the custom depth testing
+                UIBlock.drawBlock(matrixStack, Color(255, 100, 100, 100), x1, y1, x2, y2)
+            }
             UGraphics.depthFunc(GL11.GL_LEQUAL)
-
             UGraphics.disableDepth()
         }
 
-        super.draw()
+        super.draw(matrixStack)
     }
 
     companion object {

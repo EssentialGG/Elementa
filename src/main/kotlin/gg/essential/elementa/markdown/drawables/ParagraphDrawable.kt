@@ -9,6 +9,7 @@ import gg.essential.elementa.markdown.selection.ImageCursor
 import gg.essential.elementa.markdown.selection.TextCursor
 import gg.essential.elementa.utils.withAlpha
 import gg.essential.universal.UDesktop
+import gg.essential.universal.UMatrixStack
 import java.awt.Color
 import java.net.URI
 import java.net.URISyntaxException
@@ -255,13 +256,14 @@ class ParagraphDrawable(
         )
     }
 
-    override fun draw(state: DrawState) {
+    override fun draw(matrixStack: UMatrixStack, state: DrawState) {
         drawables.filterIsInstance<TextDrawable>().forEach { it.beforeDraw(state) }
-        drawables.forEach { it.draw(state) }
+        drawables.forEach { it.drawCompat(matrixStack, state) }
 
         // TODO: Remove
         if (MarkdownComponent.DEBUG) {
             UIBlock.drawBlockSized(
+                matrixStack,
                 rc,
                 layout.elementLeft.toDouble() + state.xShift,
                 layout.elementTop.toDouble() + state.yShift,

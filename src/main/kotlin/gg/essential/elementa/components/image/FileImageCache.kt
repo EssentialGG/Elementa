@@ -4,7 +4,6 @@ import java.awt.image.BufferedImage
 import java.lang.IllegalArgumentException
 import java.util.concurrent.TimeUnit
 import javax.imageio.metadata.IIOMetadataNode
-import com.sun.imageio.plugins.png.PNGMetadata
 import org.apache.commons.io.FileUtils
 import org.w3c.dom.Node
 import org.w3c.dom.NodeList
@@ -123,22 +122,16 @@ class FileImageCache(
         imageReader.setInput(ImageIO.createImageInputStream(ByteArrayInputStream(imageData)), true)
 
 
-        val metadata = imageReader.getImageMetadata(0) as PNGMetadata
-        val childNodes: NodeList = metadata.standardTextNode.childNodes
-        var cacheUrl = ""
-        var timeCached = 0L
-        for (i in 0 until childNodes.length) {
-            val node: Node = childNodes.item(i)
-            val keyword: String = node.attributes.getNamedItem("keyword").nodeValue
-            val value: String = node.attributes.getNamedItem("value").nodeValue
-            if ("image_url" == keyword) {
-                cacheUrl = value
-            } else if ("cache_time" == keyword) {
-                timeCached = value.toLong()
-            }
-        }
+        val metadata = imageReader.getImageMetadata(0).getAsTree("javax_imageio_1.0")
+        val childNodes: NodeList = metadata.childNodes.asSequence().find { it.nodeName == "Text" }!!.childNodes
+        val cacheUrl = childNodes.findValueByKeyword("image_url") ?: ""
+        val timeCached = childNodes.findValueByKeyword("cache_time")?.toLong() ?: 0L
         return Triple(ImageIO.read(ByteArrayInputStream(imageData)), cacheUrl, timeCached)
     }
 
+    private fun NodeList.asSequence(): Sequence<Node> = (0 until this.length).asSequence().map { this.item(it) }
+    private fun Node.attributeValue(name: String) = attributes.getNamedItem(name)?.nodeValue
+    private fun NodeList.findValueByKeyword(keyword: String) =
+        asSequence().find { it.attributeValue("keyword") == keyword }?.attributeValue("value")
 }
 

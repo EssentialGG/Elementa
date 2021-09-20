@@ -4,6 +4,7 @@ import gg.essential.elementa.components.UIBlock
 import gg.essential.elementa.markdown.DrawState
 import gg.essential.elementa.markdown.MarkdownComponent
 import gg.essential.elementa.markdown.MarkdownConfig
+import gg.essential.universal.UMatrixStack
 
 class HeaderDrawable(
     md: MarkdownComponent,
@@ -49,12 +50,13 @@ class HeaderDrawable(
         )
     }
 
-    override fun draw(state: DrawState) {
-        paragraph.draw(state)
+    override fun draw(matrixStack: UMatrixStack, state: DrawState) {
+        paragraph.drawCompat(matrixStack, state)
 
         if (headerConfig.hasDivider) {
             val y = layout.bottom - layout.margin.bottom - headerConfig.dividerWidth
             UIBlock.drawBlockSized(
+                matrixStack,
                 headerConfig.dividerColor, 
                 (x + state.xShift).toDouble(),
                 (y + state.yShift).toDouble(),

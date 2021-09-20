@@ -1,5 +1,6 @@
 package com.example.examplemod
 
+import gg.essential.elementa.ElementaVersion
 import gg.essential.elementa.WindowScreen
 import gg.essential.elementa.components.*
 import gg.essential.elementa.components.input.UIMultilineTextInput
@@ -15,7 +16,7 @@ import gg.essential.elementa.utils.withAlpha
 import net.minecraft.util.text.TextFormatting
 import java.awt.Color
 
-class KtTestGui : WindowScreen() {
+class KtTestGui : WindowScreen(ElementaVersion.V1) {
     private val myTextBox = UIBlock(Color(0, 0, 0, 255))
 
     init {

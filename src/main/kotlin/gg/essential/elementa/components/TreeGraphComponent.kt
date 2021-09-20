@@ -5,6 +5,7 @@ import gg.essential.elementa.constraints.RelativeConstraint
 import gg.essential.elementa.dsl.*
 import gg.essential.elementa.effects.ScissorEffect
 import gg.essential.elementa.utils.LineUtils
+import gg.essential.universal.UMatrixStack
 import java.awt.Color
 import kotlin.math.max
 import kotlin.properties.Delegates
@@ -247,8 +248,8 @@ class TreeGraphComponent(
         }
     }
 
-    override fun draw() {
-        beforeDraw()
+    override fun draw(matrixStack: UMatrixStack) {
+        beforeDrawCompat(matrixStack)
 
         if (!layedOut) {
             rootNode.layoutChildren(style)
@@ -262,7 +263,7 @@ class TreeGraphComponent(
 
         lines.forEach { style.lineDrawer(it.first, it.second) }
 
-        super.draw()
+        super.draw(matrixStack)
     }
 }
 

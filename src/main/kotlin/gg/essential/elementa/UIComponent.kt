@@ -16,6 +16,7 @@ import gg.essential.elementa.utils.elementaDebug
 import gg.essential.elementa.utils.observable
 import gg.essential.elementa.utils.requireMainThread
 import gg.essential.elementa.utils.requireState
+import gg.essential.universal.UMatrixStack
 import gg.essential.universal.UMouse
 import gg.essential.universal.UResolution
 import org.lwjgl.opengl.GL11
@@ -335,10 +336,7 @@ abstract class UIComponent : Observable() {
     }
 
     protected fun getMousePosition(): Pair<Float, Float> {
-        val scaledHeight = UResolution.scaledHeight
-        val mouseX = UMouse.getScaledX().toFloat()
-        val mouseY = scaledHeight - UMouse.getTrueY().toFloat() * scaledHeight / UResolution.windowHeight - 1f
-        return mouseX to mouseY
+        return UIComponent.getMouseX() to UIComponent.getMouseY()
     }
 
     open fun isPointInside(x: Float, y: Float): Boolean {
@@ -381,11 +379,17 @@ abstract class UIComponent : Observable() {
         effects.forEach { it.setup() }
     }
 
+    @Deprecated(UMatrixStack.Compat.DEPRECATED, ReplaceWith("draw(matrixStack)"))
+    open fun draw() = draw(UMatrixStack.Compat.get())
+
+    @Suppress("DEPRECATION")
+    fun drawCompat(matrixStack: UMatrixStack) = UMatrixStack.Compat.runLegacyMethod(matrixStack) { draw() }
+
     /**
      * Does the actual drawing for this component, meant to be overridden by specific components.
      * Also does some housekeeping dealing with hovering and effects.
      */
-    open fun draw() {
+    open fun draw(matrixStack: UMatrixStack) {
         if (!isInitialized) {
             isInitialized = true
             afterInitialization()
@@ -406,6 +410,7 @@ abstract class UIComponent : Observable() {
 
             // Top outline block
             UIBlock.drawBlock(
+                matrixStack,
                 color,
                 left - DEBUG_OUTLINE_WIDTH,
                 top - DEBUG_OUTLINE_WIDTH,
@@ -414,10 +419,11 @@ abstract class UIComponent : Observable() {
             )
 
             // Right outline block
-            UIBlock.drawBlock(color, right, top, right + DEBUG_OUTLINE_WIDTH, bottom)
+            UIBlock.drawBlock(matrixStack, color, right, top, right + DEBUG_OUTLINE_WIDTH, bottom)
 
             // Bottom outline block
             UIBlock.drawBlock(
+                matrixStack,
                 color,
                 left - DEBUG_OUTLINE_WIDTH,
                 bottom,
@@ -426,14 +432,14 @@ abstract class UIComponent : Observable() {
             )
 
             // Left outline block
-            UIBlock.drawBlock(color, left - DEBUG_OUTLINE_WIDTH, top, left, bottom)
+            UIBlock.drawBlock(matrixStack, color, left - DEBUG_OUTLINE_WIDTH, top, left, bottom)
 
             if (ScissorEffect.currentScissorState != null) {
                 GL11.glEnable(GL11.GL_SCISSOR_TEST)
             }
         }
 
-        beforeChildrenDraw()
+        beforeChildrenDrawCompat(matrixStack)
 
         val parentWindow = Window.of(this)
 
@@ -450,27 +456,45 @@ abstract class UIComponent : Observable() {
                 )
             ) return@forEach
 
-            child.draw()
+            child.drawCompat(matrixStack)
         }
         childrenLocked--
 
         if (this is Window)
-            drawFloatingComponents()
+            drawFloatingComponents(matrixStack)
 
-        afterDraw()
+        afterDrawCompat(matrixStack)
     }
 
-    open fun beforeDraw() {
-        effects.forEach { it.beforeDraw() }
+    open fun beforeDraw(matrixStack: UMatrixStack) {
+        effects.forEach { it.beforeDraw(matrixStack) }
     }
 
-    open fun afterDraw() {
-        effects.forEach { it.afterDraw() }
+    open fun afterDraw(matrixStack: UMatrixStack) {
+        effects.forEach { it.afterDraw(matrixStack) }
     }
 
-    open fun beforeChildrenDraw() {
-        effects.forEach { it.beforeChildrenDraw() }
+    open fun beforeChildrenDraw(matrixStack: UMatrixStack) {
+        effects.forEach { it.beforeChildrenDraw(matrixStack) }
     }
+
+    @Deprecated(UMatrixStack.Compat.DEPRECATED, ReplaceWith("beforeDraw(matrixStack)"))
+    open fun beforeDraw() = beforeDraw(UMatrixStack.Compat.get())
+
+    @Deprecated(UMatrixStack.Compat.DEPRECATED, ReplaceWith("afterDraw(matrixStack)"))
+    open fun afterDraw() = afterDraw(UMatrixStack.Compat.get())
+
+    @Deprecated(UMatrixStack.Compat.DEPRECATED, ReplaceWith("beforeChildrenDraw(matrixStack)"))
+    open fun beforeChildrenDraw() = beforeChildrenDraw(UMatrixStack.Compat.get())
+
+    @Suppress("DEPRECATION")
+    fun beforeDrawCompat(matrixStack: UMatrixStack) = UMatrixStack.Compat.runLegacyMethod(matrixStack) { beforeDraw() }
+
+    @Suppress("DEPRECATION")
+    fun afterDrawCompat(matrixStack: UMatrixStack) = UMatrixStack.Compat.runLegacyMethod(matrixStack) { afterDraw() }
+
+    @Suppress("DEPRECATION")
+    fun beforeChildrenDrawCompat(matrixStack: UMatrixStack) = UMatrixStack.Compat.runLegacyMethod(matrixStack) { beforeChildrenDraw() }
 
     open fun mouseMove(window: Window) {
         val hovered = isHovered() && window.hoveredFloatingComponent.let {
@@ -1137,6 +1161,19 @@ abstract class UIComponent : Observable() {
             return (number * factor).let {
                 if (roundDown) floor(it) else ceil(it)
             } / factor
+        }
+
+        internal fun getMouseX(): Float {
+            return UMouse.getScaledX().toFloat()
+        }
+
+        internal fun getMouseY(): Float {
+            val scaledHeight = UResolution.scaledHeight
+            //#if MC>=11400
+            //$$ return UMouse.getScaledY().toFloat()
+            //#else
+            return scaledHeight - UMouse.getTrueY().toFloat() * scaledHeight / UResolution.windowHeight - 1f
+            //#endif
         }
     }
 }

@@ -1,7 +1,10 @@
 package gg.essential.elementa.utils
 
 import gg.essential.elementa.UIComponent
+import gg.essential.elementa.components.Window
 import gg.essential.universal.UResolution
+import gg.essential.universal.shader.BlendState
+import gg.essential.universal.shader.UShader
 import java.awt.Color
 import kotlin.math.round
 import kotlin.math.sign
@@ -27,3 +30,7 @@ operator fun Color.component2() = this.green
 operator fun Color.component3() = this.blue
 operator fun Color.component4() = this.alpha
 
+internal fun UShader.Companion.readFromLegacyShader(vertName: String, fragName: String, blendState: BlendState) =
+    fromLegacyShader(readShader(vertName, "vsh"), readShader(fragName, "fsh"), blendState)
+private fun readShader(name: String, ext: String) =
+    Window::class.java.getResource("/shaders/$name.$ext").readText()
