@@ -127,6 +127,7 @@ class Window @JvmOverloads constructor(
 
             // We may have thrown in the middle of a ScissorEffect, in which case we
             // need to disable the scissor if we don't want half the user's screen gone
+            ScissorEffect.currentScissorState = null
             GL11.glDisable(GL11.GL_SCISSOR_TEST)
         }
     }
