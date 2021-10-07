@@ -14,8 +14,7 @@ class ChildBasedSizeConstraint(val padding: Float = 0f) : SizeConstraint {
     override fun getWidthImpl(component: UIComponent): Float {
         val holder = (constrainTo ?: component)
         var totalPadding = (holder.children.size - 1) * padding
-        for (i in 0 until holder.children.size - 1) {
-            val child =  holder.children[i]
+        holder.children.forEach { child ->
             if (child.constraints.x is PaddingConstraint) {
                 totalPadding += (child.constraints.x as PaddingConstraint).getHorizontalPadding(child)
             }
@@ -28,8 +27,7 @@ class ChildBasedSizeConstraint(val padding: Float = 0f) : SizeConstraint {
     override fun getHeightImpl(component: UIComponent): Float {
         val holder = (constrainTo ?: component)
         var totalPadding = (holder.children.size - 1) * padding
-        for (i in 0 until holder.children.size - 1) {
-            val child =  holder.children[i]
+        holder.children.forEach { child ->
             if (child.constraints.y is PaddingConstraint) {
                 totalPadding += (child.constraints.y as PaddingConstraint).getVerticalPadding(child)
             }
