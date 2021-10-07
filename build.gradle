@@ -101,7 +101,6 @@ if (!FABRIC) {
 
 if (FABRIC) {
     minecraft {
-        refmapName = 'mixins.replaymod.refmap.json'
         runConfigs.all {
             ideConfigGenerated = true
         }
@@ -121,9 +120,6 @@ if (FABRIC) {
                 }
             }
         } else {
-            if (mcVersion >= 10800) {
-                coreMod = 'com.replaymod.core.LoadingPlugin'
-            }
             runDir = "run"
         }
 
