@@ -709,12 +709,12 @@ class ScrollComponent @JvmOverloads constructor(
                 val holder = constrainTo ?: actualHolder
                 var totalPadding = (holder.children.size - 1) * padding
                 holder.children.forEach { child ->
-                    if (child.constraints.y is PaddingConstraint) {
-                        totalPadding += (child.constraints.y as PaddingConstraint).getVerticalPadding(child)
+                    if (child.constraints.x is PaddingConstraint) {
+                        totalPadding += (child.constraints.x as PaddingConstraint).getHorizontalPadding(child)
                     }
                 }
                 return (holder.children
-                    .sumOf { it.getHeight().toDouble() } + totalPadding).toFloat()
+                    .sumOf { it.getWidth().toDouble() } + totalPadding).toFloat()
 
             } else {
                 return (constrainTo ?: actualHolder).children.maxByOrNull {
