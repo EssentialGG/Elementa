@@ -100,6 +100,21 @@ abstract class UIComponent : Observable() {
         requireState(childrenLocked == 0, "Cannot modify children while iterating over them.")
     }
 
+    private inline fun <R> withChildrenLocked(block: () -> R): R {
+        childrenLocked++
+        try {
+            return block()
+        } finally {
+            childrenLocked--
+        }
+    }
+
+    private inline fun forEachChild(block: (UIComponent) -> Unit) {
+        withChildrenLocked {
+            children.forEach(block)
+        }
+    }
+
     /**
      * Adds [component] to this component's children tree,
      * as well as sets [component]'s parent to this component.
@@ -443,10 +458,9 @@ abstract class UIComponent : Observable() {
 
         val parentWindow = Window.of(this)
 
-        childrenLocked++
-        this.children.filterNot {
-            it.isFloating
-        }.forEach { child ->
+        this.forEachChild { child ->
+            if (child.isFloating) return@forEachChild
+
             // If the child is outside the current viewport, don't waste time drawing
             if (!this.alwaysDrawChildren() && !parentWindow.isAreaVisible(
                     child.getLeft().toDouble(),
@@ -454,11 +468,10 @@ abstract class UIComponent : Observable() {
                     child.getRight().toDouble(),
                     child.getBottom().toDouble()
                 )
-            ) return@forEach
+            ) return@forEachChild
 
             child.drawCompat(matrixStack)
         }
-        childrenLocked--
 
         if (this is Window)
             drawFloatingComponents(matrixStack)
@@ -511,9 +524,7 @@ abstract class UIComponent : Observable() {
             currentlyHovered = false
         }
 
-        childrenLocked++
-        this.children.forEach { it.mouseMove(window) }
-        childrenLocked--
+        this.forEachChild { it.mouseMove(window) }
     }
 
     /**
@@ -565,9 +576,7 @@ abstract class UIComponent : Observable() {
         lastDraggedMouseX = null
         lastDraggedMouseY = null
 
-        childrenLocked++
-        this.children.forEach { it.mouseRelease() }
-        childrenLocked--
+        this.forEachChild { it.mouseRelease() }
     }
 
     /**
@@ -599,9 +608,7 @@ abstract class UIComponent : Observable() {
         constraints.color.recalculate = true
         constraints.fontProvider.recalculate = true
 
-        childrenLocked++
-        children.forEach { it.onWindowResize() }
-        childrenLocked--
+        this.forEachChild { it.onWindowResize() }
     }
 
     protected fun fireScrollEvent(event: UIScrollEvent) {
@@ -643,9 +650,7 @@ abstract class UIComponent : Observable() {
         for (listener in mouseDragListeners)
             this.listener(relativeX, relativeY, button)
 
-        childrenLocked++
-        children.forEach { it.dragMouse(mouseX, mouseY, button) }
-        childrenLocked--
+        this.forEachChild { it.dragMouse(mouseX, mouseY, button) }
     }
 
     open fun keyType(typedChar: Char, keyCode: Int) {
