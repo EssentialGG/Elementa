@@ -98,37 +98,34 @@ class Window @JvmOverloads constructor(
         } catch (e: Throwable) {
             cancelDrawing = true
 
-            if (e is StackOverflowError) {
-                val guiName = UMinecraft.getMinecraft().currentScreen?.javaClass?.simpleName ?: "<unknown>"
-
-                if (elementaDev) {
-                    val cyclicNodes = ConstraintResolver(this).getCyclicNodes()
-
-                    UMinecraft.getMinecraft().displayGuiScreen(
-                        ConstraintResolutionGui(guiName, this, cyclicNodes)
-                    )
-                } else {
-                    UMinecraft.getMinecraft().displayGuiScreen(null)
-
-                    UChat.chat("Elementa encountered an error while drawing a GUI. Check your logs for more information.")
+            val guiName = UMinecraft.getMinecraft().currentScreen?.javaClass?.simpleName ?: "<unknown>"
+            when (e) {
+                is StackOverflowError -> {
                     println("Elementa: Cyclic constraint structure detected!")
                     println("If you are a developer, set the environment variable \"elementa.dev=true\" to assist in debugging the issue.")
-                    println("Gui name: $guiName")
-                    e.printStackTrace()
                 }
-            } else {
-                val guiName = UMinecraft.getMinecraft().currentScreen?.javaClass?.simpleName ?: "<unknown>"
-                UMinecraft.getMinecraft().displayGuiScreen(null)
-                UChat.chat("§cElementa encountered an error while drawing a GUI. Check your logs for more information.")
-                println("Elementa: encountered an error while drawing a GUI")
-                println("Gui name: $guiName")
-                e.printStackTrace()
+                else -> {
+                    println("Elementa: encountered an error while drawing a GUI")
+                }
             }
+            println("Gui name: $guiName")
+            e.printStackTrace()
 
             // We may have thrown in the middle of a ScissorEffect, in which case we
             // need to disable the scissor if we don't want half the user's screen gone
             ScissorEffect.currentScissorState = null
             GL11.glDisable(GL11.GL_SCISSOR_TEST)
+
+            UMinecraft.getMinecraft().displayGuiScreen(when {
+                e is StackOverflowError && elementaDev -> {
+                    val cyclicNodes = ConstraintResolver(this).getCyclicNodes()
+                    ConstraintResolutionGui(guiName, this, cyclicNodes)
+                }
+                else -> {
+                    UChat.chat("§cElementa encountered an error while drawing a GUI. Check your logs for more information.")
+                    null
+                }
+            })
         }
     }
 
