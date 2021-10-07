@@ -66,7 +66,7 @@ class ChildBasedMaxSizeConstraint : SizeConstraint {
     override fun getHeightImpl(component: UIComponent): Float {
         return (constrainTo ?: component).children.maxByOrNull {
             if(it.constraints.y is PaddingConstraint)
-                return@maxByOrNull it.getWidth() + (it.constraints.y as PaddingConstraint).getVerticalPadding(it)
+                return@maxByOrNull it.getHeight() + (it.constraints.y as PaddingConstraint).getVerticalPadding(it)
             it.getHeight() }?.getHeight() ?: 0f
     }
 
