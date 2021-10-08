@@ -39,8 +39,6 @@ class Inspector @JvmOverloads constructor(
     private var isClickSelecting = false
 
     init {
-        val rootWindow = Window.of(rootComponent)
-
         constrain {
             width = ChildBasedSizeConstraint()
             height = ChildBasedSizeConstraint()
@@ -90,6 +88,8 @@ class Inspector @JvmOverloads constructor(
         }.onMouseClick { event ->
             event.stopPropagation()
             isClickSelecting = true
+
+            val rootWindow = Window.of(this)
             rootWindow.clickInterceptor = { mouseX, mouseY, _ ->
                 rootWindow.clickInterceptor = null
                 isClickSelecting = false
@@ -115,7 +115,7 @@ class Inspector @JvmOverloads constructor(
         val treeBlockScroller = ScrollComponent().constrain {
             y = SiblingConstraint()
             width = RelativeConstraint(1f) boundTo treeBlock
-            height = RelativeConstraint(1f).boundTo(treeBlock) coerceAtMost (maxSectionHeight ?: RelativeConstraint(1 / 3f) boundTo rootWindow)
+            height = RelativeConstraint(1f).boundTo(treeBlock) coerceAtMost (maxSectionHeight ?: RelativeWindowConstraint(1 / 3f))
         } childOf container
 
         treeBlock childOf treeBlockScroller
@@ -139,7 +139,7 @@ class Inspector @JvmOverloads constructor(
         infoBlockScroller = ScrollComponent().constrain {
             y = SiblingConstraint()
             width = RelativeConstraint(1f) boundTo infoBlock
-            height = RelativeConstraint(1f) boundTo infoBlock coerceAtMost (maxSectionHeight ?: RelativeConstraint(1 / 3f) boundTo rootWindow)
+            height = RelativeConstraint(1f) boundTo infoBlock coerceAtMost (maxSectionHeight ?: RelativeWindowConstraint(1 / 3f))
         }
 
         infoBlock childOf infoBlockScroller
