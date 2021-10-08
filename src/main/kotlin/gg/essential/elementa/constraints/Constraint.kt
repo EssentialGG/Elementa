@@ -2,6 +2,7 @@ package gg.essential.elementa.constraints
 
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.constraints.animation.AnimationComponent
+import gg.essential.elementa.constraints.debug.constraintDebugger
 import gg.essential.elementa.constraints.resolution.ConstraintVisitor
 import gg.essential.elementa.utils.roundToRealPixels
 import java.awt.Color
@@ -72,6 +73,11 @@ interface XConstraint : SuperConstraint<Float> {
     fun getXPositionImpl(component: UIComponent): Float
 
     fun getXPosition(component: UIComponent): Float {
+        val debugger = constraintDebugger
+        if (debugger != null) {
+            return debugger.evaluate(this, ConstraintType.X, component)
+        }
+
         if (recalculate) {
             cachedValue = getXPositionImpl(component).roundToRealPixels()
             recalculate = false
@@ -85,6 +91,11 @@ interface YConstraint : SuperConstraint<Float> {
     fun getYPositionImpl(component: UIComponent): Float
 
     fun getYPosition(component: UIComponent): Float {
+        val debugger = constraintDebugger
+        if (debugger != null) {
+            return debugger.evaluate(this, ConstraintType.Y, component)
+        }
+
         if (recalculate) {
             cachedValue = getYPositionImpl(component).roundToRealPixels()
             recalculate = false
@@ -100,6 +111,11 @@ interface RadiusConstraint : SuperConstraint<Float> {
     fun getRadiusImpl(component: UIComponent): Float
 
     fun getRadius(component: UIComponent): Float {
+        val debugger = constraintDebugger
+        if (debugger != null) {
+            return debugger.evaluate(this, ConstraintType.RADIUS, component)
+        }
+
         if (recalculate) {
             cachedValue = getRadiusImpl(component)
             recalculate = false
@@ -113,6 +129,11 @@ interface WidthConstraint : SuperConstraint<Float> {
     fun getWidthImpl(component: UIComponent): Float
 
     fun getWidth(component: UIComponent): Float {
+        val debugger = constraintDebugger
+        if (debugger != null) {
+            return debugger.evaluate(this, ConstraintType.WIDTH, component)
+        }
+
         if (recalculate) {
             cachedValue = getWidthImpl(component).roundToRealPixels()
             recalculate = false
@@ -126,6 +147,11 @@ interface HeightConstraint : SuperConstraint<Float> {
     fun getHeightImpl(component: UIComponent): Float
 
     fun getHeight(component: UIComponent): Float {
+        val debugger = constraintDebugger
+        if (debugger != null) {
+            return debugger.evaluate(this, ConstraintType.HEIGHT, component)
+        }
+
         if (recalculate) {
             cachedValue = getHeightImpl(component).roundToRealPixels()
             recalculate = false

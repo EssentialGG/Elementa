@@ -4,6 +4,7 @@ import gg.essential.elementa.ElementaVersion
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.constraints.resolution.ConstraintResolutionGui
 import gg.essential.elementa.constraints.resolution.ConstraintResolver
+import gg.essential.elementa.constraints.resolution.ConstraintResolverV2
 import gg.essential.elementa.effects.ScissorEffect
 import gg.essential.elementa.font.FontRenderer
 import gg.essential.elementa.utils.elementaDev
@@ -118,7 +119,14 @@ class Window @JvmOverloads constructor(
 
             UMinecraft.getMinecraft().displayGuiScreen(when {
                 e is StackOverflowError && elementaDev -> {
-                    val cyclicNodes = ConstraintResolver(this).getCyclicNodes()
+                    val cyclicNodes = when (System.getProperty("elementa.dev.cycle_resolver", "2")) {
+                        "2" -> ConstraintResolverV2(this).getCyclicNodes()
+                        "1" -> ConstraintResolver(this).getCyclicNodes()
+                        else -> {
+                            println("Invalid value for \"elementa.dev.cycle_resolver\", falling back to V2 solver.")
+                            ConstraintResolverV2(this).getCyclicNodes()
+                        }
+                    }
                     ConstraintResolutionGui(guiName, this, cyclicNodes)
                 }
                 else -> {
