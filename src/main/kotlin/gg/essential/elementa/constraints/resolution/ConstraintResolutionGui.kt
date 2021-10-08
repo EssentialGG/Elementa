@@ -4,11 +4,16 @@ import gg.essential.elementa.ElementaVersion
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.WindowScreen
 import gg.essential.elementa.components.*
+import gg.essential.elementa.components.inspector.Inspector
 import gg.essential.elementa.constraints.*
 import gg.essential.elementa.constraints.animation.Animations
+import gg.essential.elementa.constraints.debug.CycleSafeConstraintDebugger
+import gg.essential.elementa.constraints.debug.RecalculatingConstraintDebugger
+import gg.essential.elementa.constraints.debug.withDebugger
 import gg.essential.elementa.dsl.*
 import gg.essential.elementa.effects.OutlineEffect
 import gg.essential.elementa.effects.ScissorEffect
+import gg.essential.universal.UMatrixStack
 import java.awt.Color
 
 class ConstraintResolutionGui(
@@ -16,6 +21,13 @@ class ConstraintResolutionGui(
     private val gui: UIComponent,
     private val nodes: List<ResolverNode>?
 ) : WindowScreen(ElementaVersion.V1) {
+
+    private val guiView by GuiView().constrain {
+        width = 100.percent
+        height = 100.percent
+    } childOf window
+    init { guiView.hide(instantly = true) }
+
     init {
         UIBlock(Color(22, 22, 24)).constrain {
             width = 100.percent()
@@ -42,6 +54,16 @@ class ConstraintResolutionGui(
             width = 1.pixel()
             height = 100.percent()
             height = 80.percent()
+        } childOf window
+
+        SVGComponent.ofResource("/svg/click.svg").constrain {
+            x = 5.pixels(alignOpposite = true)
+            y = 5.pixels
+            width = AspectConstraint(1f)
+            height = 10.pixels
+        }.onMouseClick { event ->
+            event.stopPropagation()
+            guiView.unhide(useLastPosition = false)
         } childOf window
 
         val titleContent = UIContainer().constrain {
@@ -253,7 +275,7 @@ class ConstraintResolutionGui(
             }
 
             val left = UIContainer().constrain {
-                width = ChildBasedSizeConstraint()
+                width = basicWidthConstraint { it.children.first().getWidth() }
                 height = basicHeightConstraint { right.getHeight() }
             } childOf this
 
@@ -278,6 +300,17 @@ class ConstraintResolutionGui(
                 UIText("§7Constraint Type: §r${node.constraintType.prettyName}").constrain {
                     y = SiblingConstraint(2f)
                 } childOf right
+
+                SVGComponent.ofResource("/svg/click.svg").constrain {
+                    x = 0.pixels
+                    y = SiblingConstraint(3f)
+                    width = AspectConstraint(1f)
+                    height = 10.pixels
+                }.onMouseClick {
+                    guiView.unhide(useLastPosition = false)
+                    guiView.inspector.findAndSelect(node.component)
+                } childOf left
+
             } else {
                 UIText("§7The first entry in this list") childOf right
             }
@@ -320,7 +353,55 @@ class ConstraintResolutionGui(
                 textScale = 0.5f.pixels()
             } childOf block
 
+            block.onMouseClick {
+                guiView.unhide(useLastPosition = false)
+                guiView.inspector.findAndSelect(target)
+            }
+
             return block
+        }
+    }
+
+    private inner class GuiView : UIComponent() {
+        private val background by UIBlock(Color.BLACK).constrain {
+            width = 100.percent
+            height = 100.percent
+        } childOf this
+
+        private val view by FrozenView(gui).constrain {
+            width = 100.percent
+            height = 100.percent
+        } childOf this
+
+        val inspector by Inspector(gui) childOf this
+
+        private val closeButton by SVGComponent.ofResource("/svg/close.svg").constrain {
+            x = 2.pixels(alignOpposite = true) boundTo inspector.container
+            y = 2.pixels boundTo inspector.container
+            width = AspectConstraint(1f)
+            height = 10.pixels
+        }.onMouseClick {
+            this@GuiView.hide(instantly = true)
+        } childOf inspector
+    }
+
+    private class FrozenView(private val component: UIComponent) : UIComponent() {
+        init {
+            component.parent = this
+        }
+
+        override fun draw(matrixStack: UMatrixStack) {
+            beforeDraw(matrixStack)
+
+            withDebugger(CycleSafeConstraintDebugger(RecalculatingConstraintDebugger())) {
+                if (component is Window) {
+                    component.drawEmbedded(matrixStack)
+                } else {
+                    component.draw(matrixStack)
+                }
+            }
+
+            super.draw(matrixStack)
         }
     }
 }

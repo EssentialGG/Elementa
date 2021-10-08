@@ -8,6 +8,8 @@ import gg.essential.elementa.components.UIContainer
 import gg.essential.elementa.components.UIText
 import gg.essential.elementa.constraints.*
 import gg.essential.elementa.constraints.animation.*
+import gg.essential.elementa.constraints.debug.CycleSafeConstraintDebugger
+import gg.essential.elementa.constraints.debug.withDebugger
 import gg.essential.elementa.dsl.*
 import gg.essential.universal.UMatrixStack
 import java.awt.Color
@@ -288,7 +290,7 @@ class InfoBlock(private val inspector: Inspector) : UIContainer() {
             }
         }
 
-        if (!constraintsSelected && cachedComponent != null) {
+        if (!constraintsSelected && cachedComponent != null) withDebugger(CycleSafeConstraintDebugger()) {
             xValueText.setText("%.2f".format(cachedComponent!!.getLeft()))
             yValueText.setText("%.2f".format(cachedComponent!!.getTop()))
             widthValueText.setText("%.2f".format(cachedComponent!!.getWidth()))

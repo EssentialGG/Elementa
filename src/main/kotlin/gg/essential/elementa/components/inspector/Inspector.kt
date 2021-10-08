@@ -26,7 +26,7 @@ class Inspector @JvmOverloads constructor(
     private val rootNode = componentToNode(rootComponent)
     private val treeBlock: UIContainer
     private var TreeListComponent: TreeListComponent
-    private val container: UIComponent
+    internal val container: UIComponent
     internal var selectedNode: InspectorNode? = null
         private set
     private val infoBlockScroller: ScrollComponent
@@ -204,7 +204,7 @@ class Inspector @JvmOverloads constructor(
         else hitComponent
     }
 
-    private fun findAndSelect(component: UIComponent) {
+    internal fun findAndSelect(component: UIComponent) {
         fun findNodeAndExpandParents(component: UIComponent): InspectorNode? {
             if (component == rootNode.targetComponent) {
                 return rootNode

@@ -137,6 +137,10 @@ class Window @JvmOverloads constructor(
         }
     }
 
+    internal fun drawEmbedded(matrixStack: UMatrixStack) {
+        super.draw(matrixStack)
+    }
+
     @Deprecated(UMatrixStack.Compat.DEPRECATED, ReplaceWith("drawFloatingComponents(matrixStack)"))
     fun drawFloatingComponents() = drawFloatingComponents(UMatrixStack())
 
