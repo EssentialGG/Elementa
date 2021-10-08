@@ -65,8 +65,8 @@ class CramSiblingConstraint(padding: Float = 0f) : SiblingConstraint(padding) {
                     return
                 }
 
-                visitor.visitSibling(ConstraintType.X, indexInParent)
-                visitor.visitSibling(ConstraintType.WIDTH, indexInParent)
+                visitor.visitSibling(ConstraintType.X, indexInParent - 1)
+                visitor.visitSibling(ConstraintType.WIDTH, indexInParent - 1)
                 visitor.visitSelf(ConstraintType.WIDTH)
                 visitor.visitParent(ConstraintType.X)
                 visitor.visitParent(ConstraintType.WIDTH)
@@ -77,8 +77,8 @@ class CramSiblingConstraint(padding: Float = 0f) : SiblingConstraint(padding) {
                     return
                 }
 
-                visitor.visitSibling(ConstraintType.X, indexInParent)
-                visitor.visitSibling(ConstraintType.WIDTH, indexInParent)
+                visitor.visitSibling(ConstraintType.X, indexInParent - 1)
+                visitor.visitSibling(ConstraintType.WIDTH, indexInParent - 1)
                 visitor.visitSelf(ConstraintType.WIDTH)
                 visitor.visitParent(ConstraintType.X)
                 visitor.visitParent(ConstraintType.WIDTH)
