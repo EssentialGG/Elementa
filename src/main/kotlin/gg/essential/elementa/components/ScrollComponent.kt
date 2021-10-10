@@ -709,13 +709,13 @@ class ScrollComponent @JvmOverloads constructor(
 
         override fun getWidthImpl(component: UIComponent): Float {
             val constraint = if (horizontalScrollEnabled) sumConstraint else maxConstraint
-            constraint.constrainTo = this.constrainTo
+            constraint.constrainTo = this.constrainTo ?: actualHolder
             return constraint.getWidthImpl(component)
         }
 
         override fun getHeightImpl(component: UIComponent): Float {
             val constraint = if (verticalScrollEnabled) sumConstraint else maxConstraint
-            constraint.constrainTo = this.constrainTo
+            constraint.constrainTo = this.constrainTo ?: actualHolder
             return constraint.getHeightImpl(component)
         }
 
