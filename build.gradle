@@ -30,9 +30,9 @@ buildscript {
                 exclude group: 'trove', module: 'trove' // preprocessor/idea requires more recent one
             }
         } else {
-            def forgeGradleVersion = mcVersion >= 11200 ? '34ab703' : // FG 2.3
-                                     mcVersion >= 10904 ? '5d1e8d8' : // FG 2.2
-                                                          'd1a7165'   // FG 2.1
+            def forgeGradleVersion = mcVersion >= 11200 ? '717a9f4' : // FG 2.3
+                                     mcVersion >= 10904 ? '83163c1' : // FG 2.2
+                                                          '4be84bf'   // FG 2.1
             classpath("com.github.ReplayMod:ForgeGradle:$forgeGradleVersion:all") {
                 exclude group: 'net.sf.trove4j', module: 'trove4j' // preprocessor/idea requires more recent one
                 exclude group: 'trove', module: 'trove' // different name same thing
@@ -77,10 +77,11 @@ version = project.parent.version
 group = "gg.essential" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "Elementa" + project.name
 
-sourceCompatibility = targetCompatibility = mcVersion >= 11700 ? 16 : 1.8
+kotlin.jvmToolchain {
+    languageVersion = JavaLanguageVersion.of(mcVersion >= 11700 ? 16 : 8)
+}
 compileJava.options.encoding = 'UTF-8'
 compileKotlin.kotlinOptions {
-    jvmTarget = mcVersion >= 11700 ? "16" : "1.8"
     freeCompilerArgs = [mcVersion >= 11400 ? "-Xjvm-default=all" : "-Xjvm-default=all-compatibility"]
 }
 
