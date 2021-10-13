@@ -34,7 +34,7 @@ implementation "gg.essential:elementa-$mcVersion-$mcPlatform:$buildNumber"
           <td>1.17.1</td>
           <td>fabric</td>
           <td>
-            <img alt="1.17.1-fabric" src="https://badges.modcore.net/badge/dynamic/xml?color=A97BFF&label=%20&query=%2Fmetadata%2Fversioning%2Flatest&url=https://repo.sk1er.club/repository/maven-releases/gg/essential/elementa-1.12.2-forge/maven-metadata.xml">
+            <img alt="1.17.1-fabric" src="https://badges.modcore.net/badge/dynamic/xml?color=A97BFF&label=%20&query=%2Fmetadata%2Fversioning%2Flatest&url=https://repo.sk1er.club/repository/maven-releases/gg/essential/elementa-1.17.1-fabric/maven-metadata.xml">
           </td>
         </tr>
         <tr>
