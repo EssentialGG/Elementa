@@ -34,20 +34,20 @@ implementation "gg.essential:elementa-$mcVersion-$mcPlatform:$buildNumber"
           <td>1.17.1</td>
           <td>fabric</td>
           <td>
-            <img alt="1.17.1-forge" src="https://img.shields.io/maven-metadata/v?color=A97BFF&label=&metadataUrl=https%3A%2F%2Frepo.sk1er.club%2Frepository%2Fmaven-releases%2Fgg%2Fessential%2Felementa-1.17.1-fabric%2Fmaven-metadata.xml">
+            <img alt="1.17.1-fabric" src="https://badges.modcore.net/badge/dynamic/xml?color=A97BFF&label=%20&query=%2Fmetadata%2Fversioning%2Flatest&url=https://repo.sk1er.club/repository/maven-releases/gg/essential/elementa-1.12.2-forge/maven-metadata.xml">
           </td>
         </tr>
         <tr>
           <td>1.12.2</td>
           <td>forge</td>
           <td>
-            <img alt="1.12.2-forge" src="https://img.shields.io/maven-metadata/v?color=A97BFF&label=&metadataUrl=https%3A%2F%2Frepo.sk1er.club%2Frepository%2Fmaven-releases%2Fgg%2Fessential%2Felementa-1.12.2-forge%2Fmaven-metadata.xml">
+            <img alt="1.12.2-forge" src="https://badges.modcore.net/badge/dynamic/xml?color=A97BFF&label=%20&query=%2Fmetadata%2Fversioning%2Flatest&url=https://repo.sk1er.club/repository/maven-releases/gg/essential/elementa-1.12.2-forge/maven-metadata.xml">
           </td>
         </tr>
         <tr>
           <td>1.8.9</td>
           <td>forge</td>
-          <td><img alt="1.8.9-forge" src="https://img.shields.io/maven-metadata/v?color=A97BFF&label=&metadataUrl=https%3A%2F%2Frepo.sk1er.club%2Frepository%2Fmaven-releases%2Fgg%2Fessential%2Felementa-1.8.9-forge%2Fmaven-metadata.xml"></td>
+          <td><img alt="1.8.9-forge" src="https://badges.modcore.net/badge/dynamic/xml?color=A97BFF&label=%20&query=%2Fmetadata%2Fversioning%2Flatest&url=https://repo.sk1er.club/repository/maven-releases/gg/essential/elementa-1.8.9-forge/maven-metadata.xml"></td>
         </tr>
       </tbody>
     </table>
