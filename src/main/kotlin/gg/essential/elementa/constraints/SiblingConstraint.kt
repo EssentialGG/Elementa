@@ -180,10 +180,12 @@ open class SiblingConstraint @JvmOverloads constructor(
     }
 
     override fun getVerticalPadding(component: UIComponent): Float {
-        return padding
+        val index = component.parent.children.indexOf(component)
+        return if (index == 0 && constrainTo == null) 0f else padding
     }
 
     override fun getHorizontalPadding(component: UIComponent): Float {
-        return padding
+        val index = component.parent.children.indexOf(component)
+        return if (index == 0 && constrainTo == null) 0f else padding
     }
 }

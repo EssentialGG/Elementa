@@ -65,8 +65,8 @@ class CramSiblingConstraint(padding: Float = 0f) : SiblingConstraint(padding) {
                     return
                 }
 
-                visitor.visitSibling(ConstraintType.X, indexInParent)
-                visitor.visitSibling(ConstraintType.WIDTH, indexInParent)
+                visitor.visitSibling(ConstraintType.X, indexInParent - 1)
+                visitor.visitSibling(ConstraintType.WIDTH, indexInParent - 1)
                 visitor.visitSelf(ConstraintType.WIDTH)
                 visitor.visitParent(ConstraintType.X)
                 visitor.visitParent(ConstraintType.WIDTH)
@@ -77,8 +77,8 @@ class CramSiblingConstraint(padding: Float = 0f) : SiblingConstraint(padding) {
                     return
                 }
 
-                visitor.visitSibling(ConstraintType.X, indexInParent)
-                visitor.visitSibling(ConstraintType.WIDTH, indexInParent)
+                visitor.visitSibling(ConstraintType.X, indexInParent - 1)
+                visitor.visitSibling(ConstraintType.WIDTH, indexInParent - 1)
                 visitor.visitSelf(ConstraintType.WIDTH)
                 visitor.visitParent(ConstraintType.X)
                 visitor.visitParent(ConstraintType.WIDTH)
@@ -90,7 +90,7 @@ class CramSiblingConstraint(padding: Float = 0f) : SiblingConstraint(padding) {
         val index = component.parent.children.indexOf(component)
 
         if (index == 0) {
-            return component.parent.getLeft()
+            return 0F
         }
 
         val sibling = component.parent.children[index - 1]
@@ -104,7 +104,7 @@ class CramSiblingConstraint(padding: Float = 0f) : SiblingConstraint(padding) {
         val index = component.parent.children.indexOf(component)
 
         if (index == 0) {
-            return component.parent.getTop()
+            return 0F
         }
 
         val sibling = component.parent.children[index - 1]

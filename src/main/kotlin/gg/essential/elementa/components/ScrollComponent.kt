@@ -704,43 +704,19 @@ class ScrollComponent @JvmOverloads constructor(
         override var recalculate = true
         override var constrainTo: UIComponent? = null
 
-        override fun getWidthImpl(component: UIComponent): Float {
-            if (horizontalScrollEnabled) {
-                val holder = constrainTo ?: actualHolder
-                var totalPadding = (holder.children.size - 1) * padding
-                holder.children.forEach { child ->
-                    if (child.constraints.y is PaddingConstraint) {
-                        totalPadding += (child.constraints.y as PaddingConstraint).getVerticalPadding(child)
-                    }
-                }
-                return (holder.children
-                    .sumOf { it.getHeight().toDouble() } + totalPadding).toFloat()
+        private val sumConstraint = ChildBasedSizeConstraint(padding)
+        private val maxConstraint = ChildBasedMaxSizeConstraint()
 
-            } else {
-                return (constrainTo ?: actualHolder).children.maxByOrNull {
-                    if(it.constraints.x is PaddingConstraint)
-                        return@maxByOrNull it.getWidth() + (it.constraints.x as PaddingConstraint).getHorizontalPadding(it)
-                    it.getWidth() }?.getWidth() ?: 0f
-            }
+        override fun getWidthImpl(component: UIComponent): Float {
+            val constraint = if (horizontalScrollEnabled) sumConstraint else maxConstraint
+            constraint.constrainTo = this.constrainTo ?: actualHolder
+            return constraint.getWidthImpl(component)
         }
 
         override fun getHeightImpl(component: UIComponent): Float {
-            if (verticalScrollEnabled) {
-                val holder = constrainTo ?: actualHolder
-                var totalPadding = (holder.children.size - 1) * padding
-                holder.children.forEach { child ->
-                    if (child.constraints.y is PaddingConstraint) {
-                        totalPadding += (child.constraints.y as PaddingConstraint).getVerticalPadding(child)
-                    }
-                }
-                return (holder.children
-                    .sumOf { it.getHeight().toDouble() } + totalPadding).toFloat()
-            } else {
-                return (constrainTo ?: actualHolder).children.maxByOrNull {
-                    if(it.constraints.y is PaddingConstraint)
-                        return@maxByOrNull it.getHeight() + (it.constraints.y as PaddingConstraint).getVerticalPadding(it)
-                    it.getHeight() }?.getHeight() ?: 0f
-            }
+            val constraint = if (verticalScrollEnabled) sumConstraint else maxConstraint
+            constraint.constrainTo = this.constrainTo ?: actualHolder
+            return constraint.getHeightImpl(component)
         }
 
         override fun visitImpl(visitor: ConstraintVisitor, type: ConstraintType) {
