@@ -165,8 +165,8 @@ class TextDrawable(
             }
         }
 
-        val mouseX = UMouse.getScaledX() - state.xShift
-        val mouseY = UResolution.scaledHeight - UMouse.getScaledY() - state.yShift
+        val mouseX = UMouse.Scaled.x - state.xShift
+        val mouseY = UMouse.Scaled.y - state.yShift
         isHovered = if (style.linkLocation != null) {
             isHovered(mouseX.toFloat(), mouseY.toFloat())
         } else false

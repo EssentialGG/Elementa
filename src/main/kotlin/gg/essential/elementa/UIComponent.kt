@@ -1169,16 +1169,11 @@ abstract class UIComponent : Observable() {
         }
 
         internal fun getMouseX(): Float {
-            return UMouse.getScaledX().toFloat()
+            return UMouse.Scaled.x.toFloat()
         }
 
         internal fun getMouseY(): Float {
-            val scaledHeight = UResolution.scaledHeight
-            //#if MC>=11400
-            //$$ return UMouse.getScaledY().toFloat()
-            //#else
-            return scaledHeight - UMouse.getTrueY().toFloat() * scaledHeight / UResolution.windowHeight - 1f
-            //#endif
+            return UMouse.Scaled.y.toFloat()
         }
     }
 }

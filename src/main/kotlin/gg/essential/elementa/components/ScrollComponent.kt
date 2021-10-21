@@ -484,7 +484,7 @@ class ScrollComponent @JvmOverloads constructor(
 
         if (horizontalScrollEnabled) {
             val xBegin = autoScrollBegin.first + getLeft()
-            val currentX = UMouse.getScaledX()
+            val currentX = UMouse.Scaled.x
 
             if (currentX in getLeft()..getRight()) {
                 val deltaX = currentX - xBegin
@@ -496,7 +496,7 @@ class ScrollComponent @JvmOverloads constructor(
 
         if (verticalScrollEnabled) {
             val yBegin = autoScrollBegin.second + getTop()
-            val currentY = UResolution.scaledHeight - UMouse.getScaledY() - 1
+            val currentY = UMouse.Scaled.y
 
             if (currentY in getTop()..getBottom()) {
                 val deltaY = currentY - yBegin
