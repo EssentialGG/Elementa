@@ -24,7 +24,7 @@ buildscript {
     dependencies {
         classpath "org.jetbrains.dokka:dokka-gradle-plugin:${dokka_version}"
         if (fabric) {
-            classpath 'fabric-loom:fabric-loom.gradle.plugin:0.8-SNAPSHOT'
+            classpath 'fabric-loom:fabric-loom.gradle.plugin:0.10-SNAPSHOT'
         } else if (mcVersion >= 11400) {
             classpath('net.minecraftforge.gradle:ForgeGradle:5.1.20') { // exact version cause FG tends to break stuff
                 exclude group: 'trove', module: 'trove' // preprocessor/idea requires more recent one
@@ -102,7 +102,7 @@ if (!FABRIC) {
 }
 
 if (FABRIC) {
-    minecraft {
+    loom {
         runConfigs.all {
             ideConfigGenerated = true
         }
