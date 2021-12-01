@@ -26,7 +26,7 @@ buildscript {
         if (fabric) {
             classpath 'fabric-loom:fabric-loom.gradle.plugin:0.10-SNAPSHOT'
         } else if (mcVersion >= 11400) {
-            classpath('net.minecraftforge.gradle:ForgeGradle:5.1.20') { // exact version cause FG tends to break stuff
+            classpath('net.minecraftforge.gradle:ForgeGradle:5.1.26') { // exact version cause FG tends to break stuff
                 exclude group: 'trove', module: 'trove' // preprocessor/idea requires more recent one
             }
         } else {
@@ -82,6 +82,7 @@ archivesBaseName = "Elementa" + project.name
 kotlin.jvmToolchain {
     languageVersion = JavaLanguageVersion.of(mcVersion >= 11800 ? 17 : mcVersion >= 11700 ? 16 : 8)
 }
+java.toolchain.languageVersion =  JavaLanguageVersion.of((mcVersion >= 11800 || (mcVersion>=11700 && !fabric)) ? 17 : mcVersion >= 11700 ? 16 : 8)
 compileJava.options.encoding = 'UTF-8'
 compileKotlin.kotlinOptions {
     freeCompilerArgs = [mcVersion >= 11400 ? "-Xjvm-default=all" : "-Xjvm-default=all-compatibility"]
@@ -169,7 +170,7 @@ dependencies {
     // The Api/Implementation difference is the same as in Gradle.
     modApi "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     modApi "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
-    modApi "gg.essential:universalcraft-${mcVersionStr}-${mcPlatform}:173+mc-1.18"
+    modApi "gg.essential:universalcraft-${mcVersionStr}-${mcPlatform}:174+mc-1.18"
     modImplementation "org.commonmark:commonmark:0.17.1"
     modImplementation "org.commonmark:commonmark-ext-gfm-strikethrough:0.17.1"
     modImplementation "org.commonmark:commonmark-ext-ins:0.17.1"
@@ -223,6 +224,7 @@ dependencies {
                 11502: '1.15.2-31.1.18',
                 11602: '1.16.2-33.0.58',
                 11701: '1.17.1-37.0.41',
+                11800: '1.18-38.0.4',
         ][mcVersion]
     }
 }
