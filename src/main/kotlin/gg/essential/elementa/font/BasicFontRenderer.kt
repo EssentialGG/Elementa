@@ -111,6 +111,18 @@ class BasicFontRenderer(
         )
     }
 
+    override fun getBaseLineHeight(): Float {
+        return regularFont.fontInfo.atlas.baseCharHeight
+    }
+
+    override fun getShadowHeight(): Float {
+        return regularFont.fontInfo.atlas.shadowHeight
+    }
+
+    override fun getBelowLineHeight(): Float {
+        return regularFont.fontInfo.atlas.belowLineHeight
+    }
+
     private fun drawStringNow(
         matrixStack: UMatrixStack,
         string: String,

@@ -31,7 +31,10 @@ data class Atlas(
     val size: Float,
     val width: Float,
     val height: Float,
-    val yOrigin: String
+    val yOrigin: String,
+    val baseCharHeight: Float,
+    val belowLineHeight: Float,
+    val shadowHeight: Float
 )
 
 data class Metrics(

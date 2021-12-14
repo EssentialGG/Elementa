@@ -2,8 +2,6 @@ package gg.essential.elementa.components
 
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.UIConstraints
-import gg.essential.elementa.components.UIText.Companion.BELOW_LINE_HEIGHT
-import gg.essential.elementa.components.UIText.Companion.SHADOW_HEIGHT
 import gg.essential.elementa.constraints.CenterConstraint
 import gg.essential.elementa.dsl.basicHeightConstraint
 import gg.essential.elementa.dsl.width
@@ -57,7 +55,7 @@ open class UIWrappedText @JvmOverloads constructor(
      * Also, if there are no shadows, the last line can be shorter so it looks more centered overall.
      */
     private val extraHeightState = verticallyCenteredState.zip(shadowState).map { (verticallyCentered, shadow) ->
-        (if (verticallyCentered) BELOW_LINE_HEIGHT else 0f) + (if (shadow) 0f else -SHADOW_HEIGHT)
+        (if (verticallyCentered) fontProviderState.get().getBelowLineHeight() else 0f) + (if (shadow) 0f else -fontProviderState.get().getShadowHeight())
     }
 
     init {
@@ -106,7 +104,7 @@ open class UIWrappedText @JvmOverloads constructor(
 
         val textScale = getTextScale()
         val x = getLeft()
-        val y = getTop() + (if (verticallyCenteredState.get()) BELOW_LINE_HEIGHT * textScale else 0f)
+        val y = getTop() + (if (verticallyCenteredState.get()) fontProviderState.get().getBelowLineHeight() * textScale else 0f)
         val width = getWidth()
         val color = getColor()
 

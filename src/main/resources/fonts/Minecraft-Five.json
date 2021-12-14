@@ -4,7 +4,10 @@
     "size": 8,
     "width": 64,
     "height": 64,
-    "yOrigin": "bottom"
+    "yOrigin": "bottom",
+    "baseCharHeight": 5.0,
+    "belowLineHeight": 1.0,
+    "shadowHeight": 1.0
   },
   "metrics": {
     "lineHeight": 1.4319999999999999,

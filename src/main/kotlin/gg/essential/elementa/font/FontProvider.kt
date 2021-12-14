@@ -47,4 +47,10 @@ interface FontProvider : SuperConstraint<FontProvider> {
         shadow,
         shadowColor
     )
+
+    fun getBaseLineHeight(): Float
+
+    fun getShadowHeight(): Float
+
+    fun getBelowLineHeight(): Float
 }
