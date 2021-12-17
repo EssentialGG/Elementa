@@ -110,7 +110,7 @@ open class UITextInput @JvmOverloads constructor(
         beforeDrawCompat(matrixStack)
 
         if (!active && !hasText()) {
-            getFontProvider().drawString(matrixStack, placeholder, getColor(), getLeft(), getTop(), 10f, getTextScale())
+            getFontProvider().drawString(matrixStack, placeholder, getColor(), getLeft(), getTop(), 10f, getTextScale(), shadow)
             return super.draw(matrixStack)
         }
 
