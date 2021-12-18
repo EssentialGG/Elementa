@@ -92,7 +92,7 @@ open class UIConstraints(protected val component: UIComponent) : Observable() {
     }
 
     open fun getTextScale(): Float {
-        return textScale.getHeight(component)
+        return textScale.getTextScale(component)
     }
 
     open fun withTextScale(constraint: HeightConstraint) = apply {
