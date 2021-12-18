@@ -5,7 +5,6 @@ import gg.essential.elementa.components.image.CacheableImage
 import gg.essential.elementa.components.image.DefaultLoadingImage
 import gg.essential.elementa.components.image.ImageCache
 import gg.essential.elementa.components.image.ImageProvider
-import gg.essential.elementa.dsl.pixels
 import gg.essential.elementa.svg.SVGParser
 import gg.essential.elementa.utils.ResourceCache
 import gg.essential.elementa.utils.drawTexture
@@ -59,14 +58,6 @@ open class UIImage @JvmOverloads constructor(
             // as a NativeImage) which is slow.
             texture = UGraphics.getTexture(it)
             Window.enqueueRenderOperation {
-
-                //If the user has not specified dimensions for this component,
-                //we will set it to be the size of the image
-                if (getWidth() == 1f && getHeight() == 1f) {
-                    setWidth(imageWidth.pixels)
-                    setHeight(imageHeight.pixels)
-                }
-
                 texture?.uploadTexture()
                 while (waiting.isEmpty().not())
                     waiting.poll().applyTexture(texture)
