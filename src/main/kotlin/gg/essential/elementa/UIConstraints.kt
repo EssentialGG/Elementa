@@ -118,6 +118,7 @@ open class UIConstraints(protected val component: UIComponent) : Observable() {
         height.animationFrame()
         radius.animationFrame()
         color.animationFrame()
+        textScale.animationFrame()
     }
 
     fun finish(): UIComponent {
