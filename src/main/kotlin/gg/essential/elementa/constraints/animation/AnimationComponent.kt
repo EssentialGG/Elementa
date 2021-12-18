@@ -2,6 +2,7 @@ package gg.essential.elementa.constraints.animation
 
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.constraints.*
+import gg.essential.elementa.constraints.debug.constraintDebugger
 import gg.essential.elementa.constraints.resolution.ConstraintVisitor
 import java.awt.Color
 import java.lang.UnsupportedOperationException
@@ -198,6 +199,21 @@ class HeightAnimationComponent(
         val finalX = newConstraint.getHeight(component)
 
         return startX + ((finalX - startX) * getPercentComplete())
+    }
+
+    override fun getTextScale(component: UIComponent): Float {
+        val debugger = constraintDebugger
+        if (debugger != null) {
+            return debugger.evaluate(this, ConstraintType.HEIGHT, component)
+        }
+
+        if (recalculate) {
+            // Left deliberately un-rounded during an animation
+            cachedValue = getHeightImpl(component)
+            recalculate = false
+        }
+
+        return cachedValue
     }
 
     override fun animationFrame() {
