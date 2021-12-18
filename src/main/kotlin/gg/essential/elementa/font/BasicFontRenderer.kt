@@ -10,7 +10,6 @@ import gg.essential.universal.UMatrixStack
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats
 import java.awt.Color
 import kotlin.math.max
-import kotlin.math.round
 
 class BasicFontRenderer(
     private val regularFont: Font
@@ -84,12 +83,6 @@ class BasicFontRenderer(
         shadowColor: Color?
     ) {
         /*
-            UIText will report the scale slightly off due to rounding.
-            Round it to a whole number for consistency.
-         */
-        val roundedScale = round(scale)
-
-        /*
             10 point font is the default used in Elementa.
             Adjust the point size based on this font's size.
          */
@@ -107,7 +100,7 @@ class BasicFontRenderer(
             color,
             x,
             y - 1,
-            scaledPointSize * roundedScale
+            scaledPointSize * scale
         )
     }
 
