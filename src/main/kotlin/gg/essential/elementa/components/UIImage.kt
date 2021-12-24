@@ -116,7 +116,9 @@ open class UIImage @JvmOverloads constructor(
     }
 
     override fun applyTexture(texture: ReleasedDynamicTexture?) {
-        this.texture = texture;
+        this.texture = texture
+        while (waiting.isEmpty().not())
+            waiting.poll().applyTexture(texture)
     }
 
     companion object {
