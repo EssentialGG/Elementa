@@ -3,37 +3,34 @@ package gg.essential.elementa.constraints
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.constraints.resolution.ConstraintVisitor
 
-class ScaleConstraint(val constraint1: SuperConstraint<Float>, val constraint2: SuperConstraint<Float>) : MasterConstraint {
-    constructor(constraint: SuperConstraint<Float>, value: Float) : this(constraint, PixelConstraint(value))
-
+class ScaleConstraint(val constraint: SuperConstraint<Float>, val value: Float) : MasterConstraint {
     override var cachedValue = 0f
     override var recalculate = true
     override var constrainTo: UIComponent? = null
 
     override fun animationFrame() {
         super.animationFrame()
-        constraint1.animationFrame()
-        constraint2.animationFrame()
+        constraint.animationFrame()
     }
 
     override fun getXPositionImpl(component: UIComponent): Float {
-        return (constraint1 as XConstraint).getXPosition(component) * (constraint2 as XConstraint).getXPosition(component)
+        return (constraint as XConstraint).getXPosition(component) * value
     }
 
     override fun getYPositionImpl(component: UIComponent): Float {
-        return (constraint1 as YConstraint).getYPosition(component) * (constraint2 as YConstraint).getYPosition(component)
+        return (constraint as YConstraint).getYPosition(component) * value
     }
 
     override fun getWidthImpl(component: UIComponent): Float {
-        return (constraint1 as WidthConstraint).getWidth(component) * (constraint2 as WidthConstraint).getWidth(component)
+        return (constraint as WidthConstraint).getWidth(component) * value
     }
 
     override fun getHeightImpl(component: UIComponent): Float {
-        return (constraint1 as HeightConstraint).getHeight(component) * (constraint2 as HeightConstraint).getHeight(component)
+        return (constraint as HeightConstraint).getHeight(component) * value
     }
 
     override fun getRadiusImpl(component: UIComponent): Float {
-        return (constraint1 as RadiusConstraint).getRadius(component) * (constraint2 as RadiusConstraint).getRadius(component)
+        return (constraint as RadiusConstraint).getRadius(component) * value
     }
 
     override fun to(component: UIComponent): SuperConstraint<Float> {
@@ -41,7 +38,6 @@ class ScaleConstraint(val constraint1: SuperConstraint<Float>, val constraint2: 
     }
 
     override fun visitImpl(visitor: ConstraintVisitor, type: ConstraintType) {
-        constraint1.visit(visitor, type, setNewConstraint = false)
-        constraint2.visit(visitor, type, setNewConstraint = false)
+        constraint.visit(visitor, type, setNewConstraint = false)
     }
 }

@@ -18,22 +18,12 @@ fun SuperConstraint<Float>.coerceIn(minConstraint: SuperConstraint<Float>, maxCo
 operator fun SuperConstraint<Float>.plus(other: SuperConstraint<Float>) =
     AdditiveConstraint(this, other)
 
-operator fun SuperConstraint<Float>.plus(other: Number) =
-    AdditiveConstraint(this, PixelConstraint(other.toFloat()))
-
 operator fun SuperConstraint<Float>.minus(other: SuperConstraint<Float>) =
     SubtractiveConstraint(this, other)
 
-operator fun SuperConstraint<Float>.minus(other: Number) =
-    SubtractiveConstraint(this, PixelConstraint(other.toFloat()))
-
 operator fun SuperConstraint<Float>.times(factor: Number) = ScaleConstraint(this, factor.toFloat())
 
-operator fun SuperConstraint<Float>.times(factor: SuperConstraint<Float>) = ScaleConstraint(this, factor)
-
 operator fun SuperConstraint<Float>.div(factor: Number) = ScaleConstraint(this, 1f / factor.toFloat())
-
-operator fun SuperConstraint<Float>.div(factor: SuperConstraint<Float>) = ScaleConstraint(this, factor)
 
 fun max(first: SuperConstraint<Float>, second: SuperConstraint<Float>) = MaxConstraint(first, second)
 
