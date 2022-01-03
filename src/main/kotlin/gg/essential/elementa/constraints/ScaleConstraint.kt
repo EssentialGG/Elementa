@@ -6,6 +6,11 @@ import gg.essential.elementa.constraints.resolution.ConstraintVisitor
 class ScaleConstraint(val constraint1: SuperConstraint<Float>, val constraint2: SuperConstraint<Float>) : MasterConstraint {
     constructor(constraint: SuperConstraint<Float>, value: Float) : this(constraint, PixelConstraint(value))
 
+    val constraint: SuperConstraint<Float>
+        get() = constraint1
+    val value: Float
+        get() = constraint2.cachedValue
+
     override var cachedValue = 0f
     override var recalculate = true
     override var constrainTo: UIComponent? = null
