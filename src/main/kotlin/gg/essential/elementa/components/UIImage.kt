@@ -12,6 +12,7 @@ import gg.essential.universal.UGraphics
 import gg.essential.universal.UMatrixStack
 import gg.essential.universal.UMinecraft
 import gg.essential.universal.utils.ReleasedDynamicTexture
+import org.lwjgl.opengl.GL11
 import java.awt.Color
 import java.awt.image.BufferedImage
 import java.io.File
@@ -40,6 +41,8 @@ open class UIImage @JvmOverloads constructor(
     var destroy = true
     val isLoaded: Boolean
         get() = texture != null
+    var textureMinFilter = TextureScalingMode.NEAREST
+    var textureMagFilter = TextureScalingMode.LINEAR
 
     init {
         imageFuture.thenAcceptAsync {
@@ -74,7 +77,7 @@ open class UIImage @JvmOverloads constructor(
 
     override fun drawImage(matrixStack: UMatrixStack, x: Double, y: Double, width: Double, height: Double, color: Color) {
         when {
-            texture != null -> drawTexture(matrixStack, texture!!, color, x, y, width, height)
+            texture != null -> drawTexture(matrixStack, texture!!, color, x, y, width, height, textureMinFilter.glMode, textureMagFilter.glMode)
             imageFuture.isCompletedExceptionally -> failureImage.drawImageCompat(matrixStack, x, y, width, height, color)
             else -> loadingImage.drawImageCompat(matrixStack, x, y, width, height, color)
         }
@@ -119,6 +122,15 @@ open class UIImage @JvmOverloads constructor(
         this.texture = texture
         while (waiting.isEmpty().not())
             waiting.poll().applyTexture(texture)
+    }
+
+    enum class TextureScalingMode(internal val glMode: Int) {
+        NEAREST(GL11.GL_NEAREST),
+        LINEAR(GL11.GL_LINEAR),
+        NEAREST_MIPMAP_NEAREST(GL11.GL_NEAREST_MIPMAP_NEAREST),
+        LINEAR_MIPMAP_NEAREST(GL11.GL_LINEAR_MIPMAP_NEAREST),
+        NEAREST_MIPMAP_LINEAR(GL11.GL_NEAREST_MIPMAP_LINEAR),
+        LINEAR_MIPMAP_LINEAR(GL11.GL_LINEAR_MIPMAP_LINEAR)
     }
 
     companion object {

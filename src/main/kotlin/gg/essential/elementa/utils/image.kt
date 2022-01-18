@@ -27,7 +27,9 @@ internal fun drawTexture(
     x: Double,
     y: Double,
     width: Double,
-    height: Double
+    height: Double,
+    textureMinFilter: Int = GL11.GL_NEAREST,
+    textureMagFilter: Int = GL11.GL_LINEAR
 ) {
     matrixStack.push()
 
@@ -46,7 +48,8 @@ internal fun drawTexture(
     val alpha = color.alpha.toFloat() / 255f
     val worldRenderer = UGraphics.getFromTessellator()
     UGraphics.configureTexture(glId) {
-        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST)
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, textureMinFilter)
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, textureMagFilter)
     }
 
     worldRenderer.beginWithDefaultShader(UGraphics.DrawMode.QUADS, DefaultVertexFormats.POSITION_TEX_COLOR)
