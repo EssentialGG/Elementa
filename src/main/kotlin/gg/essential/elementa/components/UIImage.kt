@@ -42,7 +42,7 @@ open class UIImage @JvmOverloads constructor(
     val isLoaded: Boolean
         get() = texture != null
     var textureMinFilter = TextureScalingMode.NEAREST
-    var textureMagFilter = TextureScalingMode.LINEAR
+    var textureMagFilter = TextureScalingMode.NEAREST
 
     init {
         imageFuture.thenAcceptAsync {
