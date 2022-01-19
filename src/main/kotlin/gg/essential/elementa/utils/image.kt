@@ -29,7 +29,7 @@ internal fun drawTexture(
     width: Double,
     height: Double,
     textureMinFilter: Int = GL11.GL_NEAREST,
-    textureMagFilter: Int = GL11.GL_LINEAR
+    textureMagFilter: Int = GL11.GL_NEAREST
 ) {
     matrixStack.push()
 
