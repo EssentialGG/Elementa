@@ -78,10 +78,10 @@ class ChildBasedRangeConstraint : WidthConstraint, HeightConstraint {
     override var constrainTo: UIComponent? = null
 
     override fun getWidthImpl(component: UIComponent): Float {
-        var leftMostPoint = Float.MAX_VALUE
-        var rightMostPoint = Float.MIN_VALUE
+        var leftMostPoint = Float.POSITIVE_INFINITY
+        var rightMostPoint = Float.NEGATIVE_INFINITY
 
-        component.children.forEach {
+        component.children.takeIf { it.isNotEmpty() }?.forEach {
             if (it.getLeft() < leftMostPoint) {
                 leftMostPoint = it.getLeft()
             }
@@ -89,16 +89,19 @@ class ChildBasedRangeConstraint : WidthConstraint, HeightConstraint {
             if (it.getRight() > rightMostPoint) {
                 rightMostPoint = it.getRight()
             }
+        } ?: run {
+            leftMostPoint = component.getLeft()
+            rightMostPoint = leftMostPoint
         }
 
         return (rightMostPoint - leftMostPoint).coerceAtLeast(0f)
     }
 
     override fun getHeightImpl(component: UIComponent): Float {
-        var topMostPoint = Float.MAX_VALUE
-        var bottomMostPoint = Float.MIN_VALUE
+        var topMostPoint = Float.POSITIVE_INFINITY
+        var bottomMostPoint = Float.NEGATIVE_INFINITY
 
-        component.children.forEach {
+        component.children.takeIf { it.isNotEmpty() }?.forEach {
             if (it.getTop() < topMostPoint) {
                 topMostPoint = it.getTop()
             }
@@ -106,6 +109,9 @@ class ChildBasedRangeConstraint : WidthConstraint, HeightConstraint {
             if (it.getBottom() > bottomMostPoint) {
                 bottomMostPoint = it.getBottom()
             }
+        } ?: run {
+            topMostPoint = component.getTop()
+            bottomMostPoint = topMostPoint
         }
 
         return (bottomMostPoint - topMostPoint).coerceAtLeast(0f)
