@@ -11,4 +11,7 @@ object DefaultFonts {
 
     @JvmStatic
     val JETBRAINS_MONO_FONT_RENDERER: FontProvider = ElementaFonts.JETBRAINS_MONO
+
+    @JvmStatic
+    val MINECRAFT_FIVE: FontProvider = ElementaFonts.MINECRAFT_FIVE
 }

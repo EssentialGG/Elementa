@@ -158,6 +158,17 @@ class FontRenderer(
 
     }
 
+    override fun getBaseLineHeight(): Float {
+        return regularFont.fontInfo.atlas.baseCharHeight
+    }
+
+    override fun getShadowHeight(): Float {
+        return regularFont.fontInfo.atlas.shadowHeight
+    }
+
+    override fun getBelowLineHeight(): Float {
+        return regularFont.fontInfo.atlas.belowLineHeight
+    }
     private fun refreshColor(pointSize: Float) {
         val current = if (drawingShadow) shadowColor else textColor
         val amt = Color.RGBtoHSB(current!!.red, current.green, current.blue, null)[2]

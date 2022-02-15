@@ -116,7 +116,8 @@ open class MSDFComponent constructor(
         val doubleX = x.toDouble()
         val doubleY = y.toDouble()
         worldRenderer.pos(matrixStack, doubleX, doubleY + height, 0.0).tex(textureLeft, textureBottom).endVertex()
-        worldRenderer.pos(matrixStack, doubleX + width, doubleY + height, 0.0).tex(textureRight, textureBottom).endVertex()
+        worldRenderer.pos(matrixStack, doubleX + width, doubleY + height, 0.0).tex(textureRight, textureBottom)
+            .endVertex()
         worldRenderer.pos(matrixStack, doubleX + width, doubleY, 0.0).tex(textureRight, textureTop).endVertex()
         worldRenderer.pos(matrixStack, doubleX, doubleY, 0.0).tex(textureLeft, textureTop).endVertex()
         worldRenderer.drawDirect()
@@ -145,7 +146,9 @@ open class MSDFComponent constructor(
     }
 
     override fun applyTexture(texture: ReleasedDynamicTexture?) {
-        this.texture=texture;
+        this.texture = texture
+        while (waiting.isEmpty().not())
+            waiting.poll().applyTexture(texture)
     }
 
     companion object {
@@ -189,8 +192,6 @@ open class MSDFComponent constructor(
         fun areShadersInitialized() = gg.essential.elementa.font.FontRenderer.areShadersInitialized()
         fun initShaders() = gg.essential.elementa.font.FontRenderer.initShaders()
     }
-
-
 
 
 }

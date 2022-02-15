@@ -159,6 +159,10 @@ interface HeightConstraint : SuperConstraint<Float> {
 
         return cachedValue
     }
+
+    fun getTextScale(component: UIComponent): Float {
+        return getHeight(component)
+    }
 }
 
 interface ColorConstraint : SuperConstraint<Color> {

@@ -1,0 +1,9 @@
+net.minecraft.client.renderer.texture.AbstractTexture net.minecraft.client.texture.AbstractTexture
+net.minecraft.client.renderer.texture.AbstractTexture getId() getGlId()
+net.minecraft.client.renderer.texture.AbstractTexture releaseId() clearGlId()
+net.minecraft.client.renderer.texture.AbstractTexture id glId
+net.minecraft.client.resources.sounds.SimpleSoundInstance net.minecraft.client.sound.PositionedSoundInstance
+net.minecraft.client.resources.sounds.SimpleSoundInstance forUI() master()
+net.minecraft.client.renderer.texture.TextureManager net.minecraft.client.renderer.texture.TextureAtlas
+net.minecraft.client.renderer.texture.TextureManager register() registerTexture()
+net.minecraft.client.renderer.texture.SimpleTexture net.minecraft.client.texture.ResourceTexture

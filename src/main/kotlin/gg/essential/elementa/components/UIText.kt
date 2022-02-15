@@ -24,14 +24,16 @@ open class UIText @JvmOverloads constructor(
     private var shadowState: State<Boolean> = BasicState(shadow)
     private var shadowColorState: State<Color?> = BasicState(shadowColor)
     private val textScaleState = constraints.asState { getTextScale() }
+    /** Guess on whether we should be trying to center or top-align this component. See [BELOW_LINE_HEIGHT]. */
+    private val verticallyCenteredState = constraints.asState { y is CenterConstraint }
     private val fontProviderState = constraints.asState { fontProvider }
     private var textWidthState = textState.zip(textScaleState.zip(fontProviderState)).map { (text, opts) ->
+        updateHeight()
         val (textScale, fontProvider) = opts
         text.width(textScale, fontProvider) / textScale
     }
 
-    /** Guess on whether we should be trying to center or top-align this component. See [BELOW_LINE_HEIGHT]. */
-    private val verticallyCenteredState = constraints.asState { y is CenterConstraint }
+
 
     private fun <T> UIConstraints.asState(selector: UIConstraints.() -> T) = BasicState(selector(constraints)).also {
         constraints.addObserver { _, _ -> it.set(selector(constraints)) }
@@ -39,10 +41,15 @@ open class UIText @JvmOverloads constructor(
 
     init {
         setWidth(textWidthState.pixels())
+        updateHeight()
+    }
+
+    private fun updateHeight() {
+        if(verticallyCenteredState == null) return
         setHeight(shadowState.zip(verticallyCenteredState).map { (shadow, verticallyCentered) ->
-            val above = (if (verticallyCentered) BELOW_LINE_HEIGHT else 0f)
-            val center = BASE_CHAR_HEIGHT
-            val below = BELOW_LINE_HEIGHT + (if (shadow) SHADOW_HEIGHT else 0f)
+            val above = (if (verticallyCentered) getFontProvider().getBelowLineHeight() else 0f)
+            val center = getFontProvider().getBaseLineHeight()
+            val below = getFontProvider().getBelowLineHeight() + (if (shadow) getFontProvider().getShadowHeight() else 0f)
             above + center + below
         }.pixels())
     }
@@ -90,7 +97,7 @@ open class UIText @JvmOverloads constructor(
 
         val scale = getWidth() / textWidthState.get()
         val x = getLeft()
-        val y = getTop() + (if (verticallyCenteredState.get()) BELOW_LINE_HEIGHT * scale else 0f)
+        val y = getTop() + (if (verticallyCenteredState.get()) fontProviderState.get().getBelowLineHeight() * scale else 0f)
         val color = getColor()
 
         // We aren't visible, don't draw
@@ -110,20 +117,5 @@ open class UIText @JvmOverloads constructor(
         super.draw(matrixStack)
     }
 
-    companion object {
-        /** Most (English) capital letters have this height, so this is what we use to center "the line". */
-        internal const val BASE_CHAR_HEIGHT = 7f
-        /**
-         * Some letters have a few extra pixels below the visually centered line (gjpqy).
-         * To accommodate these, we need to add extra height at the bottom and the top (to keep the original line
-         * centered). This needs special consideration because the font renderer does not consider it, so we need to
-         * adjust the position we give to it accordingly.
-         * Additionally, adding the space on top make top-alignment difficult, whereas not adding it makes centering
-         * difficult, so we use a simple heuristic to determine which one it is we're most likely looking for and then
-         * either add just the bottom one or the top one as well.
-         */
-        internal const val BELOW_LINE_HEIGHT = 1f
-        /** Extra height if shadows are enabled. */
-        internal const val SHADOW_HEIGHT = 1f
-    }
+
 }

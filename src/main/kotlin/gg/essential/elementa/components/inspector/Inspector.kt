@@ -10,6 +10,7 @@ import gg.essential.elementa.effects.ScissorEffect
 import gg.essential.elementa.utils.ObservableAddEvent
 import gg.essential.elementa.utils.ObservableClearEvent
 import gg.essential.elementa.utils.ObservableRemoveEvent
+import gg.essential.elementa.utils.elementaDebug
 import gg.essential.universal.UGraphics
 import gg.essential.universal.UMatrixStack
 import org.lwjgl.opengl.GL11
@@ -54,11 +55,12 @@ class Inspector @JvmOverloads constructor(
             width = ChildBasedSizeConstraint() + 30.pixels()
             height = ChildBasedMaxSizeConstraint() + 20.pixels()
         }.onMouseClick {
-            clickPos = if (it.relativeX < 0 || it.relativeY < 0 || it.relativeX > getWidth() || it.relativeY > getHeight()) {
-                null
-            } else {
-                it.relativeX to it.relativeY
-            }
+            clickPos =
+                if (it.relativeX < 0 || it.relativeY < 0 || it.relativeX > getWidth() || it.relativeY > getHeight()) {
+                    null
+                } else {
+                    it.relativeX to it.relativeY
+                }
         }.onMouseRelease {
             clickPos = null
         }.onMouseDrag { mouseX, mouseY, button ->
@@ -115,7 +117,8 @@ class Inspector @JvmOverloads constructor(
         val treeBlockScroller = ScrollComponent().constrain {
             y = SiblingConstraint()
             width = RelativeConstraint(1f) boundTo treeBlock
-            height = RelativeConstraint(1f).boundTo(treeBlock) coerceAtMost (maxSectionHeight ?: RelativeWindowConstraint(1 / 3f))
+            height = RelativeConstraint(1f).boundTo(treeBlock) coerceAtMost (maxSectionHeight
+                ?: RelativeWindowConstraint(1 / 3f))
         } childOf container
 
         treeBlock childOf treeBlockScroller
@@ -139,7 +142,8 @@ class Inspector @JvmOverloads constructor(
         infoBlockScroller = ScrollComponent().constrain {
             y = SiblingConstraint()
             width = RelativeConstraint(1f) boundTo infoBlock
-            height = RelativeConstraint(1f) boundTo infoBlock coerceAtMost (maxSectionHeight ?: RelativeWindowConstraint(1 / 3f))
+            height = RelativeConstraint(1f) boundTo infoBlock coerceAtMost (maxSectionHeight
+                ?: RelativeWindowConstraint(1 / 3f))
         }
 
         infoBlock childOf infoBlockScroller
@@ -240,6 +244,8 @@ class Inspector @JvmOverloads constructor(
     }
 
     override fun draw(matrixStack: UMatrixStack) {
+        val debugState = elementaDebug
+        elementaDebug = false
         // If we got removed from our parent, we need to un-float ourselves
         if (!isMounted()) {
             Window.enqueueRenderOperation { setFloating(false) }
@@ -286,6 +292,7 @@ class Inspector @JvmOverloads constructor(
         }
 
         super.draw(matrixStack)
+        elementaDebug = debugState
     }
 
     companion object {

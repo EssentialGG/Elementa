@@ -2,6 +2,7 @@ package gg.essential.elementa.font.data
 
 import com.google.gson.Gson
 import com.google.gson.JsonObject
+import com.google.gson.annotations.SerializedName
 
 data class FontInfo(
     val atlas: Atlas,
@@ -30,7 +31,10 @@ data class Atlas(
     val size: Float,
     val width: Float,
     val height: Float,
-    val yOrigin: String
+    val yOrigin: String,
+    val baseCharHeight: Float,
+    val belowLineHeight: Float,
+    val shadowHeight: Float
 )
 
 data class Metrics(
@@ -47,10 +51,27 @@ class Glyph(
     val planeBounds: Bounds? = null,
     val atlasBounds: Bounds? = null
 )
-
 data class Bounds(
-    val left: Float,
-    val bottom: Float,
-    val right: Float,
+    @SerializedName("left")
+    private val _left: Float,
+    @SerializedName("bottom")
+    private val _bottom: Float,
+    @SerializedName("right")
+    private val _right: Float,
+    @SerializedName("top")
+    private val _top: Float
+) {
+    /**
+     * msdfgen exports UV locations in the middle of pixels.
+     * This causes the rendering to occur slightly of from
+     * where you would expect it and incorrect texel mapping.
+     */
+    val left: Float
+        get() = _left + .5f
+    val bottom: Float
+        get() = _bottom + .5f
+    val right: Float
+        get() = _right + .5f
     val top: Float
-)
+        get() = _top + .5f
+}
