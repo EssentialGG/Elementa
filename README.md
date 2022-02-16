@@ -31,10 +31,31 @@ implementation "gg.essential:elementa-$mcVersion-$mcPlatform:$buildNumber"
           <th>buildNumber</th>
         </tr>
         <tr>
+          <td>1.18.1</td>
+          <td>fabric</td>
+          <td>
+            <img alt="1.18.1-fabric" src="https://badges.modcore.net/badge/dynamic/xml?color=A97BFF&label=%20&query=%2Fmetadata%2Fversioning%2Flatest&url=https://repo.sk1er.club/repository/maven-releases/gg/essential/elementa-1.18.1-fabric/maven-metadata.xml">
+          </td>
+        </tr>
+        <tr>
+          <td>1.18.1</td>
+          <td>forge</td>
+          <td>
+            <img alt="1.18.1-forge" src="https://badges.modcore.net/badge/dynamic/xml?color=A97BFF&label=%20&query=%2Fmetadata%2Fversioning%2Flatest&url=https://repo.sk1er.club/repository/maven-releases/gg/essential/elementa-1.18.1-forge/maven-metadata.xml">
+          </td>
+        </tr>
+        <tr>
           <td>1.17.1</td>
           <td>fabric</td>
           <td>
             <img alt="1.17.1-fabric" src="https://badges.modcore.net/badge/dynamic/xml?color=A97BFF&label=%20&query=%2Fmetadata%2Fversioning%2Flatest&url=https://repo.sk1er.club/repository/maven-releases/gg/essential/elementa-1.17.1-fabric/maven-metadata.xml">
+          </td>
+        </tr>
+        <tr>
+          <td>1.17.1</td>
+          <td>forge</td>
+          <td>
+            <img alt="1.17.1-forge" src="https://badges.modcore.net/badge/dynamic/xml?color=A97BFF&label=%20&query=%2Fmetadata%2Fversioning%2Flatest&url=https://repo.sk1er.club/repository/maven-releases/gg/essential/elementa-1.17.1-forge/maven-metadata.xml">
           </td>
         </tr>
         <tr>
