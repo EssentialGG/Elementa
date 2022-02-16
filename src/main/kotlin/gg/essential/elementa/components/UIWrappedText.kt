@@ -54,8 +54,9 @@ open class UIWrappedText @JvmOverloads constructor(
      * Balances out space required below the line by adding empty space above the first one.
      * Also, if there are no shadows, the last line can be shorter so it looks more centered overall.
      */
-    private val extraHeightState = verticallyCenteredState.zip(shadowState).map { (verticallyCentered, shadow) ->
-        (if (verticallyCentered) fontProviderState.get().getBelowLineHeight() else 0f) + (if (shadow) 0f else -fontProviderState.get().getShadowHeight())
+    private val extraHeightState = fontProviderState.zip(verticallyCenteredState).zip(shadowState).map { (opts, shadow) ->
+        val (fontProvider, verticallyCentered) = opts
+        (if (verticallyCentered) fontProvider.getBelowLineHeight() else 0f) + (if (shadow) 0f else - fontProvider.getShadowHeight())
     }
 
     init {
