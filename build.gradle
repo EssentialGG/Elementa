@@ -32,7 +32,7 @@ buildscript {
         } else {
             def forgeGradleVersion = mcVersion >= 11200 ? '717a9f4' : // FG 2.3
                                      mcVersion >= 10904 ? '83163c1' : // FG 2.2
-                                                          '4be84bf'   // FG 2.1
+                                                          'ceb83c0'   // FG 2.1
             classpath("com.github.ReplayMod:ForgeGradle:$forgeGradleVersion:all") {
                 exclude group: 'net.sf.trove4j', module: 'trove4j' // preprocessor/idea requires more recent one
                 exclude group: 'trove', module: 'trove' // different name same thing
