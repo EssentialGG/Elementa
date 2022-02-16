@@ -28,7 +28,6 @@ open class UIText @JvmOverloads constructor(
     private val verticallyCenteredState = constraints.asState { y is CenterConstraint }
     private val fontProviderState = constraints.asState { fontProvider }
     private var textWidthState = textState.zip(textScaleState.zip(fontProviderState)).map { (text, opts) ->
-        updateHeight()
         val (textScale, fontProvider) = opts
         text.width(textScale, fontProvider) / textScale
     }
@@ -41,15 +40,11 @@ open class UIText @JvmOverloads constructor(
 
     init {
         setWidth(textWidthState.pixels())
-        updateHeight()
-    }
-
-    private fun updateHeight() {
-        if(verticallyCenteredState == null) return
-        setHeight(shadowState.zip(verticallyCenteredState).map { (shadow, verticallyCentered) ->
-            val above = (if (verticallyCentered) getFontProvider().getBelowLineHeight() else 0f)
-            val center = getFontProvider().getBaseLineHeight()
-            val below = getFontProvider().getBelowLineHeight() + (if (shadow) getFontProvider().getShadowHeight() else 0f)
+        setHeight(shadowState.zip(verticallyCenteredState.zip(fontProviderState)).map { (shadow, opts) ->
+            val (verticallyCentered, fontProvider) = opts
+            val above = (if (verticallyCentered) fontProvider.getBelowLineHeight() else 0f)
+            val center = fontProvider.getBaseLineHeight()
+            val below = fontProvider.getBelowLineHeight() + (if (shadow) fontProvider.getShadowHeight() else 0f)
             above + center + below
         }.pixels())
     }
