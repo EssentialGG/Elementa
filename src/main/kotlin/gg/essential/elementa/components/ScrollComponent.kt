@@ -10,7 +10,6 @@ import gg.essential.elementa.utils.bindLast
 import gg.essential.universal.UKeyboard
 import gg.essential.universal.UMatrixStack
 import gg.essential.universal.UMouse
-import gg.essential.universal.UResolution
 import java.awt.Color
 import java.util.concurrent.CopyOnWriteArrayList
 import kotlin.math.abs
@@ -48,9 +47,9 @@ class ScrollComponent @JvmOverloads constructor(
         y = SiblingConstraint() + 4.pixels()
     }
 
-    private val scrollSVGComponent = getScrollImage().constrain {
-        width = 24.pixels()
-        height = 24.pixels()
+    private val scrollIconComponent = getScrollImage().constrain {
+        width = 10.pixels()
+        height = 16.pixels()
 
         color = scrollIconColor.toConstraint()
     }
@@ -109,8 +108,8 @@ class ScrollComponent @JvmOverloads constructor(
         actualHolder.addChild(emptyText)
         this.enableEffects(ScissorEffect(customScissorBoundingBox))
         emptyText.setFontProvider(getFontProvider())
-        super.addChild(scrollSVGComponent)
-        scrollSVGComponent.hide(instantly = true)
+        super.addChild(scrollIconComponent)
+        scrollIconComponent.hide(instantly = true)
 
         onMouseScroll {
             if (UKeyboard.isShiftKeyDown() && horizontalScrollEnabled) {
@@ -455,7 +454,7 @@ class ScrollComponent @JvmOverloads constructor(
     private fun onClick(mouseX: Float, mouseY: Float, mouseButton: Int) {
         if (isAutoScrolling) {
             isAutoScrolling = false
-            scrollSVGComponent.hide()
+            scrollIconComponent.hide()
             return
         }
 
@@ -464,12 +463,12 @@ class ScrollComponent @JvmOverloads constructor(
             isAutoScrolling = true
             autoScrollBegin = mouseX to mouseY
 
-            scrollSVGComponent.constrain {
-                x = (mouseX - 12).pixels()
-                y = (mouseY - 12).pixels()
+            scrollIconComponent.constrain {
+                x = (mouseX - 5).pixels()
+                y = (mouseY - 8).pixels()
             }
 
-            scrollSVGComponent.unhide(useLastPosition = false)
+            scrollIconComponent.unhide(useLastPosition = false)
         }
     }
 
@@ -573,7 +572,7 @@ class ScrollComponent @JvmOverloads constructor(
     }
 
     override fun removeChild(component: UIComponent) = apply {
-        if (component == scrollSVGComponent) {
+        if (component == scrollIconComponent) {
             super.removeChild(component)
             return@apply
         }
@@ -732,7 +731,7 @@ class ScrollComponent @JvmOverloads constructor(
     companion object {
 
         fun getScrollImage(): UIImage {
-            return UIImage.ofResourceCached("/svg/scroll.png")
+            return UIImage.ofResourceCached("/vertical-scroll.png")
         }
     }
 }
