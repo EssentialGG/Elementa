@@ -11,7 +11,7 @@ instead you simply have to describe _what_ you want.
 
 ## Dependency
 
-It's recommended that you include [Essential](link eventually) instead of adding it yourself.
+It's recommended that you include [Essential](essential.gg) instead of adding it yourself.
 
 In your repository block, add:
 ```groovy
