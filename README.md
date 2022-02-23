@@ -11,6 +11,8 @@ instead you simply have to describe _what_ you want.
 
 ## Dependency
 
+It's recommended that you include [Essential](link eventually) instead of adding it yourself.
+
 In your repository block, add:
 ```groovy
 maven {
@@ -79,6 +81,79 @@ If you were previously using v1.7.1 of Elementa and are now on the v2.0.0 builds
 [migration](docs/migration.md) document to know what has changed.
 
 To learn about all the new features in v2.0.0, please read the [what's new](docs/whatsnew.md) document.
+
+<span style="font-size:3em; color:red;">IMPORTANT!</span>
+
+You must also shade Elementa to avoid potential crashes with other mods. To do this, you will need to use the Shadow Gradle plugin.
+
+<details><summary>Groovy Version</summary>
+
+You can do this by either putting it in your plugins block:
+```groovy
+plugins {
+    id 'com.github.johnrengelman.shadow' version "$version"
+}
+```
+or by including it in your buildscript's classpath and applying it:
+```groovy
+buildscript {
+    repositories {
+        gradlePluginPortal()
+    }
+    dependencies {
+        classpath "gradle.plugin.com.github.jengelman.gradle.plugins:shadow:$version"
+    }
+}
+
+apply plugin: 'com.github.johnrengelman.shadow'
+```
+You'll then want to relocate UC to your own package to avoid breaking other mods
+```groovy
+shadowJar {
+    relocate("gg.essential.elementa", "your.package.elementa")
+}
+```
+
+</details>
+
+<details><summary>Kotlin Script Version</summary>
+
+You can do this by either putting it in your plugins block:
+```kotlin
+plugins {
+    id("com.github.johnrengelman.shadow") version "$version"
+}
+```
+or by including it in your buildscript's classpath and applying it:
+```kotlin
+buildscript {
+    repositories {
+        gradlePluginPortal()
+    }
+    dependencies {
+        classpath("gradle.plugin.com.github.jengelman.gradle.plugins:shadow:$version")
+    }
+}
+
+plugins {
+    id("com.github.johnrengelman.shadow")
+}
+```
+You'll then want to relocate UC to your own package to avoid breaking other mods
+```kotlin
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
+tasks {
+    named<ShadowJar>("shadowJar") {
+        archiveFileName.set(jar.get().archiveFileName)
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+        relocate("gg.essential.elementa", "your.package.elementa")
+    }
+}
+```
+
+</details>
 
 ## Legacy Builds
 In your dependencies block, add:
