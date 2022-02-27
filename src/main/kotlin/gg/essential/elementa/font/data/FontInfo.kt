@@ -48,10 +48,36 @@ data class Metrics(
 class Glyph(
     val unicode: Int,
     val advance: Float,
-    val planeBounds: Bounds? = null,
-    val atlasBounds: Bounds? = null
+    val planeBounds: PlaneBounds? = null,
+    val atlasBounds: AtlasBounds? = null
 )
-data class Bounds(
+
+data class PlaneBounds(
+    @SerializedName("left")
+    private val _left: Float,
+    @SerializedName("bottom")
+    private val _bottom: Float,
+    @SerializedName("right")
+    private val _right: Float,
+    @SerializedName("top")
+    private val _top: Float
+) {
+    /**
+     * msdfgen exports the plane locations with .025 subtracted from the
+     * Y coordinate of each glyph, so we must correct for this
+     */
+    val left: Float
+        get() = _left
+    val bottom: Float
+        get() = _bottom + 0.025f
+    val right: Float
+        get() = _right
+    val top: Float
+        get() = _top + 0.025f
+}
+
+
+data class AtlasBounds(
     @SerializedName("left")
     private val _left: Float,
     @SerializedName("bottom")

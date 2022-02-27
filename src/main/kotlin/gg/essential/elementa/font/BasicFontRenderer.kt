@@ -155,7 +155,7 @@ class BasicFontRenderer(
                     glyph,
                     color,
                     currentX,
-                    y,
+                    y + planeBounds.bottom * originalPointSize,
                     width,
                     height
                 )
