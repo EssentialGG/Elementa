@@ -7,9 +7,8 @@
     "height": 640,
     "yOrigin": "bottom",
     "baseCharHeight": 5.0,
-    "belowLineHeight": 1.0,
+    "belowLineHeight": 0.0,
     "shadowHeight": 1.0
-
   },
   "metrics": {
     "lineHeight": 0.880859375,
