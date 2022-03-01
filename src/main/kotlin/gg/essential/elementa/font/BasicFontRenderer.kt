@@ -51,7 +51,7 @@ class BasicFontRenderer(
             }
 
             val glyph = regularFont.fontInfo.glyphs[char.code]
-            if (glyph == null) {
+            if (glyph?.atlasBounds == null) {
                 i++
                 continue
             }
@@ -61,7 +61,16 @@ class BasicFontRenderer(
                 height = max((planeBounds.top - planeBounds.bottom) * currentPointSize, height)
             }
 
-            width += (glyph.advance * currentPointSize)
+            //The last character should not have the whitespace to the right of it
+            //Added to the width. Instead, we only add the width of the character
+            val lastCorrection = if (i < string.length - 1) 0 else 1
+
+            //The texture atlas is used here because in the context of this implementation of the font renderer
+            //we do not need or want the full precision the msdf font renderer exports in. Instead, we care about
+            //calculating width based on the texture pixels
+            width += (((glyph.atlasBounds.right - glyph.atlasBounds.left - lastCorrection) / regularFont.fontInfo.atlas.size) * currentPointSize)
+
+
             i++
         }
         return Pair(width, height)
