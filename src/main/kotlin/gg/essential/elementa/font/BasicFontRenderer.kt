@@ -103,6 +103,18 @@ class BasicFontRenderer(
             in the same location as the vanilla font renderer relative to
             a UIText component.
          */
+        if (shadow) {
+            drawStringNow(
+                matrixStack,
+                string,
+                shadowColor ?: Color(
+                    ((color.rgb and 16579836).shr(2)).or((color.rgb).and(-16777216))
+                ),
+                x + 1,
+                y,
+                scaledPointSize * scale
+            )
+        }
         drawStringNow(
             matrixStack,
             string,
