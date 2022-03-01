@@ -170,7 +170,14 @@ class BasicFontRenderer(
                 )
             }
 
-            currentX += (glyph.advance) * originalPointSize
+            //The texture atlas is used here because in the context of this implementation of the font renderer
+            //we do not need or want the full precision the msdf font renderer exports in. Instead, we care about
+            //calculating width based on the texture pixels
+            if (glyph.atlasBounds != null) {
+                currentX += (((glyph.atlasBounds.right - glyph.atlasBounds.left) / regularFont.fontInfo.atlas.size) * originalPointSize)
+            } else {
+                currentX += (glyph.advance) * originalPointSize
+            }
             i++
         }
 
