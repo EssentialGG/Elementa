@@ -134,7 +134,9 @@ class MarkdownComponent @JvmOverloads constructor(
         setHeight((currY - baseY).coerceAtMost(maxHeight.getHeight(this)).pixels())
     }
 
-    override fun draw(matrixStack: UMatrixStack) {
+    override fun animationFrame() {
+        super.animationFrame()
+
         if (!initialLayout) {
             initialLayout = true
             reparse()
@@ -147,7 +149,9 @@ class MarkdownComponent @JvmOverloads constructor(
         if (currentValues != lastValues)
             layout()
         lastValues = currentValues
+    }
 
+    override fun draw(matrixStack: UMatrixStack) {
         beforeDrawCompat(matrixStack)
 
         val drawState = DrawState(getLeft() - baseX, getTop() - baseY)
