@@ -152,7 +152,7 @@ class MarkdownComponent @JvmOverloads constructor(
     }
 
     override fun draw(matrixStack: UMatrixStack) {
-        beforeDrawCompat(matrixStack)
+        beforeDraw(matrixStack)
 
         val drawState = DrawState(getLeft() - baseX, getTop() - baseY)
 
