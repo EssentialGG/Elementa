@@ -45,7 +45,7 @@ class MarkdownComponent @JvmOverloads constructor(
     private var cursor: Cursor<*>? = null
     private var selection: Selection? = null
     private var canDrag = false
-    private var initialLayout = false
+    private var needsInitialLayout = true
 
     init {
         if (!disableSelection) {
@@ -137,8 +137,8 @@ class MarkdownComponent @JvmOverloads constructor(
     override fun animationFrame() {
         super.animationFrame()
 
-        if (!initialLayout) {
-            initialLayout = true
+        if (needsInitialLayout) {
+            needsInitialLayout = false
             reparse()
             layout()
             lastValues = constraintValues()
