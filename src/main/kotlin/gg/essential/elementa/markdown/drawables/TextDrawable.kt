@@ -5,6 +5,7 @@ import gg.essential.elementa.components.UIRoundedRectangle
 import gg.essential.elementa.dsl.width
 import gg.essential.elementa.font.FontProvider
 import gg.essential.elementa.markdown.DrawState
+import gg.essential.elementa.markdown.HeaderLevelConfig
 import gg.essential.elementa.markdown.MarkdownComponent
 import gg.essential.elementa.markdown.MarkdownConfig
 import gg.essential.elementa.markdown.selection.TextCursor
@@ -20,6 +21,12 @@ class TextDrawable(
 ) : Drawable(md) {
     // Used by HeaderDrawable
     var scaleModifier = 1f
+    // FIXME: Should probably be handled by [Style] at some point.
+    internal var headerConfig: HeaderLevelConfig? = null
+        set(value) {
+            field = value
+            scaleModifier = value?.textScale ?: scaleModifier
+        }
 
     var formattedText: String = style.formattingSymbols + text
         private set
@@ -217,7 +224,8 @@ class TextDrawable(
                 (it.y + yShift) / scaleModifier,
                 it.selected,
                 style.linkLocation != null,
-                hovered
+                hovered,
+                headerConfig
             )
             matrixStack.scale(1f / scaleModifier, 1f / scaleModifier, 1f)
         }
@@ -352,7 +360,8 @@ class TextDrawable(
             y: Float,
             selected: Boolean = false,
             isLink: Boolean = false,
-            isHovered: Boolean = false
+            isHovered: Boolean = false,
+            headerConfig: HeaderLevelConfig? = null
         ) {
             if (selected) {
                 UIBlock.drawBlockSized(
@@ -368,6 +377,7 @@ class TextDrawable(
             val foregroundColor = when {
                 isLink -> config.textConfig.linkColor.rgb
                 selected -> config.textConfig.selectionForegroundColor.rgb
+                headerConfig != null -> headerConfig.fontColor.rgb
                 else -> config.textConfig.color.rgb
             }
 

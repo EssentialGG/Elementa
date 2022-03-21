@@ -3,6 +3,7 @@ package gg.essential.elementa.markdown.drawables
 import gg.essential.elementa.components.UIBlock
 import gg.essential.elementa.dsl.width
 import gg.essential.elementa.markdown.DrawState
+import gg.essential.elementa.markdown.HeaderLevelConfig
 import gg.essential.elementa.markdown.MarkdownComponent
 import gg.essential.elementa.markdown.selection.Cursor
 import gg.essential.elementa.markdown.selection.ImageCursor
@@ -29,6 +30,15 @@ class ParagraphDrawable(
         get() = children.filterIsInstance<TextDrawable>()
 
     // Used by HeaderDrawable
+    internal var headerConfig: HeaderLevelConfig? = null
+        set(value) {
+            field = value
+            scaleModifier = value?.textScale ?: scaleModifier
+            textDrawables.forEach {
+                it.headerConfig = value
+            }
+        }
+
     var scaleModifier = 1f
         set(value) {
             field = value

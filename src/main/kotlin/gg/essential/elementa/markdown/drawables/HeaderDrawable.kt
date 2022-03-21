@@ -28,7 +28,7 @@ class HeaderDrawable(
     }
 
     init {
-        paragraph.scaleModifier = headerConfig.textScale
+        paragraph.headerConfig = headerConfig
         trim(paragraph)
     }
 
