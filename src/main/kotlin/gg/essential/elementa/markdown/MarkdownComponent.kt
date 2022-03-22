@@ -54,6 +54,7 @@ class MarkdownComponent(
     private var cursor: Cursor<*>? = null
     private var selection: Selection? = null
     private var canDrag = false
+    private var needsInitialLayout = true
 
     init {
         if (!disableSelection) {
@@ -142,25 +143,25 @@ class MarkdownComponent(
         setHeight((currY - baseY).coerceAtMost(maxHeight.getHeight(this)).pixels())
     }
 
-    override fun afterInitialization() {
-        reparse()
-        layout()
-        lastValues = constraintValues()
-    }
+    override fun animationFrame() {
+        super.animationFrame()
 
-    override fun draw(matrixStack: UMatrixStack) {
-        if (!isInitialized) {
-            isInitialized = true
-            afterInitialization()
+        if (needsInitialLayout) {
+            needsInitialLayout = false
+            reparse()
+            layout()
+            lastValues = constraintValues()
         }
-
-        beforeChildrenDraw(matrixStack)
 
         // Re-layout if important constraint values have changed
         val currentValues = constraintValues()
         if (currentValues != lastValues)
             layout()
         lastValues = currentValues
+    }
+
+    override fun draw(matrixStack: UMatrixStack) {
+        beforeDraw(matrixStack)
 
         val drawState = DrawState(getLeft() - baseX, getTop() - baseY)
 
@@ -168,7 +169,7 @@ class MarkdownComponent(
         if (!disableSelection)
             selection?.draw(matrixStack, drawState) ?: cursor?.draw(matrixStack, drawState)
 
-        afterDraw(matrixStack)
+        super.draw(matrixStack)
     }
 
     private fun constraintValues() = ConstraintValues(
