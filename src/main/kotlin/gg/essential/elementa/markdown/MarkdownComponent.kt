@@ -23,13 +23,22 @@ import gg.essential.universal.UMatrixStack
  * done with direct render calls instead of through the component
  * hierarchy.
  */
-class MarkdownComponent @JvmOverloads constructor(
+class MarkdownComponent(
     text: String,
     val config: MarkdownConfig = MarkdownConfig(),
     private val codeFontPointSize: Float = 10f,
     private val codeFontRenderer: FontProvider = ElementaFonts.JETBRAINS_MONO,
     private val disableSelection: Boolean = false,
 ) : UIComponent() {
+
+    @JvmOverloads
+    constructor(
+        text: String,
+        config: MarkdownConfig = MarkdownConfig(),
+        codeFontPointSize: Float = 10f,
+        codeFontRenderer: FontProvider = ElementaFonts.JETBRAINS_MONO,
+    ) : this(text, config, codeFontPointSize, codeFontRenderer, false)
+
     private var textState: State<String> = BasicState(text)
     private var removeListener = textState.onSetValue {
         reparse()
