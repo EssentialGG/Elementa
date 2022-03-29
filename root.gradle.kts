@@ -1,15 +1,12 @@
+import gg.essential.gradle.util.*
+
 plugins {
-    kotlin("jvm") version "1.6.0" apply false
-    id("fabric-loom") version "0.10-SNAPSHOT" apply false
-    id("com.replaymod.preprocess") version "7746c47"
+    kotlin("jvm") version "1.6.10" apply false
+    id("org.jetbrains.dokka") version "1.6.10" apply false
+    id("gg.essential.multi-version.root")
 }
 
-version = determineVersion()
-
-// Loom tries to find the active mixin version by recursing up to the root project and checking each project's
-// compileClasspath and build script classpath (in that order). Since we've loom in our root project's classpath,
-// loom will only find it after checking the root project's compileClasspath (which doesn't exist by default).
-configurations.register("compileClasspath")
+version = versionFromBuildIdAndBranch()
 
 preprocess {
     val forge11801 = createNode("1.18.1-forge", 11801, "srg")
@@ -30,24 +27,4 @@ preprocess {
     forge11602.link(forge11502)
     forge11502.link(forge11202, file("versions/1.15.2-1.12.2.txt"))
     forge11202.link(forge10809, file("versions/1.12.2-1.8.9.txt"))
-}
-
-fun determineVersion(): String {
-    val branch = branch()
-    var version = buildId() ?: return "$branch-SNAPSHOT"
-    if (branch != "master") {
-        version += "+$branch"
-    }
-    return version
-}
-fun buildId(): String? = project.properties["BUILD_ID"]?.toString()
-fun branch(): String = project.properties["branch"]?.toString() ?: try {
-    val stdout = java.io.ByteArrayOutputStream()
-    exec {
-        commandLine("git", "rev-parse", "--abbrev-ref", "HEAD")
-        standardOutput = stdout
-    }
-    stdout.toString().trim()
-} catch (e: Throwable) {
-    "unknown"
 }
