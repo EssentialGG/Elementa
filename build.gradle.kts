@@ -58,7 +58,7 @@ dependencies {
 
 tasks.processResources {
     filesMatching(listOf("fabric.mod.json")) {
-        filter { it.replace("com.example.examplemod.ExampleMod", "") }
+        filter { it.replace("\"com.example.examplemod.ExampleMod\"", "") }
     }
 }
 
