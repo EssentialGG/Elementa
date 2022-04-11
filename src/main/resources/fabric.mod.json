@@ -1,6 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "elementa",
+  "name": "Elementa",
   "version": "${version}",
   "environment": "client",
   "entrypoints": {
