@@ -1,15 +1,13 @@
+import gg.essential.gradle.util.*
+
 plugins {
-    kotlin("jvm") version "1.6.0" apply false
-    id("fabric-loom") version "0.10-SNAPSHOT" apply false
-    id("com.replaymod.preprocess") version "7746c47"
+    kotlin("jvm") version "1.6.10" apply false
+    id("org.jetbrains.dokka") version "1.6.10" apply false
+    id("gg.essential.multi-version.root")
+    id("gg.essential.multi-version.api-validation")
 }
 
-version = determineVersion()
-
-// Loom tries to find the active mixin version by recursing up to the root project and checking each project's
-// compileClasspath and build script classpath (in that order). Since we've loom in our root project's classpath,
-// loom will only find it after checking the root project's compileClasspath (which doesn't exist by default).
-configurations.register("compileClasspath")
+version = versionFromBuildIdAndBranch()
 
 preprocess {
     val forge11801 = createNode("1.18.1-forge", 11801, "srg")
@@ -17,10 +15,10 @@ preprocess {
     val forge11701 = createNode("1.17.1-forge", 11701, "srg")
     val fabric11701 = createNode("1.17.1-fabric", 11701, "yarn")
     val fabric11602 = createNode("1.16.2-fabric", 11602, "yarn")
-    val forge11602 = createNode("1.16.2", 11602, "srg")
-    val forge11502 = createNode("1.15.2", 11502, "srg")
-    val forge11202 = createNode("1.12.2", 11202, "srg")
-    val forge10809 = createNode("1.8.9", 10809, "srg")
+    val forge11602 = createNode("1.16.2-forge", 11602, "srg")
+    val forge11502 = createNode("1.15.2-forge", 11502, "srg")
+    val forge11202 = createNode("1.12.2-forge", 11202, "srg")
+    val forge10809 = createNode("1.8.9-forge", 10809, "srg")
 
     forge11801.link(fabric11801)
     fabric11801.link(fabric11701)
@@ -32,22 +30,6 @@ preprocess {
     forge11202.link(forge10809, file("versions/1.12.2-1.8.9.txt"))
 }
 
-fun determineVersion(): String {
-    val branch = branch()
-    var version = buildId() ?: return "$branch-SNAPSHOT"
-    if (branch != "master") {
-        version += "+$branch"
-    }
-    return version
-}
-fun buildId(): String? = project.properties["BUILD_ID"]?.toString()
-fun branch(): String = project.properties["branch"]?.toString() ?: try {
-    val stdout = java.io.ByteArrayOutputStream()
-    exec {
-        commandLine("git", "rev-parse", "--abbrev-ref", "HEAD")
-        standardOutput = stdout
-    }
-    stdout.toString().trim()
-} catch (e: Throwable) {
-    "unknown"
+apiValidation {
+    ignoredPackages.add("com.example")
 }

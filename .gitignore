@@ -40,3 +40,4 @@ usernamecache.json
 *.txt
 
 versions/*/tmp.srg
+versions/*/api/

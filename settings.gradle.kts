@@ -1,33 +1,27 @@
-
-
 pluginManagement {
     repositories {
-        mavenLocal()
         gradlePluginPortal()
-        jcenter()
         mavenCentral()
-        google()
-        maven("https://jitpack.io")
         maven("https://maven.fabricmc.net")
+        maven("https://maven.architectury.dev/")
+        maven("https://maven.minecraftforge.net")
+        maven("https://repo.essential.gg/repository/maven-public")
     }
-    resolutionStrategy {
-        eachPlugin {
-            when (requested.id.id) {
-                "com.replaymod.preprocess" -> {
-                    useModule("com.github.replaymod:preprocessor:${requested.version}")
-                }
-            }
-        }
+    plugins {
+        val egtVersion = "0.1.1"
+        id("gg.essential.multi-version.root") version egtVersion
+        id("gg.essential.multi-version.api-validation") version egtVersion
     }
 }
 
+rootProject.name = "Elementa"
 rootProject.buildFileName = "root.gradle.kts"
 
 listOf(
-    "1.8.9",
-    "1.12.2",
-    "1.15.2",
-    "1.16.2",
+    "1.8.9-forge",
+    "1.12.2-forge",
+    "1.15.2-forge",
+    "1.16.2-forge",
     "1.16.2-fabric",
     "1.17.1-fabric",
     "1.17.1-forge",
@@ -37,7 +31,7 @@ listOf(
     include(":$version")
     project(":$version").apply {
         projectDir = file("versions/$version")
-        buildFileName = "../../build.gradle"
+        buildFileName = "../../build.gradle.kts"
     }
 }
 
