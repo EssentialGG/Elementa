@@ -26,7 +26,7 @@ class CramSiblingConstraint(padding: Float = 0f) : SiblingConstraint(padding) {
 
         val sibling = component.parent.children[index - 1]
 
-        if (sibling.getRight() + component.getWidth() + padding <= component.parent.getRight()) {
+        if (sibling.getRight() + component.getWidth() + padding <= component.parent.getRight() + precisionAdjustmentFactor) {
             return sibling.getRight() + padding
         }
 
@@ -42,7 +42,7 @@ class CramSiblingConstraint(padding: Float = 0f) : SiblingConstraint(padding) {
 
         val sibling = component.parent.children[index - 1]
 
-        if (sibling.getRight() + component.getWidth() + padding <= component.parent.getRight()) {
+        if (sibling.getRight() + component.getWidth() + padding <= component.parent.getRight() + precisionAdjustmentFactor) {
             return sibling.getTop()
         }
 
@@ -95,7 +95,7 @@ class CramSiblingConstraint(padding: Float = 0f) : SiblingConstraint(padding) {
 
         val sibling = component.parent.children[index - 1]
 
-        if (sibling.getRight() + component.getWidth() + padding <= component.parent.getRight()) {
+        if (sibling.getRight() + component.getWidth() + padding <= component.parent.getRight() + precisionAdjustmentFactor) {
             return padding
         }
         return 0F
@@ -109,10 +109,19 @@ class CramSiblingConstraint(padding: Float = 0f) : SiblingConstraint(padding) {
 
         val sibling = component.parent.children[index - 1]
 
-        if (sibling.getRight() + component.getWidth() + padding <= component.parent.getRight()) {
+        if (sibling.getRight() + component.getWidth() + padding <= component.parent.getRight() + precisionAdjustmentFactor) {
             return 0F
         }
 
         return padding
+    }
+
+    private companion object {
+
+        // Due to the precision and accuracy limitations of floating point numbers,
+        // situations can arise where two numbers should be exactly the same but in practice
+        // have a small difference in their value. In order to correct for this, a very small
+        // offset is introduced to ensure this constraint behaves as expended
+        private const val precisionAdjustmentFactor = 0.01f
     }
 }
