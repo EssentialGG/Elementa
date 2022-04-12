@@ -1,6 +1,6 @@
 package gg.essential.elementa.svg.data
 
-import org.dom4j.Element
+import gg.essential.elementa.impl.dom4j.Element
 import org.lwjgl.opengl.GL11
 import java.nio.FloatBuffer
 import kotlin.math.PI

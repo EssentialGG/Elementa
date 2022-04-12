@@ -16,6 +16,12 @@ java.withSourcesJar()
 tasks.compileKotlin.setJvmDefault(if (platform.mcVersion >= 11400) "all" else "all-compatibility")
 loom.noServerRunConfigs()
 
+val internal = makeConfigurationForInternalDependencies {
+    relocate("org.dom4j", "gg.essential.elementa.impl.dom4j")
+    relocate("org.commonmark", "gg.essential.elementa.impl.commonmark")
+    remapStringsIn("org.dom4j.DocumentFactory")
+}
+
 dependencies {
     api("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version")
     api("org.jetbrains.kotlin:kotlin-reflect:$kotlin_version")
@@ -24,10 +30,10 @@ dependencies {
         exclude(group = "org.jetbrains.kotlin")
     }
 
-    implementation("org.commonmark:commonmark:0.17.1")
-    implementation("org.commonmark:commonmark-ext-gfm-strikethrough:0.17.1")
-    implementation("org.commonmark:commonmark-ext-ins:0.17.1")
-    implementation("org.dom4j:dom4j:2.1.1")
+    internal("org.commonmark:commonmark:0.17.1")
+    internal("org.commonmark:commonmark-ext-gfm-strikethrough:0.17.1")
+    internal("org.commonmark:commonmark-ext-ins:0.17.1")
+    internal("org.dom4j:dom4j:2.1.1")
 
     if (platform.isFabric) {
         val fabricApiVersion = when(platform.mcVersion) {
