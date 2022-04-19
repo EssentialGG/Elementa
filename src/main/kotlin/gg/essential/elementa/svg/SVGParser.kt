@@ -1,9 +1,9 @@
 package gg.essential.elementa.svg
 
+import gg.essential.elementa.impl.dom4j.Document
+import gg.essential.elementa.impl.dom4j.Element
+import gg.essential.elementa.impl.dom4j.io.SAXReader
 import gg.essential.elementa.svg.data.*
-import org.dom4j.Document
-import org.dom4j.Element
-import org.dom4j.io.SAXReader
 import java.lang.UnsupportedOperationException
 
 object SVGParser {
