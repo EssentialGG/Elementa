@@ -63,14 +63,6 @@ open class BlurHashImage(private val hash: String) : UIComponent(), ImageProvide
         super.draw(matrixStack)
     }
 
-    @Throws(Throwable::class)
-    protected fun finalize() {
-        val glTextureId = texture.glTextureId
-        if (glTextureId != 0 && glTextureId != -1) {
-            UGraphics.deleteTexture(glTextureId)
-        }
-    }
-
     companion object {
         const val BASE_WIDTH = 50.0
         const val BASE_HEIGHT = 50.0

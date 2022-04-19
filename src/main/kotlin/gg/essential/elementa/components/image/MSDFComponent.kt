@@ -127,16 +127,6 @@ open class MSDFComponent constructor(
 
     }
 
-    @Throws(Throwable::class)
-    protected fun finalize() {
-        if (!destroy) return
-        val glTextureId = texture?.glTextureId
-        if (glTextureId != null && glTextureId != 0 && glTextureId != -1) {
-            UGraphics.deleteTexture(glTextureId)
-        }
-    }
-
-
     override fun supply(image: CacheableImage) {
         if (texture != null) {
             image.applyTexture(texture)
