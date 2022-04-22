@@ -8,14 +8,21 @@ pluginManagement {
         maven("https://repo.essential.gg/repository/maven-public")
     }
     plugins {
-        val egtVersion = "0.1.3"
+        val egtVersion = "0.1.6"
+        id("gg.essential.defaults") version egtVersion
         id("gg.essential.multi-version.root") version egtVersion
         id("gg.essential.multi-version.api-validation") version egtVersion
     }
 }
 
 rootProject.name = "Elementa"
-rootProject.buildFileName = "root.gradle.kts"
+rootProject.buildFileName = "common.gradle.kts"
+
+include(":platform")
+project(":platform").apply {
+    projectDir = file("versions/")
+    buildFileName = "../root.gradle.kts"
+}
 
 listOf(
     "1.8.9-forge",
@@ -28,8 +35,8 @@ listOf(
     "1.18.1-fabric",
     "1.18.1-forge",
 ).forEach { version ->
-    include(":$version")
-    project(":$version").apply {
+    include(":platform:$version")
+    project(":platform:$version").apply {
         projectDir = file("versions/$version")
         buildFileName = "../../build.gradle.kts"
     }

@@ -1,3 +1,5 @@
+import gg.essential.gradle.multiversion.excludeKotlinDefaultImpls
+import gg.essential.gradle.multiversion.mergePlatformSpecifics
 import gg.essential.gradle.util.*
 
 plugins {
@@ -16,11 +18,9 @@ java.withSourcesJar()
 tasks.compileKotlin.setJvmDefault(if (platform.mcVersion >= 11400) "all" else "all-compatibility")
 loom.noServerRunConfigs()
 
-val internal = makeConfigurationForInternalDependencies {
-    relocate("org.dom4j", "gg.essential.elementa.impl.dom4j")
-    relocate("org.commonmark", "gg.essential.elementa.impl.commonmark")
-    remapStringsIn("org.dom4j.DocumentFactory")
-}
+val common by configurations.creating
+configurations.compileClasspath { extendsFrom(common) }
+configurations.runtimeClasspath { extendsFrom(common) }
 
 dependencies {
     api("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version")
@@ -31,10 +31,7 @@ dependencies {
         exclude(group = "org.jetbrains.kotlin")
     }
 
-    internal("org.commonmark:commonmark:0.17.1")
-    internal("org.commonmark:commonmark-ext-gfm-strikethrough:0.17.1")
-    internal("org.commonmark:commonmark-ext-ins:0.17.1")
-    internal("org.dom4j:dom4j:2.1.1")
+    common(project(":")) { isTransitive = false }
 
     if (platform.isFabric) {
         val fabricApiVersion = when(platform.mcVersion) {
@@ -74,6 +71,16 @@ tasks.dokkaHtml {
 }
 
 tasks.jar {
+    dependsOn(common)
+    from({ common.map { zipTree(it) } })
+    mergePlatformSpecifics()
+
+    // We build the common module with legacy default impl for backwards compatibility, but we only need those for
+    // 1.12.2 and older. Newer versions have never shipped with legacy default impl.
+    if (platform.mcVersion >= 11400) {
+        excludeKotlinDefaultImpls()
+    }
+
     exclude("com/example/examplemod/**")
     exclude("META-INF/mods.toml")
     exclude("mcmod.info")
