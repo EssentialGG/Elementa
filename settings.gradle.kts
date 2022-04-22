@@ -21,7 +21,7 @@ rootProject.buildFileName = "common.gradle.kts"
 include(":platform")
 project(":platform").apply {
     projectDir = file("versions/")
-    buildFileName = "../root.gradle.kts"
+    buildFileName = "root.gradle.kts"
 }
 
 listOf(
@@ -38,7 +38,7 @@ listOf(
     include(":platform:$version")
     project(":platform:$version").apply {
         projectDir = file("versions/$version")
-        buildFileName = "../../build.gradle.kts"
+        buildFileName = "../build.gradle.kts"
     }
 }
 
