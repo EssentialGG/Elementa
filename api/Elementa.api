@@ -779,9 +779,6 @@ public abstract interface class gg/essential/elementa/components/image/ImageCach
 
 public abstract interface class gg/essential/elementa/components/image/ImageProvider {
 	public fun drawImage (DDDDLjava/awt/Color;)V
-	@1.16.2-fabric,1.16.2-forge,1.17.1-fabric,1.17.1-forge,1.18.1-fabric,1.18.1-forge
-	public abstract fun drawImage (Lgg/essential/universal/UMatrixStack;DDDDLjava/awt/Color;)V
-	@1.12.2-forge,1.15.2-forge,1.8.9-forge
 	public fun drawImage (Lgg/essential/universal/UMatrixStack;DDDDLjava/awt/Color;)V
 	public fun drawImageCompat (Lgg/essential/universal/UMatrixStack;DDDDLjava/awt/Color;)V
 }

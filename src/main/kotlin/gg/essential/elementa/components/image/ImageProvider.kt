@@ -13,9 +13,7 @@ interface ImageProvider {
      * The default implementation exists only for backwards compatibility.
      */
     fun drawImage(matrixStack: UMatrixStack, x: Double, y: Double, width: Double, height: Double, color: Color)
-    //#if MC < 11600
             = matrixStack.runWithGlobalState { @Suppress("DEPRECATION") drawImageCompat(UMatrixStack(), x, y, width, height, color) }
-    //#endif
 
     @Deprecated(UMatrixStack.Compat.DEPRECATED, ReplaceWith("drawImage(matrixStack, x, y, width, height, color)"))
     fun drawImage(x: Double, y: Double, width: Double, height: Double, color: Color): Unit =
