@@ -32,4 +32,5 @@ preprocess {
 
 apiValidation {
     ignoredPackages.add("com.example")
+    nonPublicMarkers.add("org.jetbrains.annotations.ApiStatus\$Internal")
 }

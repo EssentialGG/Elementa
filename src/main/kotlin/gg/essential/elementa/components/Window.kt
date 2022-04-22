@@ -7,6 +7,7 @@ import gg.essential.elementa.constraints.resolution.ConstraintResolver
 import gg.essential.elementa.constraints.resolution.ConstraintResolverV2
 import gg.essential.elementa.effects.ScissorEffect
 import gg.essential.elementa.font.FontRenderer
+import gg.essential.elementa.impl.Platform.Companion.platform
 import gg.essential.elementa.utils.elementaDev
 import gg.essential.elementa.utils.requireMainThread
 import gg.essential.universal.*
@@ -99,7 +100,7 @@ class Window @JvmOverloads constructor(
         } catch (e: Throwable) {
             cancelDrawing = true
 
-            val guiName = UMinecraft.getMinecraft().currentScreen?.javaClass?.simpleName ?: "<unknown>"
+            val guiName = platform.currentScreen?.javaClass?.simpleName ?: "<unknown>"
             when (e) {
                 is StackOverflowError -> {
                     println("Elementa: Cyclic constraint structure detected!")
@@ -117,7 +118,7 @@ class Window @JvmOverloads constructor(
             ScissorEffect.currentScissorState = null
             GL11.glDisable(GL11.GL_SCISSOR_TEST)
 
-            UMinecraft.getMinecraft().displayGuiScreen(when {
+            platform.currentScreen = when {
                 e is StackOverflowError && elementaDev -> {
                     val cyclicNodes = when (System.getProperty("elementa.dev.cycle_resolver", "2")) {
                         "2" -> ConstraintResolverV2(this).getCyclicNodes()
@@ -133,7 +134,7 @@ class Window @JvmOverloads constructor(
                     UChat.chat("§cElementa encountered an error while drawing a GUI. Check your logs for more information.")
                     null
                 }
-            })
+            }
         }
     }
 

@@ -25,6 +25,7 @@ val internal = makeConfigurationForInternalDependencies {
 dependencies {
     api("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version")
     api("org.jetbrains.kotlin:kotlin-reflect:$kotlin_version")
+    compileOnly("org.jetbrains:annotations:23.0.0")
 
     modApi("gg.essential:universalcraft-$platform:202") {
         exclude(group = "org.jetbrains.kotlin")

@@ -6,6 +6,7 @@ import gg.essential.elementa.components.*
 import gg.essential.elementa.constraints.*
 import gg.essential.elementa.constraints.animation.Animations
 import gg.essential.elementa.dsl.*
+import gg.essential.elementa.impl.Platform.Companion.platform
 import gg.essential.universal.UScreen
 import java.awt.Color
 
@@ -38,7 +39,7 @@ class ExamplesGui : WindowScreen(ElementaVersion.V1) {
                 }
             }.onMouseClick {
                 try {
-                    displayScreen(action())
+                    platform.currentScreen = action()
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }

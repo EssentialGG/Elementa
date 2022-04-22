@@ -6,11 +6,11 @@ import gg.essential.elementa.constraints.CenterConstraint
 import gg.essential.elementa.constraints.animation.Animations
 import gg.essential.elementa.dsl.*
 import gg.essential.elementa.effects.ScissorEffect
+import gg.essential.elementa.impl.Platform.Companion.platform
 import gg.essential.elementa.utils.getStringSplitToWidth
 import gg.essential.universal.UDesktop
 import gg.essential.universal.UKeyboard
 import gg.essential.universal.UMatrixStack
-import net.minecraft.util.ChatAllowedCharacters
 import java.awt.Color
 import java.util.*
 import kotlin.math.abs
@@ -104,7 +104,7 @@ abstract class AbstractTextInput(
                 val operationToRedo = redoStack.pop()
                 operationToRedo.redo()
                 undoStack.push(operationToRedo)
-            } else if (ChatAllowedCharacters.isAllowedCharacter(typedChar)) { // Most of the ASCII characters
+            } else if (platform.isAllowedInChat(typedChar)) { // Most of the ASCII characters
                 commitTextAddition(typedChar.toString())
             } else if (keyCode == UKeyboard.KEY_LEFT) {
                 val holdingShift = UKeyboard.isShiftKeyDown()
