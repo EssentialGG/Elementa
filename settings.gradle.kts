@@ -16,7 +16,6 @@ pluginManagement {
 }
 
 rootProject.name = "Elementa"
-rootProject.buildFileName = "common.gradle.kts"
 
 include(":platform")
 project(":platform").apply {
