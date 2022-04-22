@@ -13,7 +13,6 @@ import gg.essential.elementa.effects.ScissorEffect
 import gg.essential.elementa.font.DefaultFonts
 import gg.essential.elementa.font.ElementaFonts
 import gg.essential.elementa.utils.withAlpha
-import net.minecraft.util.text.TextFormatting
 import java.awt.Color
 
 class KtTestGui : WindowScreen(ElementaVersion.V1) {
@@ -36,13 +35,4 @@ class KtTestGui : WindowScreen(ElementaVersion.V1) {
             } childOf container effect OutlineEffect(Color.BLUE, 1f);
         }
     }
-
-
-
-
-
-    //#if MC<11500
-    override fun doesGuiPauseGame() = false
-    //#endif
-
 }

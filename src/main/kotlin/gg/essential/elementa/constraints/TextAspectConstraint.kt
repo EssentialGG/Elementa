@@ -4,8 +4,6 @@ import gg.essential.elementa.UIComponent
 import gg.essential.elementa.components.UIText
 import gg.essential.elementa.constraints.resolution.ConstraintVisitor
 import gg.essential.universal.UGraphics
-import gg.essential.universal.UMinecraft
-import net.minecraft.client.Minecraft
 import java.lang.UnsupportedOperationException
 
 /**
