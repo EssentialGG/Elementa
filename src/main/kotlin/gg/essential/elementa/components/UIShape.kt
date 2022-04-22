@@ -4,7 +4,6 @@ import gg.essential.elementa.UIComponent
 import gg.essential.elementa.dsl.toConstraint
 import gg.essential.universal.UGraphics
 import gg.essential.universal.UMatrixStack
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats
 import org.lwjgl.opengl.GL11
 import java.awt.Color
 
@@ -53,9 +52,9 @@ open class UIShape @JvmOverloads constructor(color: Color = Color.WHITE) : UICom
         UGraphics.tryBlendFuncSeparate(770, 771, 1, 0)
 
         //#if MC>=11700
-        //$$ worldRenderer.beginWithDefaultShader(UGraphics.DrawMode.TRIANGLE_FAN, VertexFormats.POSITION_COLOR)
+        //$$ worldRenderer.beginWithDefaultShader(UGraphics.DrawMode.TRIANGLE_FAN, UGraphics.CommonVertexFormats.POSITION_COLOR)
         //#else
-        worldRenderer.begin(drawMode, DefaultVertexFormats.POSITION_COLOR)
+        worldRenderer.begin(drawMode, UGraphics.CommonVertexFormats.POSITION_COLOR)
         //#endif
         vertices.forEach {
             worldRenderer

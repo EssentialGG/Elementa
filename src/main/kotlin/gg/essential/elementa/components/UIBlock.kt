@@ -8,7 +8,6 @@ import gg.essential.elementa.state.State
 import gg.essential.elementa.state.toConstraint
 import gg.essential.universal.UGraphics
 import gg.essential.universal.UMatrixStack
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats
 import org.lwjgl.opengl.GL11
 import java.awt.Color
 
@@ -54,7 +53,7 @@ open class UIBlock(colorConstraint: ColorConstraint = Color.WHITE.toConstraint()
             UGraphics.tryBlendFuncSeparate(770, 771, 1, 0)
 
             val buffer = UGraphics.getFromTessellator()
-            buffer.beginWithDefaultShader(UGraphics.DrawMode.QUADS, DefaultVertexFormats.POSITION_COLOR)
+            buffer.beginWithDefaultShader(UGraphics.DrawMode.QUADS, UGraphics.CommonVertexFormats.POSITION_COLOR)
             drawBlock(buffer, matrixStack, color, x1, y1, x2, y2)
 
             UGraphics.disableBlend()
@@ -62,7 +61,7 @@ open class UIBlock(colorConstraint: ColorConstraint = Color.WHITE.toConstraint()
 
         fun drawBlockWithActiveShader(matrixStack: UMatrixStack, color: Color, x1: Double, y1: Double, x2: Double, y2: Double) {
             val buffer = UGraphics.getFromTessellator()
-            buffer.beginWithActiveShader(UGraphics.DrawMode.QUADS, DefaultVertexFormats.POSITION_COLOR)
+            buffer.beginWithActiveShader(UGraphics.DrawMode.QUADS, UGraphics.CommonVertexFormats.POSITION_COLOR)
             drawBlock(buffer, matrixStack, color, x1, y1, x2, y2)
         }
 

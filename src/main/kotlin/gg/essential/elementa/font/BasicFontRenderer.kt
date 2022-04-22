@@ -7,7 +7,6 @@ import gg.essential.elementa.font.data.Font
 import gg.essential.elementa.font.data.Glyph
 import gg.essential.universal.UGraphics
 import gg.essential.universal.UMatrixStack
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats
 import java.awt.Color
 import kotlin.math.max
 
@@ -145,7 +144,7 @@ class BasicFontRenderer(
         y: Float,
         originalPointSize: Float
     ) {
-        UGraphics.bindTexture(0, regularFont.getTexture().glTextureId)
+        UGraphics.bindTexture(0, regularFont.getTexture().dynamicGlId)
 
         var currentX = x
         var i = 0
@@ -213,7 +212,7 @@ class BasicFontRenderer(
         val textureRight = (atlasBounds.right / atlas.width).toDouble()
 
         val worldRenderer = UGraphics.getFromTessellator()
-        worldRenderer.beginWithDefaultShader(UGraphics.DrawMode.QUADS, DefaultVertexFormats.POSITION_TEX_COLOR)
+        worldRenderer.beginWithDefaultShader(UGraphics.DrawMode.QUADS, UGraphics.CommonVertexFormats.POSITION_TEXTURE_COLOR)
         val doubleX = x.toDouble()
         val doubleY = y.toDouble()
         worldRenderer.pos(matrixStack, doubleX, doubleY + height, 0.0).tex(textureLeft, textureBottom).color(

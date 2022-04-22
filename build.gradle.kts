@@ -26,7 +26,7 @@ dependencies {
     api("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version")
     api("org.jetbrains.kotlin:kotlin-reflect:$kotlin_version")
 
-    modApi("gg.essential:universalcraft-$platform:185") {
+    modApi("gg.essential:universalcraft-$platform:202") {
         exclude(group = "org.jetbrains.kotlin")
     }
 
