@@ -20,6 +20,7 @@ val internal = makeConfigurationForInternalDependencies {
     relocate("org.dom4j", "gg.essential.elementa.impl.dom4j")
     relocate("org.commonmark", "gg.essential.elementa.impl.commonmark")
     remapStringsIn("org.dom4j.DocumentFactory")
+    remapStringsIn("org.commonmark.internal.util.Html5Entities")
 }
 
 dependencies {
