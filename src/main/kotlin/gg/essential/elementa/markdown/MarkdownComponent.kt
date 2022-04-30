@@ -1,8 +1,11 @@
 package gg.essential.elementa.markdown
 
 import gg.essential.elementa.UIComponent
+import gg.essential.elementa.components.UIBlock
+import gg.essential.elementa.components.Window
 import gg.essential.elementa.constraints.HeightConstraint
 import gg.essential.elementa.dsl.pixels
+import gg.essential.elementa.effects.ScissorEffect
 import gg.essential.elementa.markdown.drawables.Drawable
 import gg.essential.elementa.markdown.drawables.DrawableList
 import gg.essential.elementa.markdown.selection.Cursor
@@ -11,9 +14,14 @@ import gg.essential.elementa.state.BasicState
 import gg.essential.elementa.state.State
 import gg.essential.elementa.font.ElementaFonts
 import gg.essential.elementa.font.FontProvider
+import gg.essential.elementa.utils.elementaDebug
 import gg.essential.universal.UDesktop
 import gg.essential.universal.UKeyboard
 import gg.essential.universal.UMatrixStack
+import org.lwjgl.opengl.GL11
+import java.awt.Color
+import kotlin.math.PI
+import kotlin.math.sin
 
 /**
  * Component that parses a string as Markdown and renders it.
@@ -164,8 +172,60 @@ class MarkdownComponent(
         beforeDraw(matrixStack)
 
         val drawState = DrawState(getLeft() - baseX, getTop() - baseY)
+        val parentWindow = Window.of(this)
 
-        drawables.forEach { it.draw(matrixStack, drawState) }
+        drawables.forEach {
+
+            // Draw colored outline around the drawables
+            if (elementaDebug) {
+                if (ScissorEffect.currentScissorState != null) {
+                    GL11.glDisable(GL11.GL_SCISSOR_TEST)
+                }
+
+                val l = it.layout.left.toDouble() + drawState.xShift
+                val r = it.layout.right.toDouble() + drawState.xShift
+                val t = it.layout.top.toDouble() + drawState.yShift
+                val b = it.layout.bottom.toDouble() + drawState.yShift
+
+                val color = getDebugColor(depth(), (parent.hashCode() / PI) % PI)
+
+                // Top outline block
+                UIBlock.drawBlock(
+                    matrixStack,
+                    color,
+                    l - DEBUG_OUTLINE_WIDTH,
+                    t - DEBUG_OUTLINE_WIDTH,
+                    r + DEBUG_OUTLINE_WIDTH,
+                    t
+                )
+
+                // Right outline block
+                UIBlock.drawBlock(matrixStack, color, r, t, r + DEBUG_OUTLINE_WIDTH, b)
+
+                // Bottom outline block
+                UIBlock.drawBlock(
+                    matrixStack,
+                    color,
+                    l - DEBUG_OUTLINE_WIDTH,
+                    b,
+                    r + DEBUG_OUTLINE_WIDTH,
+                    b + DEBUG_OUTLINE_WIDTH
+                )
+
+                // Left outline block
+                UIBlock.drawBlock(matrixStack, color, l - DEBUG_OUTLINE_WIDTH, t, l, b)
+
+                if (ScissorEffect.currentScissorState != null) {
+                    GL11.glEnable(GL11.GL_SCISSOR_TEST)
+                }
+            }
+
+            if (!parentWindow.isAreaVisible(
+                    it.layout.left.toDouble() + drawState.xShift, it.layout.top.toDouble() + drawState.yShift,
+                    it.layout.right.toDouble() + drawState.xShift, it.layout.bottom.toDouble() + drawState.yShift
+            )) return@forEach
+            it.draw(matrixStack, drawState)
+        }
         if (!disableSelection)
             selection?.draw(matrixStack, drawState) ?: cursor?.draw(matrixStack, drawState)
 
@@ -190,5 +250,14 @@ class MarkdownComponent(
     companion object {
         // TODO: Remove
         const val DEBUG = false
+
+        private fun getDebugColor(depth: Int, offset: Double): Color {
+            val step = depth.toDouble() / PI + offset
+
+            val red = ((sin((step)) + 0.75) * 170).toInt().coerceIn(0..255)
+            val green = ((sin(step + 2 * Math.PI / 3) + 0.75) * 170).toInt().coerceIn(0..255)
+            val blue = ((sin(step + 4 * Math.PI / 3) + 0.75) * 170).toInt().coerceIn(0..255)
+            return Color(red, green, blue, 255)
+        }
     }
 }
