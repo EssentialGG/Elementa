@@ -351,7 +351,15 @@ abstract class UIComponent : Observable() {
     }
 
     protected fun getMousePosition(): Pair<Float, Float> {
-        return UIComponent.getMouseX() to UIComponent.getMouseY()
+        return transformMouseLocation(getMouseX(), getMouseY())
+    }
+
+    internal fun transformMouseLocation(mouseX: Float, mouseY: Float): Pair<Float, Float> {
+        // Move the position of a click to the center of a pixel. See [ElementaVersion.v2] for more info
+        if ((cachedWindow?.version ?: ElementaVersion.v0) >= ElementaVersion.V2) {
+            return mouseX + 0.5f / UResolution.scaleFactor.toFloat() to mouseY + 0.5f / UResolution.scaleFactor.toFloat()
+        }
+        return mouseX to mouseY
     }
 
     open fun isPointInside(x: Float, y: Float): Boolean {

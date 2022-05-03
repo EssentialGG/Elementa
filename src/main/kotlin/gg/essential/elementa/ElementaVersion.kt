@@ -28,6 +28,21 @@ enum class ElementaVersion {
      */
     V1,
 
+    /**
+     * This Elementa version improves the behavior of mouse input in two ways
+     *
+     * 1. In Minecraft versions <=1.12.2, the game calculates the position of the mouse input in an integer context
+     * relative to scaled pixels. However, Elementa uses real pixels to determine the position of components leading
+     * to situations where certain components or parts of components are not clickable due the game truncating the decimal.
+     * This Elementa version improves this behavior by restoring the decimal component of mouse clicks to the mouse positions
+     * on affected versions.
+     *
+     * 2. Minecraft mouse click input is positioned in the top left corner of a pixel. As a result, the left and top pixel of
+     * a component do not register clicks and components with a width or height of 1 are also not clickable. This Elementa version
+     * improves this behavior by moving the click to the center of the pixel.
+     */
+    V2,
+
     ;
 
     /**
@@ -62,6 +77,9 @@ Be sure to read through all the changes between your current version and your ne
         internal val v0 = V0
         @Suppress("DEPRECATION")
         internal val v1 = V1
+        @Suppress("DEPRECATION")
+        internal val v2 = V2
+
 
         @PublishedApi
         internal var active: ElementaVersion = v0

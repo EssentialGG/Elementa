@@ -8,9 +8,11 @@ import gg.essential.elementa.components.Window
 import gg.essential.elementa.constraints.animation.*
 import gg.essential.universal.UKeyboard
 import gg.essential.universal.UMatrixStack
+import gg.essential.universal.UMouse
 import gg.essential.universal.UScreen
 
 import java.awt.Color
+import kotlin.math.floor
 import kotlin.reflect.KMutableProperty0
 
 /**
@@ -18,7 +20,7 @@ import kotlin.reflect.KMutableProperty0
  * functions for Elementa Gui programming.
  */
 abstract class WindowScreen @JvmOverloads constructor(
-    version: ElementaVersion,
+    private val version: ElementaVersion,
     private val enableRepeatKeys: Boolean = true,
     private val drawDefaultBackground: Boolean = true,
     restoreCurrentGuiOnClose: Boolean = false,
@@ -65,8 +67,22 @@ abstract class WindowScreen @JvmOverloads constructor(
     override fun onMouseClicked(mouseX: Double, mouseY: Double, mouseButton: Int) {
         super.onMouseClicked(mouseX, mouseY, mouseButton)
 
+        // Restore decimal value to mouse locations if not present.
+        // See [ElementaVersion.V2] for more info
+        val (adjustedMouseX, adjustedMouseY) = if (
+            version >= ElementaVersion.V2 &&
+            (mouseX == floor(mouseX) && mouseY == floor(mouseY))
+        ) {
+            val x = UMouse.Scaled.x
+            val y = UMouse.Scaled.y
+
+            mouseX + (x - floor(x)) to mouseY + (y - floor(y))
+        } else {
+            mouseX to mouseY
+        }
+
         // We also need to pass along clicks
-        window.mouseClick(mouseX, mouseY, mouseButton)
+        window.mouseClick(adjustedMouseX, adjustedMouseY, mouseButton)
     }
 
     override fun onMouseReleased(mouseX: Double, mouseY: Double, state: Int) {
