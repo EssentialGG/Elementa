@@ -69,17 +69,15 @@ abstract class WindowScreen @JvmOverloads constructor(
 
         // Restore decimal value to mouse locations if not present.
         // See [ElementaVersion.V2] for more info
-        val (adjustedMouseX, adjustedMouseY) = if (
-            version >= ElementaVersion.V2 &&
-            (mouseX == floor(mouseX) && mouseY == floor(mouseY))
-        ) {
-            val x = UMouse.Scaled.x
-            val y = UMouse.Scaled.y
+        val (adjustedMouseX, adjustedMouseY) =
+            if (version >= ElementaVersion.v2 && (mouseX == floor(mouseX) && mouseY == floor(mouseY))) {
+                val x = UMouse.Scaled.x
+                val y = UMouse.Scaled.y
 
-            mouseX + (x - floor(x)) to mouseY + (y - floor(y))
-        } else {
-            mouseX to mouseY
-        }
+                mouseX + (x - floor(x)) to mouseY + (y - floor(y))
+            } else {
+                mouseX to mouseY
+            }
 
         // We also need to pass along clicks
         window.mouseClick(adjustedMouseX, adjustedMouseY, mouseButton)
