@@ -719,7 +719,6 @@ public final class gg/essential/elementa/components/Window : gg/essential/elemen
 	public fun getLeft ()F
 	public fun getRight ()F
 	public fun getTop ()F
-	public final fun getVersion ()Lgg/essential/elementa/ElementaVersion;
 	public fun getWidth ()F
 	public final fun isAreaVisible (DDDD)Z
 	public fun keyType (CI)V
