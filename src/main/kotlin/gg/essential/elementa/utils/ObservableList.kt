@@ -73,8 +73,9 @@ class ObservableList<T>(private val wrapped: MutableList<T>) : MutableList<T> by
     }
 
     override fun clear() {
+        val oldChildren = wrapped.toList()
         wrapped.clear()
-        update(ObservableClearEvent())
+        update(ObservableClearEvent(oldChildren))
     }
 
     override operator fun set(index: Int, element: T): T {
@@ -97,7 +98,9 @@ class ObservableAddEvent<T>(val element: IndexedValue<T>) : ObservableListEvent<
 
 class ObservableRemoveEvent<T>(val element: IndexedValue<T>) : ObservableListEvent<T>()
 
-class ObservableClearEvent<T> : ObservableListEvent<T>()
+class ObservableClearEvent<T>(val oldChildren: List<T>) : ObservableListEvent<T>() {
+    constructor() : this(listOf())
+}
 
 infix fun <T> T.withIndex(index: Int) = IndexedValue(index, this)
 

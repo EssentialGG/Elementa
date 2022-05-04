@@ -4350,6 +4350,8 @@ public final class gg/essential/elementa/utils/ObservableAddEvent : gg/essential
 
 public final class gg/essential/elementa/utils/ObservableClearEvent : gg/essential/elementa/utils/ObservableListEvent {
 	public fun <init> ()V
+	public fun <init> (Ljava/util/List;)V
+	public final fun getOldChildren ()Ljava/util/List;
 }
 
 public final class gg/essential/elementa/utils/ObservableList : java/util/Observable, java/util/List, kotlin/jvm/internal/markers/KMutableList {
