@@ -11,9 +11,7 @@ import gg.essential.elementa.effects.ScissorEffect
 import gg.essential.elementa.events.UIClickEvent
 import gg.essential.elementa.events.UIScrollEvent
 import gg.essential.elementa.font.FontProvider
-import gg.essential.elementa.utils.TriConsumer
-import gg.essential.elementa.utils.elementaDebug
-import gg.essential.elementa.utils.observable
+import gg.essential.elementa.utils.*
 import gg.essential.elementa.utils.requireMainThread
 import gg.essential.elementa.utils.requireState
 import gg.essential.universal.UMatrixStack
@@ -41,6 +39,7 @@ abstract class UIComponent : Observable() {
     private var childrenLocked = 0
     init {
         children.addObserver { _, _ -> requireChildrenUnlocked() }
+        children.addObserver { _, event -> setWindowCacheOnChangedChild(event) }
     }
 
     open lateinit var parent: UIComponent
@@ -95,6 +94,22 @@ abstract class UIComponent : Observable() {
 
     protected var isInitialized = false
     private var isFloating = false
+
+    internal var cachedWindow: Window? = null
+
+    private fun setWindowCacheOnChangedChild(possibleEvent: Any) {
+        @Suppress("UNCHECKED_CAST")
+        when (val event = possibleEvent as? ObservableListEvent<UIComponent> ?: return) {
+            is ObservableAddEvent -> event.element.value.recursivelySetWindowCache(Window.ofOrNull(this))
+            is ObservableRemoveEvent -> event.element.value.recursivelySetWindowCache(null)
+            is ObservableClearEvent -> event.oldChildren.forEach { it.recursivelySetWindowCache(null) }
+        }
+    }
+
+    private fun recursivelySetWindowCache(window: Window?) {
+        cachedWindow = window
+        children.forEach { it.recursivelySetWindowCache(window) }
+    }
 
     protected fun requireChildrenUnlocked() {
         requireState(childrenLocked == 0, "Cannot modify children while iterating over them.")
