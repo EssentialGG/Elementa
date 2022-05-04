@@ -357,13 +357,14 @@ class Window @JvmOverloads constructor(
             )
         }
 
-        fun ofOrNull(component: UIComponent): Window? {
+        fun ofOrNull(component: UIComponent): Window? = component.cachedWindow ?: run {
             var current = component
 
-            while (current !is Window && current.hasParent && current.parent != current)
+            while (current !is Window && current.hasParent && current.parent != current) {
                 current = current.parent
+            }
 
-            return current as? Window
+            current as? Window
         }
     }
 }
