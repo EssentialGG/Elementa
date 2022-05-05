@@ -29,7 +29,7 @@ enum class ElementaVersion {
     V1,
 
     /**
-     * This Elementa version improves the behavior of mouse input in two ways
+     * This Elementa version improves the behavior of mouse input in three ways
      *
      * 1. In Minecraft versions <=1.12.2, the game calculates the position of the mouse input in an integer context
      * relative to scaled pixels. However, Elementa uses real pixels to determine the position of components leading
@@ -49,6 +49,12 @@ enum class ElementaVersion {
      * [gg.essential.elementa.utils.guiHint].
      * E.g. if the user clicks on the MC pixel at 3/4 with their GUI scale set to 2, the click used to be processed at
      * 3.0/4.0, but with this change it will appear at 3.25/4.25 (because 0.25 is half a real pixel at scale 2).
+     *
+     * 3. [gg.essential.elementa.components.Window] will now call the new [gg.essential.elementa.UIComponent.dragMouse]
+     * override (the one using Double) instead of the old one (using Int). This allows the drag listeners to receive
+     * high quality mouse coordinates (including the two changes above) but it may be breaking if you rely on an
+     * override of that method. If you do, then you should switch to using the new override at the same time as you
+     * upgrade to the new version (or override both if you need to maintain support for old versions).
      */
     V2,
 

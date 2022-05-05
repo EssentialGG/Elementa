@@ -642,25 +642,41 @@ abstract class UIComponent : Observable() {
         // no-op
     }
 
+    @Deprecated(
+        "Replaced by override using Double for coordinates.",
+        ReplaceWith("dragMouse(mouseX.toDouble(), mouseY.toDouble(), button)")
+    )
+    @Suppress("DEPRECATION")
+    open fun dragMouse(mouseX: Int, mouseY: Int, button: Int) {
+        doDragMouse(mouseX.toDouble(), mouseY.toDouble(), button) { dragMouse(mouseX, mouseY, button) }
+    }
+
     /**
      * Runs the set [onMouseDrag] method for the component and it's children.
      * Use this in the proper mouse drag event to cascade all component's mouse scroll events.
      * Most common use is on the [Window] object.
+     *
+     * Note: This method is only called by [Window]s using an [ElementaVersion] of 2 or greater. Older versions will
+     *       only call the deprecated integer overload.
      */
-    open fun dragMouse(mouseX: Int, mouseY: Int, button: Int) {
-        if (lastDraggedMouseX == mouseX.toDouble() && lastDraggedMouseY == mouseY.toDouble())
+    open fun dragMouse(mouseX: Double, mouseY: Double, button: Int) {
+        doDragMouse(mouseX, mouseY, button) { dragMouse(mouseX, mouseY, button) }
+    }
+
+    private inline fun doDragMouse(mouseX: Double, mouseY: Double, button: Int, superCall: UIComponent.() -> Unit) {
+        if (lastDraggedMouseX == mouseX && lastDraggedMouseY == mouseY)
             return
 
-        lastDraggedMouseX = mouseX.toDouble()
-        lastDraggedMouseY = mouseY.toDouble()
+        lastDraggedMouseX = mouseX
+        lastDraggedMouseY = mouseY
 
-        val relativeX = mouseX - getLeft()
-        val relativeY = mouseY - getTop()
+        val relativeX = mouseX.toFloat() - getLeft()
+        val relativeY = mouseY.toFloat() - getTop()
 
         for (listener in mouseDragListeners)
             this.listener(relativeX, relativeY, button)
 
-        this.forEachChild { it.dragMouse(mouseX, mouseY, button) }
+        this.forEachChild { it.superCall() }
     }
 
     open fun keyType(typedChar: Char, keyCode: Int) {

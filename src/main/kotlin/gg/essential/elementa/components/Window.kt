@@ -238,7 +238,12 @@ class Window @JvmOverloads constructor(
     override fun animationFrame() {
         if (currentMouseButton != -1) {
             val (mouseX, mouseY) = getMousePosition()
-            dragMouse(mouseX.toInt(), mouseY.toInt(), currentMouseButton)
+            if (version >= ElementaVersion.v2) {
+                dragMouse(mouseX.toDouble(), mouseY.toDouble(), currentMouseButton)
+            } else {
+                @Suppress("DEPRECATION")
+                dragMouse(mouseX.toInt(), mouseY.toInt(), currentMouseButton)
+            }
         }
 
         if (componentRequestingFocus != null && componentRequestingFocus != focusedComponent) {
