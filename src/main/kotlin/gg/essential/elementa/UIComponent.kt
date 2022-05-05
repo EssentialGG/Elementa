@@ -643,12 +643,12 @@ abstract class UIComponent : Observable() {
     }
 
     @Deprecated(
-        "Replaced by override using Double for coordinates.",
-        ReplaceWith("dragMouse(mouseX.toDouble(), mouseY.toDouble(), button)")
+        "Replaced by override using Float for coordinates.",
+        ReplaceWith("dragMouse(mouseX.toFloat(), mouseY.toFloat(), button)")
     )
     @Suppress("DEPRECATION")
     open fun dragMouse(mouseX: Int, mouseY: Int, button: Int) {
-        doDragMouse(mouseX.toDouble(), mouseY.toDouble(), button) { dragMouse(mouseX, mouseY, button) }
+        doDragMouse(mouseX.toFloat(), mouseY.toFloat(), button) { dragMouse(mouseX, mouseY, button) }
     }
 
     /**
@@ -659,19 +659,19 @@ abstract class UIComponent : Observable() {
      * Note: This method is only called by [Window]s using an [ElementaVersion] of 2 or greater. Older versions will
      *       only call the deprecated integer overload.
      */
-    open fun dragMouse(mouseX: Double, mouseY: Double, button: Int) {
+    open fun dragMouse(mouseX: Float, mouseY: Float, button: Int) {
         doDragMouse(mouseX, mouseY, button) { dragMouse(mouseX, mouseY, button) }
     }
 
-    private inline fun doDragMouse(mouseX: Double, mouseY: Double, button: Int, superCall: UIComponent.() -> Unit) {
-        if (lastDraggedMouseX == mouseX && lastDraggedMouseY == mouseY)
+    private inline fun doDragMouse(mouseX: Float, mouseY: Float, button: Int, superCall: UIComponent.() -> Unit) {
+        if (lastDraggedMouseX == mouseX.toDouble() && lastDraggedMouseY == mouseY.toDouble())
             return
 
-        lastDraggedMouseX = mouseX
-        lastDraggedMouseY = mouseY
+        lastDraggedMouseX = mouseX.toDouble()
+        lastDraggedMouseY = mouseY.toDouble()
 
-        val relativeX = mouseX.toFloat() - getLeft()
-        val relativeY = mouseY.toFloat() - getTop()
+        val relativeX = mouseX - getLeft()
+        val relativeY = mouseY - getTop()
 
         for (listener in mouseDragListeners)
             this.listener(relativeX, relativeY, button)

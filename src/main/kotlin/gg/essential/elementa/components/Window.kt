@@ -239,7 +239,7 @@ class Window @JvmOverloads constructor(
         if (currentMouseButton != -1) {
             val (mouseX, mouseY) = getMousePosition()
             if (version >= ElementaVersion.v2) {
-                dragMouse(mouseX.toDouble(), mouseY.toDouble(), currentMouseButton)
+                dragMouse(mouseX, mouseY, currentMouseButton)
             } else {
                 @Suppress("DEPRECATION")
                 dragMouse(mouseX.toInt(), mouseY.toInt(), currentMouseButton)

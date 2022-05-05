@@ -51,7 +51,7 @@ enum class ElementaVersion {
      * 3.0/4.0, but with this change it will appear at 3.25/4.25 (because 0.25 is half a real pixel at scale 2).
      *
      * 3. [gg.essential.elementa.components.Window] will now call the new [gg.essential.elementa.UIComponent.dragMouse]
-     * override (the one using Double) instead of the old one (using Int). This allows the drag listeners to receive
+     * override (the one using Float) instead of the old one (using Int). This allows the drag listeners to receive
      * high quality mouse coordinates (including the two changes above) but it may be breaking if you rely on an
      * override of that method. If you do, then you should switch to using the new override at the same time as you
      * upgrade to the new version (or override both if you need to maintain support for old versions).
