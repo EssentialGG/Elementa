@@ -24,20 +24,19 @@ val common = registerStripReferencesAttribute("common") {
 }
 
 dependencies {
-    val kotlin_version = "1.5.10"
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version")
-    implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlin_version")
-    compileOnly("org.jetbrains:annotations:23.0.0")
+    implementation(libs.kotlin.stdlib.jdk8)
+    implementation(libs.kotlin.reflect)
+    compileOnly(libs.jetbrains.annotations)
 
-    internal("org.commonmark:commonmark:0.17.1")
-    internal("org.commonmark:commonmark-ext-gfm-strikethrough:0.17.1")
-    internal("org.commonmark:commonmark-ext-ins:0.17.1")
-    internal("org.dom4j:dom4j:2.1.1")
+    internal(libs.commonmark)
+    internal(libs.commonmark.ext.gfm.strikethrough)
+    internal(libs.commonmark.ext.ins)
+    internal(libs.dom4j)
 
     // Depending on LWJGL3 instead of 2 so we can choose opengl bindings only
     compileOnly("org.lwjgl:lwjgl-opengl:3.3.1")
     // Depending on 1.8.9 for all of these because that's the oldest version we support
-    compileOnly("gg.essential:universalcraft-1.8.9-forge:202") {
+    compileOnly(libs.versions.universalcraft.map { "gg.essential:universalcraft-1.8.9-forge:$it" }) {
         attributes { attribute(common, true) }
     }
     compileOnly("com.google.code.gson:gson:2.2.4")

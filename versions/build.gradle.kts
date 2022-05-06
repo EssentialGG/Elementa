@@ -10,8 +10,6 @@ plugins {
     id("gg.essential.defaults.maven-publish")
 }
 
-val kotlin_version = "1.5.10"
-
 group = "gg.essential"
 
 java.withSourcesJar()
@@ -23,11 +21,11 @@ configurations.compileClasspath { extendsFrom(common) }
 configurations.runtimeClasspath { extendsFrom(common) }
 
 dependencies {
-    api("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version")
-    api("org.jetbrains.kotlin:kotlin-reflect:$kotlin_version")
-    compileOnly("org.jetbrains:annotations:23.0.0")
+    implementation(libs.kotlin.stdlib.jdk8)
+    implementation(libs.kotlin.reflect)
+    compileOnly(libs.jetbrains.annotations)
 
-    modApi("gg.essential:universalcraft-$platform:202") {
+    modApi(libs.versions.universalcraft.map { "gg.essential:universalcraft-$platform:$it" }) {
         exclude(group = "org.jetbrains.kotlin")
     }
 
