@@ -779,14 +779,10 @@ public abstract interface class gg/essential/elementa/components/image/ImageCach
 
 public abstract interface class gg/essential/elementa/components/image/ImageProvider {
 	public fun drawImage (DDDDLjava/awt/Color;)V
-	@1.16.2-fabric,1.16.2-forge,1.17.1-fabric,1.17.1-forge,1.18.1-fabric,1.18.1-forge
-	public abstract fun drawImage (Lgg/essential/universal/UMatrixStack;DDDDLjava/awt/Color;)V
-	@1.12.2-forge,1.15.2-forge,1.8.9-forge
 	public fun drawImage (Lgg/essential/universal/UMatrixStack;DDDDLjava/awt/Color;)V
 	public fun drawImageCompat (Lgg/essential/universal/UMatrixStack;DDDDLjava/awt/Color;)V
 }
 
-@1.12.2-forge,1.8.9-forge
 public final class gg/essential/elementa/components/image/ImageProvider$DefaultImpls {
 	public static fun drawImage (Lgg/essential/elementa/components/image/ImageProvider;DDDDLjava/awt/Color;)V
 	public static fun drawImage (Lgg/essential/elementa/components/image/ImageProvider;Lgg/essential/universal/UMatrixStack;DDDDLjava/awt/Color;)V
@@ -1457,7 +1453,6 @@ public abstract interface class gg/essential/elementa/constraints/ColorConstrain
 	public abstract fun getColorImpl (Lgg/essential/elementa/UIComponent;)Ljava/awt/Color;
 }
 
-@1.12.2-forge,1.8.9-forge
 public final class gg/essential/elementa/constraints/ColorConstraint$DefaultImpls {
 	public static fun animationFrame (Lgg/essential/elementa/constraints/ColorConstraint;)V
 	public static fun getColor (Lgg/essential/elementa/constraints/ColorConstraint;Lgg/essential/elementa/UIComponent;)Ljava/awt/Color;
@@ -1586,7 +1581,6 @@ public abstract interface class gg/essential/elementa/constraints/GeneralConstra
 	public abstract fun getYValue (Lgg/essential/elementa/UIComponent;)F
 }
 
-@1.12.2-forge,1.8.9-forge
 public final class gg/essential/elementa/constraints/GeneralConstraint$DefaultImpls {
 	public static fun animationFrame (Lgg/essential/elementa/constraints/GeneralConstraint;)V
 	public static fun getHeight (Lgg/essential/elementa/constraints/GeneralConstraint;Lgg/essential/elementa/UIComponent;)F
@@ -1613,7 +1607,6 @@ public abstract interface class gg/essential/elementa/constraints/HeightConstrai
 	public fun getTextScale (Lgg/essential/elementa/UIComponent;)F
 }
 
-@1.12.2-forge,1.8.9-forge
 public final class gg/essential/elementa/constraints/HeightConstraint$DefaultImpls {
 	public static fun animationFrame (Lgg/essential/elementa/constraints/HeightConstraint;)V
 	public static fun getHeight (Lgg/essential/elementa/constraints/HeightConstraint;Lgg/essential/elementa/UIComponent;)F
@@ -1659,7 +1652,6 @@ public final class gg/essential/elementa/constraints/InheritedColorConstraint : 
 public abstract interface class gg/essential/elementa/constraints/MasterConstraint : gg/essential/elementa/constraints/PositionConstraint, gg/essential/elementa/constraints/SizeConstraint {
 }
 
-@1.12.2-forge,1.8.9-forge
 public final class gg/essential/elementa/constraints/MasterConstraint$DefaultImpls {
 	public static fun animationFrame (Lgg/essential/elementa/constraints/MasterConstraint;)V
 	public static fun getHeight (Lgg/essential/elementa/constraints/MasterConstraint;Lgg/essential/elementa/UIComponent;)F
@@ -1789,7 +1781,6 @@ public final class gg/essential/elementa/constraints/PixelConstraint : gg/essent
 public abstract interface class gg/essential/elementa/constraints/PositionConstraint : gg/essential/elementa/constraints/XConstraint, gg/essential/elementa/constraints/YConstraint {
 }
 
-@1.12.2-forge,1.8.9-forge
 public final class gg/essential/elementa/constraints/PositionConstraint$DefaultImpls {
 	public static fun animationFrame (Lgg/essential/elementa/constraints/PositionConstraint;)V
 	public static fun getXPosition (Lgg/essential/elementa/constraints/PositionConstraint;Lgg/essential/elementa/UIComponent;)F
@@ -1806,7 +1797,6 @@ public abstract interface class gg/essential/elementa/constraints/RadiusConstrai
 	public abstract fun getRadiusImpl (Lgg/essential/elementa/UIComponent;)F
 }
 
-@1.12.2-forge,1.8.9-forge
 public final class gg/essential/elementa/constraints/RadiusConstraint$DefaultImpls {
 	public static fun animationFrame (Lgg/essential/elementa/constraints/RadiusConstraint;)V
 	public static fun getRadius (Lgg/essential/elementa/constraints/RadiusConstraint;Lgg/essential/elementa/UIComponent;)F
@@ -1987,7 +1977,6 @@ public class gg/essential/elementa/constraints/SiblingConstraint : gg/essential/
 public abstract interface class gg/essential/elementa/constraints/SizeConstraint : gg/essential/elementa/constraints/HeightConstraint, gg/essential/elementa/constraints/RadiusConstraint, gg/essential/elementa/constraints/WidthConstraint {
 }
 
-@1.12.2-forge,1.8.9-forge
 public final class gg/essential/elementa/constraints/SizeConstraint$DefaultImpls {
 	public static fun animationFrame (Lgg/essential/elementa/constraints/SizeConstraint;)V
 	public static fun getHeight (Lgg/essential/elementa/constraints/SizeConstraint;Lgg/essential/elementa/UIComponent;)F
@@ -2041,7 +2030,6 @@ public abstract interface class gg/essential/elementa/constraints/SuperConstrain
 	public abstract fun visitImpl (Lgg/essential/elementa/constraints/resolution/ConstraintVisitor;Lgg/essential/elementa/constraints/ConstraintType;)V
 }
 
-@1.12.2-forge,1.8.9-forge
 public final class gg/essential/elementa/constraints/SuperConstraint$DefaultImpls {
 	public static fun animationFrame (Lgg/essential/elementa/constraints/SuperConstraint;)V
 	public static fun pauseIfSupported (Lgg/essential/elementa/constraints/SuperConstraint;)V
@@ -2074,7 +2062,6 @@ public abstract interface class gg/essential/elementa/constraints/WidthConstrain
 	public abstract fun getWidthImpl (Lgg/essential/elementa/UIComponent;)F
 }
 
-@1.12.2-forge,1.8.9-forge
 public final class gg/essential/elementa/constraints/WidthConstraint$DefaultImpls {
 	public static fun animationFrame (Lgg/essential/elementa/constraints/WidthConstraint;)V
 	public static fun getWidth (Lgg/essential/elementa/constraints/WidthConstraint;Lgg/essential/elementa/UIComponent;)F
@@ -2090,7 +2077,6 @@ public abstract interface class gg/essential/elementa/constraints/XConstraint : 
 	public abstract fun getXPositionImpl (Lgg/essential/elementa/UIComponent;)F
 }
 
-@1.12.2-forge,1.8.9-forge
 public final class gg/essential/elementa/constraints/XConstraint$DefaultImpls {
 	public static fun animationFrame (Lgg/essential/elementa/constraints/XConstraint;)V
 	public static fun getXPosition (Lgg/essential/elementa/constraints/XConstraint;Lgg/essential/elementa/UIComponent;)F
@@ -2106,7 +2092,6 @@ public abstract interface class gg/essential/elementa/constraints/YConstraint : 
 	public abstract fun getYPositionImpl (Lgg/essential/elementa/UIComponent;)F
 }
 
-@1.12.2-forge,1.8.9-forge
 public final class gg/essential/elementa/constraints/YConstraint$DefaultImpls {
 	public static fun animationFrame (Lgg/essential/elementa/constraints/YConstraint;)V
 	public static fun getYPosition (Lgg/essential/elementa/constraints/YConstraint;Lgg/essential/elementa/UIComponent;)F
@@ -2525,24 +2510,8 @@ public final class gg/essential/elementa/dsl/UtilitiesKt {
 	public static final fun toConstraint (Ljava/awt/Color;)Lgg/essential/elementa/constraints/ConstantColorConstraint;
 	public static final fun width (CF)F
 	public static final fun width (Ljava/lang/String;FLgg/essential/elementa/font/FontProvider;)F
-	@1.8.9-forge
-	public static final fun width (Lnet/minecraft/util/IChatComponent;FLgg/essential/elementa/font/FontProvider;)F
-	@1.17.1-forge,1.18.1-forge
-	public static final fun width (Lnet/minecraft/network/chat/Component;FLgg/essential/elementa/font/FontProvider;)F
-	@1.16.2-fabric,1.17.1-fabric,1.18.1-fabric
-	public static final fun width (Lnet/minecraft/text/Text;FLgg/essential/elementa/font/FontProvider;)F
-	@1.12.2-forge,1.15.2-forge,1.16.2-forge
-	public static final fun width (Lnet/minecraft/util/text/ITextComponent;FLgg/essential/elementa/font/FontProvider;)F
 	public static synthetic fun width$default (CFILjava/lang/Object;)F
 	public static synthetic fun width$default (Ljava/lang/String;FLgg/essential/elementa/font/FontProvider;ILjava/lang/Object;)F
-	@1.8.9-forge
-	public static synthetic fun width$default (Lnet/minecraft/util/IChatComponent;FLgg/essential/elementa/font/FontProvider;ILjava/lang/Object;)F
-	@1.17.1-forge,1.18.1-forge
-	public static synthetic fun width$default (Lnet/minecraft/network/chat/Component;FLgg/essential/elementa/font/FontProvider;ILjava/lang/Object;)F
-	@1.16.2-fabric,1.17.1-fabric,1.18.1-fabric
-	public static synthetic fun width$default (Lnet/minecraft/text/Text;FLgg/essential/elementa/font/FontProvider;ILjava/lang/Object;)F
-	@1.12.2-forge,1.15.2-forge,1.16.2-forge
-	public static synthetic fun width$default (Lnet/minecraft/util/text/ITextComponent;FLgg/essential/elementa/font/FontProvider;ILjava/lang/Object;)F
 }
 
 public abstract class gg/essential/elementa/effects/Effect {
@@ -2751,7 +2720,6 @@ public abstract interface class gg/essential/elementa/font/FontProvider : gg/ess
 	public abstract fun getStringWidth (Ljava/lang/String;F)F
 }
 
-@1.12.2-forge,1.8.9-forge
 public final class gg/essential/elementa/font/FontProvider$DefaultImpls {
 	public static fun animationFrame (Lgg/essential/elementa/font/FontProvider;)V
 	public static fun drawString (Lgg/essential/elementa/font/FontProvider;Lgg/essential/universal/UMatrixStack;Ljava/lang/String;Ljava/awt/Color;FFFFZLjava/awt/Color;)V

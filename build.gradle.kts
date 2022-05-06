@@ -1,20 +1,17 @@
+import gg.essential.gradle.multiversion.StripReferencesTransform.Companion.registerStripReferencesAttribute
 import gg.essential.gradle.util.*
 
 plugins {
-    kotlin("jvm")
-    id("org.jetbrains.dokka")
-    id("gg.essential.multi-version")
+    kotlin("jvm") version "1.6.10"
+    id("org.jetbrains.kotlinx.binary-compatibility-validator") version "0.8.0"
+    id("org.jetbrains.dokka") version "1.6.10" apply false
     id("gg.essential.defaults")
-    id("gg.essential.defaults.maven-publish")
 }
 
-val kotlin_version = "1.5.10"
-
-group = "gg.essential"
-
-java.withSourcesJar()
-tasks.compileKotlin.setJvmDefault(if (platform.mcVersion >= 11400) "all" else "all-compatibility")
-loom.noServerRunConfigs()
+kotlin.jvmToolchain {
+    (this as JavaToolchainSpec).languageVersion.set(JavaLanguageVersion.of(8))
+}
+tasks.compileKotlin.setJvmDefault("all-compatibility")
 
 val internal = makeConfigurationForInternalDependencies {
     relocate("org.dom4j", "gg.essential.elementa.impl.dom4j")
@@ -22,62 +19,31 @@ val internal = makeConfigurationForInternalDependencies {
     remapStringsIn("org.dom4j.DocumentFactory")
 }
 
+val common = registerStripReferencesAttribute("common") {
+    excludes.add("net.minecraft")
+}
+
 dependencies {
-    api("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version")
-    api("org.jetbrains.kotlin:kotlin-reflect:$kotlin_version")
+    implementation(libs.kotlin.stdlib.jdk8)
+    implementation(libs.kotlin.reflect)
+    compileOnly(libs.jetbrains.annotations)
 
-    modApi("gg.essential:universalcraft-$platform:185") {
-        exclude(group = "org.jetbrains.kotlin")
+    internal(libs.commonmark)
+    internal(libs.commonmark.ext.gfm.strikethrough)
+    internal(libs.commonmark.ext.ins)
+    internal(libs.dom4j)
+
+    // Depending on LWJGL3 instead of 2 so we can choose opengl bindings only
+    compileOnly("org.lwjgl:lwjgl-opengl:3.3.1")
+    // Depending on 1.8.9 for all of these because that's the oldest version we support
+    compileOnly(libs.versions.universalcraft.map { "gg.essential:universalcraft-1.8.9-forge:$it" }) {
+        attributes { attribute(common, true) }
     }
-
-    internal("org.commonmark:commonmark:0.17.1")
-    internal("org.commonmark:commonmark-ext-gfm-strikethrough:0.17.1")
-    internal("org.commonmark:commonmark-ext-ins:0.17.1")
-    internal("org.dom4j:dom4j:2.1.1")
-
-    if (platform.isFabric) {
-        val fabricApiVersion = when(platform.mcVersion) {
-            11404 -> "0.4.3+build.247-1.14"
-            11502 -> "0.5.1+build.294-1.15"
-            11601 -> "0.14.0+build.371-1.16"
-            11602 -> "0.17.1+build.394-1.16"
-            11701 -> "0.38.1+1.17"
-            11801 -> "0.46.4+1.18"
-            else -> throw GradleException("Unsupported platform $platform")
-        }
-        val fabricApiModules = mutableListOf(
-                "api-base",
-                "networking-v0",
-                "keybindings-v0",
-                "resource-loader-v0",
-                "lifecycle-events-v1",
-        )
-        if (platform.mcVersion >= 11600) {
-            fabricApiModules.add("key-binding-api-v1")
-        }
-        fabricApiModules.forEach { module ->
-            // Using this combo to add it to our deps but not to our maven publication cause it's only for the example
-            modRuntime(modCompileOnly(fabricApi.module("fabric-$module", fabricApiVersion))!!)
-        }
-    }
+    compileOnly("com.google.code.gson:gson:2.2.4")
 }
 
-tasks.processResources {
-    filesMatching(listOf("fabric.mod.json")) {
-        filter { it.replace("\"com.example.examplemod.ExampleMod\"", "") }
-    }
-}
-
-tasks.dokkaHtml {
-    moduleName.set("Elementa $name")
-}
-
-tasks.jar {
-    exclude("com/example/examplemod/**")
-    exclude("META-INF/mods.toml")
-    exclude("mcmod.info")
-    exclude("kotlin/**")
-    manifest {
-        attributes(mapOf("FMLModType" to "LIBRARY"))
-    }
+apiValidation {
+    ignoredProjects.add("platform")
+    ignoredPackages.add("com.example")
+    nonPublicMarkers.add("org.jetbrains.annotations.ApiStatus\$Internal")
 }

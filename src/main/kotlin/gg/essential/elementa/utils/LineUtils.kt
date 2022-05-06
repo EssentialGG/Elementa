@@ -3,7 +3,6 @@ package gg.essential.elementa.utils
 import gg.essential.elementa.components.UIPoint
 import gg.essential.universal.UGraphics
 import gg.essential.universal.UMatrixStack
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats
 import org.lwjgl.opengl.GL11
 import java.awt.Color
 import kotlin.math.sqrt
@@ -24,7 +23,7 @@ object LineUtils {
         UGraphics.enableBlend()
 
         val buffer = UGraphics.getFromTessellator()
-        buffer.beginWithDefaultShader(UGraphics.DrawMode.TRIANGLE_STRIP, DefaultVertexFormats.POSITION_COLOR);
+        buffer.beginWithDefaultShader(UGraphics.DrawMode.TRIANGLE_STRIP, UGraphics.CommonVertexFormats.POSITION_COLOR);
         points.forEachIndexed { index, curr ->
             val (x, y) = curr
             val prev = points.getOrNull(index - 1)

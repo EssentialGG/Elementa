@@ -4,7 +4,6 @@ import gg.essential.elementa.state.BasicState
 import gg.essential.elementa.state.State
 import gg.essential.universal.UGraphics
 import gg.essential.universal.UMatrixStack
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats
 import org.lwjgl.opengl.GL11
 import java.awt.Color
 
@@ -132,7 +131,7 @@ open class GradientComponent @JvmOverloads constructor(
 
             val colours = direction.getGradientColors(startColor, endColor)
             val tessellator = UGraphics.getFromTessellator()
-            tessellator.beginWithDefaultShader(UGraphics.DrawMode.QUADS, DefaultVertexFormats.POSITION_COLOR)
+            tessellator.beginWithDefaultShader(UGraphics.DrawMode.QUADS, UGraphics.CommonVertexFormats.POSITION_COLOR)
             tessellator.pos(matrixStack, x2, y1, 0.0).color(colours.topRight).endVertex()
             tessellator.pos(matrixStack, x1, y1, 0.0).color(colours.topLeft).endVertex()
             tessellator.pos(matrixStack, x1, y2, 0.0).color(colours.bottomLeft).endVertex()

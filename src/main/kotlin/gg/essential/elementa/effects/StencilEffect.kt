@@ -1,8 +1,7 @@
 package gg.essential.elementa.effects
 
-import gg.essential.elementa.UIComponent
+import gg.essential.elementa.impl.Platform.Companion.platform
 import gg.essential.universal.UMatrixStack
-import net.minecraft.client.Minecraft
 import org.lwjgl.opengl.GL11.*
 
 /**
@@ -34,11 +33,7 @@ class StencilEffect : Effect() {
          * Must be called in mod initialization to use [StencilEffect]
          */
         @JvmStatic fun enableStencil() { //TODO wait for 1.15 to impl
-            //#if MC<11500
-            if (!Minecraft.getMinecraft().framebuffer.isStencilEnabled) {
-                Minecraft.getMinecraft().framebuffer.enableStencil()
-            }
-            //#endif
+            platform.enableStencil()
         }
     }
 }

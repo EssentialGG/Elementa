@@ -14,7 +14,6 @@ import gg.essential.elementa.utils.ResourceCache
 import gg.essential.universal.UGraphics
 import gg.essential.universal.UMatrixStack
 import gg.essential.universal.utils.ReleasedDynamicTexture
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats
 import org.lwjgl.opengl.GL11
 import java.awt.image.BufferedImage
 import java.io.File
@@ -87,8 +86,8 @@ open class MSDFComponent constructor(
         )
         shader.bind()
 
-        samplerUniform.setValue(tex.glTextureId)
-        UGraphics.configureTexture(tex.glTextureId) {
+        samplerUniform.setValue(tex.dynamicGlId)
+        UGraphics.configureTexture(tex.dynamicGlId) {
             GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR)
             GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR)
         }
@@ -112,7 +111,7 @@ open class MSDFComponent constructor(
             1f
         )
         val worldRenderer = UGraphics.getFromTessellator()
-        worldRenderer.beginWithActiveShader(UGraphics.DrawMode.QUADS, DefaultVertexFormats.POSITION_TEX)
+        worldRenderer.beginWithActiveShader(UGraphics.DrawMode.QUADS, UGraphics.CommonVertexFormats.POSITION_TEXTURE)
         val doubleX = x.toDouble()
         val doubleY = y.toDouble()
         worldRenderer.pos(matrixStack, doubleX, doubleY + height, 0.0).tex(textureLeft, textureBottom).endVertex()
