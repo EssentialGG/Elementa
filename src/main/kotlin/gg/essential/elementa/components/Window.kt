@@ -96,6 +96,7 @@ class Window @JvmOverloads constructor(
             }
 
             mouseMove(this)
+            beforeDraw(matrixStack)
             super.draw(matrixStack)
         } catch (e: Throwable) {
             cancelDrawing = true
