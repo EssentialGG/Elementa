@@ -95,6 +95,9 @@ abstract class UIComponent : Observable() {
     protected var isInitialized = false
     private var isFloating = false
 
+    private var didCallBeforeDraw = false
+    private var warnedAboutBeforeDraw = false
+
     internal var cachedWindow: Window? = null
 
     private fun setWindowCacheOnChangedChild(possibleEvent: Any) {
@@ -425,6 +428,14 @@ abstract class UIComponent : Observable() {
             afterInitialization()
         }
 
+        if (!didCallBeforeDraw && !warnedAboutBeforeDraw) {
+            warnedAboutBeforeDraw = true
+            handleInvalidUsage("${javaClass.name} failed to call `beforeDraw` at the start of its `draw` method. " +
+                "Consider extending UIContainer if you do not wish to override the draw method. " +
+                "If you do need to override it, then be sure to call `beforeDraw` from it before you do any drawing.")
+        }
+        didCallBeforeDraw = false
+
         // Draw colored outline around the components
         if (elementaDebug) {
             if (ScissorEffect.currentScissorState != null) {
@@ -495,6 +506,8 @@ abstract class UIComponent : Observable() {
     }
 
     open fun beforeDraw(matrixStack: UMatrixStack) {
+        didCallBeforeDraw = true
+
         effects.forEach { it.beforeDraw(matrixStack) }
     }
 
