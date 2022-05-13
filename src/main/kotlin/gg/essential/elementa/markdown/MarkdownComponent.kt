@@ -69,17 +69,18 @@ class MarkdownComponent(
     private var needsInitialLayout = true
 
     init {
+        onMouseClick {
+            val xShift = getLeft() - baseX
+            val yShift = getTop() - baseY
+            cursor =
+                drawables.cursorAt(it.absoluteX - xShift, it.absoluteY - yShift, dragged = false, it.mouseButton)
+
+            selection?.remove()
+            selection = null
+            releaseWindowFocus()
+        }
         if (!disableSelection) {
             onMouseClick {
-                val xShift = getLeft() - baseX
-                val yShift = getTop() - baseY
-                cursor =
-                    drawables.cursorAt(it.absoluteX - xShift, it.absoluteY - yShift, dragged = false, it.mouseButton)
-
-                selection?.remove()
-                selection = null
-                releaseWindowFocus()
-
                 canDrag = true
             }
 
