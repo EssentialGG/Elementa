@@ -14,6 +14,7 @@ import gg.essential.elementa.state.BasicState
 import gg.essential.elementa.state.State
 import gg.essential.elementa.font.ElementaFonts
 import gg.essential.elementa.font.FontProvider
+import gg.essential.elementa.markdown.drawables.HeaderDrawable
 import gg.essential.elementa.utils.elementaDebug
 import gg.essential.universal.UDesktop
 import gg.essential.universal.UKeyboard
@@ -54,6 +55,9 @@ class MarkdownComponent(
     }
 
     val drawables = DrawableList(this, emptyList())
+    private val offsets = HashMap<String, Float>()
+    val sectionOffsets: Map<String, Float>
+        get() = offsets
 
     private var baseX: Float = -1f
     private var baseY: Float = -1f
@@ -145,6 +149,9 @@ class MarkdownComponent(
         val width = getWidth()
 
         drawables.forEach {
+            if (it is HeaderDrawable) {
+                offsets[it.id] = currY
+            }
             currY += it.layout(baseX, currY, width).height
         }
 

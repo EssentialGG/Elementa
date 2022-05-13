@@ -3,7 +3,6 @@ package gg.essential.elementa.markdown.drawables
 import gg.essential.elementa.components.UIBlock
 import gg.essential.elementa.markdown.DrawState
 import gg.essential.elementa.markdown.MarkdownComponent
-import gg.essential.elementa.markdown.MarkdownConfig
 import gg.essential.universal.UMatrixStack
 
 class HeaderDrawable(
@@ -12,6 +11,8 @@ class HeaderDrawable(
     private val paragraph: ParagraphDrawable
 ) : Drawable(md) {
     override val children: List<Drawable> get() = listOf(paragraph)
+    //TODO: Add custom ids 5/13/2022
+    val id = paragraph.textDrawables.joinToString { it.plainText() }.replace(' ', '-')
 
     init {
         paragraph.parent = this
