@@ -149,6 +149,8 @@ class MarkdownComponent(
         var currY = baseY
         val width = getWidth()
 
+        offsets.clear()
+
         drawables.forEach {
             if (it is HeaderDrawable) {
                 offsets[it.id] = currY
