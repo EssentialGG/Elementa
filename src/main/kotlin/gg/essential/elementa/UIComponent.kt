@@ -1,6 +1,7 @@
 package gg.essential.elementa
 
 import gg.essential.elementa.components.UIBlock
+import gg.essential.elementa.components.UIContainer
 import gg.essential.elementa.components.Window
 import gg.essential.elementa.constraints.*
 import gg.essential.elementa.constraints.animation.*
@@ -506,6 +507,15 @@ abstract class UIComponent : Observable() {
     }
 
     open fun beforeDraw(matrixStack: UMatrixStack) {
+        if (didCallBeforeDraw && !warnedAboutBeforeDraw) {
+            warnedAboutBeforeDraw = true
+            val advice = if (this is UIContainer) {
+                "It should not be extending UIContainer if it overrides `draw` and calls `beforeDraw` on its own."
+            } else {
+                "Make sure that none of its super classes already call `beforeDraw`."
+            }
+            handleInvalidUsage("${javaClass.name} called `beforeDraw` more than once without a call to `draw`. $advice")
+        }
         didCallBeforeDraw = true
 
         effects.forEach { it.beforeDraw(matrixStack) }
