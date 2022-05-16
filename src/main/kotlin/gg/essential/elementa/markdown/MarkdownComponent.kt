@@ -186,48 +186,15 @@ class MarkdownComponent(
 
         drawables.forEach {
 
-            // Draw colored outline around the drawables
             if (elementaDebug) {
-                if (ScissorEffect.currentScissorState != null) {
-                    GL11.glDisable(GL11.GL_SCISSOR_TEST)
-                }
-
-                val l = it.layout.left.toDouble() + drawState.xShift
-                val r = it.layout.right.toDouble() + drawState.xShift
-                val t = it.layout.top.toDouble() + drawState.yShift
-                val b = it.layout.bottom.toDouble() + drawState.yShift
-
-                val color = getDebugColor(depth(), (parent.hashCode() / PI) % PI)
-
-                // Top outline block
-                UIBlock.drawBlock(
+                drawDebugOutline(
                     matrixStack,
-                    color,
-                    l - DEBUG_OUTLINE_WIDTH,
-                    t - DEBUG_OUTLINE_WIDTH,
-                    r + DEBUG_OUTLINE_WIDTH,
-                    t
+                    it.layout.left.toDouble() + drawState.xShift,
+                    it.layout.top.toDouble() + drawState.yShift,
+                    it.layout.right.toDouble() + drawState.xShift,
+                    it.layout.bottom.toDouble() + drawState.yShift,
+                    this
                 )
-
-                // Right outline block
-                UIBlock.drawBlock(matrixStack, color, r, t, r + DEBUG_OUTLINE_WIDTH, b)
-
-                // Bottom outline block
-                UIBlock.drawBlock(
-                    matrixStack,
-                    color,
-                    l - DEBUG_OUTLINE_WIDTH,
-                    b,
-                    r + DEBUG_OUTLINE_WIDTH,
-                    b + DEBUG_OUTLINE_WIDTH
-                )
-
-                // Left outline block
-                UIBlock.drawBlock(matrixStack, color, l - DEBUG_OUTLINE_WIDTH, t, l, b)
-
-                if (ScissorEffect.currentScissorState != null) {
-                    GL11.glEnable(GL11.GL_SCISSOR_TEST)
-                }
             }
 
             if (!parentWindow.isAreaVisible(
