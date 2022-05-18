@@ -613,6 +613,7 @@ public final class gg/essential/elementa/components/UIPoint : gg/essential/eleme
 	public fun <init> (Lgg/essential/elementa/constraints/PositionConstraint;Lgg/essential/elementa/constraints/PositionConstraint;)V
 	public fun <init> (Ljava/lang/Number;Ljava/lang/Number;)V
 	public fun <init> (Lkotlin/Pair;)V
+	public fun draw (Lgg/essential/universal/UMatrixStack;)V
 	public final fun getAbsolutePoint ()Lkotlin/Pair;
 	public final fun getAbsoluteX ()F
 	public final fun getAbsoluteY ()F
@@ -1072,6 +1073,7 @@ public class gg/essential/elementa/components/input/UITextInput : gg/essential/e
 public final class gg/essential/elementa/components/inspector/ArrowComponent : gg/essential/elementa/components/TreeArrowComponent {
 	public fun <init> (Z)V
 	public fun close ()V
+	public fun draw (Lgg/essential/universal/UMatrixStack;)V
 	public fun open ()V
 }
 

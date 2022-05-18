@@ -5,6 +5,7 @@ import gg.essential.elementa.components.TreeArrowComponent
 import gg.essential.elementa.dsl.childOf
 import gg.essential.elementa.dsl.constrain
 import gg.essential.elementa.dsl.pixels
+import gg.essential.universal.UMatrixStack
 
 class ArrowComponent(private val empty: Boolean) : TreeArrowComponent() {
     private val closedIcon = SVGComponent.ofResource("/svg/square-plus.svg").constrain {
@@ -34,5 +35,10 @@ class ArrowComponent(private val empty: Boolean) : TreeArrowComponent() {
     override fun close() {
         if (!empty)
             replaceChild(closedIcon, openIcon)
+    }
+
+    override fun draw(matrixStack: UMatrixStack) {
+        beforeDraw(matrixStack)
+        super.draw(matrixStack)
     }
 }

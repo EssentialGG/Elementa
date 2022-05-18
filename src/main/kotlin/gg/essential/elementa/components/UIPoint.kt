@@ -3,6 +3,7 @@ package gg.essential.elementa.components
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.constraints.PositionConstraint
 import gg.essential.elementa.dsl.pixels
+import gg.essential.universal.UMatrixStack
 
 /**
  * "Component" with no width/height and therefore no visible rendering.
@@ -47,4 +48,9 @@ class UIPoint(
     fun withY(y: PositionConstraint) = UIPoint(x, y)
 
     fun withY(y: Number) = UIPoint(x, y.pixels())
+
+    override fun draw(matrixStack: UMatrixStack) {
+        beforeDraw(matrixStack)
+        super.draw(matrixStack)
+    }
 }
