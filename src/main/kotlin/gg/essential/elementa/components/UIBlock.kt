@@ -31,13 +31,17 @@ open class UIBlock(colorConstraint: ColorConstraint = Color.WHITE.toConstraint()
         val x2 = this.getRight().toDouble()
         val y2 = this.getBottom().toDouble()
 
-        val color = getColor()
-        if (color.alpha == 0)
-            return super.draw(matrixStack)
-
-        drawBlock(matrixStack, color, x, y, x2, y2)
+        drawBlock(matrixStack, x, y, x2, y2)
 
         super.draw(matrixStack)
+    }
+
+    internal open fun drawBlock(matrixStack: UMatrixStack, x: Double, y: Double, x2: Double, y2: Double) {
+        val color = getColor()
+        if (color.alpha == 0)
+            return
+
+        drawBlock(matrixStack, color, x, y, x2, y2)
     }
 
     companion object {
