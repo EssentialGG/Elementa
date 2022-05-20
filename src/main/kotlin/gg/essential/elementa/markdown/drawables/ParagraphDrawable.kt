@@ -364,11 +364,13 @@ class ParagraphDrawable(
         // Step 4: If the current text is linked, open it (only if we're not dragging though)
         // TODO: Confirmation modal somehow?
 
-        if (!dragged && currentDrawable.style.linkLocation != null && mouseButton == 0) {
-            try {
-                UDesktop.browse(URI(currentDrawable.style.linkLocation!!))
-            } catch (e: URISyntaxException) {
-                // Ignored, if the link is invalid we just do nothing
+        currentDrawable.style.linkLocation?.takeIf { !dragged && mouseButton == 0 }?.let { linkLocation ->
+            if (md.fireLinkClickEvent(MarkdownComponent.LinkClickEvent(linkLocation))) {
+                try {
+                    UDesktop.browse(URI(linkLocation))
+                } catch (e: URISyntaxException) {
+                    // Ignored, if the link is invalid we just do nothing
+                }
             }
         }
 
