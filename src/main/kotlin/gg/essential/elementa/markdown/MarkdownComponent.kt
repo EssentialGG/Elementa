@@ -4,6 +4,7 @@ import gg.essential.elementa.UIComponent
 import gg.essential.elementa.components.Window
 import gg.essential.elementa.constraints.HeightConstraint
 import gg.essential.elementa.dsl.pixels
+import gg.essential.elementa.events.UIEvent
 import gg.essential.elementa.markdown.drawables.Drawable
 import gg.essential.elementa.markdown.drawables.DrawableList
 import gg.essential.elementa.markdown.selection.Cursor
@@ -62,6 +63,7 @@ class MarkdownComponent(
     private var selection: Selection? = null
     private var canDrag = false
     private var needsInitialLayout = true
+    private val linkClickListeners = mutableListOf<MarkdownComponent.(LinkClickEvent) -> Unit>()
 
     init {
         onMouseClick {
@@ -206,6 +208,21 @@ class MarkdownComponent(
         getWidth(),
         getTextScale(),
     )
+
+    fun onLinkClicked(block: MarkdownComponent.(LinkClickEvent) -> Unit) {
+        linkClickListeners.add(block)
+    }
+
+    internal fun fireLinkClickEvent(event: LinkClickEvent): Boolean {
+        for (listener in linkClickListeners) {
+            this.listener(event)
+
+            if (event.propagationStoppedImmediately) return false
+        }
+        return !event.propagationStopped
+    }
+
+    class LinkClickEvent internal constructor(val url: String) : UIEvent()
 
     /**
      * This class stores the values of the important constraints of this
