@@ -4,17 +4,12 @@ import gg.essential.elementa.constraints.*
 import gg.essential.elementa.font.DefaultFonts
 import gg.essential.elementa.font.FontProvider
 import gg.essential.universal.UGraphics
-import gg.essential.universal.wrappers.message.UTextComponent
-import net.minecraft.util.text.ITextComponent
 import java.awt.Color
 
 fun Char.width(textScale: Float = 1f) = UGraphics.getCharWidth(this) * textScale
 
 fun String.width(textScale: Float = 1f, fontProvider: FontProvider = DefaultFonts.VANILLA_FONT_RENDERER) =
     fontProvider.getStringWidth(this, 10f) * textScale
-
-fun ITextComponent.width(textScale: Float = 1f, fontProvider: FontProvider = DefaultFonts.VANILLA_FONT_RENDERER) =
-    UTextComponent(this).formattedText.width(textScale, fontProvider)
 
 @JvmOverloads
 fun Number.pixels(alignOpposite: Boolean = false, alignOutside: Boolean = false): PixelConstraint =

@@ -1,13 +1,8 @@
 package gg.essential.elementa.utils
 
-//#if MC<=11202
-import net.minecraft.client.renderer.texture.AbstractTexture
-//#else
-//$$ import net.minecraft.client.renderer.texture.Texture
-//#endif
 import gg.essential.universal.UGraphics
 import gg.essential.universal.UMatrixStack
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats
+import gg.essential.universal.utils.ReleasedDynamicTexture
 import org.lwjgl.opengl.GL11
 import java.awt.Color
 import java.awt.image.BufferedImage
@@ -18,11 +13,7 @@ import kotlin.math.withSign
 
 internal fun drawTexture(
     matrixStack: UMatrixStack,
-    //#if MC<=11202
-    texture: AbstractTexture,
-    //#else
-    //$$ texture: Texture,
-    //#endif
+    texture: ReleasedDynamicTexture,
     color: Color,
     x: Double,
     y: Double,
@@ -36,11 +27,7 @@ internal fun drawTexture(
     UGraphics.enableBlend()
     UGraphics.enableAlpha()
     matrixStack.scale(1f, 1f, 50f)
-    //#if MC<=11202
-    val glId = texture.glTextureId
-    //#else
-    //$$ val glId = texture.getGlTextureId()
-    //#endif
+    val glId = texture.dynamicGlId
     UGraphics.bindTexture(0, glId)
     val red = color.red.toFloat() / 255f
     val green = color.green.toFloat() / 255f
@@ -52,7 +39,7 @@ internal fun drawTexture(
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, textureMagFilter)
     }
 
-    worldRenderer.beginWithDefaultShader(UGraphics.DrawMode.QUADS, DefaultVertexFormats.POSITION_TEX_COLOR)
+    worldRenderer.beginWithDefaultShader(UGraphics.DrawMode.QUADS, UGraphics.CommonVertexFormats.POSITION_TEXTURE_COLOR)
 
     worldRenderer.pos(matrixStack, x, y + height, 0.0).tex(0.0, 1.0).color(red, green, blue, alpha).endVertex()
     worldRenderer.pos(matrixStack, x + width, y + height, 0.0).tex(1.0, 1.0).color(red, green, blue, alpha).endVertex()

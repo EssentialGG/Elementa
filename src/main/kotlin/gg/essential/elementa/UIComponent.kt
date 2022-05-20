@@ -1,6 +1,7 @@
 package gg.essential.elementa
 
 import gg.essential.elementa.components.UIBlock
+import gg.essential.elementa.components.UIContainer
 import gg.essential.elementa.components.Window
 import gg.essential.elementa.constraints.*
 import gg.essential.elementa.constraints.animation.*
@@ -11,9 +12,7 @@ import gg.essential.elementa.effects.ScissorEffect
 import gg.essential.elementa.events.UIClickEvent
 import gg.essential.elementa.events.UIScrollEvent
 import gg.essential.elementa.font.FontProvider
-import gg.essential.elementa.utils.TriConsumer
-import gg.essential.elementa.utils.elementaDebug
-import gg.essential.elementa.utils.observable
+import gg.essential.elementa.utils.*
 import gg.essential.elementa.utils.requireMainThread
 import gg.essential.elementa.utils.requireState
 import gg.essential.universal.UMatrixStack
@@ -41,6 +40,7 @@ abstract class UIComponent : Observable() {
     private var childrenLocked = 0
     init {
         children.addObserver { _, _ -> requireChildrenUnlocked() }
+        children.addObserver { _, event -> setWindowCacheOnChangedChild(event) }
     }
 
     open lateinit var parent: UIComponent
@@ -95,6 +95,25 @@ abstract class UIComponent : Observable() {
 
     protected var isInitialized = false
     private var isFloating = false
+
+    private var didCallBeforeDraw = false
+    private var warnedAboutBeforeDraw = false
+
+    internal var cachedWindow: Window? = null
+
+    private fun setWindowCacheOnChangedChild(possibleEvent: Any) {
+        @Suppress("UNCHECKED_CAST")
+        when (val event = possibleEvent as? ObservableListEvent<UIComponent> ?: return) {
+            is ObservableAddEvent -> event.element.value.recursivelySetWindowCache(Window.ofOrNull(this))
+            is ObservableRemoveEvent -> event.element.value.recursivelySetWindowCache(null)
+            is ObservableClearEvent -> event.oldChildren.forEach { it.recursivelySetWindowCache(null) }
+        }
+    }
+
+    private fun recursivelySetWindowCache(window: Window?) {
+        cachedWindow = window
+        children.forEach { it.recursivelySetWindowCache(window) }
+    }
 
     protected fun requireChildrenUnlocked() {
         requireState(childrenLocked == 0, "Cannot modify children while iterating over them.")
@@ -409,7 +428,15 @@ abstract class UIComponent : Observable() {
             isInitialized = true
             afterInitialization()
         }
+        if (!didCallBeforeDraw && !warnedAboutBeforeDraw) {
+            warnedAboutBeforeDraw = true
+            handleInvalidUsage("${javaClass.name} failed to call `beforeDraw` at the start of its `draw` method. " +
+                "Consider extending UIContainer if you do not wish to override the draw method. " +
+                "If you do need to override it, then be sure to call `beforeDraw` from it before you do any drawing.")
+        }
+        didCallBeforeDraw = false
 
+        // Draw colored outline around the components
         if (elementaDebug) {
             drawDebugOutline(
                 matrixStack,
@@ -445,6 +472,17 @@ abstract class UIComponent : Observable() {
     }
 
     open fun beforeDraw(matrixStack: UMatrixStack) {
+        if (didCallBeforeDraw && !warnedAboutBeforeDraw) {
+            warnedAboutBeforeDraw = true
+            val advice = if (this is UIContainer) {
+                "It should not be extending UIContainer if it overrides `draw` and calls `beforeDraw` on its own."
+            } else {
+                "Make sure that none of its super classes already call `beforeDraw`."
+            }
+            handleInvalidUsage("${javaClass.name} called `beforeDraw` more than once without a call to `draw`. $advice")
+        }
+        didCallBeforeDraw = true
+
         effects.forEach { it.beforeDraw(matrixStack) }
     }
 

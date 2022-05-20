@@ -4,7 +4,6 @@ import java.awt.image.BufferedImage
 import java.lang.IllegalArgumentException
 import java.util.concurrent.TimeUnit
 import javax.imageio.metadata.IIOMetadataNode
-import org.apache.commons.io.FileUtils
 import org.w3c.dom.Node
 import org.w3c.dom.NodeList
 import java.io.*
@@ -118,7 +117,7 @@ class FileImageCache(
 
     private fun readEntry(file: File): Triple<BufferedImage, String, Long> {
         val imageReader = ImageIO.getImageReadersByFormatName("png").next()
-        val imageData = FileUtils.readFileToByteArray(file)
+        val imageData = file.readBytes()
         imageReader.setInput(ImageIO.createImageInputStream(ByteArrayInputStream(imageData)), true)
 
 

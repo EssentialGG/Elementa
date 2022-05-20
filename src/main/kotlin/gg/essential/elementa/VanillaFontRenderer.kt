@@ -6,7 +6,6 @@ import gg.essential.elementa.font.FontProvider
 import gg.essential.elementa.utils.roundToRealPixels
 import gg.essential.universal.UGraphics
 import gg.essential.universal.UMatrixStack
-import gg.essential.universal.UMinecraft.getFontRenderer
 import java.awt.Color
 
 class VanillaFontRenderer : FontProvider {
@@ -18,10 +17,10 @@ class VanillaFontRenderer : FontProvider {
     }
 
     override fun getStringWidth(string: String, pointSize: Float): Float =
-        getFontRenderer().getStringWidth(string).toFloat()
+        UGraphics.getStringWidth(string).toFloat()
 
     override fun getStringHeight(string: String, pointSize: Float): Float =
-        getFontRenderer().FONT_HEIGHT.toFloat()
+        UGraphics.getFontHeight().toFloat()
 
     override fun drawString(
         matrixStack: UMatrixStack,

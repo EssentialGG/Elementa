@@ -15,7 +15,6 @@ import gg.essential.universal.shader.Float4Uniform
 import gg.essential.universal.shader.FloatUniform
 import gg.essential.universal.shader.SamplerUniform
 import gg.essential.universal.shader.UShader
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats
 import org.lwjgl.opengl.GL11
 import java.awt.Color
 import kotlin.math.ceil
@@ -109,10 +108,10 @@ class FontRenderer(
             }
         }
 
-        samplerUniform.setValue(activeFont.getTexture().glTextureId)
+        samplerUniform.setValue(activeFont.getTexture().dynamicGlId)
 
         if (activeFont != tmp) { //Font context switch
-            UGraphics.configureTexture(activeFont.getTexture().glTextureId) {
+            UGraphics.configureTexture(activeFont.getTexture().dynamicGlId) {
                 GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR)
                 GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR)
             }
@@ -337,7 +336,7 @@ class FontRenderer(
             1f
         )
         val worldRenderer = UGraphics.getFromTessellator()
-        worldRenderer.beginWithActiveShader(UGraphics.DrawMode.QUADS, DefaultVertexFormats.POSITION_TEX)
+        worldRenderer.beginWithActiveShader(UGraphics.DrawMode.QUADS, UGraphics.CommonVertexFormats.POSITION_TEXTURE)
         val doubleX = x.toDouble()
         val doubleY = y.toDouble()
         worldRenderer.pos(matrixStack, doubleX, doubleY + height, 0.0).tex(textureLeft, textureBottom).endVertex()

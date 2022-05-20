@@ -244,8 +244,6 @@ class Inspector @JvmOverloads constructor(
     }
 
     override fun draw(matrixStack: UMatrixStack) {
-        val debugState = elementaDebug
-        elementaDebug = false
         // If we got removed from our parent, we need to un-float ourselves
         if (!isMounted()) {
             Window.enqueueRenderOperation { setFloating(false) }
@@ -291,8 +289,13 @@ class Inspector @JvmOverloads constructor(
             UGraphics.disableDepth()
         }
 
-        super.draw(matrixStack)
-        elementaDebug = debugState
+        val debugState = elementaDebug
+        elementaDebug = false
+        try {
+            super.draw(matrixStack)
+        } finally {
+            elementaDebug = debugState
+        }
     }
 
     companion object {

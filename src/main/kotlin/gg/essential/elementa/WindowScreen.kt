@@ -1,9 +1,5 @@
 package gg.essential.elementa
 
-//#if MC>=11602
-//$$ import gg.essential.universal.UGraphics
-//#endif
-
 import gg.essential.elementa.components.Window
 import gg.essential.elementa.constraints.animation.*
 import gg.essential.universal.UKeyboard
