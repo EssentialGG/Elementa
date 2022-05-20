@@ -189,7 +189,7 @@ class MarkdownComponent(
 
             if (event.propagationStoppedImmediately) return false
         }
-        return true
+        return !event.propagationStopped
     }
 
     class LinkClickEvent internal constructor(val url: String) : UIEvent()
