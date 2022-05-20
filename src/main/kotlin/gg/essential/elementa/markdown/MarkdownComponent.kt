@@ -178,6 +178,11 @@ class MarkdownComponent(
 
         drawables.forEach {
 
+            if (!parentWindow.isAreaVisible(
+                    it.layout.left.toDouble() + drawState.xShift, it.layout.top.toDouble() + drawState.yShift,
+                    it.layout.right.toDouble() + drawState.xShift, it.layout.bottom.toDouble() + drawState.yShift
+            )) return@forEach
+
             if (elementaDebug) {
                 drawDebugOutline(
                     matrixStack,
@@ -189,10 +194,6 @@ class MarkdownComponent(
                 )
             }
 
-            if (!parentWindow.isAreaVisible(
-                    it.layout.left.toDouble() + drawState.xShift, it.layout.top.toDouble() + drawState.yShift,
-                    it.layout.right.toDouble() + drawState.xShift, it.layout.bottom.toDouble() + drawState.yShift
-            )) return@forEach
             it.draw(matrixStack, drawState)
         }
         if (!disableSelection)
@@ -219,14 +220,5 @@ class MarkdownComponent(
     companion object {
         // TODO: Remove
         const val DEBUG = false
-
-        private fun getDebugColor(depth: Int, offset: Double): Color {
-            val step = depth.toDouble() / PI + offset
-
-            val red = ((sin((step)) + 0.75) * 170).toInt().coerceIn(0..255)
-            val green = ((sin(step + 2 * Math.PI / 3) + 0.75) * 170).toInt().coerceIn(0..255)
-            val blue = ((sin(step + 4 * Math.PI / 3) + 0.75) * 170).toInt().coerceIn(0..255)
-            return Color(red, green, blue, 255)
-        }
     }
 }
