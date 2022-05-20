@@ -11,8 +11,7 @@ class HeaderDrawable(
     private val paragraph: ParagraphDrawable
 ) : Drawable(md) {
     override val children: List<Drawable> get() = listOf(paragraph)
-    //TODO: Add custom ids 5/13/2022
-    internal val id = paragraph.textDrawables.joinToString { it.plainText() }.replace(' ', '-')
+    internal val id = paragraph.textDrawables.joinToString(separator = " ") { it.plainText() }
 
     init {
         paragraph.parent = this
