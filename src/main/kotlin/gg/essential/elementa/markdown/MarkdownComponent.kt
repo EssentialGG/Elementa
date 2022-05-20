@@ -1,11 +1,9 @@
 package gg.essential.elementa.markdown
 
 import gg.essential.elementa.UIComponent
-import gg.essential.elementa.components.UIBlock
 import gg.essential.elementa.components.Window
 import gg.essential.elementa.constraints.HeightConstraint
 import gg.essential.elementa.dsl.pixels
-import gg.essential.elementa.effects.ScissorEffect
 import gg.essential.elementa.markdown.drawables.Drawable
 import gg.essential.elementa.markdown.drawables.DrawableList
 import gg.essential.elementa.markdown.selection.Cursor
@@ -19,7 +17,6 @@ import gg.essential.elementa.utils.elementaDebug
 import gg.essential.universal.UDesktop
 import gg.essential.universal.UKeyboard
 import gg.essential.universal.UMatrixStack
-import org.lwjgl.opengl.GL11
 import java.awt.Color
 import kotlin.math.PI
 import kotlin.math.sin
@@ -55,10 +52,8 @@ class MarkdownComponent(
     }
 
     val drawables = DrawableList(this, emptyList())
-    private val offsets = HashMap<String, Float>()
-    val sectionOffsets: Map<String, Float>
-        get() = offsets
-
+    var sectionOffsets: Map<String, Float> = emptyMap()
+        private set
     private var baseX: Float = -1f
     private var baseY: Float = -1f
     private lateinit var lastValues: ConstraintValues
@@ -149,14 +144,11 @@ class MarkdownComponent(
         var currY = baseY
         val width = getWidth()
 
-        offsets.clear()
-
         drawables.forEach {
-            if (it is HeaderDrawable) {
-                offsets[it.id] = currY
-            }
             currY += it.layout(baseX, currY, width).height
         }
+
+        sectionOffsets = drawables.filterIsInstance<HeaderDrawable>().associate { it.id to it.y }
 
         setHeight((currY - baseY).coerceAtMost(maxHeight.getHeight(this)).pixels())
     }
