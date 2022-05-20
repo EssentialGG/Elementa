@@ -3158,6 +3158,7 @@ public final class gg/essential/elementa/markdown/MarkdownComponent : gg/essenti
 	public final fun getConfig ()Lgg/essential/elementa/markdown/MarkdownConfig;
 	public final fun getDrawables ()Lgg/essential/elementa/markdown/drawables/DrawableList;
 	public final fun layout ()V
+	public final fun onLinkClicked (Lkotlin/jvm/functions/Function2;)V
 	public final fun setMaxHeight (Lgg/essential/elementa/constraints/HeightConstraint;)Lgg/essential/elementa/markdown/MarkdownComponent;
 }
 
@@ -3175,6 +3176,10 @@ public final class gg/essential/elementa/markdown/MarkdownComponent$ConstraintVa
 	public final fun getWidth ()F
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
+}
+
+public final class gg/essential/elementa/markdown/MarkdownComponent$LinkClickEvent : gg/essential/elementa/events/UIEvent {
+	public final fun getUrl ()Ljava/lang/String;
 }
 
 public final class gg/essential/elementa/markdown/MarkdownConfig {
