@@ -44,14 +44,7 @@ open class GradientComponent @JvmOverloads constructor(
         directionState = newDirectionState
     }
 
-    override fun draw(matrixStack: UMatrixStack) {
-        beforeDrawCompat(matrixStack)
-
-        val x = this.getLeft().toDouble()
-        val y = this.getTop().toDouble()
-        val x2 = this.getRight().toDouble()
-        val y2 = this.getBottom().toDouble()
-
+    override fun drawBlock(matrixStack: UMatrixStack, x: Double, y: Double, x2: Double, y2: Double) {
         drawGradientBlock(
             matrixStack,
             x,
@@ -62,8 +55,6 @@ open class GradientComponent @JvmOverloads constructor(
             endColorState.get(),
             directionState.get()
         )
-
-        super.draw(matrixStack)
     }
 
     enum class GradientDirection {

@@ -269,7 +269,6 @@ public class gg/essential/elementa/components/GradientComponent : gg/essential/e
 	public final fun bindDirection (Lgg/essential/elementa/state/State;)Lgg/essential/elementa/components/GradientComponent;
 	public final fun bindEndColor (Lgg/essential/elementa/state/State;)Lgg/essential/elementa/components/GradientComponent;
 	public final fun bindStartColor (Lgg/essential/elementa/state/State;)Lgg/essential/elementa/components/GradientComponent;
-	public fun draw (Lgg/essential/universal/UMatrixStack;)V
 	public final fun getDirection ()Lgg/essential/elementa/components/GradientComponent$GradientDirection;
 	public final fun getEndColor ()Ljava/awt/Color;
 	public final fun getStartColor ()Ljava/awt/Color;
