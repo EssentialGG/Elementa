@@ -1,6 +1,7 @@
 package gg.essential.elementa.markdown
 
 import gg.essential.elementa.UIComponent
+import gg.essential.elementa.components.Window
 import gg.essential.elementa.constraints.HeightConstraint
 import gg.essential.elementa.dsl.pixels
 import gg.essential.elementa.markdown.drawables.Drawable
@@ -11,9 +12,14 @@ import gg.essential.elementa.state.BasicState
 import gg.essential.elementa.state.State
 import gg.essential.elementa.font.ElementaFonts
 import gg.essential.elementa.font.FontProvider
+import gg.essential.elementa.markdown.drawables.HeaderDrawable
+import gg.essential.elementa.utils.elementaDebug
 import gg.essential.universal.UDesktop
 import gg.essential.universal.UKeyboard
 import gg.essential.universal.UMatrixStack
+import java.awt.Color
+import kotlin.math.PI
+import kotlin.math.sin
 
 /**
  * Component that parses a string as Markdown and renders it.
@@ -46,7 +52,8 @@ class MarkdownComponent(
     }
 
     val drawables = DrawableList(this, emptyList())
-
+    var sectionOffsets: Map<String, Float> = emptyMap()
+        private set
     private var baseX: Float = -1f
     private var baseY: Float = -1f
     private lateinit var lastValues: ConstraintValues
@@ -57,17 +64,18 @@ class MarkdownComponent(
     private var needsInitialLayout = true
 
     init {
+        onMouseClick {
+            val xShift = getLeft() - baseX
+            val yShift = getTop() - baseY
+            cursor =
+                drawables.cursorAt(it.absoluteX - xShift, it.absoluteY - yShift, dragged = false, it.mouseButton)
+
+            selection?.remove()
+            selection = null
+            releaseWindowFocus()
+        }
         if (!disableSelection) {
             onMouseClick {
-                val xShift = getLeft() - baseX
-                val yShift = getTop() - baseY
-                cursor =
-                    drawables.cursorAt(it.absoluteX - xShift, it.absoluteY - yShift, dragged = false, it.mouseButton)
-
-                selection?.remove()
-                selection = null
-                releaseWindowFocus()
-
                 canDrag = true
             }
 
@@ -140,6 +148,8 @@ class MarkdownComponent(
             currY += it.layout(baseX, currY, width).height
         }
 
+        sectionOffsets = drawables.filterIsInstance<HeaderDrawable>().associate { it.id to it.y }
+
         setHeight((currY - baseY).coerceAtMost(maxHeight.getHeight(this)).pixels())
     }
 
@@ -164,8 +174,28 @@ class MarkdownComponent(
         beforeDraw(matrixStack)
 
         val drawState = DrawState(getLeft() - baseX, getTop() - baseY)
+        val parentWindow = Window.of(this)
 
-        drawables.forEach { it.draw(matrixStack, drawState) }
+        drawables.forEach {
+
+            if (!parentWindow.isAreaVisible(
+                    it.layout.left.toDouble() + drawState.xShift, it.layout.top.toDouble() + drawState.yShift,
+                    it.layout.right.toDouble() + drawState.xShift, it.layout.bottom.toDouble() + drawState.yShift
+            )) return@forEach
+
+            if (elementaDebug) {
+                drawDebugOutline(
+                    matrixStack,
+                    it.layout.left.toDouble() + drawState.xShift,
+                    it.layout.top.toDouble() + drawState.yShift,
+                    it.layout.right.toDouble() + drawState.xShift,
+                    it.layout.bottom.toDouble() + drawState.yShift,
+                    this
+                )
+            }
+
+            it.draw(matrixStack, drawState)
+        }
         if (!disableSelection)
             selection?.draw(matrixStack, drawState) ?: cursor?.draw(matrixStack, drawState)
 

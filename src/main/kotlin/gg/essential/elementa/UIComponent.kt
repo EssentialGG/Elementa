@@ -428,7 +428,6 @@ abstract class UIComponent : Observable() {
             isInitialized = true
             afterInitialization()
         }
-
         if (!didCallBeforeDraw && !warnedAboutBeforeDraw) {
             warnedAboutBeforeDraw = true
             handleInvalidUsage("${javaClass.name} failed to call `beforeDraw` at the start of its `draw` method. " +
@@ -439,46 +438,12 @@ abstract class UIComponent : Observable() {
 
         // Draw colored outline around the components
         if (elementaDebug) {
-            if (ScissorEffect.currentScissorState != null) {
-                GL11.glDisable(GL11.GL_SCISSOR_TEST)
-            }
-
-            val left = getLeft().toDouble()
-            val right = getRight().toDouble()
-            val top = getTop().toDouble()
-            val bottom = getBottom().toDouble()
-
-            val color = getDebugColor(depth(), (parent.hashCode() / PI) % PI)
-
-            // Top outline block
-            UIBlock.drawBlock(
+            drawDebugOutline(
                 matrixStack,
-                color,
-                left - DEBUG_OUTLINE_WIDTH,
-                top - DEBUG_OUTLINE_WIDTH,
-                right + DEBUG_OUTLINE_WIDTH,
-                top
+                getLeft().toDouble(), getTop().toDouble(),
+                getRight().toDouble(), getBottom().toDouble(),
+                this
             )
-
-            // Right outline block
-            UIBlock.drawBlock(matrixStack, color, right, top, right + DEBUG_OUTLINE_WIDTH, bottom)
-
-            // Bottom outline block
-            UIBlock.drawBlock(
-                matrixStack,
-                color,
-                left - DEBUG_OUTLINE_WIDTH,
-                bottom,
-                right + DEBUG_OUTLINE_WIDTH,
-                bottom + DEBUG_OUTLINE_WIDTH
-            )
-
-            // Left outline block
-            UIBlock.drawBlock(matrixStack, color, left - DEBUG_OUTLINE_WIDTH, top, left, bottom)
-
-            if (ScissorEffect.currentScissorState != null) {
-                GL11.glEnable(GL11.GL_SCISSOR_TEST)
-            }
         }
 
         beforeChildrenDrawCompat(matrixStack)
@@ -1176,6 +1141,47 @@ abstract class UIComponent : Observable() {
 
     companion object {
         val DEBUG_OUTLINE_WIDTH = System.getProperty("elementa.debug.width")?.toDoubleOrNull() ?: 2.0
+
+        /**
+         * Draws a colored outline around a given area
+         */
+        internal fun drawDebugOutline(matrixStack: UMatrixStack,left: Double, top: Double, right: Double, bottom: Double, component: UIComponent) {
+            if (ScissorEffect.currentScissorState != null) {
+                GL11.glDisable(GL11.GL_SCISSOR_TEST)
+            }
+
+            val color = getDebugColor(component.depth(), (component.parent.hashCode() / PI) % PI)
+
+            // Top outline block
+            UIBlock.drawBlock(
+                matrixStack,
+                color,
+                left - DEBUG_OUTLINE_WIDTH,
+                top - DEBUG_OUTLINE_WIDTH,
+                right + DEBUG_OUTLINE_WIDTH,
+                top
+            )
+
+            // Right outline block
+            UIBlock.drawBlock(matrixStack, color, right, top, right + DEBUG_OUTLINE_WIDTH, bottom)
+
+            // Bottom outline block
+            UIBlock.drawBlock(
+                matrixStack,
+                color,
+                left - DEBUG_OUTLINE_WIDTH,
+                bottom,
+                right + DEBUG_OUTLINE_WIDTH,
+                bottom + DEBUG_OUTLINE_WIDTH
+            )
+
+            // Left outline block
+            UIBlock.drawBlock(matrixStack, color, left - DEBUG_OUTLINE_WIDTH, top, left, bottom)
+
+            if (ScissorEffect.currentScissorState != null) {
+                GL11.glEnable(GL11.GL_SCISSOR_TEST)
+            }
+        }
 
         private fun getDebugColor(depth: Int, offset: Double): Color {
             val step = depth.toDouble() / PI + offset

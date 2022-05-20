@@ -3123,6 +3123,7 @@ public final class gg/essential/elementa/markdown/MarkdownComponent : gg/essenti
 	public fun draw (Lgg/essential/universal/UMatrixStack;)V
 	public final fun getConfig ()Lgg/essential/elementa/markdown/MarkdownConfig;
 	public final fun getDrawables ()Lgg/essential/elementa/markdown/drawables/DrawableList;
+	public final fun getSectionOffsets ()Ljava/util/Map;
 	public final fun layout ()V
 	public final fun setMaxHeight (Lgg/essential/elementa/constraints/HeightConstraint;)Lgg/essential/elementa/markdown/MarkdownComponent;
 }
