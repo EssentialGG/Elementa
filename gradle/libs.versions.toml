@@ -1,7 +1,7 @@
 [versions]
 kotlin = "1.5.10"
 jetbrains-annotations = "23.0.0"
-universalcraft = "202"
+universalcraft = "211"
 commonmark = "0.17.1"
 dom4j = "2.1.1"
 
