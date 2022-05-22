@@ -357,7 +357,7 @@ abstract class UIComponent : Observable() {
     internal fun pixelCoordinatesToPixelCenter(mouseX: Double, mouseY: Double): Pair<Double, Double> {
         // Move the position of a click to the center of a pixel. See [ElementaVersion.v2] for more info
         return if ((Window.ofOrNull(this)?.version ?: ElementaVersion.v0) >= ElementaVersion.v2) {
-            val halfPixel = 0.5 / UResolution.scaleFactor.toFloat()
+            val halfPixel = 0.5 / UResolution.scaleFactor
             mouseX + halfPixel to mouseY + halfPixel
         } else {
             mouseX to mouseY
