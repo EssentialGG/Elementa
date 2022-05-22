@@ -18,7 +18,7 @@ import java.awt.Color
  * The example won't look particularly pretty, but that is up to the programmer
  * to design their GUIs how they wish.
  */
-class ExampleGui : WindowScreen(ElementaVersion.V1) {
+class ExampleGui : WindowScreen(ElementaVersion.V2) {
     // Our ExampleGui class will extend from WindowScreen
     // which is a subclass of GuiScreen that will call all mouse/keyboard
     // events for us.

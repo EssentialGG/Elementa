@@ -14,7 +14,7 @@ import gg.essential.elementa.markdown.MarkdownComponent
 import java.awt.Color
 import java.net.URL
 
-class ComponentsGui : WindowScreen(ElementaVersion.V1) {
+class ComponentsGui : WindowScreen(ElementaVersion.V2) {
     init {
         ComponentType("UIContainer") {
             val bar = UIBlock().constrain {

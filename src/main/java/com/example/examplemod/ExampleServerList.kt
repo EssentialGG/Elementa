@@ -13,7 +13,7 @@ import gg.essential.universal.UScreen
 import java.awt.Color
 import java.net.URL
 
-class ExampleServerList : WindowScreen(ElementaVersion.V1) {
+class ExampleServerList : WindowScreen(ElementaVersion.V2) {
 //    val serverList = (ScrollComponent().constrain {
 //        y = 30.pixels()
 //        width = RelativeConstraint()

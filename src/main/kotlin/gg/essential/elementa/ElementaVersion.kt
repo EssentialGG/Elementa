@@ -26,6 +26,7 @@ enum class ElementaVersion {
      * Additionally they will always reset the depth test state to disabled and the depth test function to LEQUAL before
      * returning (this matches the default state during GUI rendering but may be important in some special use cases).
      */
+    @Deprecated(DEPRECATION_MESSAGE)
     V1,
 
     /**

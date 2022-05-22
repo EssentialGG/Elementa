@@ -21,7 +21,7 @@ public class JavaTestGui extends WindowScreen {
         .enableEffect(new ScissorEffect());
 
     public JavaTestGui() {
-        super(ElementaVersion.V1);
+        super(ElementaVersion.V2);
         box.onMouseEnterRunnable(() -> {
             // Animate, set color, etc.
             AnimatingConstraints anim = box.makeAnimation();

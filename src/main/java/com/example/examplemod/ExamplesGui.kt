@@ -13,7 +13,7 @@ import java.awt.Color
  * List of buttons to open a specific example gui.
  * See ExampleGui (singular) for a well-commented example gui.
  */
-class ExamplesGui : WindowScreen(ElementaVersion.V1) {
+class ExamplesGui : WindowScreen(ElementaVersion.V2) {
     private val container by ScrollComponent().constrain {
         y = 3.pixels()
         width = 100.percent()
