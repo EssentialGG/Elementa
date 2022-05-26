@@ -15,7 +15,7 @@ import gg.essential.elementa.font.ElementaFonts
 import gg.essential.elementa.utils.withAlpha
 import java.awt.Color
 
-class KtTestGui : WindowScreen(ElementaVersion.V1) {
+class KtTestGui : WindowScreen(ElementaVersion.V2) {
     private val myTextBox = UIBlock(Color(0, 0, 0, 255))
 
     init {

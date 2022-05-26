@@ -26,7 +26,38 @@ enum class ElementaVersion {
      * Additionally they will always reset the depth test state to disabled and the depth test function to LEQUAL before
      * returning (this matches the default state during GUI rendering but may be important in some special use cases).
      */
+    @Deprecated(DEPRECATION_MESSAGE)
     V1,
+
+    /**
+     * This Elementa version improves the behavior of mouse input in three ways
+     *
+     * 1. In Minecraft versions <=1.12.2, the game calculates the position of the mouse input in an integer context
+     * relative to scaled pixels. However, Elementa uses real pixels to determine the position of components leading
+     * to situations where certain components or parts of components are not clickable due the game truncating the fractional part.
+     * This Elementa version improves this behavior by restoring the fractional component of mouse clicks to the mouse positions
+     * in [gg.essential.elementa.WindowScreen.onMouseClicked] if it is not already present
+     *
+     * 2. Minecraft mouse click input is positioned in the top left corner of a pixel. As a result, the left and top pixel of
+     * a component do not register clicks and components with a width or height of 1 are also not clickable. This Elementa version
+     * improves this behavior by offsetting mouse coordinates to the center of the real pixel.
+     * In particular, [gg.essential.elementa.components.Window.mouseClick] will add half a real pixel to the passed
+     * coordinates and [gg.essential.elementa.UIComponent.getMousePosition] will add half a real pixel to the returned
+     * coordinates.
+     * As a result, if you have previously relied on the exact distance between a click and a component, beware that
+     * this value will now be off by up to half a real pixel compared to what it used to be. If required, you can get
+     * back the original real-pixel-aligned value by rounding down to the nearest real pixel via
+     * [gg.essential.elementa.utils.guiHint].
+     * E.g. if the user clicks on the MC pixel at 3/4 with their GUI scale set to 2, the click used to be processed at
+     * 3.0/4.0, but with this change it will appear at 3.25/4.25 (because 0.25 is half a real pixel at scale 2).
+     *
+     * 3. [gg.essential.elementa.components.Window] will now call the new [gg.essential.elementa.UIComponent.dragMouse]
+     * override (the one using Float) instead of the old one (using Int). This allows the drag listeners to receive
+     * high quality mouse coordinates (including the two changes above) but it may be breaking if you rely on an
+     * override of that method. If you do, then you should switch to using the new override at the same time as you
+     * upgrade to the new version (or override both if you need to maintain support for old versions).
+     */
+    V2,
 
     ;
 
@@ -62,6 +93,9 @@ Be sure to read through all the changes between your current version and your ne
         internal val v0 = V0
         @Suppress("DEPRECATION")
         internal val v1 = V1
+        @Suppress("DEPRECATION")
+        internal val v2 = V2
+
 
         @PublishedApi
         internal var active: ElementaVersion = v0

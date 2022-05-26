@@ -370,7 +370,17 @@ abstract class UIComponent : Observable() {
     }
 
     protected fun getMousePosition(): Pair<Float, Float> {
-        return UIComponent.getMouseX() to UIComponent.getMouseY()
+        return pixelCoordinatesToPixelCenter(UMouse.Scaled.x, UMouse.Scaled.y).let { (x, y) -> x.toFloat() to y.toFloat() }
+    }
+
+    internal fun pixelCoordinatesToPixelCenter(mouseX: Double, mouseY: Double): Pair<Double, Double> {
+        // Move the position of a click to the center of a pixel. See [ElementaVersion.v2] for more info
+        return if ((Window.ofOrNull(this)?.version ?: ElementaVersion.v0) >= ElementaVersion.v2) {
+            val halfPixel = 0.5 / UResolution.scaleFactor
+            mouseX + halfPixel to mouseY + halfPixel
+        } else {
+            mouseX to mouseY
+        }
     }
 
     open fun isPointInside(x: Float, y: Float): Boolean {
@@ -635,12 +645,28 @@ abstract class UIComponent : Observable() {
         // no-op
     }
 
+    @Deprecated(
+        "Replaced by override using Float for coordinates.",
+        ReplaceWith("dragMouse(mouseX.toFloat(), mouseY.toFloat(), button)")
+    )
+    @Suppress("DEPRECATION")
+    open fun dragMouse(mouseX: Int, mouseY: Int, button: Int) {
+        doDragMouse(mouseX.toFloat(), mouseY.toFloat(), button) { dragMouse(mouseX, mouseY, button) }
+    }
+
     /**
      * Runs the set [onMouseDrag] method for the component and it's children.
      * Use this in the proper mouse drag event to cascade all component's mouse scroll events.
      * Most common use is on the [Window] object.
+     *
+     * Note: This method is only called by [Window]s using an [ElementaVersion] of 2 or greater. Older versions will
+     *       only call the deprecated integer overload.
      */
-    open fun dragMouse(mouseX: Int, mouseY: Int, button: Int) {
+    open fun dragMouse(mouseX: Float, mouseY: Float, button: Int) {
+        doDragMouse(mouseX, mouseY, button) { dragMouse(mouseX, mouseY, button) }
+    }
+
+    private inline fun doDragMouse(mouseX: Float, mouseY: Float, button: Int, superCall: UIComponent.() -> Unit) {
         if (lastDraggedMouseX == mouseX.toDouble() && lastDraggedMouseY == mouseY.toDouble())
             return
 
@@ -653,7 +679,7 @@ abstract class UIComponent : Observable() {
         for (listener in mouseDragListeners)
             this.listener(relativeX, relativeY, button)
 
-        this.forEachChild { it.dragMouse(mouseX, mouseY, button) }
+        this.forEachChild { it.superCall() }
     }
 
     open fun keyType(typedChar: Char, keyCode: Int) {

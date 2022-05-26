@@ -20,7 +20,7 @@ class ConstraintResolutionGui(
     private val guiName: String,
     private val gui: UIComponent,
     private val nodes: List<ResolverNode>?
-) : WindowScreen(ElementaVersion.V1) {
+) : WindowScreen(ElementaVersion.V2) {
 
     private val guiView by GuiView().constrain {
         width = 100.percent

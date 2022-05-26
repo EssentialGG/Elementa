@@ -2,6 +2,7 @@ public final class gg/essential/elementa/ElementaVersion : java/lang/Enum {
 	public static final field Companion Lgg/essential/elementa/ElementaVersion$Companion;
 	public static final field V0 Lgg/essential/elementa/ElementaVersion;
 	public static final field V1 Lgg/essential/elementa/ElementaVersion;
+	public static final field V2 Lgg/essential/elementa/ElementaVersion;
 	public final fun enableFor (Lkotlin/jvm/functions/Function0;)Ljava/lang/Object;
 	public static fun valueOf (Ljava/lang/String;)Lgg/essential/elementa/ElementaVersion;
 	public static fun values ()[Lgg/essential/elementa/ElementaVersion;
@@ -45,6 +46,7 @@ public abstract class gg/essential/elementa/UIComponent : java/util/Observable {
 	public fun clearChildren ()Lgg/essential/elementa/UIComponent;
 	public final fun delay (JLkotlin/jvm/functions/Function0;)Lkotlin/jvm/functions/Function0;
 	public final fun depth ()I
+	public fun dragMouse (FFI)V
 	public fun dragMouse (III)V
 	public fun draw ()V
 	public fun draw (Lgg/essential/universal/UMatrixStack;)V

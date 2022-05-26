@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit
  * or animating.
  */
 class Window @JvmOverloads constructor(
-    private val version: ElementaVersion,
+    internal val version: ElementaVersion,
     val animationFPS: Int = 244
 ) : UIComponent() {
     private var systemTime = -1L
@@ -177,6 +177,14 @@ class Window @JvmOverloads constructor(
     override fun mouseClick(mouseX: Double, mouseY: Double, button: Int) {
         requireMainThread()
 
+        //  Override mouse positions to be in the center of the pixel on Elementa versions
+        //  2 and over. See [ElementaVersion.V2] for more info.
+        val (adjustedX, adjustedY) = pixelCoordinatesToPixelCenter(mouseX, mouseY)
+
+        doMouseClick(adjustedX, adjustedY, button)
+    }
+
+    private fun doMouseClick(mouseX: Double, mouseY: Double, button: Int) {
         currentMouseButton = button
 
         clickInterceptor?.let {
@@ -232,7 +240,12 @@ class Window @JvmOverloads constructor(
     override fun animationFrame() {
         if (currentMouseButton != -1) {
             val (mouseX, mouseY) = getMousePosition()
-            dragMouse(mouseX.toInt(), mouseY.toInt(), currentMouseButton)
+            if (version >= ElementaVersion.v2) {
+                dragMouse(mouseX, mouseY, currentMouseButton)
+            } else {
+                @Suppress("DEPRECATION")
+                dragMouse(mouseX.toInt(), mouseY.toInt(), currentMouseButton)
+            }
         }
 
         if (componentRequestingFocus != null && componentRequestingFocus != focusedComponent) {
