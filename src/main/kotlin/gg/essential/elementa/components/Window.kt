@@ -45,6 +45,9 @@ class Window @JvmOverloads constructor(
         super.parent = this
     }
 
+    override fun hitTest(x: Float, y: Float): UIComponent =
+        floatingComponents.find { it.isPointInside(x, y) } ?: super.hitTest(x, y)
+
     override fun afterInitialization() {
         enqueueRenderOperation {
             FontRenderer.initShaders()
