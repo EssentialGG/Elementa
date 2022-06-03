@@ -139,7 +139,7 @@ private class MarkdownRendererImpl(
     }
 
     override fun visit(fencedCodeBlock: FencedCodeBlock) {
-        //TODO("Not yet implemented")
+        drawables.add(CodeBlockDrawable(md, fencedCodeBlock.literal))
     }
 
     override fun visit(hardLineBreak: HardLineBreak) {

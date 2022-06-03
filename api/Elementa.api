@@ -3288,7 +3288,7 @@ public final class gg/essential/elementa/markdown/drawables/BlockquoteDrawable :
 }
 
 public final class gg/essential/elementa/markdown/drawables/CodeBlockDrawable : gg/essential/elementa/markdown/drawables/Drawable {
-	public fun <init> (Lgg/essential/elementa/markdown/MarkdownComponent;)V
+	public fun <init> (Lgg/essential/elementa/markdown/MarkdownComponent;Ljava/lang/String;)V
 	public fun cursorAt (FFZI)Lgg/essential/elementa/markdown/selection/Cursor;
 	public fun cursorAtEnd ()Lgg/essential/elementa/markdown/selection/Cursor;
 	public fun cursorAtStart ()Lgg/essential/elementa/markdown/selection/Cursor;
@@ -3640,14 +3640,22 @@ public final class gg/essential/elementa/markdown/drawables/TextDrawable$Text {
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class gg/essential/elementa/markdown/selection/CodeTextCursor : gg/essential/elementa/markdown/selection/Cursor {
+	public fun <init> (Lgg/essential/elementa/markdown/drawables/CodeBlockDrawable;III)V
+	public fun compareTo (Lgg/essential/elementa/markdown/selection/Cursor;)I
+	public final fun getLine ()I
+	public final fun getNumericalOffset ()I
+	public final fun getOffset ()I
+}
+
 public abstract class gg/essential/elementa/markdown/selection/Cursor {
 	public fun <init> (Lgg/essential/elementa/markdown/drawables/Drawable;)V
 	public abstract fun compareTo (Lgg/essential/elementa/markdown/selection/Cursor;)I
 	public final fun draw (Lgg/essential/elementa/markdown/DrawState;)V
 	public final fun draw (Lgg/essential/universal/UMatrixStack;Lgg/essential/elementa/markdown/DrawState;)V
-	protected final fun getHeight ()D
+	protected fun getHeight ()D
 	public final fun getTarget ()Lgg/essential/elementa/markdown/drawables/Drawable;
-	protected final fun getWidth ()D
+	protected fun getWidth ()D
 	protected fun getXBase ()F
 	protected fun getYBase ()F
 }

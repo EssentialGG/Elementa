@@ -11,7 +11,6 @@ import gg.essential.elementa.markdown.MarkdownConfig
 import gg.essential.elementa.markdown.selection.TextCursor
 import gg.essential.universal.UMatrixStack
 import gg.essential.universal.UMouse
-import gg.essential.universal.UResolution
 import java.awt.Color
 
 class TextDrawable(

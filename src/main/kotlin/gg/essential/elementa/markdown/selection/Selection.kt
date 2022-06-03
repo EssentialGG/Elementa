@@ -1,6 +1,7 @@
 package gg.essential.elementa.markdown.selection
 
 import gg.essential.elementa.markdown.DrawState
+import gg.essential.elementa.markdown.drawables.CodeBlockDrawable
 import gg.essential.elementa.markdown.drawables.Drawable
 import gg.essential.elementa.markdown.drawables.ImageDrawable
 import gg.essential.elementa.markdown.drawables.TextDrawable
@@ -12,16 +13,20 @@ class Selection private constructor(val start: Cursor<*>, val end: Cursor<*>) {
     init {
         if (start.target == end.target) {
             drawables.add(start.target)
-            val (cursorStart, cursorEnd) = if (start is TextCursor) {
-                start.offset to (end as TextCursor).offset
-            } else -1 to -1
+            val (cursorStart, cursorEnd) = when {
+                start is TextCursor && end is TextCursor -> start.offset to end.offset
+                start is CodeTextCursor && end is CodeTextCursor -> start.numericalOffset to end.numericalOffset
+                else -> -1 to -1
+            }
 
             setSelected(start.target, cursorStart, cursorEnd, selected = true)
         } else {
             // Configure selection area for the starting target
-            val (cursorStart, cursorEnd) = if (start is TextCursor) {
-                start.offset to start.target.plainText().length
-            } else -1 to -1
+            val (cursorStart, cursorEnd) = when {
+                start is TextCursor && end is TextCursor -> start.offset to end.offset
+                start is CodeTextCursor && end is CodeTextCursor -> start.numericalOffset to end.numericalOffset
+                else -> -1 to -1
+            }
             setSelected(start.target, cursorStart, cursorEnd, selected = true)
 
             // We now have to iterate the entire markdown tree structure.
@@ -35,16 +40,20 @@ class Selection private constructor(val start: Cursor<*>, val end: Cursor<*>) {
                     null -> throw IllegalStateException()
                     end.target -> {
                         drawables.add(currentTarget)
-                        val (cursorStart, cursorEnd) = if (end is TextCursor) {
-                            0 to end.offset
-                        } else -1 to -1
+                        val (cursorStart, cursorEnd) = when {
+                            start is TextCursor && end is TextCursor -> start.offset to end.offset
+                            start is CodeTextCursor && end is CodeTextCursor -> start.numericalOffset to end.numericalOffset
+                            else -> -1 to -1
+                        }
                         setSelected(currentTarget, cursorStart, cursorEnd, selected = true)
                         break@loop
                     }
                     else -> {
-                        val (cursorStart, cursorEnd) = if (currentTarget is TextDrawable) {
-                            0 to currentTarget.plainText().length
-                        } else -1 to -1
+                        val (cursorStart, cursorEnd) = when {
+                            currentTarget is TextDrawable -> 0 to currentTarget.plainText().length
+                            currentTarget is CodeBlockDrawable -> 0 to currentTarget.text.length
+                            else -> -1 to -1
+                        }
                         setSelected(currentTarget, cursorStart, cursorEnd, selected = true)
                     }
                 }
@@ -106,6 +115,7 @@ class Selection private constructor(val start: Cursor<*>, val end: Cursor<*>) {
                 drawable.selectionEnd = end
             }
             is ImageDrawable -> drawable.selected = selected
+            is CodeBlockDrawable -> drawable.selection = start..end
             else -> throw IllegalArgumentException()
         }
     }

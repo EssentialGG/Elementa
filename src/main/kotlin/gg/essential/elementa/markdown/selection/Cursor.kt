@@ -10,8 +10,8 @@ import java.awt.Color
 abstract class Cursor<T : Drawable>(val target: T) {
     protected open val xBase = target.x
     protected open val yBase = target.y
-    protected val height = target.height.toDouble()
-    protected val width = height / 9.0
+    protected open val height = target.height.toDouble()
+    protected open val width = target.height.toDouble() / 9.0
 
     @Deprecated(UMatrixStack.Compat.DEPRECATED, ReplaceWith("draw(matrixStack, state)"))
     fun draw(state: DrawState) = draw(UMatrixStack(), state)
