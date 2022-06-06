@@ -6,6 +6,7 @@ import gg.essential.elementa.constraints.CenterConstraint
 import gg.essential.elementa.dsl.basicHeightConstraint
 import gg.essential.elementa.dsl.width
 import gg.essential.elementa.state.BasicState
+import gg.essential.elementa.state.MappedState
 import gg.essential.elementa.state.State
 import gg.essential.elementa.state.pixels
 import gg.essential.elementa.utils.getStringSplitToWidth
@@ -19,9 +20,9 @@ import java.awt.Color
  * this component's width & height constrains.
  */
 open class UIWrappedText @JvmOverloads constructor(
-    text: String = "",
-    shadow: Boolean = true,
-    shadowColor: Color? = null,
+    text: State<String>,
+    shadow: State<Boolean>,
+    shadowColor: State<Color?>,
     private var centered: Boolean = false,
     /**
      * Keeps the rendered text within the bounds of the component,
@@ -31,9 +32,24 @@ open class UIWrappedText @JvmOverloads constructor(
     private val lineSpacing: Float = 9f,
     private val trimmedTextSuffix: String = "..."
 ) : UIComponent() {
-    private val textState = BasicState(text).map { it } // extra map so we can easily rebind it
-    private var shadowState: State<Boolean> = BasicState(shadow)
-    private var shadowColorState: State<Color?> = BasicState(shadowColor)
+    @JvmOverloads constructor(
+        text: String = "",
+        shadow: Boolean = true,
+        shadowColor: Color? = null,
+        centered: Boolean = false,
+        /**
+         * Keeps the rendered text within the bounds of the component,
+         * inserting an ellipsis ("...") if text is trimmed
+         */
+        trimText: Boolean = false,
+        lineSpacing: Float = 9f,
+        trimmedTextSuffix: String = "..."
+    ) : this(BasicState(text), BasicState(shadow), BasicState(shadowColor), centered, trimText, lineSpacing, trimmedTextSuffix)
+
+
+    private val textState: MappedState<String, String> = text.map { it } // extra map so we can easily rebind it
+    private val shadowState: MappedState<Boolean, Boolean> = shadow.map { it }
+    private val shadowColorState: MappedState<Color?, Color?> = shadowColor.map { it }
     private val textScaleState = constraints.asState { getTextScale() }
     private val fontProviderState = constraints.asState { fontProvider }
     private var textWidthState = textState.zip(textScaleState.zip(fontProviderState)).map { (text, opts) ->
@@ -79,11 +95,11 @@ open class UIWrappedText @JvmOverloads constructor(
     }
 
     fun bindShadow(newShadowState: State<Boolean>) = apply {
-        this.shadowState = newShadowState
+        shadowState.rebind(newShadowState)
     }
 
     fun bindShadowColor(newShadowColorState: State<Color?>) = apply {
-        this.shadowColorState = newShadowColorState
+        shadowColorState.rebind(newShadowColorState)
     }
 
     fun getText() = textState.get()
@@ -92,7 +108,11 @@ open class UIWrappedText @JvmOverloads constructor(
     fun getShadow() = shadowState.get()
     fun setShadow(shadow: Boolean) = apply { shadowState.set(shadow) }
 
-    fun getShadowColor() = shadowColorState
+    @Deprecated("Wrong return type", level = DeprecationLevel.HIDDEN)
+    @JvmName("getShadowColor")
+    fun getShadowColorState(): State<Color?> = shadowColorState
+
+    fun getShadowColor(): Color? = shadowColorState.get()
     fun setShadowColor(shadowColor: Color?) = apply { shadowColorState.set(shadowColor) }
 
     /**

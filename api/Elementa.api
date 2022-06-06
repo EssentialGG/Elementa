@@ -264,6 +264,7 @@ public abstract class gg/essential/elementa/WindowScreen : gg/essential/universa
 public class gg/essential/elementa/components/GradientComponent : gg/essential/elementa/components/UIBlock {
 	public static final field Companion Lgg/essential/elementa/components/GradientComponent$Companion;
 	public fun <init> ()V
+	public fun <init> (Lgg/essential/elementa/state/State;Lgg/essential/elementa/state/State;Lgg/essential/elementa/state/State;)V
 	public fun <init> (Ljava/awt/Color;)V
 	public fun <init> (Ljava/awt/Color;Ljava/awt/Color;)V
 	public fun <init> (Ljava/awt/Color;Ljava/awt/Color;Lgg/essential/elementa/components/GradientComponent$GradientDirection;)V
@@ -655,6 +656,7 @@ public class gg/essential/elementa/components/UIShape : gg/essential/elementa/UI
 
 public class gg/essential/elementa/components/UIText : gg/essential/elementa/UIComponent {
 	public fun <init> ()V
+	public fun <init> (Lgg/essential/elementa/state/State;Lgg/essential/elementa/state/State;Lgg/essential/elementa/state/State;)V
 	public fun <init> (Ljava/lang/String;)V
 	public fun <init> (Ljava/lang/String;Z)V
 	public fun <init> (Ljava/lang/String;ZLjava/awt/Color;)V
@@ -665,7 +667,8 @@ public class gg/essential/elementa/components/UIText : gg/essential/elementa/UIC
 	public fun draw (Lgg/essential/universal/UMatrixStack;)V
 	public fun getHeight ()F
 	public final fun getShadow ()Z
-	public final fun getShadowColor ()Lgg/essential/elementa/state/State;
+	public final synthetic fun getShadowColor ()Lgg/essential/elementa/state/State;
+	public final fun getShadowColor ()Ljava/awt/Color;
 	public final fun getText ()Ljava/lang/String;
 	public final fun getTextWidth ()F
 	public fun getWidth ()F
@@ -676,6 +679,12 @@ public class gg/essential/elementa/components/UIText : gg/essential/elementa/UIC
 
 public class gg/essential/elementa/components/UIWrappedText : gg/essential/elementa/UIComponent {
 	public fun <init> ()V
+	public fun <init> (Lgg/essential/elementa/state/State;Lgg/essential/elementa/state/State;Lgg/essential/elementa/state/State;)V
+	public fun <init> (Lgg/essential/elementa/state/State;Lgg/essential/elementa/state/State;Lgg/essential/elementa/state/State;Z)V
+	public fun <init> (Lgg/essential/elementa/state/State;Lgg/essential/elementa/state/State;Lgg/essential/elementa/state/State;ZZ)V
+	public fun <init> (Lgg/essential/elementa/state/State;Lgg/essential/elementa/state/State;Lgg/essential/elementa/state/State;ZZF)V
+	public fun <init> (Lgg/essential/elementa/state/State;Lgg/essential/elementa/state/State;Lgg/essential/elementa/state/State;ZZFLjava/lang/String;)V
+	public synthetic fun <init> (Lgg/essential/elementa/state/State;Lgg/essential/elementa/state/State;Lgg/essential/elementa/state/State;ZZFLjava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun <init> (Ljava/lang/String;)V
 	public fun <init> (Ljava/lang/String;Z)V
 	public fun <init> (Ljava/lang/String;ZLjava/awt/Color;)V
@@ -689,7 +698,8 @@ public class gg/essential/elementa/components/UIWrappedText : gg/essential/eleme
 	public final fun bindText (Lgg/essential/elementa/state/State;)Lgg/essential/elementa/components/UIWrappedText;
 	public fun draw (Lgg/essential/universal/UMatrixStack;)V
 	public final fun getShadow ()Z
-	public final fun getShadowColor ()Lgg/essential/elementa/state/State;
+	public final synthetic fun getShadowColor ()Lgg/essential/elementa/state/State;
+	public final fun getShadowColor ()Ljava/awt/Color;
 	public final fun getText ()Ljava/lang/String;
 	public final fun getTextWidth ()F
 	public final fun setShadow (Z)Lgg/essential/elementa/components/UIWrappedText;

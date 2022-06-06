@@ -5,6 +5,7 @@ import gg.essential.elementa.UIConstraints
 import gg.essential.elementa.constraints.CenterConstraint
 import gg.essential.elementa.dsl.width
 import gg.essential.elementa.state.BasicState
+import gg.essential.elementa.state.MappedState
 import gg.essential.elementa.state.State
 import gg.essential.elementa.state.pixels
 import gg.essential.universal.UGraphics
@@ -15,14 +16,16 @@ import java.awt.Color
  * Simple text component that draws its given `text` at the scale determined by
  * this component's width & height constraints.
  */
-open class UIText @JvmOverloads constructor(
-    text: String = "",
-    shadow: Boolean = true,
-    shadowColor: Color? = null
-) : UIComponent() {
-    private val textState = BasicState(text).map { it } // extra map so we can easily rebind it
-    private var shadowState: State<Boolean> = BasicState(shadow)
-    private var shadowColorState: State<Color?> = BasicState(shadowColor)
+open class UIText constructor(text: State<String>, shadow: State<Boolean>, shadowColor: State<Color?>) : UIComponent() {
+    @JvmOverloads constructor(
+        text: String = "",
+        shadow: Boolean = true,
+        shadowColor: Color? = null
+    ) : this(BasicState(text), BasicState(shadow), BasicState(shadowColor))
+
+    private val textState: MappedState<String, String> = text.map { it } // extra map so we can easily rebind it
+    private val shadowState: MappedState<Boolean, Boolean> = shadow.map { it }
+    private val shadowColorState: MappedState<Color?, Color?> = shadowColor.map { it }
     private val textScaleState = constraints.asState { getTextScale() }
     /** Guess on whether we should be trying to center or top-align this component. See [BELOW_LINE_HEIGHT]. */
     private val verticallyCenteredState = constraints.asState { y is CenterConstraint }
@@ -54,11 +57,11 @@ open class UIText @JvmOverloads constructor(
     }
 
     fun bindShadow(newShadowState: State<Boolean>) = apply {
-        this.shadowState = newShadowState
+        shadowState.rebind(newShadowState)
     }
 
     fun bindShadowColor(newShadowColorState: State<Color?>) = apply {
-        this.shadowColorState = newShadowColorState
+        shadowColorState.rebind(newShadowColorState)
     }
 
     fun getText() = textState.get()
@@ -67,7 +70,11 @@ open class UIText @JvmOverloads constructor(
     fun getShadow() = shadowState.get()
     fun setShadow(shadow: Boolean) = apply { shadowState.set(shadow) }
 
-    fun getShadowColor() = shadowColorState
+    @Deprecated("Wrong return type", level = DeprecationLevel.HIDDEN)
+    @JvmName("getShadowColor")
+    fun getShadowColorState(): State<Color?> = shadowColorState
+
+    fun getShadowColor(): Color? = shadowColorState.get()
     fun setShadowColor(shadowColor: Color?) = apply { shadowColorState.set(shadowColor) }
 
     /**
