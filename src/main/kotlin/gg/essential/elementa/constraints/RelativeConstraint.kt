@@ -3,6 +3,7 @@ package gg.essential.elementa.constraints
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.constraints.resolution.ConstraintVisitor
 import gg.essential.elementa.state.BasicState
+import gg.essential.elementa.state.MappedState
 import gg.essential.elementa.state.State
 
 /**
@@ -14,14 +15,14 @@ class RelativeConstraint @JvmOverloads constructor(value: Float = 1f) : Position
     override var recalculate = true
     override var constrainTo: UIComponent? = null
 
-    private var valueState: State<Float> = BasicState(value)
+    private val valueState: MappedState<Float, Float> = BasicState(value).map { it }
 
     var value: Float
         get() = valueState.get()
         set(value) { valueState.set(value) }
 
     fun bindValue(newState: State<Float>) = apply {
-        valueState = newState
+        valueState.rebind(newState)
     }
 
     override fun getXPositionImpl(component: UIComponent): Float {

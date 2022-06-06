@@ -1285,6 +1285,7 @@ public final class gg/essential/elementa/constraints/AdditiveConstraint : gg/ess
 
 public final class gg/essential/elementa/constraints/AlphaAspectColorConstraint : gg/essential/elementa/constraints/ColorConstraint {
 	public fun <init> ()V
+	public fun <init> (Lgg/essential/elementa/state/State;Lgg/essential/elementa/state/State;)V
 	public fun <init> (Ljava/awt/Color;F)V
 	public synthetic fun <init> (Ljava/awt/Color;FILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun bindAlpha (Lgg/essential/elementa/state/State;)Lgg/essential/elementa/constraints/AlphaAspectColorConstraint;
@@ -1478,6 +1479,7 @@ public final class gg/essential/elementa/constraints/ColorConstraint$DefaultImpl
 
 public final class gg/essential/elementa/constraints/ConstantColorConstraint : gg/essential/elementa/constraints/ColorConstraint {
 	public fun <init> ()V
+	public fun <init> (Lgg/essential/elementa/state/State;)V
 	public fun <init> (Ljava/awt/Color;)V
 	public synthetic fun <init> (Ljava/awt/Color;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun bindColor (Lgg/essential/elementa/state/State;)Lgg/essential/elementa/constraints/ConstantColorConstraint;
@@ -1766,6 +1768,10 @@ public final class gg/essential/elementa/constraints/PixelConstraint : gg/essent
 	public fun <init> (FZ)V
 	public fun <init> (FZZ)V
 	public synthetic fun <init> (FZZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lgg/essential/elementa/state/State;)V
+	public fun <init> (Lgg/essential/elementa/state/State;Lgg/essential/elementa/state/State;)V
+	public fun <init> (Lgg/essential/elementa/state/State;Lgg/essential/elementa/state/State;Lgg/essential/elementa/state/State;)V
+	public synthetic fun <init> (Lgg/essential/elementa/state/State;Lgg/essential/elementa/state/State;Lgg/essential/elementa/state/State;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun bindAlignOpposite (Lgg/essential/elementa/state/State;)Lgg/essential/elementa/constraints/PixelConstraint;
 	public final fun bindAlignOutside (Lgg/essential/elementa/state/State;)Lgg/essential/elementa/constraints/PixelConstraint;
 	public final fun bindValue (Lgg/essential/elementa/state/State;)Lgg/essential/elementa/constraints/PixelConstraint;
@@ -1919,6 +1925,7 @@ public final class gg/essential/elementa/constraints/RoundingConstraint$Mode : j
 
 public final class gg/essential/elementa/constraints/ScaleConstraint : gg/essential/elementa/constraints/MasterConstraint {
 	public fun <init> (Lgg/essential/elementa/constraints/SuperConstraint;F)V
+	public fun <init> (Lgg/essential/elementa/constraints/SuperConstraint;Lgg/essential/elementa/state/State;)V
 	public fun animationFrame ()V
 	public final fun bindValue (Lgg/essential/elementa/state/State;)Lgg/essential/elementa/constraints/ScaleConstraint;
 	public fun getCachedValue ()Ljava/lang/Float;
@@ -2586,14 +2593,8 @@ public final class gg/essential/elementa/effects/OutlineEffect$Side : java/lang/
 
 public final class gg/essential/elementa/effects/RecursiveFadeEffect : gg/essential/elementa/effects/Effect {
 	public fun <init> ()V
-	public fun <init> (F)V
-	public synthetic fun <init> (FILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public fun <init> (Lgg/essential/elementa/state/State;)V
 	public fun <init> (Lgg/essential/elementa/state/State;Lgg/essential/elementa/state/State;)V
 	public synthetic fun <init> (Lgg/essential/elementa/state/State;Lgg/essential/elementa/state/State;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public fun <init> (Z)V
-	public fun <init> (ZF)V
-	public synthetic fun <init> (ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun rebindIsOverridden (Lgg/essential/elementa/state/State;)Lgg/essential/elementa/effects/RecursiveFadeEffect;
 	public final fun rebindOverriddenAlphaPercentage (Lgg/essential/elementa/state/State;)Lgg/essential/elementa/effects/RecursiveFadeEffect;
 	public final fun remove ()V

@@ -15,16 +15,10 @@ import kotlin.math.roundToInt
 /**
  * Fades a component's color as well as all of its children.
  */
-class RecursiveFadeEffect @JvmOverloads constructor(
+class RecursiveFadeEffect constructor(
     isOverridden: State<Boolean> = BasicState(false),
     overriddenAlphaPercentage: State<Float> = BasicState(1f)
 ) : Effect() {
-    constructor(
-        isOverridden: Boolean,
-        overriddenAlphaPercentage: Float
-    ) : this(BasicState(isOverridden), BasicState(overriddenAlphaPercentage))
-    constructor(isOverridden: Boolean = false) : this(isOverridden, 1f)
-    constructor(overriddenAlphaPercentage: Float = 1f) : this(false, overriddenAlphaPercentage)
     private val isOverridden: MappedState<Boolean, Boolean> = isOverridden.map { it }
     private val overriddenAlphaPercentage: MappedState<Float, Float> = overriddenAlphaPercentage.map { it }
 
