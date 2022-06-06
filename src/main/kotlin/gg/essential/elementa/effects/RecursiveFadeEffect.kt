@@ -5,8 +5,8 @@ import gg.essential.elementa.constraints.ColorConstraint
 import gg.essential.elementa.constraints.ConstraintType
 import gg.essential.elementa.constraints.resolution.ConstraintVisitor
 import gg.essential.elementa.dsl.constrain
-import gg.essential.elementa.effects.Effect
 import gg.essential.elementa.state.BasicState
+import gg.essential.elementa.state.MappedState
 import gg.essential.elementa.state.State
 import gg.essential.elementa.utils.withAlpha
 import java.awt.Color
@@ -15,16 +15,25 @@ import kotlin.math.roundToInt
 /**
  * Fades a component's color as well as all of its children.
  */
-class RecursiveFadeEffect(
-    private var isOverridden: State<Boolean> = BasicState(false),
-    private var overriddenAlphaPercentage: State<Float> = BasicState(1f)
+class RecursiveFadeEffect @JvmOverloads constructor(
+    isOverridden: State<Boolean> = BasicState(false),
+    overriddenAlphaPercentage: State<Float> = BasicState(1f)
 ) : Effect() {
+    constructor(
+        isOverridden: Boolean,
+        overriddenAlphaPercentage: Float
+    ) : this(BasicState(isOverridden), BasicState(overriddenAlphaPercentage))
+    constructor(isOverridden: Boolean = false) : this(isOverridden, 1f)
+    constructor(overriddenAlphaPercentage: Float = 1f) : this(false, overriddenAlphaPercentage)
+    private val isOverridden: MappedState<Boolean, Boolean> = isOverridden.map { it }
+    private val overriddenAlphaPercentage: MappedState<Float, Float> = overriddenAlphaPercentage.map { it }
+
     fun rebindIsOverridden(state: State<Boolean>) = apply {
-        isOverridden = state
+        isOverridden.rebind(state)
     }
 
     fun rebindOverriddenAlphaPercentage(state: State<Float>) = apply {
-        overriddenAlphaPercentage = state
+        overriddenAlphaPercentage.rebind(state)
     }
 
     override fun setup() {

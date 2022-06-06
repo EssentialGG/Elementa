@@ -2547,6 +2547,11 @@ public abstract class gg/essential/elementa/effects/Effect {
 }
 
 public final class gg/essential/elementa/effects/OutlineEffect : gg/essential/elementa/effects/Effect {
+	public fun <init> (Lgg/essential/elementa/state/State;Lgg/essential/elementa/state/State;)V
+	public fun <init> (Lgg/essential/elementa/state/State;Lgg/essential/elementa/state/State;Z)V
+	public fun <init> (Lgg/essential/elementa/state/State;Lgg/essential/elementa/state/State;ZZ)V
+	public fun <init> (Lgg/essential/elementa/state/State;Lgg/essential/elementa/state/State;ZZLjava/util/Set;)V
+	public synthetic fun <init> (Lgg/essential/elementa/state/State;Lgg/essential/elementa/state/State;ZZLjava/util/Set;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun <init> (Ljava/awt/Color;F)V
 	public fun <init> (Ljava/awt/Color;FZ)V
 	public fun <init> (Ljava/awt/Color;FZZ)V
@@ -2581,8 +2586,14 @@ public final class gg/essential/elementa/effects/OutlineEffect$Side : java/lang/
 
 public final class gg/essential/elementa/effects/RecursiveFadeEffect : gg/essential/elementa/effects/Effect {
 	public fun <init> ()V
+	public fun <init> (F)V
+	public synthetic fun <init> (FILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lgg/essential/elementa/state/State;)V
 	public fun <init> (Lgg/essential/elementa/state/State;Lgg/essential/elementa/state/State;)V
 	public synthetic fun <init> (Lgg/essential/elementa/state/State;Lgg/essential/elementa/state/State;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Z)V
+	public fun <init> (ZF)V
+	public synthetic fun <init> (ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun rebindIsOverridden (Lgg/essential/elementa/state/State;)Lgg/essential/elementa/effects/RecursiveFadeEffect;
 	public final fun rebindOverriddenAlphaPercentage (Lgg/essential/elementa/state/State;)Lgg/essential/elementa/effects/RecursiveFadeEffect;
 	public final fun remove ()V
