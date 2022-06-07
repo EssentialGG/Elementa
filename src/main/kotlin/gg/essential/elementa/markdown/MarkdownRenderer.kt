@@ -177,7 +177,7 @@ private class MarkdownRendererImpl(
     }
 
     override fun visit(indentedCodeBlock: IndentedCodeBlock) {
-        //TODO("Not yet implemented")
+        drawables.add(CodeBlockDrawable(md, indentedCodeBlock.literal))
     }
 
     override fun visit(link: Link) {
