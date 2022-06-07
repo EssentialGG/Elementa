@@ -39,6 +39,7 @@ private class MarkdownRendererImpl(
     fun render(): DrawableList {
         val enabledBlockTypes = mutableSetOf<Class<out Block>>()
         with(enabledBlockTypes) {
+            add(ThematicBreak::class.java) // commonmark disables this, ¯\_(ツ)_/¯
             if (config.headerConfig.enabled) add(Heading::class.java)
             if (config.codeBlockConfig.enabled) {
                 add(FencedCodeBlock::class.java)
@@ -156,7 +157,7 @@ private class MarkdownRendererImpl(
     }
 
     override fun visit(thematicBreak: ThematicBreak) {
-        //TODO("Not yet implemented")
+        drawables.add(ThematicBreakDrawable(md))
     }
 
     override fun visit(htmlInline: HtmlInline) {

@@ -1,10 +1,7 @@
 package gg.essential.elementa.markdown.selection
 
 import gg.essential.elementa.markdown.DrawState
-import gg.essential.elementa.markdown.drawables.CodeBlockDrawable
-import gg.essential.elementa.markdown.drawables.Drawable
-import gg.essential.elementa.markdown.drawables.ImageDrawable
-import gg.essential.elementa.markdown.drawables.TextDrawable
+import gg.essential.elementa.markdown.drawables.*
 import gg.essential.universal.UMatrixStack
 
 class Selection private constructor(val start: Cursor<*>, val end: Cursor<*>) {
@@ -116,6 +113,7 @@ class Selection private constructor(val start: Cursor<*>, val end: Cursor<*>) {
             }
             is ImageDrawable -> drawable.selected = selected
             is CodeBlockDrawable -> drawable.selection = start..end
+            is ThematicBreakDrawable -> {} // no-op as there's no text
             else -> throw IllegalArgumentException()
         }
     }
