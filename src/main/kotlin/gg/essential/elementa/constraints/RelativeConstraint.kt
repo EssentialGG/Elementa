@@ -10,12 +10,13 @@ import gg.essential.elementa.state.State
  * Sets this component's X/Y position or width/height to be some
  * multiple of its parents.
  */
-class RelativeConstraint @JvmOverloads constructor(value: Float = 1f) : PositionConstraint, SizeConstraint {
+class RelativeConstraint constructor(value: State<Float>) : PositionConstraint, SizeConstraint {
+    @JvmOverloads constructor(value: Float = 1f) : this(BasicState(value))
     override var cachedValue = 0f
     override var recalculate = true
     override var constrainTo: UIComponent? = null
 
-    private val valueState: MappedState<Float, Float> = BasicState(value).map { it }
+    private val valueState: MappedState<Float, Float> = value.map { it }
 
     var value: Float
         get() = valueState.get()
