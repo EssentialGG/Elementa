@@ -16,7 +16,12 @@ import java.awt.Color
  * Simple text component that draws its given `text` at the scale determined by
  * this component's width & height constraints.
  */
-open class UIText constructor(text: State<String>, shadow: State<Boolean>, shadowColor: State<Color?>) : UIComponent() {
+open class UIText
+constructor(
+    text: State<String>,
+    shadow: State<Boolean> = BasicState(true),
+    shadowColor: State<Color?> = BasicState(null)
+) : UIComponent() {
     @JvmOverloads constructor(
         text: String = "",
         shadow: Boolean = true,
