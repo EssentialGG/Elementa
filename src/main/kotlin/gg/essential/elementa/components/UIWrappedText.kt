@@ -21,8 +21,8 @@ import java.awt.Color
  */
 open class UIWrappedText @JvmOverloads constructor(
     text: State<String>,
-    shadow: State<Boolean>,
-    shadowColor: State<Color?>,
+    shadow: State<Boolean> = BasicState(true),
+    shadowColor: State<Color?> = BasicState(null),
     private var centered: Boolean = false,
     /**
      * Keeps the rendered text within the bounds of the component,

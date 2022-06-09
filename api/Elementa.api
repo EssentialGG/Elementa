@@ -680,6 +680,8 @@ public class gg/essential/elementa/components/UIText : gg/essential/elementa/UIC
 
 public class gg/essential/elementa/components/UIWrappedText : gg/essential/elementa/UIComponent {
 	public fun <init> ()V
+	public fun <init> (Lgg/essential/elementa/state/State;)V
+	public fun <init> (Lgg/essential/elementa/state/State;Lgg/essential/elementa/state/State;)V
 	public fun <init> (Lgg/essential/elementa/state/State;Lgg/essential/elementa/state/State;Lgg/essential/elementa/state/State;)V
 	public fun <init> (Lgg/essential/elementa/state/State;Lgg/essential/elementa/state/State;Lgg/essential/elementa/state/State;Z)V
 	public fun <init> (Lgg/essential/elementa/state/State;Lgg/essential/elementa/state/State;Lgg/essential/elementa/state/State;ZZ)V
