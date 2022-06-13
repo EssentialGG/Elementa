@@ -2,6 +2,7 @@ package gg.essential.elementa.effects
 
 import gg.essential.elementa.components.UIBlock
 import gg.essential.elementa.state.BasicState
+import gg.essential.elementa.state.MappedState
 import gg.essential.elementa.state.State
 import gg.essential.universal.UMatrixStack
 import java.awt.Color
@@ -12,19 +13,27 @@ import java.awt.Color
  * so all children will render above the outline.
  */
 class OutlineEffect @JvmOverloads constructor(
-    color: Color,
-    width: Float,
+    color: State<Color>,
+    width: State<Float>,
     var drawAfterChildren: Boolean = false,
     var drawInsideChildren: Boolean = false,
     sides: Set<Side> = setOf(Side.Left, Side.Top, Side.Right, Side.Bottom)
 ) : Effect() {
+    @JvmOverloads constructor(
+        color: Color,
+        width: Float,
+        drawAfterChildren: Boolean = false,
+        drawInsideChildren: Boolean = false,
+        sides: Set<Side> = setOf(Side.Left, Side.Top, Side.Right, Side.Bottom)
+    ) : this(BasicState(color), BasicState(width), drawAfterChildren, drawInsideChildren, sides)
+
     private var hasLeft = Side.Left in sides
     private var hasTop = Side.Top in sides
     private var hasRight = Side.Right in sides
     private var hasBottom = Side.Bottom in sides
 
-    private var colorState: State<Color> = BasicState(color)
-    private var widthState: State<Float> = BasicState(width)
+    private val colorState: MappedState<Color, Color> = color.map { it }
+    private val widthState: MappedState<Float, Float> = width.map { it }
 
     var color: Color
         get() = colorState.get()
@@ -39,11 +48,11 @@ class OutlineEffect @JvmOverloads constructor(
         }
 
     fun bindColor(state: State<Color>) = apply {
-        colorState = state
+        colorState.rebind(state)
     }
 
     fun bindWidth(state: State<Float>) = apply {
-        widthState = state
+        widthState.rebind(state)
     }
 
     var sides = sides

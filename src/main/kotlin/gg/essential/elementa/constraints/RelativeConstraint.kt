@@ -3,25 +3,27 @@ package gg.essential.elementa.constraints
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.constraints.resolution.ConstraintVisitor
 import gg.essential.elementa.state.BasicState
+import gg.essential.elementa.state.MappedState
 import gg.essential.elementa.state.State
 
 /**
  * Sets this component's X/Y position or width/height to be some
  * multiple of its parents.
  */
-class RelativeConstraint @JvmOverloads constructor(value: Float = 1f) : PositionConstraint, SizeConstraint {
+class RelativeConstraint constructor(value: State<Float>) : PositionConstraint, SizeConstraint {
+    @JvmOverloads constructor(value: Float = 1f) : this(BasicState(value))
     override var cachedValue = 0f
     override var recalculate = true
     override var constrainTo: UIComponent? = null
 
-    private var valueState: State<Float> = BasicState(value)
+    private val valueState: MappedState<Float, Float> = value.map { it }
 
     var value: Float
         get() = valueState.get()
         set(value) { valueState.set(value) }
 
     fun bindValue(newState: State<Float>) = apply {
-        valueState = newState
+        valueState.rebind(newState)
     }
 
     override fun getXPositionImpl(component: UIComponent): Float {

@@ -5,6 +5,7 @@ import gg.essential.elementa.constraints.resolution.ConstraintVisitor
 import gg.essential.elementa.state.BasicState
 import gg.essential.elementa.state.State
 import gg.essential.elementa.dsl.*
+import gg.essential.elementa.state.MappedState
 import java.awt.Color
 import kotlin.math.sin
 import kotlin.random.Random
@@ -12,19 +13,20 @@ import kotlin.random.Random
 /**
  * Sets the color to be a constant, determined color.
  */
-class ConstantColorConstraint(color: Color = Color.WHITE) : ColorConstraint {
+class ConstantColorConstraint(color: State<Color>) : ColorConstraint {
+    @JvmOverloads constructor(color: Color = Color.WHITE) : this(BasicState(color))
     override var cachedValue: Color = Color.WHITE
     override var recalculate = true
     override var constrainTo: UIComponent? = null
 
-    private var colorState: State<Color> = BasicState(color)
+    private val colorState: MappedState<Color, Color> = color.map { it }
 
     var color: Color
         get() = colorState.get()
         set(value) { colorState.set(value) }
 
     fun bindColor(newState: State<Color>) = apply {
-        colorState = newState
+        colorState.rebind(newState)
     }
 
     override fun getColorImpl(component: UIComponent): Color {
@@ -43,13 +45,15 @@ class ConstantColorConstraint(color: Color = Color.WHITE) : ColorConstraint {
 /**
  * Sets the color to be constant but with an alpha based off of its parent.
  */
-class AlphaAspectColorConstraint(color: Color = Color.WHITE, alphaValue: Float = 1f) : ColorConstraint {
+class AlphaAspectColorConstraint(color: State<Color>, alphaValue: State<Float>) : ColorConstraint {
+    constructor(color: Color = Color.WHITE, alphaValue: Float = 1f) : this(BasicState(color), BasicState(alphaValue))
+    constructor() : this(Color.WHITE, 1f)
     override var cachedValue: Color = Color.WHITE
     override var recalculate = true
     override var constrainTo: UIComponent? = null
 
-    private var colorState: State<Color> = BasicState(color)
-    private var alphaState: State<Float> = BasicState(alphaValue)
+    private val colorState: MappedState<Color, Color> = color.map { it }
+    private val alphaState: MappedState<Float, Float> = alphaValue.map { it }
 
     var color: Color
         get() = colorState.get()
@@ -59,11 +63,11 @@ class AlphaAspectColorConstraint(color: Color = Color.WHITE, alphaValue: Float =
         set(value) { alphaState.set(value) }
 
     fun bindColor(newState: State<Color>) = apply {
-        colorState = newState
+        colorState.rebind(newState)
     }
 
     fun bindAlpha(newState: State<Float>) = apply {
-        alphaState = newState
+        alphaState.rebind(newState)
     }
 
     override fun getColorImpl(component: UIComponent): Color {

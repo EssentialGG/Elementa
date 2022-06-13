@@ -3,6 +3,8 @@ package gg.essential.elementa.components.input
 import gg.essential.elementa.dsl.pixels
 import gg.essential.elementa.dsl.width
 import gg.essential.elementa.state.BasicState
+import gg.essential.elementa.state.MappedState
+import gg.essential.elementa.state.State
 import java.awt.Color
 
 open class UIPasswordInput @JvmOverloads constructor(
@@ -25,7 +27,7 @@ open class UIPasswordInput @JvmOverloads constructor(
     inactiveSelectionForegroundColor,
     cursorColor
 ) {
-    private var protected: BasicState<Boolean> = BasicState(true)
+    private val protected: MappedState<Boolean, Boolean> = BasicState(true).map { it }
     private val passwordCharAsString: String = passwordChar.toString()
 
     override fun getTextForRender(): String = if (protected.get()) getProtectedString(getText()) else getText()
@@ -42,7 +44,7 @@ open class UIPasswordInput @JvmOverloads constructor(
     }
 
     fun bindProtection(protectedState: BasicState<Boolean>) = apply {
-        protected = protectedState
+        protected.rebind(protectedState)
     }
 
     fun isProtected(): Boolean = protected.get()

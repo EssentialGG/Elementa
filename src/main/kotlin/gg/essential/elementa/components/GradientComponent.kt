@@ -1,6 +1,7 @@
 package gg.essential.elementa.components
 
 import gg.essential.elementa.state.BasicState
+import gg.essential.elementa.state.MappedState
 import gg.essential.elementa.state.State
 import gg.essential.universal.UGraphics
 import gg.essential.universal.UMatrixStack
@@ -11,21 +12,28 @@ import java.awt.Color
  * Variant of [UIBlock] with two colours that fade into each other in a
  * gradient pattern.
  */
-open class GradientComponent @JvmOverloads constructor(
-    startColor: Color = Color.WHITE,
-    endColor: Color = Color.WHITE,
-    direction: GradientDirection = GradientDirection.TOP_TO_BOTTOM
+open class GradientComponent constructor(
+    startColor: State<Color>,
+    endColor: State<Color>,
+    direction: State<GradientDirection>
 ) : UIBlock(Color(0, 0, 0, 0)) {
-    private var startColorState: State<Color> = BasicState(startColor)
-    private var endColorState: State<Color> = BasicState(endColor)
-    private var directionState: State<GradientDirection> = BasicState(direction)
+
+    @JvmOverloads constructor(
+        startColor: Color = Color.WHITE,
+        endColor: Color = Color.WHITE,
+        direction: GradientDirection = GradientDirection.TOP_TO_BOTTOM
+    ): this(BasicState(startColor), BasicState(endColor), BasicState(direction))
+
+    private val startColorState: MappedState<Color, Color> = startColor.map { it }
+    private val endColorState: MappedState<Color, Color> = endColor.map{ it }
+    private val directionState: MappedState<GradientDirection, GradientDirection> = direction.map { it }
 
     fun getStartColor(): Color = startColorState.get()
     fun setStartColor(startColor: Color) = apply {
         startColorState.set(startColor)
     }
     fun bindStartColor(newStartColorState: State<Color>) = apply {
-        startColorState = newStartColorState
+        startColorState.rebind(newStartColorState)
     }
 
     fun getEndColor(): Color = endColorState.get()
@@ -33,7 +41,7 @@ open class GradientComponent @JvmOverloads constructor(
         endColorState.set(endColor)
     }
     fun bindEndColor(newEndColorState: State<Color>) = apply {
-        endColorState = newEndColorState
+        endColorState.rebind(newEndColorState)
     }
 
     fun getDirection(): GradientDirection = directionState.get()
@@ -41,7 +49,7 @@ open class GradientComponent @JvmOverloads constructor(
         directionState.set(direction)
     }
     fun bindDirection(newDirectionState: State<GradientDirection>) = apply {
-        directionState = newDirectionState
+        directionState.rebind(newDirectionState)
     }
 
     override fun drawBlock(matrixStack: UMatrixStack, x: Double, y: Double, x2: Double, y2: Double) {

@@ -264,6 +264,7 @@ public abstract class gg/essential/elementa/WindowScreen : gg/essential/universa
 public class gg/essential/elementa/components/GradientComponent : gg/essential/elementa/components/UIBlock {
 	public static final field Companion Lgg/essential/elementa/components/GradientComponent$Companion;
 	public fun <init> ()V
+	public fun <init> (Lgg/essential/elementa/state/State;Lgg/essential/elementa/state/State;Lgg/essential/elementa/state/State;)V
 	public fun <init> (Ljava/awt/Color;)V
 	public fun <init> (Ljava/awt/Color;Ljava/awt/Color;)V
 	public fun <init> (Ljava/awt/Color;Ljava/awt/Color;Lgg/essential/elementa/components/GradientComponent$GradientDirection;)V
@@ -655,6 +656,8 @@ public class gg/essential/elementa/components/UIShape : gg/essential/elementa/UI
 
 public class gg/essential/elementa/components/UIText : gg/essential/elementa/UIComponent {
 	public fun <init> ()V
+	public fun <init> (Lgg/essential/elementa/state/State;Lgg/essential/elementa/state/State;Lgg/essential/elementa/state/State;)V
+	public synthetic fun <init> (Lgg/essential/elementa/state/State;Lgg/essential/elementa/state/State;Lgg/essential/elementa/state/State;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun <init> (Ljava/lang/String;)V
 	public fun <init> (Ljava/lang/String;Z)V
 	public fun <init> (Ljava/lang/String;ZLjava/awt/Color;)V
@@ -665,7 +668,8 @@ public class gg/essential/elementa/components/UIText : gg/essential/elementa/UIC
 	public fun draw (Lgg/essential/universal/UMatrixStack;)V
 	public fun getHeight ()F
 	public final fun getShadow ()Z
-	public final fun getShadowColor ()Lgg/essential/elementa/state/State;
+	public final synthetic fun getShadowColor ()Lgg/essential/elementa/state/State;
+	public final fun getShadowColor ()Ljava/awt/Color;
 	public final fun getText ()Ljava/lang/String;
 	public final fun getTextWidth ()F
 	public fun getWidth ()F
@@ -676,6 +680,14 @@ public class gg/essential/elementa/components/UIText : gg/essential/elementa/UIC
 
 public class gg/essential/elementa/components/UIWrappedText : gg/essential/elementa/UIComponent {
 	public fun <init> ()V
+	public fun <init> (Lgg/essential/elementa/state/State;)V
+	public fun <init> (Lgg/essential/elementa/state/State;Lgg/essential/elementa/state/State;)V
+	public fun <init> (Lgg/essential/elementa/state/State;Lgg/essential/elementa/state/State;Lgg/essential/elementa/state/State;)V
+	public fun <init> (Lgg/essential/elementa/state/State;Lgg/essential/elementa/state/State;Lgg/essential/elementa/state/State;Z)V
+	public fun <init> (Lgg/essential/elementa/state/State;Lgg/essential/elementa/state/State;Lgg/essential/elementa/state/State;ZZ)V
+	public fun <init> (Lgg/essential/elementa/state/State;Lgg/essential/elementa/state/State;Lgg/essential/elementa/state/State;ZZF)V
+	public fun <init> (Lgg/essential/elementa/state/State;Lgg/essential/elementa/state/State;Lgg/essential/elementa/state/State;ZZFLjava/lang/String;)V
+	public synthetic fun <init> (Lgg/essential/elementa/state/State;Lgg/essential/elementa/state/State;Lgg/essential/elementa/state/State;ZZFLjava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun <init> (Ljava/lang/String;)V
 	public fun <init> (Ljava/lang/String;Z)V
 	public fun <init> (Ljava/lang/String;ZLjava/awt/Color;)V
@@ -689,7 +701,8 @@ public class gg/essential/elementa/components/UIWrappedText : gg/essential/eleme
 	public final fun bindText (Lgg/essential/elementa/state/State;)Lgg/essential/elementa/components/UIWrappedText;
 	public fun draw (Lgg/essential/universal/UMatrixStack;)V
 	public final fun getShadow ()Z
-	public final fun getShadowColor ()Lgg/essential/elementa/state/State;
+	public final synthetic fun getShadowColor ()Lgg/essential/elementa/state/State;
+	public final fun getShadowColor ()Ljava/awt/Color;
 	public final fun getText ()Ljava/lang/String;
 	public final fun getTextWidth ()F
 	public final fun setShadow (Z)Lgg/essential/elementa/components/UIWrappedText;
@@ -1275,6 +1288,7 @@ public final class gg/essential/elementa/constraints/AdditiveConstraint : gg/ess
 
 public final class gg/essential/elementa/constraints/AlphaAspectColorConstraint : gg/essential/elementa/constraints/ColorConstraint {
 	public fun <init> ()V
+	public fun <init> (Lgg/essential/elementa/state/State;Lgg/essential/elementa/state/State;)V
 	public fun <init> (Ljava/awt/Color;F)V
 	public synthetic fun <init> (Ljava/awt/Color;FILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun bindAlpha (Lgg/essential/elementa/state/State;)Lgg/essential/elementa/constraints/AlphaAspectColorConstraint;
@@ -1468,6 +1482,7 @@ public final class gg/essential/elementa/constraints/ColorConstraint$DefaultImpl
 
 public final class gg/essential/elementa/constraints/ConstantColorConstraint : gg/essential/elementa/constraints/ColorConstraint {
 	public fun <init> ()V
+	public fun <init> (Lgg/essential/elementa/state/State;)V
 	public fun <init> (Ljava/awt/Color;)V
 	public synthetic fun <init> (Ljava/awt/Color;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun bindColor (Lgg/essential/elementa/state/State;)Lgg/essential/elementa/constraints/ConstantColorConstraint;
@@ -1756,6 +1771,10 @@ public final class gg/essential/elementa/constraints/PixelConstraint : gg/essent
 	public fun <init> (FZ)V
 	public fun <init> (FZZ)V
 	public synthetic fun <init> (FZZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lgg/essential/elementa/state/State;)V
+	public fun <init> (Lgg/essential/elementa/state/State;Lgg/essential/elementa/state/State;)V
+	public fun <init> (Lgg/essential/elementa/state/State;Lgg/essential/elementa/state/State;Lgg/essential/elementa/state/State;)V
+	public synthetic fun <init> (Lgg/essential/elementa/state/State;Lgg/essential/elementa/state/State;Lgg/essential/elementa/state/State;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun bindAlignOpposite (Lgg/essential/elementa/state/State;)Lgg/essential/elementa/constraints/PixelConstraint;
 	public final fun bindAlignOutside (Lgg/essential/elementa/state/State;)Lgg/essential/elementa/constraints/PixelConstraint;
 	public final fun bindValue (Lgg/essential/elementa/state/State;)Lgg/essential/elementa/constraints/PixelConstraint;
@@ -1835,6 +1854,7 @@ public final class gg/essential/elementa/constraints/RelativeConstraint : gg/ess
 	public fun <init> ()V
 	public fun <init> (F)V
 	public synthetic fun <init> (FILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lgg/essential/elementa/state/State;)V
 	public final fun bindValue (Lgg/essential/elementa/state/State;)Lgg/essential/elementa/constraints/RelativeConstraint;
 	public fun getCachedValue ()Ljava/lang/Float;
 	public synthetic fun getCachedValue ()Ljava/lang/Object;
@@ -1909,6 +1929,7 @@ public final class gg/essential/elementa/constraints/RoundingConstraint$Mode : j
 
 public final class gg/essential/elementa/constraints/ScaleConstraint : gg/essential/elementa/constraints/MasterConstraint {
 	public fun <init> (Lgg/essential/elementa/constraints/SuperConstraint;F)V
+	public fun <init> (Lgg/essential/elementa/constraints/SuperConstraint;Lgg/essential/elementa/state/State;)V
 	public fun animationFrame ()V
 	public final fun bindValue (Lgg/essential/elementa/state/State;)Lgg/essential/elementa/constraints/ScaleConstraint;
 	public fun getCachedValue ()Ljava/lang/Float;
@@ -2537,6 +2558,11 @@ public abstract class gg/essential/elementa/effects/Effect {
 }
 
 public final class gg/essential/elementa/effects/OutlineEffect : gg/essential/elementa/effects/Effect {
+	public fun <init> (Lgg/essential/elementa/state/State;Lgg/essential/elementa/state/State;)V
+	public fun <init> (Lgg/essential/elementa/state/State;Lgg/essential/elementa/state/State;Z)V
+	public fun <init> (Lgg/essential/elementa/state/State;Lgg/essential/elementa/state/State;ZZ)V
+	public fun <init> (Lgg/essential/elementa/state/State;Lgg/essential/elementa/state/State;ZZLjava/util/Set;)V
+	public synthetic fun <init> (Lgg/essential/elementa/state/State;Lgg/essential/elementa/state/State;ZZLjava/util/Set;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun <init> (Ljava/awt/Color;F)V
 	public fun <init> (Ljava/awt/Color;FZ)V
 	public fun <init> (Ljava/awt/Color;FZZ)V

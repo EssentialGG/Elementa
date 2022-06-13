@@ -3,6 +3,7 @@ package gg.essential.elementa.constraints
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.constraints.resolution.ConstraintVisitor
 import gg.essential.elementa.state.BasicState
+import gg.essential.elementa.state.MappedState
 import gg.essential.elementa.state.State
 
 /**
@@ -10,17 +11,22 @@ import gg.essential.elementa.state.State
  * number of pixels.
  */
 class PixelConstraint @JvmOverloads constructor(
-    value: Float,
-    alignOpposite: Boolean = false,
-    alignOutside:  Boolean = false
+    value: State<Float>,
+    alignOpposite: State<Boolean> = BasicState(false),
+    alignOutside: State<Boolean> = BasicState(false)
 ) : MasterConstraint {
+    @JvmOverloads constructor(
+        value: Float,
+        alignOpposite: Boolean = false,
+        alignOutside: Boolean = false
+    ) : this(BasicState(value), BasicState(alignOpposite), BasicState(alignOutside))
     override var cachedValue = 0f
     override var recalculate = true
     override var constrainTo: UIComponent? = null
 
-    private var valueState: State<Float> = BasicState(value)
-    private var alignOppositeState: State<Boolean> = BasicState(alignOpposite)
-    private var alignOutsideState: State<Boolean> = BasicState(alignOutside)
+    private val valueState: MappedState<Float, Float> = value.map { it }
+    private val alignOppositeState: MappedState<Boolean, Boolean> = alignOpposite.map { it }
+    private val alignOutsideState: MappedState<Boolean, Boolean> = alignOutside.map { it }
 
     var value: Float
         get() = valueState.get()
@@ -33,15 +39,15 @@ class PixelConstraint @JvmOverloads constructor(
         set(value) { alignOutsideState.set(value) }
 
     fun bindValue(newState: State<Float>) = apply {
-        valueState = newState
+        valueState.rebind(newState)
     }
 
     fun bindAlignOpposite(newState: State<Boolean>) = apply {
-        alignOppositeState = newState
+        alignOppositeState.rebind(newState)
     }
 
     fun bindAlignOutside(newState: State<Boolean>) = apply {
-        alignOutsideState = newState
+        alignOutsideState.rebind(newState)
     }
 
     override fun getXPositionImpl(component: UIComponent): Float {
