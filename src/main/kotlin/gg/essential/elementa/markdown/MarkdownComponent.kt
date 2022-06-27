@@ -173,6 +173,9 @@ class MarkdownComponent(
     }
 
     override fun draw(matrixStack: UMatrixStack) {
+        if (needsInitialLayout) {
+            animationFrame()
+        }
         beforeDraw(matrixStack)
 
         val drawState = DrawState(getLeft() - baseX, getTop() - baseY)
