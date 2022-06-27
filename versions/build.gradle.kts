@@ -29,7 +29,7 @@ dependencies {
         exclude(group = "org.jetbrains.kotlin")
     }
 
-    common(project(":")) { isTransitive = false }
+    common(project(":"))
 
     if (platform.isFabric) {
         val fabricApiVersion = when(platform.mcVersion) {
