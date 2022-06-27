@@ -88,23 +88,9 @@ class ListDrawable(
             currY += elementSpacing
         }
 
-        for (drawable_ in drawables) {
-            var drawable = drawable_
+        for (drawable in drawables) {
             if (drawable is ListDrawable)
                 drawable.indentLevel = indentLevel + 1
-            if (drawable is DrawableList) {
-                // Pull out any trailing ListDrawables into their own ListElement
-                val last = drawable.last()
-                if (last is ListDrawable) {
-                    drawable = DrawableList(md, drawable.dropLast(1))
-                    addItem(drawable)
-                    index++
-                    orderedListShift++
-                    trim(last)
-                    last.isLoose = isLoose
-                    drawable = last
-                }
-            }
             addItem(drawable)
             index++
         }
