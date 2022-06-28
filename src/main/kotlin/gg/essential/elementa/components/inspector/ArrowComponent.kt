@@ -1,26 +1,31 @@
 package gg.essential.elementa.components.inspector
 
-import gg.essential.elementa.components.SVGComponent
 import gg.essential.elementa.components.TreeArrowComponent
+import gg.essential.elementa.components.UIImage
+import gg.essential.elementa.constraints.CenterConstraint
 import gg.essential.elementa.dsl.childOf
 import gg.essential.elementa.dsl.constrain
 import gg.essential.elementa.dsl.pixels
 import gg.essential.universal.UMatrixStack
 
 class ArrowComponent(private val empty: Boolean) : TreeArrowComponent() {
-    private val closedIcon = SVGComponent.ofResource("/svg/square-plus.svg").constrain {
-        width = 10.pixels()
-        height = 10.pixels()
+    private val closedIcon = UIImage.ofResourceCached("/textures/inspector/square_plus.png").constrain {
+        width = 7.pixels
+        height = 7.pixels
+        x = CenterConstraint()
+        y = CenterConstraint()
     }
-    private val openIcon = SVGComponent.ofResource("/svg/square-minus.svg").constrain {
-        width = 10.pixels()
-        height = 10.pixels()
+    private val openIcon = UIImage.ofResourceCached("/textures/inspector/square_minus.png").constrain {
+        width = 7.pixels
+        height = 7.pixels
+        x = CenterConstraint()
+        y = CenterConstraint()
     }
 
     init {
         constrain {
-            width = 10.pixels()
-            height = 10.pixels()
+            width = 10.pixels
+            height = 10.pixels
         }
 
         if (!empty)
