@@ -1,6 +1,9 @@
 package gg.essential.elementa.markdown
 
 import gg.essential.elementa.UIComponent
+import gg.essential.elementa.components.MarkdownNode
+import gg.essential.elementa.components.TreeListComponent
+import gg.essential.elementa.components.TreeNode
 import gg.essential.elementa.components.Window
 import gg.essential.elementa.constraints.HeightConstraint
 import gg.essential.elementa.dsl.pixels
@@ -18,9 +21,6 @@ import gg.essential.elementa.utils.elementaDebug
 import gg.essential.universal.UDesktop
 import gg.essential.universal.UKeyboard
 import gg.essential.universal.UMatrixStack
-import java.awt.Color
-import kotlin.math.PI
-import kotlin.math.sin
 
 /**
  * Component that parses a string as Markdown and renders it.
@@ -172,7 +172,22 @@ class MarkdownComponent(
         lastValues = currentValues
     }
 
+    /**
+     * Returns a [TreeListComponent] that contains the markdown tree.
+     */
+    internal fun createLayoutTree(): TreeListComponent {
+        val nodes = mutableListOf<TreeNode>()
+        drawables.forEach {
+            nodes.add(MarkdownNode(it))
+        }
+
+        return TreeListComponent(nodes)
+    }
+
     override fun draw(matrixStack: UMatrixStack) {
+        if (needsInitialLayout) {
+            animationFrame()
+        }
         beforeDraw(matrixStack)
 
         val drawState = DrawState(getLeft() - baseX, getTop() - baseY)
