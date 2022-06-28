@@ -1,5 +1,6 @@
 import gg.essential.gradle.multiversion.StripReferencesTransform.Companion.registerStripReferencesAttribute
 import gg.essential.gradle.util.*
+import gg.essential.gradle.util.RelocationTransform.Companion.registerRelocationAttribute
 
 plugins {
     kotlin("jvm") version "1.6.10"
@@ -13,11 +14,14 @@ kotlin.jvmToolchain {
 }
 tasks.compileKotlin.setJvmDefault("all-compatibility")
 
-val internal = makeConfigurationForInternalDependencies {
-    relocate("org.dom4j", "gg.essential.elementa.impl.dom4j")
-    relocate("org.commonmark", "gg.essential.elementa.impl.commonmark")
-    remapStringsIn("org.dom4j.DocumentFactory")
-    remapStringsIn("org.commonmark.internal.util.Html5Entities")
+val internal by configurations.creating {
+    val relocated = registerRelocationAttribute("internal-relocated") {
+        relocate("org.dom4j", "gg.essential.elementa.impl.dom4j")
+        relocate("org.commonmark", "gg.essential.elementa.impl.commonmark")
+        remapStringsIn("org.dom4j.DocumentFactory")
+        remapStringsIn("org.commonmark.internal.util.Html5Entities")
+    }
+    attributes { attribute(relocated, true) }
 }
 
 val common = registerStripReferencesAttribute("common") {
@@ -25,14 +29,15 @@ val common = registerStripReferencesAttribute("common") {
 }
 
 dependencies {
-    implementation(libs.kotlin.stdlib.jdk8)
-    implementation(libs.kotlin.reflect)
+    compileOnly(libs.kotlin.stdlib.jdk8)
+    compileOnly(libs.kotlin.reflect)
     compileOnly(libs.jetbrains.annotations)
 
     internal(libs.commonmark)
     internal(libs.commonmark.ext.gfm.strikethrough)
     internal(libs.commonmark.ext.ins)
     internal(libs.dom4j)
+    implementation(prebundle(internal))
 
     // Depending on LWJGL3 instead of 2 so we can choose opengl bindings only
     compileOnly("org.lwjgl:lwjgl-opengl:3.3.1")
