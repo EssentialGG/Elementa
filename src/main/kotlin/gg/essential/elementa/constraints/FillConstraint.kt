@@ -20,7 +20,9 @@ class FillConstraint @JvmOverloads constructor(private val useSiblings: Boolean 
         val target = constrainTo ?: component.parent
 
         return if (useSiblings) {
-            target.getWidth() - target.children.filter { it != component }.sumOf {
+            target.getRight() - component.getLeft() - target.children.filter {
+                it != component && it.getRight() > component.getLeft()
+            }.sumOf {
                 it.getWidth().toDouble()
             }.toFloat()
         } else target.getRight() - component.getLeft()
@@ -30,7 +32,9 @@ class FillConstraint @JvmOverloads constructor(private val useSiblings: Boolean 
         val target = constrainTo ?: component.parent
 
         return if (useSiblings) {
-            target.getHeight() - target.children.filter { it != component }.sumOf {
+            target.getBottom() - component.getTop() - target.children.filter {
+                it != component && it.getBottom() > component.getTop()
+            }.sumOf {
                 it.getHeight().toDouble()
             }.toFloat()
         } else target.getBottom() - component.getTop()
