@@ -54,14 +54,15 @@ open class UIImage @JvmOverloads constructor(
             imageHeight = it.height.toFloat()
             imageFuture.obtrudeValue(null)
 
-            //In versions before 1.15, we make the bufferedImage.getRGB call without the upload in the
+            // In versions before 1.15, we make the bufferedImage.getRGB call without the upload in the
             // constructor since that takes most of the CPU time and we upload the actual texture during the
             // first call to uploadTexture or getGlTextureId
             // Same for 1.15+ actually, except that it is not getRGB but serialization to byte[] (so we can re-parse it
             // as a NativeImage) which is slow.
-            texture = UGraphics.getTexture(it)
+            val texture = UGraphics.getTexture(it)
             Window.enqueueRenderOperation {
                 texture?.uploadTexture()
+                this.texture = texture
                 while (waiting.isEmpty().not())
                     waiting.poll().applyTexture(texture)
             }
