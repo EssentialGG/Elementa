@@ -734,6 +734,7 @@ public final class gg/essential/elementa/components/Window : gg/essential/elemen
 	public fun getRight ()F
 	public fun getTop ()F
 	public fun getWidth ()F
+	public fun hitTest (FF)Lgg/essential/elementa/UIComponent;
 	public final fun isAreaVisible (DDDD)Z
 	public fun keyType (CI)V
 	public fun mouseClick (DDI)V
