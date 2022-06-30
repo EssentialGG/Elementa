@@ -46,7 +46,7 @@ class Window @JvmOverloads constructor(
     }
 
     override fun hitTest(x: Float, y: Float): UIComponent =
-        floatingComponents.find { it.isPointInside(x, y) } ?: super.hitTest(x, y)
+        floatingComponents.find { it.isPointInside(x, y) }?.hitTest(x, y) ?: super.hitTest(x, y)
 
     override fun afterInitialization() {
         enqueueRenderOperation {
