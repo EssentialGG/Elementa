@@ -126,10 +126,20 @@ class ScrollComponent @JvmOverloads constructor(
         }
     }
 
+    private var lastWidth = 0f
+    private var lastHeight = 0f
     private var lastActualWidth = 0f
     private var lastActualHeight = 0f
 
     override fun draw(matrixStack: UMatrixStack) {
+        val width = getWidth()
+        val height = getHeight()
+        if (width != lastWidth || height != lastHeight) {
+            lastWidth = width
+            lastHeight = height
+            needsUpdate = true
+        }
+
         val actualWidth = calculateActualWidth()
         val actualHeight = calculateActualHeight()
         if (actualWidth != lastActualWidth || actualHeight != lastActualHeight) {
@@ -154,11 +164,11 @@ class ScrollComponent @JvmOverloads constructor(
             }
             // Run our scroll adjust event, normally updating [scrollBarGrip]
             var percent = (innerPadding - horizontalOffset) / horizontalRange.width()
-            var percentageOfParent = this.getWidth() / actualWidth
+            var percentageOfParent = width / actualWidth
             horizontalScrollAdjustEvents.forEach { it(percent, percentageOfParent) }
 
             percent = (innerPadding - verticalOffset) / verticalRange.width()
-            percentageOfParent = this.getHeight() / actualHeight
+            percentageOfParent = height / actualHeight
             verticalScrollAdjustEvents.forEach { it(percent, percentageOfParent) }
         }
 
