@@ -32,7 +32,7 @@ import gg.essential.universal.UMatrixStack
  */
 class MarkdownComponent(
     text: String,
-    val config: MarkdownConfig = MarkdownConfig(),
+    config: MarkdownConfig = MarkdownConfig(),
     private val codeFontPointSize: Float = 10f,
     private val codeFontRenderer: FontProvider = ElementaFonts.JETBRAINS_MONO,
     private val disableSelection: Boolean = false,
@@ -45,6 +45,10 @@ class MarkdownComponent(
         codeFontPointSize: Float = 10f,
         codeFontRenderer: FontProvider = ElementaFonts.JETBRAINS_MONO,
     ) : this(text, config, codeFontPointSize, codeFontRenderer, false)
+
+    private val configState = BasicState(config)
+    val config: MarkdownConfig
+        get() = configState.get()
 
     private var textState: State<String> = BasicState(text)
     private var removeListener = textState.onSetValue {
@@ -108,6 +112,10 @@ class MarkdownComponent(
                 }
             }
         }
+        configState.onSetValue {
+            reparse()
+            layout()
+        }
     }
 
     fun bindText(state: State<String>) = apply {
@@ -170,6 +178,13 @@ class MarkdownComponent(
         if (currentValues != lastValues)
             layout()
         lastValues = currentValues
+    }
+
+    /**
+     * Updates the MarkdownConfig this component uses.
+     */
+    fun updateConfig(config: MarkdownConfig)  {
+        configState.set(config)
     }
 
     /**

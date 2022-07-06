@@ -3156,6 +3156,7 @@ public final class gg/essential/elementa/markdown/MarkdownComponent : gg/essenti
 	public final fun layout ()V
 	public final fun onLinkClicked (Lkotlin/jvm/functions/Function2;)V
 	public final fun setMaxHeight (Lgg/essential/elementa/constraints/HeightConstraint;)Lgg/essential/elementa/markdown/MarkdownComponent;
+	public final fun updateConfig (Lgg/essential/elementa/markdown/MarkdownConfig;)V
 }
 
 public final class gg/essential/elementa/markdown/MarkdownComponent$Companion {
