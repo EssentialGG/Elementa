@@ -269,61 +269,55 @@ class ScrollComponent @JvmOverloads constructor(
         needsUpdate = true
     }
 
-    fun scrollToLeft(smoothScroll: Boolean = true) {
-        // This gets clamped later
-        horizontalOffset = Float.POSITIVE_INFINITY
+    fun scrollTo(
+        horizontalOffset: Float = this.horizontalOffset,
+        verticalOffset: Float = this.verticalOffset,
+        smoothScroll: Boolean = true
+    ) {
+        val horizontalRange = calculateOffsetRange(isHorizontal = true)
+        val verticalRange = calculateOffsetRange(isHorizontal = false)
+        this.horizontalOffset =
+            if (horizontalRange.isEmpty()) innerPadding else horizontalOffset.coerceIn(horizontalRange)
+        this.verticalOffset = if (verticalRange.isEmpty()) {
+            innerPadding
+        } else {
+            verticalOffset.coerceIn(verticalRange)
+        }
 
         if (smoothScroll) {
             needsUpdate = true
             return
         }
 
-        val horizontalRange = calculateOffsetRange(isHorizontal = true)
-        actualHolder.setX(horizontalRange.endInclusive.pixels())
-        horizontalScrollAdjustEvents.forEach { it(0f, this.getWidth() / calculateActualWidth()) }
+        actualHolder.setX(this.horizontalOffset.pixels())
+        actualHolder.setY(this.verticalOffset.pixels())
+        val horizontalFraction = (innerPadding - this.horizontalOffset) / horizontalRange
+        val verticalFraction = (innerPadding -this.verticalOffset) / verticalRange
+        horizontalScrollAdjustEvents.forEach { it(horizontalFraction, this.getWidth() / calculateActualWidth()) }
+        verticalScrollAdjustEvents.forEach { it(verticalFraction, this.getHeight() / calculateActualHeight()) }
+    }
+
+    private operator fun Float.div(range: ClosedFloatingPointRange<Float>): Float {
+        val width = range.width()
+        return if (width == 0f) 0f else this / width
+    }
+
+    fun scrollToLeft(smoothScroll: Boolean = true) {
+        scrollTo(horizontalOffset = Float.POSITIVE_INFINITY, smoothScroll = smoothScroll)
     }
 
     fun scrollToRight(smoothScroll: Boolean = true) {
-        // This gets clamped later
-        horizontalOffset = Float.NEGATIVE_INFINITY
-
-        if (smoothScroll) {
-            needsUpdate = true
-            return
-        }
-
-        val horizontalRange = calculateOffsetRange(isHorizontal = true)
-        actualHolder.setX(horizontalRange.start.pixels())
-        horizontalScrollAdjustEvents.forEach { it(1f, this.getWidth() / calculateActualWidth()) }
+        scrollTo(horizontalOffset = Float.NEGATIVE_INFINITY, smoothScroll = smoothScroll)
     }
 
     fun scrollToTop(smoothScroll: Boolean = true) {
-        // This gets clamped later
-        verticalOffset = Float.POSITIVE_INFINITY
-
-        if (smoothScroll) {
-            needsUpdate = true
-            return
-        }
-
-        val verticalRange = calculateOffsetRange(isHorizontal = false)
-        actualHolder.setY(verticalRange.endInclusive.pixels())
-        verticalScrollAdjustEvents.forEach { it(0f, this.getHeight() / calculateActualHeight()) }
+        scrollTo(verticalOffset = Float.POSITIVE_INFINITY, smoothScroll = smoothScroll)
     }
 
     fun scrollToBottom(smoothScroll: Boolean = true) {
-        // This gets clamped later
-        verticalOffset = Float.NEGATIVE_INFINITY
-
-        if (smoothScroll) {
-            needsUpdate = true
-            return
-        }
-
-        val verticalRange = calculateOffsetRange(isHorizontal = false)
-        actualHolder.setY(verticalRange.start.pixels())
-        verticalScrollAdjustEvents.forEach { it(1f, this.getHeight() / calculateActualHeight()) }
+        scrollTo(verticalOffset = Float.NEGATIVE_INFINITY, smoothScroll = smoothScroll)
     }
+
 
     fun filterChildren(filter: (component: UIComponent) -> Boolean) {
         actualHolder.children.clear()
