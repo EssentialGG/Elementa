@@ -421,7 +421,7 @@ class ScrollComponent @JvmOverloads constructor(
                     Animations.IN_SIN, 0.1f, basicXConstraint { component ->
                         val offset = (component.parent.getWidth() - component.getWidth()) * scrollPercentage
 
-                        if (horizontalScrollOpposite) component.parent.getRight() - component.getHeight() - offset
+                        if (horizontalScrollOpposite) component.parent.getRight() - component.getHeight() + offset
                         else component.parent.getLeft() + offset
                     }
                 )
@@ -430,7 +430,7 @@ class ScrollComponent @JvmOverloads constructor(
                     Animations.IN_SIN, 0.1f, basicYConstraint { component ->
                         val offset = (component.parent.getHeight() - component.getHeight()) * scrollPercentage
 
-                        if (verticalScrollOpposite) component.parent.getBottom() - component.getHeight() - offset
+                        if (verticalScrollOpposite) component.parent.getBottom() - component.getHeight() + offset
                         else component.parent.getTop() + offset
                     }
                 )
