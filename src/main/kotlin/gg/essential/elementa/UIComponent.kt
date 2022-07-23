@@ -33,7 +33,20 @@ import kotlin.reflect.KMutableProperty0
  * everything visible on the screen is a UIComponent.
  */
 abstract class UIComponent : Observable() {
-    var componentName: String = this.javaClass.simpleName
+
+    // Except when debugging, the component name does not need to be resolved
+    // and the performance hit of eagerly resolving the name via the java class
+    // is non-negligible. To improve this behavior, the value is defaulted to
+    // some marker value and resolved via java class only when needed. If
+    // the component name is defined via the component delegated properly,
+    // then the call to the java class is eliminated entirely.
+    var componentName: String = defaultComponentName
+        get() {
+            if (field === defaultComponentName) {
+                field = this.javaClass.simpleName
+            }
+            return field
+        }
     open val children = CopyOnWriteArrayList<UIComponent>().observable()
     val effects = mutableListOf<Effect>()
 
@@ -1166,6 +1179,9 @@ abstract class UIComponent : Observable() {
     }
 
     companion object {
+        // Default value for componentName used as marker for lazy init.
+        private val defaultComponentName = String()
+
         val DEBUG_OUTLINE_WIDTH = System.getProperty("elementa.debug.width")?.toDoubleOrNull() ?: 2.0
 
         /**
