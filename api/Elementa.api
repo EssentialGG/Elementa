@@ -778,6 +778,11 @@ public abstract interface class gg/essential/elementa/components/image/Cacheable
 	public abstract fun supply (Lgg/essential/elementa/components/image/CacheableImage;)V
 }
 
+public final class gg/essential/elementa/components/image/DefaultFailureImage : gg/essential/elementa/components/image/ImageProvider {
+	public static final field INSTANCE Lgg/essential/elementa/components/image/DefaultFailureImage;
+	public fun drawImage (Lgg/essential/universal/UMatrixStack;DDDDLjava/awt/Color;)V
+}
+
 public final class gg/essential/elementa/components/image/DefaultLoadingImage : gg/essential/elementa/components/image/ImageProvider {
 	public static final field INSTANCE Lgg/essential/elementa/components/image/DefaultLoadingImage;
 	public fun drawImage (Lgg/essential/universal/UMatrixStack;DDDDLjava/awt/Color;)V

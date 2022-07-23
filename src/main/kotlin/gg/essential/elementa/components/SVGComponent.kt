@@ -27,10 +27,6 @@ class SVGComponent(private var svg: SVG) : UIComponent(), ImageProvider {
     private lateinit var vboData: List<VBOData>
     private var needsReload = false
 
-    private val finalizeRunnable = {
-        GL15.glDeleteBuffers(vboID)
-    }
-
     fun setSVG(svg: SVG) {
         this.svg = svg
         needsReload = true
@@ -129,7 +125,12 @@ class SVGComponent(private var svg: SVG) : UIComponent(), ImageProvider {
     }
 
     fun finalize() {
-        Window.enqueueRenderOperation(finalizeRunnable)
+        val vboID = vboID
+        if (vboID != -1) {
+            Window.enqueueRenderOperation {
+                GL15.glDeleteBuffers(vboID)
+            }
+        }
     }
 
     companion object {

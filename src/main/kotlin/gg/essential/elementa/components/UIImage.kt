@@ -1,16 +1,11 @@
 package gg.essential.elementa.components
 
 import gg.essential.elementa.UIComponent
-import gg.essential.elementa.components.image.CacheableImage
-import gg.essential.elementa.components.image.DefaultLoadingImage
-import gg.essential.elementa.components.image.ImageCache
-import gg.essential.elementa.components.image.ImageProvider
-import gg.essential.elementa.svg.SVGParser
+import gg.essential.elementa.components.image.*
 import gg.essential.elementa.utils.ResourceCache
 import gg.essential.elementa.utils.drawTexture
 import gg.essential.universal.UGraphics
 import gg.essential.universal.UMatrixStack
-import gg.essential.universal.UMinecraft
 import gg.essential.universal.utils.ReleasedDynamicTexture
 import org.lwjgl.opengl.GL11
 import java.awt.Color
@@ -31,7 +26,7 @@ import javax.imageio.ImageIO
 open class UIImage @JvmOverloads constructor(
     private val imageFuture: CompletableFuture<BufferedImage>,
     private val loadingImage: ImageProvider = DefaultLoadingImage,
-    private val failureImage: ImageProvider = SVGComponent(failureSVG)
+    private val failureImage: ImageProvider = DefaultFailureImage,
 ) : UIComponent(), ImageProvider, CacheableImage {
     private var texture: ReleasedDynamicTexture? = null
 
@@ -126,7 +121,7 @@ open class UIImage @JvmOverloads constructor(
     }
 
     companion object {
-        private val failureSVG = SVGParser.parseFromResource("/svg/failure.svg")
+
         val defaultResourceCache = ResourceCache(50)
 
         @JvmStatic
