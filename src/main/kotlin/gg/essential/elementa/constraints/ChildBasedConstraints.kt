@@ -2,15 +2,22 @@ package gg.essential.elementa.constraints
 
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.constraints.resolution.ConstraintVisitor
+import gg.essential.elementa.debug.ManagedState
+import gg.essential.elementa.debug.StateRegistry
 import gg.essential.elementa.state.BasicState
 import gg.essential.elementa.state.State
+import gg.essential.elementa.utils.getValue
 
 /**
  * Sets this component's width or height to be the sum of its children's width or height
  */
-class ChildBasedSizeConstraint(val padding: State<Float>) : SizeConstraint {
+class ChildBasedSizeConstraint(
+    private val paddingState: State<Float>,
+) : SizeConstraint, StateRegistry {
 
-    constructor(padding: Float = 0f) : this(BasicState(padding))
+    @JvmOverloads constructor(padding: Float = 0f) : this(BasicState(padding))
+
+    val padding by paddingState
 
     override var cachedValue = 0f
     override var recalculate = true
@@ -20,14 +27,14 @@ class ChildBasedSizeConstraint(val padding: State<Float>) : SizeConstraint {
         val holder = (constrainTo ?: component)
         return holder.children.sumOf {
             it.getWidth() + ((it.constraints.x as? PaddingConstraint)?.getHorizontalPadding(it) ?: 0f).toDouble()
-        }.toFloat() + (holder.children.size - 1) * padding.get()
+        }.toFloat() + (holder.children.size - 1) * paddingState.get()
     }
 
     override fun getHeightImpl(component: UIComponent): Float {
         val holder = (constrainTo ?: component)
         return holder.children.sumOf {
             it.getHeight() + ((it.constraints.y as? PaddingConstraint)?.getVerticalPadding(it) ?: 0f).toDouble()
-        }.toFloat() + (holder.children.size - 1) * padding.get()
+        }.toFloat() + (holder.children.size - 1) * paddingState.get()
     }
 
     override fun getRadiusImpl(component: UIComponent): Float {
@@ -42,6 +49,10 @@ class ChildBasedSizeConstraint(val padding: State<Float>) : SizeConstraint {
             else -> throw IllegalArgumentException(type.prettyName)
         }
     }
+
+    override fun getManagedStates(): List<ManagedState> = listOf(
+        ManagedState.ManagedFloatState(paddingState, "padding", true)
+    )
 }
 
 class ChildBasedMaxSizeConstraint : SizeConstraint {

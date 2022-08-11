@@ -2,6 +2,8 @@ package gg.essential.elementa.constraints
 
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.constraints.resolution.ConstraintVisitor
+import gg.essential.elementa.debug.ManagedState
+import gg.essential.elementa.debug.StateRegistry
 import gg.essential.elementa.state.BasicState
 import gg.essential.elementa.state.MappedState
 import gg.essential.elementa.state.State
@@ -13,8 +15,8 @@ import gg.essential.elementa.state.State
 class PixelConstraint @JvmOverloads constructor(
     value: State<Float>,
     alignOpposite: State<Boolean> = BasicState(false),
-    alignOutside: State<Boolean> = BasicState(false)
-) : MasterConstraint {
+    alignOutside: State<Boolean> = BasicState(false),
+) : MasterConstraint, StateRegistry {
     @JvmOverloads constructor(
         value: Float,
         alignOpposite: Boolean = false,
@@ -133,4 +135,10 @@ class PixelConstraint @JvmOverloads constructor(
             else -> throw IllegalArgumentException(type.prettyName)
         }
     }
+
+    override fun getManagedStates(): List<ManagedState> = listOf(
+        ManagedState.ManagedFloatState(valueState, "value", true),
+        ManagedState.ManagedBooleanState(alignOppositeState, "alignOpposite", true),
+        ManagedState.ManagedBooleanState(alignOutsideState, "alignOutside", true),
+    )
 }

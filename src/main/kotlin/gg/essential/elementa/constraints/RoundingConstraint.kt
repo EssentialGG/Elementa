@@ -2,6 +2,12 @@ package gg.essential.elementa.constraints
 
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.constraints.resolution.ConstraintVisitor
+import gg.essential.elementa.debug.ManagedState
+import gg.essential.elementa.debug.StateRegistry
+import gg.essential.elementa.state.BasicState
+import gg.essential.elementa.state.State
+import gg.essential.elementa.utils.getValue
+import gg.essential.elementa.utils.setValue
 import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.round
@@ -10,10 +16,18 @@ import kotlin.math.round
  * Rounds a constraint to an Int value using one of three modes: floor,
  * ceil, and rounding. Rounding is the default.
  */
-class RoundingConstraint @JvmOverloads constructor(
+class RoundingConstraint constructor(
     val constraint: SuperConstraint<Float>,
-    var roundingMode: Mode = Mode.Round
-) : MasterConstraint {
+    private val roundingModeState: State<Mode>,
+) : MasterConstraint, StateRegistry {
+
+    @JvmOverloads constructor(
+        constraint: SuperConstraint<Float>,
+        roundingMode: Mode = Mode.Round,
+    ): this(constraint, BasicState(roundingMode))
+
+    var roundingMode by roundingModeState
+
     override var cachedValue = 0f
     override var recalculate = true
     override var constrainTo: UIComponent? = null
@@ -53,4 +67,8 @@ class RoundingConstraint @JvmOverloads constructor(
        Ceil,
        Round,
    }
+
+    override fun getManagedStates(): List<ManagedState> = listOf(
+        ManagedState.ManagedEnumState(roundingModeState, "mode", true),
+    )
 }

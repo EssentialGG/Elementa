@@ -2,6 +2,8 @@ package gg.essential.elementa.constraints
 
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.constraints.resolution.ConstraintVisitor
+import gg.essential.elementa.debug.ManagedState
+import gg.essential.elementa.debug.StateRegistry
 import gg.essential.elementa.state.BasicState
 import gg.essential.elementa.state.MappedState
 import gg.essential.elementa.state.State
@@ -10,8 +12,13 @@ import gg.essential.elementa.state.State
  * Sets this component's X/Y position or width/height to be some
  * multiple of its parents.
  */
-class RelativeConstraint constructor(value: State<Float>) : PositionConstraint, SizeConstraint {
-    @JvmOverloads constructor(value: Float = 1f) : this(BasicState(value))
+class RelativeConstraint constructor(
+    value: State<Float>,
+) : PositionConstraint, SizeConstraint, StateRegistry {
+
+    @JvmOverloads
+    constructor(value: Float = 1f) : this(BasicState(value))
+
     override var cachedValue = 0f
     override var recalculate = true
     override var constrainTo: UIComponent? = null
@@ -20,7 +27,9 @@ class RelativeConstraint constructor(value: State<Float>) : PositionConstraint, 
 
     var value: Float
         get() = valueState.get()
-        set(value) { valueState.set(value) }
+        set(value) {
+            valueState.set(value)
+        }
 
     fun bindValue(newState: State<Float>) = apply {
         valueState.rebind(newState)
@@ -62,4 +71,8 @@ class RelativeConstraint constructor(value: State<Float>) : PositionConstraint, 
             else -> throw IllegalArgumentException(type.prettyName)
         }
     }
+
+    override fun getManagedStates(): List<ManagedState> = listOf(
+        ManagedState.ManagedFloatState(valueState, "value", true),
+    )
 }

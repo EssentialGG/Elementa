@@ -3,6 +3,8 @@ package gg.essential.elementa.components
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.UIConstraints
 import gg.essential.elementa.constraints.CenterConstraint
+import gg.essential.elementa.debug.ManagedState
+import gg.essential.elementa.debug.StateRegistry
 import gg.essential.elementa.dsl.basicHeightConstraint
 import gg.essential.elementa.dsl.width
 import gg.essential.elementa.state.BasicState
@@ -31,7 +33,7 @@ open class UIWrappedText @JvmOverloads constructor(
     private val trimText: Boolean = false,
     private val lineSpacing: Float = 9f,
     private val trimmedTextSuffix: String = "..."
-) : UIComponent() {
+) : UIComponent(), StateRegistry {
     @JvmOverloads constructor(
         text: String = "",
         shadow: Boolean = true,
@@ -89,6 +91,12 @@ open class UIWrappedText @JvmOverloads constructor(
             (lines.size * lineSpacing + extraHeightState.get()) * getTextScale()
         })
     }
+
+    override fun getManagedStates(): List<ManagedState> = listOf(
+        ManagedState.ManagedStringState(textState, "text", true),
+        ManagedState.ManagedBooleanState(shadowState, "shadow", true),
+        ManagedState.ManagedColorStateNullable(shadowColorState, "shadowColor", true),
+    )
 
     fun bindText(newTextState: State<String>) = apply {
         textState.rebind(newTextState)

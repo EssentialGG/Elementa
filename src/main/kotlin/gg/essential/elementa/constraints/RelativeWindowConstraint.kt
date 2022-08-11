@@ -3,12 +3,23 @@ package gg.essential.elementa.constraints
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.components.Window
 import gg.essential.elementa.constraints.resolution.ConstraintVisitor
+import gg.essential.elementa.debug.ManagedState
+import gg.essential.elementa.debug.StateRegistry
+import gg.essential.elementa.state.BasicState
+import gg.essential.elementa.state.State
+import gg.essential.elementa.utils.getValue
 
 /**
  * Sets this component's X/Y position or width/height to be some percentage
  * of the Window
  */
-class RelativeWindowConstraint @JvmOverloads constructor(val value: Float = 1f) : PositionConstraint, SizeConstraint {
+class RelativeWindowConstraint(
+    private val valueState: State<Float>,
+) : PositionConstraint, SizeConstraint, StateRegistry {
+    @JvmOverloads constructor(value: Float = 1f): this(BasicState(value))
+
+    val value by valueState
+
     override var cachedValue = 0f
     override var recalculate = true
     override var constrainTo: UIComponent? = null
@@ -50,4 +61,8 @@ class RelativeWindowConstraint @JvmOverloads constructor(val value: Float = 1f) 
         if (constrainTo == null)
             constrainTo = Window.of(component)
     }
+
+    override fun getManagedStates(): List<ManagedState> = listOf(
+        ManagedState.ManagedFloatState(valueState, "value", true),
+    )
 }

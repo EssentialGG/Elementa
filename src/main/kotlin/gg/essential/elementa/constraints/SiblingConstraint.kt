@@ -2,6 +2,11 @@ package gg.essential.elementa.constraints
 
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.constraints.resolution.ConstraintVisitor
+import gg.essential.elementa.debug.ManagedState
+import gg.essential.elementa.debug.StateRegistry
+import gg.essential.elementa.state.BasicState
+import gg.essential.elementa.state.State
+import gg.essential.elementa.utils.getValue
 
 /**
  * Positions this component to be directly after its previous sibling.
@@ -9,10 +14,19 @@ import gg.essential.elementa.constraints.resolution.ConstraintVisitor
  * Intended for use in either the x or y direction but not both at the same time.
  * If you would like for components to try and fit inline, use [CramSiblingConstraint]
  */
-open class SiblingConstraint @JvmOverloads constructor(
-    val padding: Float = 0f,
-    val alignOpposite: Boolean = false
-) : PositionConstraint, PaddingConstraint {
+open class SiblingConstraint constructor(
+    private val paddingState: State<Float>,
+    private val alignOppositeState: State<Boolean>,
+) : PositionConstraint, PaddingConstraint, StateRegistry {
+
+    @JvmOverloads constructor(
+        padding: Float = 0f,
+        alignOpposite: Boolean = false
+    ): this(BasicState(padding), BasicState(alignOpposite))
+
+    val padding by paddingState
+    val alignOpposite by alignOppositeState
+
     override var cachedValue = 0f
     override var recalculate = true
     override var constrainTo: UIComponent? = null
@@ -188,4 +202,9 @@ open class SiblingConstraint @JvmOverloads constructor(
         val index = component.parent.children.indexOf(component)
         return if (index == 0 && constrainTo == null) 0f else padding
     }
+
+    override fun getManagedStates(): List<ManagedState> = listOf(
+        ManagedState.ManagedFloatState(paddingState, "padding", true),
+        ManagedState.ManagedBooleanState(alignOppositeState, "alignOpposite", true),
+    )
 }

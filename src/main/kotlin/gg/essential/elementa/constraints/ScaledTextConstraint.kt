@@ -3,13 +3,26 @@ package gg.essential.elementa.constraints
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.components.UIText
 import gg.essential.elementa.constraints.resolution.ConstraintVisitor
+import gg.essential.elementa.debug.ManagedState
+import gg.essential.elementa.debug.StateRegistry
+import gg.essential.elementa.state.BasicState
+import gg.essential.elementa.state.State
+import gg.essential.elementa.utils.getValue
+import gg.essential.elementa.utils.setValue
 import gg.essential.universal.UGraphics
 import java.lang.UnsupportedOperationException
 
 /**
  * Sets the width/height to be a scale of the default text width and height
  */
-class ScaledTextConstraint(var scale: Float) : SizeConstraint {
+class ScaledTextConstraint(
+    private val scaleState: State<Float>,
+) : SizeConstraint, StateRegistry {
+
+    constructor(scale: Float): this(BasicState(scale))
+
+    var scale: Float by scaleState
+
     override var cachedValue = 0f
     override var recalculate = true
     override var constrainTo: UIComponent? = null
@@ -38,4 +51,8 @@ class ScaledTextConstraint(var scale: Float) : SizeConstraint {
     }
 
     override fun visitImpl(visitor: ConstraintVisitor, type: ConstraintType) { }
+
+    override fun getManagedStates(): List<ManagedState> = listOf(
+        ManagedState.ManagedFloatState(scaleState, "scale", true),
+    )
 }

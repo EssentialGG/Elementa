@@ -2,8 +2,11 @@ package gg.essential.elementa.constraints
 
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.constraints.resolution.ConstraintVisitor
+import gg.essential.elementa.debug.ManagedState
+import gg.essential.elementa.debug.StateRegistry
 import gg.essential.elementa.state.BasicState
 import gg.essential.elementa.state.State
+import gg.essential.elementa.utils.getValue
 
 /**
  * For size:
@@ -12,7 +15,7 @@ import gg.essential.elementa.state.State
  * For position:
  * Sets the x/y position to be [value] multiple of its own y/x position respectively.
  */
-class AspectConstraint(private val value: State<Float>) : PositionConstraint, SizeConstraint {
+class AspectConstraint(private val valueState: State<Float>) : PositionConstraint, SizeConstraint, StateRegistry {
 
     @JvmOverloads constructor(value: Float = 1f) : this(BasicState(value))
 
@@ -20,24 +23,26 @@ class AspectConstraint(private val value: State<Float>) : PositionConstraint, Si
     override var recalculate = true
     override var constrainTo: UIComponent? = null
 
+    val value by valueState
+
     override fun getXPositionImpl(component: UIComponent): Float {
-        return (constrainTo ?: component).getTop() * value.get()
+        return (constrainTo ?: component).getTop() * valueState.get()
     }
 
     override fun getYPositionImpl(component: UIComponent): Float {
-        return (constrainTo ?: component).getLeft()* value.get()
+        return (constrainTo ?: component).getLeft()* valueState.get()
     }
 
     override fun getWidthImpl(component: UIComponent): Float {
-        return (constrainTo ?: component).getHeight() * value.get()
+        return (constrainTo ?: component).getHeight() * valueState.get()
     }
 
     override fun getHeightImpl(component: UIComponent): Float {
-        return (constrainTo ?: component).getWidth() * value.get()
+        return (constrainTo ?: component).getWidth() * valueState.get()
     }
 
     override fun getRadiusImpl(component: UIComponent): Float {
-        return (constrainTo ?: component).getRadius() * value.get()
+        return (constrainTo ?: component).getRadius() * valueState.get()
     }
 
     override fun visitImpl(visitor: ConstraintVisitor, type: ConstraintType) {
@@ -50,4 +55,8 @@ class AspectConstraint(private val value: State<Float>) : PositionConstraint, Si
             else -> throw IllegalArgumentException(type.prettyName)
         }
     }
+
+    override fun getManagedStates(): List<ManagedState> = listOf(
+        ManagedState.ManagedFloatState(valueState, "value", true)
+    )
 }

@@ -2,11 +2,16 @@ package gg.essential.elementa.constraints
 
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.constraints.resolution.ConstraintVisitor
+import gg.essential.elementa.debug.ManagedState
+import gg.essential.elementa.debug.StateRegistry
 import gg.essential.elementa.state.BasicState
 import gg.essential.elementa.state.MappedState
 import gg.essential.elementa.state.State
 
-class ScaleConstraint(val constraint: SuperConstraint<Float>, value: State<Float>) : MasterConstraint {
+class ScaleConstraint(
+    val constraint: SuperConstraint<Float>,
+    value: State<Float>,
+) : MasterConstraint, StateRegistry {
     constructor(constraint: SuperConstraint<Float>, value: Float) : this(constraint, BasicState(value))
     override var cachedValue = 0f
     override var recalculate = true
@@ -53,4 +58,8 @@ class ScaleConstraint(val constraint: SuperConstraint<Float>, value: State<Float
     override fun visitImpl(visitor: ConstraintVisitor, type: ConstraintType) {
         constraint.visit(visitor, type, setNewConstraint = false)
     }
+
+    override fun getManagedStates(): List<ManagedState> = listOf(
+        ManagedState.ManagedFloatState(valueState, "value", true),
+    )
 }

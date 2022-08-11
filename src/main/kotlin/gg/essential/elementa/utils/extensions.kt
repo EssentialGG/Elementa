@@ -2,17 +2,20 @@ package gg.essential.elementa.utils
 
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.components.Window
+import gg.essential.elementa.events.UIClickEvent
 import gg.essential.elementa.manager.*
 import gg.essential.elementa.manager.DefaultMousePositionManager
 import gg.essential.elementa.manager.DefaultResolutionManager
 import gg.essential.elementa.manager.KeyboardManager
 import gg.essential.elementa.manager.MousePositionManager
 import gg.essential.elementa.manager.ResolutionManager
+import gg.essential.elementa.state.State
 import gg.essential.universal.shader.BlendState
 import gg.essential.universal.shader.UShader
 import java.awt.Color
 import kotlin.math.round
 import kotlin.math.sign
+import kotlin.reflect.KProperty
 
 @Deprecated("This relies on global states", replaceWith = ReplaceWith("guiHint(roundDown, component)"))
 @Suppress("DEPRECATION")
@@ -73,3 +76,14 @@ internal val UIComponent.mousePositionManager: MousePositionManager
 
 internal val UIComponent.keyboardManager: KeyboardManager
     get() = this.window?.keyboardManager ?: DefaultKeyboardManager
+
+inline fun UIComponent.onLeftClick(crossinline method: UIComponent.(event: UIClickEvent) -> Unit) = onMouseClick {
+    if (it.mouseButton == 0) {
+        this.method(it)
+    }
+}
+
+fun <T> State<T>.onSetValueAndNow(listener: (T) -> Unit) = onSetValue(listener).also { listener(get()) }
+
+operator fun <T> State<T>.getValue(obj: Any, property: KProperty<*>): T = get()
+operator fun <T> State<T>.setValue(obj: Any, property: KProperty<*>, value: T) = set(value)
