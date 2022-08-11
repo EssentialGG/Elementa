@@ -106,7 +106,7 @@ abstract class WindowScreen @JvmOverloads constructor(
         // to type. This is a wrapper around a base LWJGL function.
         // - Keyboard.enableRepeatEvents in <= 1.12.2
         if (enableRepeatKeys)
-            UKeyboard.allowRepeatEvents(true)
+            window.keyboardManager.allowRepeatEvents(true)
     }
 
     override fun onScreenClose() {
@@ -114,11 +114,11 @@ abstract class WindowScreen @JvmOverloads constructor(
 
         // We need to disable repeat events when leaving the gui.
         if (enableRepeatKeys)
-            UKeyboard.allowRepeatEvents(false)
+            window.keyboardManager.allowRepeatEvents(false)
     }
 
     fun defaultKeyBehavior(typedChar: Char, keyCode: Int) {
-        super.onKeyPressed(keyCode, typedChar, UKeyboard.getModifiers())
+        super.onKeyPressed(keyCode, typedChar, window.keyboardManager.getModifiers())
     }
 
     /**

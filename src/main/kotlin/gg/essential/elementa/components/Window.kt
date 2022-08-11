@@ -8,8 +8,10 @@ import gg.essential.elementa.constraints.resolution.ConstraintResolverV2
 import gg.essential.elementa.effects.ScissorEffect
 import gg.essential.elementa.font.FontRenderer
 import gg.essential.elementa.impl.Platform.Companion.platform
+import gg.essential.elementa.manager.*
 import gg.essential.elementa.manager.DefaultMousePositionManager
 import gg.essential.elementa.manager.DefaultResolutionManager
+import gg.essential.elementa.manager.KeyboardManager
 import gg.essential.elementa.manager.MousePositionManager
 import gg.essential.elementa.manager.ResolutionManager
 import gg.essential.elementa.utils.elementaDev
@@ -46,6 +48,7 @@ class Window @JvmOverloads constructor(
      */
     internal var resolutionManager: ResolutionManager = DefaultResolutionManager
     internal var mousePositionManager: MousePositionManager = DefaultMousePositionManager
+    internal var keyboardManager: KeyboardManager = DefaultKeyboardManager
 
     @Deprecated("Add ElementaVersion as the first argument to opt-in to improved behavior.")
     @JvmOverloads
@@ -398,6 +401,13 @@ class Window @JvmOverloads constructor(
          */
         internal val mousePositionManager: MousePositionManager
             get() = currentWindow.get()?.mousePositionManager ?: DefaultMousePositionManager
+
+        /**
+         * Keyboard manager of the window currently being rendered or [DefaultKeyboardManager]
+         * if one cannot be resolved.
+         */
+        internal val keyboardManager: KeyboardManager
+            get() = currentWindow.get()?.keyboardManager ?: DefaultKeyboardManager
 
         fun enqueueRenderOperation(operation: Runnable) {
             renderOperations.add {
