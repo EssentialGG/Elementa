@@ -80,10 +80,10 @@ class TextDrawable(
             formattedText.substring(0, it + 1).width(scaleModifier) > maxWidth
         } ?: throw IllegalStateException("TextDrawable#split called when it should not have been called")
 
-        splitPoint = splitPoint - 1 - styleChars
+        splitPoint -= styleChars
 
         if (!breakWords) {
-            while (splitPoint > styleChars && formattedText[splitPoint - 1] != ' ') {
+            while (splitPoint > styleChars && formattedText[splitPoint] != ' ') {
                 splitPoint--
             }
 
