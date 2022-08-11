@@ -8,7 +8,9 @@ import gg.essential.elementa.constraints.resolution.ConstraintResolverV2
 import gg.essential.elementa.effects.ScissorEffect
 import gg.essential.elementa.font.FontRenderer
 import gg.essential.elementa.impl.Platform.Companion.platform
+import gg.essential.elementa.manager.DefaultMousePositionManager
 import gg.essential.elementa.manager.DefaultResolutionManager
+import gg.essential.elementa.manager.MousePositionManager
 import gg.essential.elementa.manager.ResolutionManager
 import gg.essential.elementa.utils.elementaDev
 import gg.essential.elementa.utils.requireMainThread
@@ -43,6 +45,7 @@ class Window @JvmOverloads constructor(
      *  State managers to avoid global states
      */
     internal var resolutionManager: ResolutionManager = DefaultResolutionManager
+    internal var mousePositionManager: MousePositionManager = DefaultMousePositionManager
 
     @Deprecated("Add ElementaVersion as the first argument to opt-in to improved behavior.")
     @JvmOverloads
@@ -388,6 +391,13 @@ class Window @JvmOverloads constructor(
          */
         internal val resolutionManager: ResolutionManager
             get() = currentWindow.get()?.resolutionManager ?: DefaultResolutionManager
+
+        /**
+         * Mouse position manger of the window currently being rendered or [DefaultMousePositionManager]
+         * if one cannot be resolved.
+         */
+        internal val mousePositionManager: MousePositionManager
+            get() = currentWindow.get()?.mousePositionManager ?: DefaultMousePositionManager
 
         fun enqueueRenderOperation(operation: Runnable) {
             renderOperations.add {

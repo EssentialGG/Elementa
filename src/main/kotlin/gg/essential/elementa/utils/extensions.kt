@@ -2,7 +2,9 @@ package gg.essential.elementa.utils
 
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.components.Window
+import gg.essential.elementa.manager.DefaultMousePositionManager
 import gg.essential.elementa.manager.DefaultResolutionManager
+import gg.essential.elementa.manager.MousePositionManager
 import gg.essential.elementa.manager.ResolutionManager
 import gg.essential.universal.shader.BlendState
 import gg.essential.universal.shader.UShader
@@ -63,3 +65,6 @@ val UIComponent.window: Window?
 
 internal val UIComponent.resolutionManager: ResolutionManager
     get() = this.window?.resolutionManager ?: DefaultResolutionManager
+
+internal val UIComponent.mousePositionManager: MousePositionManager
+    get() = this.window?.mousePositionManager ?: DefaultMousePositionManager

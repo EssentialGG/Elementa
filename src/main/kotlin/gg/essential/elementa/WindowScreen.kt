@@ -4,7 +4,6 @@ import gg.essential.elementa.components.Window
 import gg.essential.elementa.constraints.animation.*
 import gg.essential.universal.UKeyboard
 import gg.essential.universal.UMatrixStack
-import gg.essential.universal.UMouse
 import gg.essential.universal.UScreen
 
 import java.awt.Color
@@ -67,8 +66,8 @@ abstract class WindowScreen @JvmOverloads constructor(
         // See [ElementaVersion.V2] for more info
         val (adjustedMouseX, adjustedMouseY) =
             if (version >= ElementaVersion.v2 && (mouseX == floor(mouseX) && mouseY == floor(mouseY))) {
-                val x = UMouse.Scaled.x
-                val y = UMouse.Scaled.y
+                val x = window.mousePositionManager.scaledX
+                val y = window.mousePositionManager.scaledY
 
                 mouseX + (x - floor(x)) to mouseY + (y - floor(y))
             } else {

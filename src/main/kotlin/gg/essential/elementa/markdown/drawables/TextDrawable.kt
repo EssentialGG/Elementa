@@ -9,8 +9,8 @@ import gg.essential.elementa.markdown.HeaderLevelConfig
 import gg.essential.elementa.markdown.MarkdownComponent
 import gg.essential.elementa.markdown.MarkdownConfig
 import gg.essential.elementa.markdown.selection.TextCursor
+import gg.essential.elementa.utils.mousePositionManager
 import gg.essential.universal.UMatrixStack
-import gg.essential.universal.UMouse
 import java.awt.Color
 
 class TextDrawable(
@@ -171,8 +171,8 @@ class TextDrawable(
             }
         }
 
-        val mouseX = UMouse.Scaled.x - state.xShift
-        val mouseY = UMouse.Scaled.y - state.yShift
+        val mouseX = md.mousePositionManager.scaledX - state.xShift
+        val mouseY = md.mousePositionManager.scaledY - state.yShift
         isHovered = if (style.linkLocation != null) {
             isHovered(mouseX.toFloat(), mouseY.toFloat())
         } else false

@@ -16,7 +16,6 @@ import gg.essential.elementa.utils.*
 import gg.essential.elementa.utils.requireMainThread
 import gg.essential.elementa.utils.requireState
 import gg.essential.universal.UMatrixStack
-import gg.essential.universal.UMouse
 import org.lwjgl.opengl.GL11
 import java.awt.Color
 import java.util.*
@@ -382,7 +381,8 @@ abstract class UIComponent : Observable() {
     }
 
     protected fun getMousePosition(): Pair<Float, Float> {
-        return pixelCoordinatesToPixelCenter(UMouse.Scaled.x, UMouse.Scaled.y).let { (x, y) -> x.toFloat() to y.toFloat() }
+        return pixelCoordinatesToPixelCenter(mousePositionManager.scaledX, mousePositionManager.scaledY)
+            .let { (x, y) -> x.toFloat() to y.toFloat() }
     }
 
     internal fun pixelCoordinatesToPixelCenter(mouseX: Double, mouseY: Double): Pair<Double, Double> {
@@ -1276,13 +1276,5 @@ abstract class UIComponent : Observable() {
             } / factor
         }
 
-
-        internal fun getMouseX(): Float {
-            return UMouse.Scaled.x.toFloat()
-        }
-
-        internal fun getMouseY(): Float {
-            return UMouse.Scaled.y.toFloat()
-        }
     }
 }
