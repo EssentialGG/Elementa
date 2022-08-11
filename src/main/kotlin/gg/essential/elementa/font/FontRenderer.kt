@@ -1,6 +1,7 @@
 package gg.essential.elementa.font
 
 import gg.essential.elementa.UIComponent
+import gg.essential.elementa.components.Window
 import gg.essential.elementa.constraints.ConstraintType
 import gg.essential.elementa.constraints.resolution.ConstraintVisitor
 import gg.essential.elementa.font.data.Font
@@ -8,7 +9,6 @@ import gg.essential.elementa.font.data.Glyph
 import gg.essential.elementa.utils.readFromLegacyShader
 import gg.essential.universal.UGraphics
 import gg.essential.universal.UMatrixStack
-import gg.essential.universal.UResolution
 import gg.essential.universal.shader.BlendState
 import gg.essential.universal.shader.Float2Uniform
 import gg.essential.universal.shader.Float4Uniform
@@ -194,7 +194,7 @@ class FontRenderer(
         doffsetUniform.setValue(3.5f / currentPointSize)
 
 
-        val guiScale = UResolution.scaleFactor.toFloat()
+        val guiScale = Window.resolutionManager.scaleFactor.toFloat()
 
         //Reset
         obfuscated = false

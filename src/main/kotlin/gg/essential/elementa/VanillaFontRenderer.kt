@@ -22,6 +22,7 @@ class VanillaFontRenderer : FontProvider {
     override fun getStringHeight(string: String, pointSize: Float): Float =
         UGraphics.getFontHeight().toFloat()
 
+    @Suppress("DEPRECATION")
     override fun drawString(
         matrixStack: UMatrixStack,
         string: String,

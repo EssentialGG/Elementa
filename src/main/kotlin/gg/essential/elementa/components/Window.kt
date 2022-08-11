@@ -8,6 +8,8 @@ import gg.essential.elementa.constraints.resolution.ConstraintResolverV2
 import gg.essential.elementa.effects.ScissorEffect
 import gg.essential.elementa.font.FontRenderer
 import gg.essential.elementa.impl.Platform.Companion.platform
+import gg.essential.elementa.manager.DefaultResolutionManager
+import gg.essential.elementa.manager.ResolutionManager
 import gg.essential.elementa.utils.elementaDev
 import gg.essential.elementa.utils.requireMainThread
 import gg.essential.universal.*
@@ -37,6 +39,11 @@ class Window @JvmOverloads constructor(
 
     internal var clickInterceptor: ((mouseX: Double, mouseY: Double, button: Int) -> Boolean)? = null
 
+    /**
+     *  State managers to avoid global states
+     */
+    internal var resolutionManager: ResolutionManager = DefaultResolutionManager
+
     @Deprecated("Add ElementaVersion as the first argument to opt-in to improved behavior.")
     @JvmOverloads
     constructor(animationFPS: Int = 244) : this(ElementaVersion.v0, animationFPS)
@@ -59,6 +66,7 @@ class Window @JvmOverloads constructor(
     private fun doDraw(matrixStack: UMatrixStack) {
         if (cancelDrawing)
             return
+        currentWindow.set(this)
 
         requireMainThread()
 
@@ -137,6 +145,7 @@ class Window @JvmOverloads constructor(
                 }
             }
         }
+        currentWindow.set(null)
     }
 
     internal fun drawEmbedded(matrixStack: UMatrixStack) {
@@ -269,11 +278,11 @@ class Window @JvmOverloads constructor(
     }
 
     override fun getWidth(): Float {
-        return UResolution.scaledWidth.toFloat()
+        return resolutionManager.scaledWidth.toFloat()
     }
 
     override fun getHeight(): Float {
-        return UResolution.scaledHeight.toFloat()
+        return resolutionManager.scaledHeight.toFloat()
     }
 
     override fun getRight() = getWidth()
@@ -287,12 +296,12 @@ class Window @JvmOverloads constructor(
         ) return false
 
         val currentScissor = ScissorEffect.currentScissorState ?: return true
-        val sf = UResolution.scaleFactor
+        val sf = resolutionManager.scaleFactor
 
         val realX = currentScissor.x / sf
         val realWidth = currentScissor.width / sf
 
-        val bottomY = ((UResolution.scaledHeight * sf) - currentScissor.y) / sf
+        val bottomY = ((resolutionManager.scaledHeight * sf) - currentScissor.y) / sf
         val realHeight = currentScissor.height / sf
 
         return right > realX &&
@@ -367,6 +376,18 @@ class Window @JvmOverloads constructor(
 
     companion object {
         private val renderOperations = ConcurrentLinkedQueue<() -> Unit>()
+
+        /**
+         * Instance of the Window currently being rendered
+         */
+        internal val currentWindow: ThreadLocal<Window?> = ThreadLocal.withInitial { null }
+
+        /**
+         * Resolution manager of the window currently being rendered or [DefaultResolutionManager]
+         * if one cannot be resolved.
+         */
+        internal val resolutionManager: ResolutionManager
+            get() = currentWindow.get()?.resolutionManager ?: DefaultResolutionManager
 
         fun enqueueRenderOperation(operation: Runnable) {
             renderOperations.add {

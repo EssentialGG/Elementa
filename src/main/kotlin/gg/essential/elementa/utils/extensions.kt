@@ -2,22 +2,45 @@ package gg.essential.elementa.utils
 
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.components.Window
-import gg.essential.universal.UResolution
+import gg.essential.elementa.manager.DefaultResolutionManager
+import gg.essential.elementa.manager.ResolutionManager
 import gg.essential.universal.shader.BlendState
 import gg.essential.universal.shader.UShader
 import java.awt.Color
 import kotlin.math.round
 import kotlin.math.sign
 
+@Deprecated("This relies on global states", replaceWith = ReplaceWith("guiHint(roundDown, component)"))
+@Suppress("DEPRECATION")
 fun Float.guiHint(roundDown: Boolean) = UIComponent.guiHint(this, roundDown)
+
+@Deprecated("This relies on global states", replaceWith = ReplaceWith("guiHint(roundDown, component)"))
+@Suppress("DEPRECATION")
 fun Double.guiHint(roundDown: Boolean) = UIComponent.guiHint(this, roundDown)
 
+fun Float.guiHint(roundDown: Boolean, component: UIComponent) = UIComponent.guiHint(this, roundDown, component)
+
+fun Double.guiHint(roundDown: Boolean, component: UIComponent) = UIComponent.guiHint(this, roundDown, component)
+
+@Deprecated("This relies on global states", replaceWith = ReplaceWith("roundToRealPixels(component)"))
 fun Float.roundToRealPixels(): Float {
-    val factor = UResolution.scaleFactor.toFloat()
+    val factor = Window.resolutionManager.scaleFactor.toFloat()
     return round(this * factor).let { if (it == 0f && this != 0f) sign(this) else it } / factor
 }
+
+fun Float.roundToRealPixels(component: UIComponent): Float {
+    val factor = component.resolutionManager.scaleFactor.toFloat()
+    return round(this * factor).let { if (it == 0f && this != 0f) sign(this) else it } / factor
+}
+
+@Deprecated("This relies on global states", replaceWith = ReplaceWith("roundToRealPixels(component)"))
 fun Double.roundToRealPixels(): Double {
-    val factor = UResolution.scaleFactor
+    val factor = Window.resolutionManager.scaleFactor
+    return round(this * factor).let { if (it == 0.0 && this != 0.0) sign(this) else it } / factor
+}
+
+fun Double.roundToRealPixels(component: UIComponent): Double {
+    val factor = component.resolutionManager.scaleFactor
     return round(this * factor).let { if (it == 0.0 && this != 0.0) sign(this) else it } / factor
 }
 
@@ -34,3 +57,9 @@ internal fun UShader.Companion.readFromLegacyShader(vertName: String, fragName: 
     fromLegacyShader(readShader(vertName, "vsh"), readShader(fragName, "fsh"), blendState)
 private fun readShader(name: String, ext: String) =
     Window::class.java.getResource("/shaders/$name.$ext").readText()
+
+val UIComponent.window: Window?
+    get() = Window.ofOrNull(this)
+
+internal val UIComponent.resolutionManager: ResolutionManager
+    get() = this.window?.resolutionManager ?: DefaultResolutionManager
