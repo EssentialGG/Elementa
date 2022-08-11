@@ -11,7 +11,6 @@ import gg.essential.elementa.markdown.MarkdownConfig
 import gg.essential.elementa.markdown.selection.TextCursor
 import gg.essential.universal.UMatrixStack
 import gg.essential.universal.UMouse
-import gg.essential.universal.UResolution
 import java.awt.Color
 
 class TextDrawable(
@@ -57,7 +56,7 @@ class TextDrawable(
 
         val styleChars = style.numFormattingChars
         formattedText = formattedText.substring(0, styleChars) +
-            formattedText.substring(styleChars, formattedText.length).trimStart()
+                formattedText.substring(styleChars, formattedText.length).trimStart()
     }
 
     fun width() = formattedText.width(scaleModifier) + if (style.isCode) {
@@ -93,7 +92,7 @@ class TextDrawable(
         }
         if (splitPoint <= 0)
             splitPoint = 1
-        val first = TextDrawable(md, plainText.substring(0, splitPoint), style)
+        val first = TextDrawable(md, plainText.substring(0, splitPoint).trimEnd(), style)
         val second = TextDrawable(md, plainText.substring(splitPoint, plainText.length), style)
 
         val linkedTexts = this.linkedTexts?.also {
