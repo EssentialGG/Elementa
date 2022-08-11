@@ -2,11 +2,16 @@ package gg.essential.elementa.constraints
 
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.constraints.resolution.ConstraintVisitor
+import gg.essential.elementa.state.BasicState
+import gg.essential.elementa.state.State
 
 /**
  * Sets this component's width or height to be the sum of its children's width or height
  */
-class ChildBasedSizeConstraint(val padding: Float = 0f) : SizeConstraint {
+class ChildBasedSizeConstraint(val padding: State<Float>) : SizeConstraint {
+
+    constructor(padding: Float = 0f) : this(BasicState(padding))
+
     override var cachedValue = 0f
     override var recalculate = true
     override var constrainTo: UIComponent? = null
@@ -15,14 +20,14 @@ class ChildBasedSizeConstraint(val padding: Float = 0f) : SizeConstraint {
         val holder = (constrainTo ?: component)
         return holder.children.sumOf {
             it.getWidth() + ((it.constraints.x as? PaddingConstraint)?.getHorizontalPadding(it) ?: 0f).toDouble()
-        }.toFloat() + (holder.children.size - 1) * padding
+        }.toFloat() + (holder.children.size - 1) * padding.get()
     }
 
     override fun getHeightImpl(component: UIComponent): Float {
         val holder = (constrainTo ?: component)
         return holder.children.sumOf {
             it.getHeight() + ((it.constraints.y as? PaddingConstraint)?.getVerticalPadding(it) ?: 0f).toDouble()
-        }.toFloat() + (holder.children.size - 1) * padding
+        }.toFloat() + (holder.children.size - 1) * padding.get()
     }
 
     override fun getRadiusImpl(component: UIComponent): Float {
