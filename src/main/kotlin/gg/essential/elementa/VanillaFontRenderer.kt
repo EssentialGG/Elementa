@@ -37,7 +37,7 @@ class VanillaFontRenderer : FontProvider {
         val scaledY = y.roundToRealPixels() / scale
 
         matrixStack.scale(scale, scale, 1f)
-        if (shadowColor == null) {
+        if (shadowColor == null || !shadow) {
             UGraphics.drawString(matrixStack, string, scaledX, scaledY, color.rgb, shadow)
         } else {
             UGraphics.drawString(matrixStack, string, scaledX, scaledY, color.rgb, shadowColor.rgb)
