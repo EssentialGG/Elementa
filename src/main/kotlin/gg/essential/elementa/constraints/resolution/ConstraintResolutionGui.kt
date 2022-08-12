@@ -18,9 +18,11 @@ import java.awt.Color
 
 class ConstraintResolutionGui(
     private val guiName: String,
-    private val gui: UIComponent,
+    private val gui: Window,
     private val nodes: List<ResolverNode>?
 ) : WindowScreen(ElementaVersion.V2) {
+
+    constructor(guiName: String, gui: UIComponent, nodes: List<ResolverNode>?) : this(guiName, gui as Window, nodes)
 
     private val guiView by GuiView().constrain {
         width = 100.percent
@@ -373,7 +375,7 @@ class ConstraintResolutionGui(
             height = 100.percent
         } childOf this
 
-        val inspector by Inspector(gui) childOf this
+        val inspector by Inspector(gui) {} childOf this
 
         private val closeButton by SVGComponent.ofResource("/svg/close.svg").constrain {
             x = 2.pixels(alignOpposite = true) boundTo inspector.container

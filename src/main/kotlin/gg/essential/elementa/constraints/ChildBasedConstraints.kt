@@ -7,6 +7,7 @@ import gg.essential.elementa.debug.StateRegistry
 import gg.essential.elementa.state.BasicState
 import gg.essential.elementa.state.State
 import gg.essential.elementa.utils.getValue
+import org.jetbrains.annotations.ApiStatus
 
 /**
  * Sets this component's width or height to be the sum of its children's width or height
@@ -50,6 +51,7 @@ class ChildBasedSizeConstraint(
         }
     }
 
+    @ApiStatus.Internal
     override fun getManagedStates(): List<ManagedState> = listOf(
         ManagedState.ManagedFloatState(paddingState, "padding", true)
     )

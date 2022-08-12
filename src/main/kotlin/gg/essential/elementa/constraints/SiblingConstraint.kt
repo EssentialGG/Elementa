@@ -7,6 +7,7 @@ import gg.essential.elementa.debug.StateRegistry
 import gg.essential.elementa.state.BasicState
 import gg.essential.elementa.state.State
 import gg.essential.elementa.utils.getValue
+import org.jetbrains.annotations.ApiStatus
 
 /**
  * Positions this component to be directly after its previous sibling.
@@ -203,6 +204,7 @@ open class SiblingConstraint constructor(
         return if (index == 0 && constrainTo == null) 0f else padding
     }
 
+    @ApiStatus.Internal
     override fun getManagedStates(): List<ManagedState> = listOf(
         ManagedState.ManagedFloatState(paddingState, "padding", true),
         ManagedState.ManagedBooleanState(alignOppositeState, "alignOpposite", true),

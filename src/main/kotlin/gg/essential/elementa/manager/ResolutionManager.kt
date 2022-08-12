@@ -1,10 +1,13 @@
 package gg.essential.elementa.manager
 
+import org.jetbrains.annotations.ApiStatus
+
 
 /**
  * Provides a non-global way to access different aspects about the current resolution
  */
-internal interface ResolutionManager {
+@ApiStatus.Internal
+interface ResolutionManager {
 
     val windowWidth: Int
 

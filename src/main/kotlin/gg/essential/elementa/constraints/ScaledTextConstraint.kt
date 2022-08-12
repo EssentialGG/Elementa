@@ -10,6 +10,7 @@ import gg.essential.elementa.state.State
 import gg.essential.elementa.utils.getValue
 import gg.essential.elementa.utils.setValue
 import gg.essential.universal.UGraphics
+import org.jetbrains.annotations.ApiStatus
 import java.lang.UnsupportedOperationException
 
 /**
@@ -52,6 +53,7 @@ class ScaledTextConstraint(
 
     override fun visitImpl(visitor: ConstraintVisitor, type: ConstraintType) { }
 
+    @ApiStatus.Internal
     override fun getManagedStates(): List<ManagedState> = listOf(
         ManagedState.ManagedFloatState(scaleState, "scale", true),
     )

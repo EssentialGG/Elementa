@@ -6,25 +6,30 @@ import gg.essential.elementa.components.*
 import gg.essential.elementa.components.image.BlurHashImage
 import gg.essential.elementa.components.input.UIMultilineTextInput
 import gg.essential.elementa.components.input.UITextInput
-import gg.essential.elementa.components.inspector.Inspector
+import gg.essential.elementa.components.inspector.CompactToggle
 import gg.essential.elementa.constraints.*
+import gg.essential.elementa.debug.InspectorManager
 import gg.essential.elementa.dsl.*
 import gg.essential.elementa.effects.OutlineEffect
-import gg.essential.elementa.markdown.MarkdownComponent
+import gg.essential.elementa.markdown.*
+import gg.essential.elementa.state.BasicState
 import java.awt.Color
 import java.net.URL
 
 class ComponentsGui : WindowScreen(ElementaVersion.V2) {
     init {
-        ComponentType("UIContainer") {
-            val bar = UIBlock().constrain {
+        // Components declared through a delegated properly will have their component
+        // name set to the property name in the inspector. In this case, the component
+        // will be called "bar
+        val containerExample by ComponentType("UIContainer") {
+            val bar by UIBlock().constrain {
                 x = 2.pixels()
                 y = SiblingConstraint() + 5.pixels()
                 width = 150.pixels()
                 height = 50.pixels()
             } childOf this
 
-            val container = UIContainer().constrain {
+            val container by UIContainer().constrain {
                 x = 0.pixels(true)
                 width = ChildBasedSizeConstraint(padding = 2f)
                 height = ChildBasedMaxSizeConstraint()
@@ -39,7 +44,7 @@ class ComponentsGui : WindowScreen(ElementaVersion.V2) {
             }
         } childOf window
 
-        ComponentType("UIBlock") {
+        val blockExample by ComponentType("UIBlock") {
             UIBlock().constrain {
                 x = 2.pixels()
                 y = SiblingConstraint() + 5.pixels()
@@ -48,7 +53,7 @@ class ComponentsGui : WindowScreen(ElementaVersion.V2) {
             } childOf this
         } childOf window
 
-        ComponentType("UIText") {
+        val textExample by ComponentType("UIText") {
             UIText("This is my non-wrapping text").constrain {
                 x = 2.pixels()
                 y = SiblingConstraint() + 5.pixels()
@@ -70,7 +75,7 @@ class ComponentsGui : WindowScreen(ElementaVersion.V2) {
             } childOf this
         } childOf window
 
-        ComponentType("UIWrappedText") {
+        val wrappedTextExample by ComponentType("UIWrappedText") {
             UIWrappedText("This is my text that is wrapping at 100 pixels!").constrain {
                 x = 2.pixels()
                 y = SiblingConstraint() + 5.pixels()
@@ -93,7 +98,7 @@ class ComponentsGui : WindowScreen(ElementaVersion.V2) {
             } childOf this
         } childOf window
 
-        ComponentType("UIRoundedRectangle") {
+        val rectangleExample by ComponentType("UIRoundedRectangle") {
             UIRoundedRectangle(2f).constrain {
                 x = 2.pixels()
                 y = SiblingConstraint() + 5.pixels()
@@ -111,7 +116,7 @@ class ComponentsGui : WindowScreen(ElementaVersion.V2) {
             } childOf this
         } childOf window
 
-        ComponentType("UICircle") {
+        val circleExample by ComponentType("UICircle") {
             UICircle().constrain {
                 // These x & y positions describe the CENTER of the circle
                 x = 30.pixels()
@@ -128,7 +133,7 @@ class ComponentsGui : WindowScreen(ElementaVersion.V2) {
             } childOf this
         } childOf window
 
-        ComponentType("UIShape") {
+        val shapeExample by ComponentType("UIShape") {
             val shapeHolder = UIContainer().constrain {
                 x = 2.pixels()
                 y = SiblingConstraint() + 5.pixels()
@@ -166,7 +171,7 @@ class ComponentsGui : WindowScreen(ElementaVersion.V2) {
             }
         } childOf window
 
-        ComponentType("UIImage") {
+        val imageExample by ComponentType("UIImage") {
             UIImage.ofURL(URL("https://i.imgur.com/Pc6iMw3.png")).constrain {
                 x = 2.pixels()
                 y = SiblingConstraint() + 5.pixels()
@@ -184,7 +189,7 @@ class ComponentsGui : WindowScreen(ElementaVersion.V2) {
             } childOf this
         } childOf window
 
-        ComponentType("BlurHashImage") {
+        val blurHashImageExample by ComponentType("BlurHashImage") {
             BlurHashImage("L4ESU,OD1e#:=GwwJSAr1M,r|]Ar").constrain {
                 x = 2.pixels()
                 y = SiblingConstraint() + 5.pixels()
@@ -202,8 +207,8 @@ class ComponentsGui : WindowScreen(ElementaVersion.V2) {
             } childOf this
         } childOf window
 
-        ComponentType("Text Input") {
-            val box1 = UIBlock(Color(50, 50, 50)).constrain {
+        val textInputExample by ComponentType("Text Input") {
+            val box1 by UIBlock(Color(50, 50, 50)).constrain {
                 x = 2.pixels()
                 y = SiblingConstraint() + 5.pixels()
 
@@ -211,7 +216,7 @@ class ComponentsGui : WindowScreen(ElementaVersion.V2) {
                 height = 12.pixels()
             } childOf this
 
-            val textInput1 = UITextInput("My single line text input!").constrain {
+            val textInput1 by UITextInput("My single line text input!").constrain {
                 x = 2.pixels()
                 y = 2.pixels()
 
@@ -220,7 +225,7 @@ class ComponentsGui : WindowScreen(ElementaVersion.V2) {
 
             box1.onMouseClick { textInput1.grabWindowFocus() }
 
-            val box2 = UIBlock(Color(50, 50, 50)).constrain {
+            val box2 by UIBlock(Color(50, 50, 50)).constrain {
                 x = 2.pixels()
                 y = SiblingConstraint() + 5.pixels()
 
@@ -228,7 +233,7 @@ class ComponentsGui : WindowScreen(ElementaVersion.V2) {
                 height = ChildBasedSizeConstraint() + 4.pixels()
             } childOf this
 
-            val textInput2 = UIMultilineTextInput("My multiline text input!").constrain {
+            val textInput2 by UIMultilineTextInput("My multiline text input!").constrain {
                 x = 2.pixels()
                 y = 2.pixels()
 
@@ -238,8 +243,8 @@ class ComponentsGui : WindowScreen(ElementaVersion.V2) {
             box2.onMouseClick { textInput2.grabWindowFocus() }
         } childOf window
 
-        ComponentType("ScrollComponent") {
-            val scroll1 = ScrollComponent().constrain {
+        val scrollComponentExample by ComponentType("ScrollComponent") {
+            val scroll1 by ScrollComponent().constrain {
                 x = 2.pixels()
                 y = SiblingConstraint() + 5.pixels()
 
@@ -266,7 +271,7 @@ class ComponentsGui : WindowScreen(ElementaVersion.V2) {
             } childOf this
         } childOf window
 
-        ComponentType("Markdown") {
+        val markdownExample by ComponentType("Markdown") {
             MarkdownComponent(
                 """
                     # Markdown!
@@ -285,7 +290,7 @@ class ComponentsGui : WindowScreen(ElementaVersion.V2) {
             } childOf this
         } childOf window
 
-        ComponentType("SVG") {
+        val svgExample by ComponentType("SVG") {
             SVGComponent.ofResource("/svg/test.svg").constrain {
                 x = 2.pixels()
                 y = SiblingConstraint(padding = 2f)
@@ -294,7 +299,7 @@ class ComponentsGui : WindowScreen(ElementaVersion.V2) {
             } childOf this
         } childOf window
 
-        ComponentType("Gradient") {
+        val gradientExample by ComponentType("Gradient") {
             GradientComponent(Color.BLACK, Color.PINK).constrain {
                 x = 2.pixels()
                 y = SiblingConstraint() + 5.pixels()
@@ -303,10 +308,77 @@ class ComponentsGui : WindowScreen(ElementaVersion.V2) {
             } childOf this
         } childOf window
 
-        Inspector(window).constrain {
-            x = 10.pixels(true)
-            y = 10.pixels(true)
+        val inspectorExample by ComponentType("Inspector") {
+            constrain {
+                width = 250.pixels
+            }
+
+            val inspectorTextDescription by MarkdownComponent(
+                """The Elementa inspector provides useful debug features for creating UIs with Elementa.  
+                    It can operate within a Window as an overlay or in an external window. 
+                    It's initial position can be configured by adding 
+                    `-Delementa.inspector.detached=<true/false>` to the JVM arguments.  
+                  """,
+                config = MarkdownConfig(
+                    paragraphConfig = ParagraphConfig(
+                        spaceBetweenLines = 0f
+                    ),
+                    inlineCodeConfig = InlineCodeConfig(
+                        backgroundColor = Color.GRAY,
+                        outlineWidth = 0f,
+                        verticalPadding = 1f,
+                    )
+                )
+            ).constrain {
+                width = 100.percent
+                y = SiblingConstraint(2f)
+            } childOf this
+
+            val inspectorExternal = BasicState(false)
+
+            val toggleRow by UIContainer().constrain {
+                y = SiblingConstraint(10f)
+                width = 100.percent
+                height = ChildBasedMaxSizeConstraint()
+            }.addChildren(
+                UIText("Detached Inspector: "),
+                CompactToggle(inspectorExternal).constrain {
+                    x = SiblingConstraint(5f)
+                    y = CenterConstraint()
+                }
+            ) childOf this
+
+
+            inspectorExternal.onSetValue {
+                InspectorManager.toggleInspectorDetached(window)
+            }
+
+            val inspectorFeaturesDescription by UIWrappedText(
+                "The inspector allows you to configure the underlying states in components and constraints that" +
+                    " implement the StateRegistry. "
+            ).constrain {
+                width = 100.percent
+                y = SiblingConstraint(10f)
+            } childOf this
+
+            val inspectorHotkeyDescription by UIWrappedText(
+                "You can also use hotkeys to interact with the inspector while using your UI.\n" +
+                    "'C' activtes the constraints tab\n" +
+                    "'V' activates the values tab\n" +
+                    "'B' activates the states tab\n" +
+                    "'S' activates the selection tool\n" +
+                    "'M' activates the measure tool\n" +
+                    "'N' disables the measure tool\n" +
+                    "'D' toggles Elementa debug mode\n"
+            ).constrain {
+                width = 100.percent
+                y = SiblingConstraint(10f)
+            } childOf this
+
+            InspectorManager.startDetached = false
+            InspectorManager.toggleInspector(window)
         } childOf window
+
     }
 
     class ComponentType(componentName: String, initBlock: ComponentType.() -> Unit) : UIContainer() {

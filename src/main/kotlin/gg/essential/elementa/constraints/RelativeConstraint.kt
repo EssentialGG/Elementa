@@ -7,6 +7,7 @@ import gg.essential.elementa.debug.StateRegistry
 import gg.essential.elementa.state.BasicState
 import gg.essential.elementa.state.MappedState
 import gg.essential.elementa.state.State
+import org.jetbrains.annotations.ApiStatus
 
 /**
  * Sets this component's X/Y position or width/height to be some
@@ -72,6 +73,7 @@ class RelativeConstraint constructor(
         }
     }
 
+    @ApiStatus.Internal
     override fun getManagedStates(): List<ManagedState> = listOf(
         ManagedState.ManagedFloatState(valueState, "value", true),
     )

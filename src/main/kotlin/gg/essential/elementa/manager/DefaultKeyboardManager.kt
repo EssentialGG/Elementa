@@ -1,11 +1,13 @@
 package gg.essential.elementa.manager
 
 import gg.essential.universal.UKeyboard
+import org.jetbrains.annotations.ApiStatus
 
 /**
  * A keyboard manager that provides its values from [UKeyboard]
  */
-internal object DefaultKeyboardManager : KeyboardManager {
+@ApiStatus.Internal
+object DefaultKeyboardManager : KeyboardManager {
 
     override fun isKeyDown(key: Int): Boolean = UKeyboard.isKeyDown(key)
 

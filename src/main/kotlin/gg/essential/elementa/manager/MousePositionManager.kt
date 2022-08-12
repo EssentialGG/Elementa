@@ -1,10 +1,13 @@
 package gg.essential.elementa.manager
 
+import org.jetbrains.annotations.ApiStatus
+
 
 /**
  * Provides a non-global way to access the cursor position.
  */
-internal interface MousePositionManager {
+@ApiStatus.Internal
+interface MousePositionManager {
 
     val rawX: Double
 

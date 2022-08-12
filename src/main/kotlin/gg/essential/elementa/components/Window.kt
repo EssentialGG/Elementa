@@ -5,6 +5,7 @@ import gg.essential.elementa.UIComponent
 import gg.essential.elementa.constraints.resolution.ConstraintResolutionGui
 import gg.essential.elementa.constraints.resolution.ConstraintResolver
 import gg.essential.elementa.constraints.resolution.ConstraintResolverV2
+import gg.essential.elementa.debug.InspectorManager
 import gg.essential.elementa.effects.ScissorEffect
 import gg.essential.elementa.font.FontRenderer
 import gg.essential.elementa.impl.Platform.Companion.platform
@@ -17,6 +18,7 @@ import gg.essential.elementa.manager.ResolutionManager
 import gg.essential.elementa.utils.elementaDev
 import gg.essential.elementa.utils.requireMainThread
 import gg.essential.universal.*
+import org.jetbrains.annotations.ApiStatus
 import org.lwjgl.opengl.GL11
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.TimeUnit
@@ -46,9 +48,12 @@ class Window @JvmOverloads constructor(
     /**
      *  State managers to avoid global states
      */
-    internal var resolutionManager: ResolutionManager = DefaultResolutionManager
-    internal var mousePositionManager: MousePositionManager = DefaultMousePositionManager
-    internal var keyboardManager: KeyboardManager = DefaultKeyboardManager
+    @ApiStatus.Internal
+    var resolutionManager: ResolutionManager = DefaultResolutionManager
+    @ApiStatus.Internal
+    var mousePositionManager: MousePositionManager = DefaultMousePositionManager
+    @ApiStatus.Internal
+    var keyboardManager: KeyboardManager = DefaultKeyboardManager
 
     @Deprecated("Add ElementaVersion as the first argument to opt-in to improved behavior.")
     @JvmOverloads
@@ -152,6 +157,7 @@ class Window @JvmOverloads constructor(
             }
         }
         currentWindow.set(null)
+        InspectorManager.onDraw(this)
     }
 
     internal fun drawEmbedded(matrixStack: UMatrixStack) {

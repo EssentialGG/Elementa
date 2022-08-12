@@ -15,6 +15,7 @@ import gg.essential.elementa.utils.getStringSplitToWidth
 import gg.essential.elementa.utils.getStringSplitToWidthTruncated
 import gg.essential.universal.UGraphics
 import gg.essential.universal.UMatrixStack
+import org.jetbrains.annotations.ApiStatus
 import java.awt.Color
 
 /**
@@ -92,6 +93,7 @@ open class UIWrappedText @JvmOverloads constructor(
         })
     }
 
+    @ApiStatus.Internal
     override fun getManagedStates(): List<ManagedState> = listOf(
         ManagedState.ManagedStringState(textState, "text", true),
         ManagedState.ManagedBooleanState(shadowState, "shadow", true),

@@ -8,6 +8,7 @@ import gg.essential.elementa.state.BasicState
 import gg.essential.elementa.state.State
 import gg.essential.elementa.utils.getValue
 import gg.essential.elementa.utils.setValue
+import org.jetbrains.annotations.ApiStatus
 import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.round
@@ -68,6 +69,7 @@ class RoundingConstraint constructor(
        Round,
    }
 
+    @ApiStatus.Internal
     override fun getManagedStates(): List<ManagedState> = listOf(
         ManagedState.ManagedEnumState(roundingModeState, "mode", true),
     )

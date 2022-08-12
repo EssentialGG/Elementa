@@ -7,23 +7,43 @@ import gg.essential.elementa.constraints.*
 import gg.essential.elementa.dsl.*
 import gg.essential.elementa.effects.OutlineEffect
 import gg.essential.elementa.effects.ScissorEffect
+import gg.essential.elementa.font.DefaultFonts
 import gg.essential.elementa.utils.ObservableAddEvent
 import gg.essential.elementa.utils.ObservableClearEvent
 import gg.essential.elementa.utils.ObservableRemoveEvent
 import gg.essential.elementa.utils.elementaDebug
 import gg.essential.universal.UGraphics
+import gg.essential.universal.UKeyboard
 import gg.essential.universal.UMatrixStack
+import org.jetbrains.annotations.ApiStatus
 import org.lwjgl.opengl.GL11
 import java.awt.Color
 import java.text.NumberFormat
 
 class Inspector @JvmOverloads constructor(
-    rootComponent: UIComponent,
+    private val rootComponent: Window,
     backgroundColor: Color = Color(40, 40, 40),
     outlineColor: Color = Color(20, 20, 20),
     outlineWidth: Float = 2f,
-    maxSectionHeight: HeightConstraint? = null
+    maxSectionHeight: HeightConstraint? = null,
+    private val externalCleanupCallback: Inspector.() -> Unit,
 ) : UIContainer() {
+
+    @JvmOverloads
+    constructor(
+        rootComponent: UIComponent,
+        backgroundColor: Color = Color(40, 40, 40),
+        outlineColor: Color = Color(20, 20, 20),
+        outlineWidth: Float = 2f,
+        maxSectionHeight: HeightConstraint? = null,
+    ) : this(
+        rootComponent as Window,
+        backgroundColor,
+        outlineColor,
+        outlineWidth,
+        maxSectionHeight,
+        externalCleanupCallback = {})
+
     private val rootNode = componentToNode(rootComponent)
     private val treeBlock: UIContainer
     private var TreeListComponent: TreeListComponent
@@ -38,6 +58,41 @@ class Inspector @JvmOverloads constructor(
     private val outlineEffect = OutlineEffect(outlineColor, outlineWidth, drawAfterChildren = true)
 
     private var isClickSelecting = false
+    private val drawObserver by WindowDrawObserver()
+
+    private var measuringDistance = false
+
+    private val keyTypeListener: UIComponent.(typedChar: Char, keyCode: Int) -> Unit = { _, keyCode ->
+        when (keyCode) {
+            UKeyboard.KEY_M -> {
+                measuringDistance = true
+            }
+            UKeyboard.KEY_N -> {
+                measuringDistance = false
+            }
+            UKeyboard.KEY_S -> {
+                openComponentSelector()
+            }
+            UKeyboard.KEY_C -> {
+                infoBlock.openConstraintsTab()
+            }
+            UKeyboard.KEY_V -> {
+                infoBlock.openValuesTab()
+            }
+            UKeyboard.KEY_B -> {
+                infoBlock.openStatesTab()
+            }
+            UKeyboard.KEY_D -> {
+                elementaDebug = !elementaDebug
+            }
+        }
+    }
+
+    private val infoBlock by InfoBlock(this).constrain {
+        y = SiblingConstraint()
+        width = ChildBasedMaxSizeConstraint() + 10.pixels()
+        height = ChildBasedSizeConstraint() + 10.pixels()
+    }
 
     init {
         constrain {
@@ -70,7 +125,11 @@ class Inspector @JvmOverloads constructor(
             if (button == 0) {
                 this@Inspector.constrain {
                     x = (this@Inspector.getLeft() + mouseX - clickPos!!.first).pixels()
+                        .coerceAtLeast(0.pixels)
+                        .coerceAtMost(0.pixels(alignOpposite = true))
                     y = (this@Inspector.getTop() + mouseY - clickPos!!.second).pixels()
+                        .coerceAtLeast(0.pixels)
+                        .coerceAtMost(0.pixels(alignOpposite = true))
                 }
             }
         } childOf container
@@ -89,19 +148,7 @@ class Inspector @JvmOverloads constructor(
             height = RelativeConstraint(1f).to(title) as HeightConstraint
         }.onMouseClick { event ->
             event.stopPropagation()
-            isClickSelecting = true
-
-            val rootWindow = Window.of(this)
-            rootWindow.clickInterceptor = { mouseX, mouseY, _ ->
-                rootWindow.clickInterceptor = null
-                isClickSelecting = false
-
-                val targetComponent = getClickSelectTarget(mouseX.toFloat(), mouseY.toFloat())
-                if (targetComponent != null) {
-                    findAndSelect(targetComponent)
-                }
-                true
-            }
+            openComponentSelector()
         } childOf titleBlock
 
         separator1 = UIBlock(outlineColor).constrain {
@@ -133,11 +180,6 @@ class Inspector @JvmOverloads constructor(
             height = 2.pixels()
         }
 
-        val infoBlock = InfoBlock(this).constrain {
-            y = SiblingConstraint()
-            width = ChildBasedMaxSizeConstraint() + 10.pixels()
-            height = ChildBasedSizeConstraint() + 10.pixels()
-        }
 
         infoBlockScroller = ScrollComponent().constrain {
             y = SiblingConstraint()
@@ -147,6 +189,26 @@ class Inspector @JvmOverloads constructor(
         }
 
         infoBlock childOf infoBlockScroller
+
+        drawObserver childOf rootComponent
+
+        rootComponent.onKeyType(keyTypeListener)
+    }
+
+    private fun openComponentSelector() {
+        isClickSelecting = true
+
+        val rootWindow = rootComponent
+        rootWindow.clickInterceptor = { mouseX, mouseY, _ ->
+            rootWindow.clickInterceptor = null
+            isClickSelecting = false
+
+            val targetComponent = getClickSelectTarget(mouseX.toFloat(), mouseY.toFloat())
+            if (targetComponent != null) {
+                findAndSelect(targetComponent)
+            }
+            true
+        }
     }
 
     private fun componentToNode(component: UIComponent): InspectorNode {
@@ -188,6 +250,14 @@ class Inspector @JvmOverloads constructor(
         return node
     }
 
+    fun cleanup() {
+        drawObserver.hide(instantly = true)
+        rootComponent.keyTypedListeners.remove(keyTypeListener)
+        if (this in parent.children) {
+            parent.children.remove(this)
+        }
+    }
+
     internal fun setSelectedNode(node: InspectorNode?) {
         if (node == null) {
             container.removeChild(separator2)
@@ -219,7 +289,8 @@ class Inspector @JvmOverloads constructor(
             val parentNode = findNodeAndExpandParents(component.parent) ?: return null
             val parentDisplay = parentNode.displayComponent
             parentDisplay.opened = true
-            return parentDisplay.childNodes.filterIsInstance<InspectorNode>().find { it.targetComponent == component }
+            return parentDisplay.childNodes
+                .filterIsInstance<InspectorNode>().find { it.targetComponent == component }
         }
 
         val node = findNodeAndExpandParents(component) ?: return
@@ -231,70 +302,300 @@ class Inspector @JvmOverloads constructor(
     private fun UIComponent.isMounted(): Boolean =
         parent == this || (this in parent.children && parent.isMounted())
 
-    override fun animationFrame() {
-        super.animationFrame()
+
+    override fun draw(matrixStack: UMatrixStack) {
+        val debugState = elementaDebug
+        elementaDebug = false
 
         // Make sure we are the top-most component (last to draw and first to receive input)
         Window.enqueueRenderOperation {
-            setFloating(false)
-            if (isMounted()) { // only if we are still mounted
-                setFloating(true)
-            }
+            ensureLastComponent(this@Inspector)
         }
-    }
 
-    override fun draw(matrixStack: UMatrixStack) {
-        // If we got removed from our parent, we need to un-float ourselves
-        if (!isMounted()) {
-            Window.enqueueRenderOperation { setFloating(false) }
-            return
-        }
 
         separator1.setWidth(container.getWidth().pixels())
         separator2.setWidth(container.getWidth().pixels())
 
-        if (isClickSelecting) {
-            val (mouseX, mouseY) = getMousePosition()
-            getClickSelectTarget(mouseX, mouseY)
-        } else {
-            selectedNode?.targetComponent
-        }?.also { component ->
-            val scissors = generateSequence(component) { if (it.parent != it) it.parent else null }
-                .flatMap { it.effects.filterIsInstance<ScissorEffect>().asReversed() }
-                .toList()
-                .reversed()
 
-            val x1 = component.getLeft().toDouble()
-            val y1 = component.getTop().toDouble()
-            val x2 = component.getRight().toDouble()
-            val y2 = component.getBottom().toDouble()
+        super.draw(matrixStack)
 
-            // Clear the depth buffer cause we will be using it to draw our outside-of-scissor-bounds block
-            UGraphics.glClear(GL11.GL_DEPTH_BUFFER_BIT)
+        elementaDebug = debugState
+    }
 
-            // Draw a highlight on the element respecting its scissor effects
-            scissors.forEach { it.beforeDraw(matrixStack) }
-            UIBlock.drawBlock(matrixStack, Color(129, 212, 250, 100), x1, y1, x2, y2)
-            scissors.asReversed().forEach { it.afterDraw(matrixStack) }
-
-            // Then draw another highlight (with depth testing such that we do not overwrite the previous one)
-            // which does not respect the scissor effects and thereby indicates where the element is drawn outside of
-            // its scissor bounds.
-            UGraphics.enableDepth()
-            UGraphics.depthFunc(GL11.GL_LESS)
-            ElementaVersion.v0.enableFor { // need the custom depth testing
-                UIBlock.drawBlock(matrixStack, Color(255, 100, 100, 100), x1, y1, x2, y2)
+    @ApiStatus.Internal
+    inner class WindowDrawObserver : UIComponent() {
+        override fun draw(matrixStack: UMatrixStack) {
+            beforeDraw(matrixStack)
+            // If we got removed from our parent, we need to un-float ourselves
+            if (!isMounted()) {
+                Window.enqueueRenderOperation { setFloating(false) }
+                this@Inspector.externalCleanupCallback()
+                return
             }
-            UGraphics.depthFunc(GL11.GL_LEQUAL)
-            UGraphics.disableDepth()
+            val targetComponent = selectedNode?.targetComponent
+            if (isClickSelecting) {
+                val (mouseX, mouseY) = getMousePosition()
+                getClickSelectTarget(mouseX, mouseY)
+            } else {
+                targetComponent
+            }?.also { component ->
+                val scissors = generateSequence(component) { if (it.parent != it) it.parent else null }
+                    .flatMap { it.effects.filterIsInstance<ScissorEffect>().asReversed() }
+                    .toList()
+                    .reversed()
+
+                val x1 = component.getLeft().toDouble()
+                val y1 = component.getTop().toDouble()
+                val x2 = component.getRight().toDouble()
+                val y2 = component.getBottom().toDouble()
+
+                // Clear the depth buffer cause we will be using it to draw our outside-of-scissor-bounds block
+                UGraphics.glClear(GL11.GL_DEPTH_BUFFER_BIT)
+
+                // Draw a highlight on the element respecting its scissor effects
+                scissors.forEach { it.beforeDraw(matrixStack) }
+                UIBlock.drawBlock(matrixStack, Color(129, 212, 250, 100), x1, y1, x2, y2)
+                scissors.asReversed().forEach { it.afterDraw(matrixStack) }
+
+                // Then draw another highlight (with depth testing such that we do not overwrite the previous one)
+                // which does not respect the scissor effects and thereby indicates where the element is drawn outside of
+                // its scissor bounds.
+                UGraphics.enableDepth()
+                UGraphics.depthFunc(GL11.GL_LESS)
+                ElementaVersion.V1.enableFor { // need the custom depth testing
+                    UIBlock.drawBlock(matrixStack, Color(255, 255, 255, 100), x1, y1, x2, y2)
+                }
+                UGraphics.depthFunc(GL11.GL_LEQUAL)
+                UGraphics.disableDepth()
+            }
+
+            if (targetComponent != null && measuringDistance) {
+                val (mouseX, mouseY) = getMousePosition()
+                val hoveredComponent = getClickSelectTarget(mouseX, mouseY)
+
+
+                if (hoveredComponent != null && hoveredComponent != targetComponent) {
+                    // Outline the hovered item
+                    UIBlock.drawBlock(
+                        matrixStack,
+                        Color(255, 100, 100, 100),
+                        hoveredComponent.getLeft().toDouble(),
+                        hoveredComponent.getTop().toDouble(),
+                        hoveredComponent.getRight().toDouble(),
+                        hoveredComponent.getBottom().toDouble()
+                    )
+
+                    val horizontalLineY =
+                        if (targetComponent.centerY() in hoveredComponent.getTop()..hoveredComponent.getBottom()) {
+                            targetComponent.centerY()
+                        } else if (targetComponent.getTop() > hoveredComponent.getBottom()) {
+                            targetComponent.getTop()
+                        } else {
+                            targetComponent.getBottom()
+                        }
+
+                    if (hoveredComponent.getRight() < targetComponent.getLeft()) {
+                        measureHorizontalDistance(
+                            matrixStack,
+                            hoveredComponent.getRight(),
+                            targetComponent.getLeft(),
+                            horizontalLineY
+                        )
+                    } else if (hoveredComponent.getRight() < targetComponent.getRight()) {
+                        measureHorizontalDistance(
+                            matrixStack,
+                            hoveredComponent.getRight(),
+                            targetComponent.getRight(),
+                            horizontalLineY
+                        )
+                    }
+
+                    if (hoveredComponent.getLeft() > targetComponent.getRight()) {
+                        measureHorizontalDistance(
+                            matrixStack,
+                            targetComponent.getRight(),
+                            hoveredComponent.getLeft(),
+                            horizontalLineY
+                        )
+                    } else if (hoveredComponent.getLeft() > targetComponent.getLeft()) {
+                        measureHorizontalDistance(
+                            matrixStack,
+                            targetComponent.getLeft(),
+                            hoveredComponent.getLeft(),
+                            horizontalLineY
+                        )
+                    }
+
+
+                    val verticalLineX =
+                        if (targetComponent.centerX() in hoveredComponent.getLeft()..hoveredComponent.getRight()) {
+                            targetComponent.centerX()
+                        } else if (hoveredComponent.getRight() < targetComponent.getLeft()) {
+                            hoveredComponent.getRight()
+                        } else {
+                            hoveredComponent.getLeft()
+                        }
+                    if (hoveredComponent.getBottom() < targetComponent.getTop()) {
+                        measureVerticalDistance(
+                            matrixStack,
+                            hoveredComponent.getBottom(),
+                            targetComponent.getTop(),
+                            verticalLineX
+                        )
+                    } else if (hoveredComponent.getBottom() < targetComponent.getBottom()) {
+                        measureVerticalDistance(
+                            matrixStack,
+                            hoveredComponent.getBottom(),
+                            targetComponent.getBottom(),
+                            verticalLineX
+                        )
+                    }
+
+                    if (hoveredComponent.getTop() > targetComponent.getBottom()) {
+                        measureVerticalDistance(
+                            matrixStack,
+                            targetComponent.getBottom(),
+                            hoveredComponent.getTop(),
+                            verticalLineX
+                        )
+                    } else if (hoveredComponent.getTop() > targetComponent.getTop()) {
+                        measureVerticalDistance(
+                            matrixStack,
+                            targetComponent.getTop(),
+                            hoveredComponent.getTop(),
+                            verticalLineX
+                        )
+                    }
+
+
+                }
+            }
+            super.draw(matrixStack)
         }
 
-        val debugState = elementaDebug
-        elementaDebug = false
-        try {
-            super.draw(matrixStack)
-        } finally {
-            elementaDebug = debugState
+        override fun animationFrame() {
+            super.animationFrame()
+            // Make sure we are the top-most component (last to draw and first to receive input)
+            Window.enqueueRenderOperation {
+                ensureLastComponent(this@WindowDrawObserver)
+            }
+        }
+
+        fun UIComponent.centerX(): Float {
+            return (getLeft() + getRight()) / 2
+        }
+
+        fun UIComponent.centerY(): Float {
+            return (getTop() + getBottom()) / 2
+        }
+
+        fun drawShadedText(
+            matrixStack: UMatrixStack,
+            text: String,
+            xCenter: Float,
+            yCenter: Float,
+        ) {
+            val stringWidth = text.width()
+            val stringHeight = UGraphics.getFontHeight()
+
+
+            val x1 = xCenter - stringWidth / 2.0
+            val y1 = yCenter - stringHeight / 2.0
+            val x2 = xCenter + stringWidth / 2.0
+            val y2 = yCenter + stringHeight / 2.0
+
+            // Draw outline for increased visiblity
+            UIBlock.drawBlock(
+                matrixStack,
+                Color.MAGENTA,
+                x1 - 1,
+                y1 - 1,
+                x2 + 1,
+                y2 + 1
+            )
+
+
+            DefaultFonts.VANILLA_FONT_RENDERER.drawString(
+                matrixStack,
+                text,
+                Color.WHITE,
+                xCenter - stringWidth / 2,
+                yCenter - stringHeight / 2,
+                10f,
+                1f,
+                false,
+            )
+        }
+
+        fun measureVerticalDistance(
+            matrixStack: UMatrixStack,
+            y1: Float,
+            y2: Float,
+            x: Float,
+        ) {
+            val distance = y2 - y1
+            if (distance > 0) {
+                UIBlock.drawBlock(
+                    matrixStack,
+                    Color.YELLOW,
+                    (x - 1).toDouble(),
+                    (y1).toDouble(),
+                    (x + 1).toDouble(),
+                    (y2).toDouble()
+                )
+                val string = String.format("%.2f", distance).dropLastWhile { it == '0' }.dropLastWhile { it == '.' }
+                drawShadedText(
+                    matrixStack,
+                    "${string}px",
+                    x + string.width() + 5,
+                    y1 + distance / 2,
+                )
+            }
+        }
+
+        fun measureHorizontalDistance(
+            matrixStack: UMatrixStack,
+            x1: Float,
+            x2: Float,
+            y: Float,
+        ) {
+            val distance = x2 - x1
+            if (distance > 0) {
+                UIBlock.drawBlock(
+                    matrixStack,
+                    Color.YELLOW,
+                    x1.toDouble(),
+                    (y - 1).toDouble(),
+                    x2.toDouble(),
+                    (y + 1).toDouble()
+                )
+                drawShadedText(
+                    matrixStack,
+                    "${String.format("%.2f", distance).dropLastWhile { it == '0' }.dropLastWhile { it == '.' }}px",
+                    x1 + distance / 2,
+                    y + 10,
+                )
+            }
+        }
+    }
+
+    private fun ensureLastComponent(component: UIComponent) {
+        component.setFloating(false)
+        if (component.isMounted()) { // only if we are still mounted
+            component.setFloating(true)
+            val siblings = component.parent.children
+            val index = siblings.indexOf(component)
+            if (index != siblings.size - 1) {
+                if (siblings.size > 1 && index == siblings.size - 2) {
+
+                    // The draw observer should be below the inspector itself
+                    if (siblings[siblings.size - 1] is Inspector && component is WindowDrawObserver) {
+                        return
+                    }
+                }
+                siblings.remove(component)
+                siblings.add(component)
+            }
         }
     }
 

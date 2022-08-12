@@ -1,11 +1,13 @@
 package gg.essential.elementa.manager
 
 import gg.essential.universal.UMouse
+import org.jetbrains.annotations.ApiStatus
 
 /**
  * A mouse position manager that provides its values from [UMouse]
  */
-internal object DefaultMousePositionManager: MousePositionManager {
+@ApiStatus.Internal
+object DefaultMousePositionManager: MousePositionManager {
 
     override val rawX: Double
         get() = UMouse.Raw.x

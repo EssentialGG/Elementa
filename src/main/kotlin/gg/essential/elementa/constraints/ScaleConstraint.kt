@@ -7,6 +7,7 @@ import gg.essential.elementa.debug.StateRegistry
 import gg.essential.elementa.state.BasicState
 import gg.essential.elementa.state.MappedState
 import gg.essential.elementa.state.State
+import org.jetbrains.annotations.ApiStatus
 
 class ScaleConstraint(
     val constraint: SuperConstraint<Float>,
@@ -59,6 +60,7 @@ class ScaleConstraint(
         constraint.visit(visitor, type, setNewConstraint = false)
     }
 
+    @ApiStatus.Internal
     override fun getManagedStates(): List<ManagedState> = listOf(
         ManagedState.ManagedFloatState(valueState, "value", true),
     )

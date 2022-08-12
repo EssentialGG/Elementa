@@ -1,11 +1,13 @@
 package gg.essential.elementa.manager
 
 import gg.essential.universal.UResolution
+import org.jetbrains.annotations.ApiStatus
 
 /**
  * A resolution manager that provides its values from [UResolution].
  */
-internal object DefaultResolutionManager : ResolutionManager {
+@ApiStatus.Internal
+object DefaultResolutionManager : ResolutionManager {
 
     override val windowWidth: Int
         get() = UResolution.windowWidth

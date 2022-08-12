@@ -7,6 +7,7 @@ import gg.essential.elementa.debug.StateRegistry
 import gg.essential.elementa.state.BasicState
 import gg.essential.elementa.state.State
 import gg.essential.elementa.utils.getValue
+import org.jetbrains.annotations.ApiStatus
 
 /**
  * For size:
@@ -56,6 +57,7 @@ class AspectConstraint(private val valueState: State<Float>) : PositionConstrain
         }
     }
 
+    @ApiStatus.Internal
     override fun getManagedStates(): List<ManagedState> = listOf(
         ManagedState.ManagedFloatState(valueState, "value", true)
     )

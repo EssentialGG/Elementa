@@ -12,6 +12,7 @@ import gg.essential.elementa.state.State
 import gg.essential.elementa.state.pixels
 import gg.essential.universal.UGraphics
 import gg.essential.universal.UMatrixStack
+import org.jetbrains.annotations.ApiStatus
 import java.awt.Color
 
 /**
@@ -59,6 +60,7 @@ constructor(
         }.pixels())
     }
 
+    @ApiStatus.Internal
     override fun getManagedStates(): List<ManagedState> = listOf(
         ManagedState.ManagedStringState(textState, "text", true),
         ManagedState.ManagedBooleanState(shadowState, "shadow", true),

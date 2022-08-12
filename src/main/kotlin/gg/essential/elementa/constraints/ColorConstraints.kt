@@ -9,6 +9,7 @@ import gg.essential.elementa.state.State
 import gg.essential.elementa.dsl.*
 import gg.essential.elementa.state.MappedState
 import gg.essential.elementa.utils.getValue
+import org.jetbrains.annotations.ApiStatus
 import java.awt.Color
 import kotlin.math.sin
 import kotlin.random.Random
@@ -49,6 +50,8 @@ class ConstantColorConstraint(
     // Color constraints will only ever have parent dependencies, so there is no possibility
     // of an invalid constraint here
     override fun visitImpl(visitor: ConstraintVisitor, type: ConstraintType) {}
+
+    @ApiStatus.Internal
     override fun getManagedStates(): List<ManagedState> = listOf(
         ManagedState.ManagedColorState(colorState, "color", true)
     )
@@ -100,6 +103,7 @@ class AlphaAspectColorConstraint(
     // of an invalid constraint here
     override fun visitImpl(visitor: ConstraintVisitor, type: ConstraintType) {}
 
+    @ApiStatus.Internal
     override fun getManagedStates(): List<ManagedState> = listOf(
         ManagedState.ManagedColorState(colorState, "color", true),
         ManagedState.ManagedFloatState(alphaState, "alpha", true)
@@ -155,6 +159,7 @@ class RainbowColorConstraint(
     // of an invalid constraint here
     override fun visitImpl(visitor: ConstraintVisitor, type: ConstraintType) {}
 
+    @ApiStatus.Internal
     override fun getManagedStates(): List<ManagedState> = listOf(
         ManagedState.ManagedFloatState(speedState, "speed", true),
         ManagedState.ManagedIntState(alphaState, "alpha", true)
