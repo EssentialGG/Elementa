@@ -3511,7 +3511,9 @@ public final class gg/essential/elementa/markdown/drawables/HeaderDrawable : gg/
 	public fun cursorAtStart ()Lgg/essential/elementa/markdown/selection/Cursor;
 	public fun draw (Lgg/essential/universal/UMatrixStack;Lgg/essential/elementa/markdown/DrawState;)V
 	public fun getChildren ()Ljava/util/List;
+	public final fun getDividerWidth ()Ljava/lang/Double;
 	public fun selectedText (Z)Ljava/lang/String;
+	public final fun setDividerWidth (Ljava/lang/Double;)V
 }
 
 public final class gg/essential/elementa/markdown/drawables/ImageDrawable : gg/essential/elementa/markdown/drawables/Drawable {
