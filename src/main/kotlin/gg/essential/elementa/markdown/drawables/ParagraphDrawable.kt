@@ -80,7 +80,11 @@ class ParagraphDrawable(
         val currentLine = mutableListOf<Drawable>()
         var maxLineHeight = Float.MIN_VALUE
 
+        var prevY = y
+
         fun gotoNextLine() {
+            prevY = currY
+
             currX = x
             currY += maxLineHeight * scaleModifier + config.paragraphConfig.spaceBetweenLines
 
@@ -261,9 +265,8 @@ class ParagraphDrawable(
 
         drawables.setDrawables(newDrawables)
 
-        val height = currY - y + 9f * scaleModifier + if (insertSpaceAfter) {
-            config.paragraphConfig.spaceAfter
-        } else 0f
+        val height = (if (currentLine.isNotEmpty()) currY else prevY) - y + 9f * scaleModifier +
+                if (insertSpaceAfter) config.paragraphConfig.spaceAfter else 0f
 
         return Layout(
             x,
