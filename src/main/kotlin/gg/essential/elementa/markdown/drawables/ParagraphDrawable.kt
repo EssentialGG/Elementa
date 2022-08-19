@@ -29,6 +29,10 @@ class ParagraphDrawable(
     val textDrawables: List<TextDrawable>
         get() = children.filterIsInstance<TextDrawable>()
 
+    // The width of the longest TextDrawable line after lines are split
+    var maxTextLineWidth = 0f
+        private set
+
     // Used by HeaderDrawable
     internal var headerConfig: HeaderLevelConfig? = null
         set(value) {
@@ -245,6 +249,10 @@ class ParagraphDrawable(
                 }
             }
         }
+
+        maxTextLineWidth = lines.maxOfOrNull { line ->
+            line.sumOf { (it as? TextDrawable)?.width()?.toDouble() ?: it.width.toDouble() }.toFloat()
+        } ?: 0f
 
         newDrawables.forEach {
             if (it is TextDrawable)

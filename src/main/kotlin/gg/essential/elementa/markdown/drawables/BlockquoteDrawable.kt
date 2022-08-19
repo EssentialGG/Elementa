@@ -3,12 +3,14 @@ package gg.essential.elementa.markdown.drawables
 import gg.essential.elementa.components.UIBlock
 import gg.essential.elementa.markdown.DrawState
 import gg.essential.elementa.markdown.MarkdownComponent
-import gg.essential.elementa.markdown.MarkdownConfig
 import gg.essential.universal.UMatrixStack
 
 class BlockquoteDrawable(md: MarkdownComponent, val drawables: DrawableList) : Drawable(md) {
     private var dividerHeight: Float = -1f
     override val children: List<Drawable> get() = drawables
+
+    var maxTextLineWidth = 0f
+        private set
 
     init {
         drawables.parent = this
@@ -38,6 +40,10 @@ class BlockquoteDrawable(md: MarkdownComponent, val drawables: DrawableList) : D
             currY += config.spaceAfterBlockquote
 
         val height = currY - y
+
+        maxTextLineWidth = drawables.maxOfOrNull { drawable ->
+            (drawable as? ParagraphDrawable)?.maxTextLineWidth?.plus(padding) ?: 0f
+        } ?: 0f
 
         return Layout(
             x,
