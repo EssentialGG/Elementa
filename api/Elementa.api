@@ -11,7 +11,7 @@ public final class gg/essential/elementa/ElementaVersion : java/lang/Enum {
 public final class gg/essential/elementa/ElementaVersion$Companion {
 }
 
-public abstract class gg/essential/elementa/UIComponent : java/util/Observable {
+public abstract class gg/essential/elementa/UIComponent : java/util/Observable, gg/essential/elementa/state/v2/ReferenceHolder {
 	public static final field Companion Lgg/essential/elementa/UIComponent$Companion;
 	public field parent Lgg/essential/elementa/UIComponent;
 	public fun <init> ()V
@@ -88,6 +88,7 @@ public abstract class gg/essential/elementa/UIComponent : java/util/Observable {
 	public final fun hide (Z)V
 	public static synthetic fun hide$default (Lgg/essential/elementa/UIComponent;ZILjava/lang/Object;)V
 	public fun hitTest (FF)Lgg/essential/elementa/UIComponent;
+	public fun holdOnto (Ljava/lang/Object;)Lkotlin/jvm/functions/Function0;
 	public fun insertChildAfter (Lgg/essential/elementa/UIComponent;Lgg/essential/elementa/UIComponent;)Lgg/essential/elementa/UIComponent;
 	public fun insertChildAt (Lgg/essential/elementa/UIComponent;I)Lgg/essential/elementa/UIComponent;
 	public fun insertChildBefore (Lgg/essential/elementa/UIComponent;Lgg/essential/elementa/UIComponent;)Lgg/essential/elementa/UIComponent;
@@ -3799,7 +3800,7 @@ public final class gg/essential/elementa/state/MappedStateDelegator : gg/essenti
 	public fun <init> (Lgg/essential/elementa/state/State;Lkotlin/jvm/functions/Function1;)V
 }
 
-public abstract class gg/essential/elementa/state/State {
+public abstract class gg/essential/elementa/state/State : gg/essential/elementa/state/v2/MutableState {
 	public fun <init> ()V
 	public abstract fun get ()Ljava/lang/Object;
 	protected final fun getListeners ()Ljava/util/List;
@@ -3807,6 +3808,7 @@ public abstract class gg/essential/elementa/state/State {
 	public final fun getOrElse (Lkotlin/jvm/functions/Function0;)Ljava/lang/Object;
 	public final fun map (Ljava/util/function/Function;)Lgg/essential/elementa/state/State;
 	public final fun map (Lkotlin/jvm/functions/Function1;)Lgg/essential/elementa/state/MappedState;
+	public fun onSetValue (Lgg/essential/elementa/state/v2/ReferenceHolder;Lkotlin/jvm/functions/Function1;)Lkotlin/jvm/functions/Function0;
 	public final fun onSetValue (Ljava/util/function/Consumer;)Lkotlin/jvm/functions/Function0;
 	public final fun onSetValue (Lkotlin/jvm/functions/Function1;)Lkotlin/jvm/functions/Function0;
 	public fun set (Ljava/lang/Object;)V
@@ -3829,6 +3831,51 @@ public final class gg/essential/elementa/state/ZippedState : gg/essential/elemen
 
 public final class gg/essential/elementa/state/ZippedStateDelegator : gg/essential/elementa/state/StateDelegator {
 	public fun <init> (Lgg/essential/elementa/state/State;Lgg/essential/elementa/state/State;)V
+}
+
+public final class gg/essential/elementa/state/v2/CombinatorsKt {
+	public static final fun map (Lgg/essential/elementa/state/v2/State;Lkotlin/jvm/functions/Function1;)Lgg/essential/elementa/state/v2/State;
+	public static final fun zip (Lgg/essential/elementa/state/v2/State;Lgg/essential/elementa/state/v2/State;)Lgg/essential/elementa/state/v2/State;
+	public static final fun zip (Lgg/essential/elementa/state/v2/State;Lgg/essential/elementa/state/v2/State;Lkotlin/jvm/functions/Function2;)Lgg/essential/elementa/state/v2/State;
+}
+
+public final class gg/essential/elementa/state/v2/CompatibilityKt {
+	public static final fun toV1 (Lgg/essential/elementa/state/v2/State;Lgg/essential/elementa/state/v2/ReferenceHolder;)Lgg/essential/elementa/state/State;
+}
+
+public abstract interface class gg/essential/elementa/state/v2/DelegatingMutableState : gg/essential/elementa/state/v2/MutableState {
+	public abstract fun rebind (Lgg/essential/elementa/state/v2/MutableState;)V
+}
+
+public abstract interface class gg/essential/elementa/state/v2/DelegatingState : gg/essential/elementa/state/v2/State {
+	public abstract fun rebind (Lgg/essential/elementa/state/v2/State;)V
+}
+
+public abstract interface class gg/essential/elementa/state/v2/MutableState : gg/essential/elementa/state/v2/State {
+	public fun set (Ljava/lang/Object;)V
+	public abstract fun set (Lkotlin/jvm/functions/Function1;)V
+}
+
+public abstract interface class gg/essential/elementa/state/v2/ReferenceHolder {
+	public abstract fun holdOnto (Ljava/lang/Object;)Lkotlin/jvm/functions/Function0;
+}
+
+public final class gg/essential/elementa/state/v2/ReferenceHolder$Weak : gg/essential/elementa/state/v2/ReferenceHolder {
+	public static final field INSTANCE Lgg/essential/elementa/state/v2/ReferenceHolder$Weak;
+	public fun holdOnto (Ljava/lang/Object;)Lkotlin/jvm/functions/Function0;
+}
+
+public abstract interface class gg/essential/elementa/state/v2/State {
+	public abstract fun get ()Ljava/lang/Object;
+	public abstract fun onSetValue (Lgg/essential/elementa/state/v2/ReferenceHolder;Lkotlin/jvm/functions/Function1;)Lkotlin/jvm/functions/Function0;
+}
+
+public final class gg/essential/elementa/state/v2/StateKt {
+	public static final fun derivedState (Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)Lgg/essential/elementa/state/v2/State;
+	public static final fun mutableStateDelegatingTo (Lgg/essential/elementa/state/v2/MutableState;)Lgg/essential/elementa/state/v2/DelegatingMutableState;
+	public static final fun mutableStateOf (Ljava/lang/Object;)Lgg/essential/elementa/state/v2/MutableState;
+	public static final fun stateDelegatingTo (Lgg/essential/elementa/state/v2/State;)Lgg/essential/elementa/state/v2/DelegatingState;
+	public static final fun stateOf (Ljava/lang/Object;)Lgg/essential/elementa/state/v2/State;
 }
 
 public final class gg/essential/elementa/svg/PathParser {
