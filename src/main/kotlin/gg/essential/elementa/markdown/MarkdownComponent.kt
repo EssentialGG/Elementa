@@ -12,11 +12,14 @@ import gg.essential.elementa.markdown.drawables.Drawable
 import gg.essential.elementa.markdown.drawables.DrawableList
 import gg.essential.elementa.markdown.selection.Cursor
 import gg.essential.elementa.markdown.selection.Selection
-import gg.essential.elementa.state.BasicState
-import gg.essential.elementa.state.State
+import gg.essential.elementa.state.State as StateV1
 import gg.essential.elementa.font.ElementaFonts
 import gg.essential.elementa.font.FontProvider
 import gg.essential.elementa.markdown.drawables.HeaderDrawable
+import gg.essential.elementa.state.v2.State
+import gg.essential.elementa.state.v2.mutableStateOf
+import gg.essential.elementa.state.v2.stateDelegatingTo
+import gg.essential.elementa.state.v2.stateOf
 import gg.essential.elementa.utils.elementaDebug
 import gg.essential.universal.UDesktop
 import gg.essential.universal.UKeyboard
@@ -46,15 +49,11 @@ class MarkdownComponent(
         codeFontRenderer: FontProvider = ElementaFonts.JETBRAINS_MONO,
     ) : this(text, config, codeFontPointSize, codeFontRenderer, false)
 
-    private val configState = BasicState(config)
+    private val configState = mutableStateOf(config)
     val config: MarkdownConfig
         get() = configState.get()
 
-    private var textState: State<String> = BasicState(text)
-    private var removeListener = textState.onSetValue {
-        reparse()
-        layout()
-    }
+    private val textState = stateDelegatingTo(stateOf(text))
 
     val drawables = DrawableList(this, emptyList())
     var sectionOffsets: Map<String, Float> = emptyMap()
@@ -112,22 +111,21 @@ class MarkdownComponent(
                 }
             }
         }
-        configState.onSetValue {
+        configState.onSetValue(this) {
+            reparse()
+            layout()
+        }
+        textState.onSetValue(this) {
             reparse()
             layout()
         }
     }
 
-    fun bindText(state: State<String>) = apply {
-        removeListener()
-        textState = state
-        reparse()
-        layout()
+    @Deprecated("Legacy State API", level = DeprecationLevel.HIDDEN)
+    fun bindText(state: StateV1<String>) = bindText(state)
 
-        removeListener = textState.onSetValue {
-            reparse()
-            layout()
-        }
+    fun bindText(state: State<String>) = apply {
+        textState.rebind(state)
     }
 
     fun setMaxHeight(maxHeight: HeightConstraint) = apply {

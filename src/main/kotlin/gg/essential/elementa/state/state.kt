@@ -1,5 +1,7 @@
 package gg.essential.elementa.state
 
+import gg.essential.elementa.state.v2.MutableState
+import gg.essential.elementa.state.v2.ReferenceHolder
 import java.util.function.Consumer
 import java.util.function.Function
 
@@ -25,13 +27,13 @@ import java.util.function.Function
  *
  * @see StateDelegator
  */
-abstract class State<T> {
+abstract class State<T> : MutableState<T> {
     protected val listeners = mutableListOf<(T) -> Unit>()
 
     /**
      * Get the value of this State object
      */
-    abstract fun get(): T
+    abstract override fun get(): T
 
     /**
      * Set the value of this State object
@@ -39,7 +41,7 @@ abstract class State<T> {
      * This method also notifies all of the listeners of this
      * State object.
      */
-    open fun set(value: T) {
+    override fun set(value: T) {
         listeners.forEach { it(value) }
     }
 
@@ -47,7 +49,7 @@ abstract class State<T> {
      * Like [set], but accepts a lambda which takes the
      * current value of this State object
      */
-    fun set(mapper: (T) -> T) = set(mapper(get()))
+    final override fun set(mapper: (T) -> T) = set(mapper(get()))
 
     /**
      * Register a listener which will be called whenever the
@@ -58,6 +60,10 @@ abstract class State<T> {
     fun onSetValue(listener: (T) -> Unit): () -> Unit {
         listeners.add(listener)
         return { listeners.remove(listener) }
+    }
+
+    override fun onSetValue(owner: ReferenceHolder, listener: (T) -> Unit): () -> Unit {
+        return onSetValue(listener)
     }
 
     /**

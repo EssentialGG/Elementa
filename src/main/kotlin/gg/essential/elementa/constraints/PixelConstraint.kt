@@ -3,8 +3,8 @@ package gg.essential.elementa.constraints
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.constraints.resolution.ConstraintVisitor
 import gg.essential.elementa.state.BasicState
-import gg.essential.elementa.state.MappedState
-import gg.essential.elementa.state.State
+import gg.essential.elementa.state.State as StateV1
+import gg.essential.elementa.state.v2.*
 
 /**
  * Sets this component's X/Y position or width/height to be a constant
@@ -12,21 +12,22 @@ import gg.essential.elementa.state.State
  */
 class PixelConstraint @JvmOverloads constructor(
     value: State<Float>,
-    alignOpposite: State<Boolean> = BasicState(false),
-    alignOutside: State<Boolean> = BasicState(false)
+    alignOpposite: State<Boolean> = stateOf(false),
+    alignOutside: State<Boolean> = stateOf(false),
 ) : MasterConstraint {
     @JvmOverloads constructor(
         value: Float,
         alignOpposite: Boolean = false,
         alignOutside: Boolean = false
-    ) : this(BasicState(value), BasicState(alignOpposite), BasicState(alignOutside))
+    ) : this(stateOf(value), stateOf(alignOpposite), stateOf(alignOutside))
+
     override var cachedValue = 0f
     override var recalculate = true
     override var constrainTo: UIComponent? = null
 
-    private val valueState: MappedState<Float, Float> = value.map { it }
-    private val alignOppositeState: MappedState<Boolean, Boolean> = alignOpposite.map { it }
-    private val alignOutsideState: MappedState<Boolean, Boolean> = alignOutside.map { it }
+    private val valueState = value.wrapWithDelegatingMutableState()
+    private val alignOppositeState = alignOpposite.wrapWithDelegatingMutableState()
+    private val alignOutsideState = alignOutside.wrapWithDelegatingMutableState()
 
     var value: Float
         get() = valueState.get()
@@ -133,4 +134,21 @@ class PixelConstraint @JvmOverloads constructor(
             else -> throw IllegalArgumentException(type.prettyName)
         }
     }
+
+    @JvmOverloads
+    @Deprecated("Legacy State API", level = DeprecationLevel.HIDDEN)
+    constructor(
+        value: StateV1<Float>,
+        alignOpposite: StateV1<Boolean> = BasicState(false),
+        alignOutside: StateV1<Boolean> = BasicState(false)
+    ) : this(value, alignOpposite, alignOutside)
+
+    @Deprecated("Legacy State API", level = DeprecationLevel.HIDDEN)
+    fun bindValue(newState: StateV1<Float>) = bindValue(newState)
+
+    @Deprecated("Legacy State API", level = DeprecationLevel.HIDDEN)
+    fun bindAlignOpposite(newState: StateV1<Boolean>) = bindAlignOpposite(newState)
+
+    @Deprecated("Legacy State API", level = DeprecationLevel.HIDDEN)
+    fun bindAlignOutside(newState: StateV1<Boolean>) = bindAlignOutside(newState)
 }
