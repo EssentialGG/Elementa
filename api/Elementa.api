@@ -3159,6 +3159,7 @@ public final class gg/essential/elementa/markdown/MarkdownComponent : gg/essenti
 	public fun draw (Lgg/essential/universal/UMatrixStack;)V
 	public final fun getConfig ()Lgg/essential/elementa/markdown/MarkdownConfig;
 	public final fun getDrawables ()Lgg/essential/elementa/markdown/drawables/DrawableList;
+	public final fun getMaxTextLineWidth ()F
 	public final fun getSectionOffsets ()Ljava/util/Map;
 	public final fun layout ()V
 	public final fun onLinkClicked (Lkotlin/jvm/functions/Function2;)V
@@ -3319,6 +3320,7 @@ public final class gg/essential/elementa/markdown/drawables/BlockquoteDrawable :
 	public fun draw (Lgg/essential/universal/UMatrixStack;Lgg/essential/elementa/markdown/DrawState;)V
 	public fun getChildren ()Ljava/util/List;
 	public final fun getDrawables ()Lgg/essential/elementa/markdown/drawables/DrawableList;
+	public final fun getMaxTextLineWidth ()F
 	public fun selectedText (Z)Ljava/lang/String;
 }
 
@@ -3511,7 +3513,9 @@ public final class gg/essential/elementa/markdown/drawables/HeaderDrawable : gg/
 	public fun cursorAtStart ()Lgg/essential/elementa/markdown/selection/Cursor;
 	public fun draw (Lgg/essential/universal/UMatrixStack;Lgg/essential/elementa/markdown/DrawState;)V
 	public fun getChildren ()Ljava/util/List;
+	public final fun getDividerWidth ()Ljava/lang/Double;
 	public fun selectedText (Z)Ljava/lang/String;
+	public final fun setDividerWidth (Ljava/lang/Double;)V
 }
 
 public final class gg/essential/elementa/markdown/drawables/ImageDrawable : gg/essential/elementa/markdown/drawables/Drawable {
@@ -3543,6 +3547,7 @@ public final class gg/essential/elementa/markdown/drawables/ListDrawable : gg/es
 	public fun cursorAtStart ()Lgg/essential/elementa/markdown/selection/Cursor;
 	public fun draw (Lgg/essential/universal/UMatrixStack;Lgg/essential/elementa/markdown/DrawState;)V
 	public fun getChildren ()Ljava/util/List;
+	public final fun getMaxTextLineWidth ()F
 	public fun selectedText (Z)Ljava/lang/String;
 }
 
@@ -3565,6 +3570,7 @@ public final class gg/essential/elementa/markdown/drawables/ParagraphDrawable : 
 	public fun draw (Lgg/essential/universal/UMatrixStack;Lgg/essential/elementa/markdown/DrawState;)V
 	public fun getChildren ()Ljava/util/List;
 	public final fun getDrawables ()Lgg/essential/elementa/markdown/drawables/DrawableList;
+	public final fun getMaxTextLineWidth ()F
 	public final fun getScaleModifier ()F
 	public final fun getTextDrawables ()Ljava/util/List;
 	public fun selectedText (Z)Ljava/lang/String;

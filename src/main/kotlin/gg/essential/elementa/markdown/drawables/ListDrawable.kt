@@ -33,6 +33,10 @@ class ListDrawable(
      */
     private var indentLevel = 0
 
+    // The width of the longest list entry, including the indentation, symbol width, and space after symbol
+    var maxTextLineWidth = 0f
+        private set
+
     init {
         trim(drawables)
         drawables.parent = this
@@ -94,6 +98,12 @@ class ListDrawable(
             addItem(drawable)
             index++
         }
+
+        maxTextLineWidth = drawables.maxOfOrNull { drawable ->
+            drawable.children.filterIsInstance<ParagraphDrawable>().maxOfOrNull {
+                indentation + symbolWidth + spaceAfterSymbol + it.maxTextLineWidth
+            } ?: 0f
+        } ?: 0f
 
         currY -= elementSpacing
         currY += marginBottom
