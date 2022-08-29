@@ -375,7 +375,7 @@ class ConstraintResolutionGui(
             height = 100.percent
         } childOf this
 
-        val inspector by Inspector(gui) {} childOf this
+        val inspector by Inspector(gui) childOf this
 
         private val closeButton by SVGComponent.ofResource("/svg/close.svg").constrain {
             x = 2.pixels(alignOpposite = true) boundTo inspector.container

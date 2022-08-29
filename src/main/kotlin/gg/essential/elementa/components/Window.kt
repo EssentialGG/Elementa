@@ -5,7 +5,6 @@ import gg.essential.elementa.UIComponent
 import gg.essential.elementa.constraints.resolution.ConstraintResolutionGui
 import gg.essential.elementa.constraints.resolution.ConstraintResolver
 import gg.essential.elementa.constraints.resolution.ConstraintResolverV2
-import gg.essential.elementa.debug.InspectorManager
 import gg.essential.elementa.effects.ScissorEffect
 import gg.essential.elementa.font.FontRenderer
 import gg.essential.elementa.impl.Platform.Companion.platform
@@ -44,6 +43,8 @@ class Window @JvmOverloads constructor(
     private var cancelDrawing = false
 
     internal var clickInterceptor: ((mouseX: Double, mouseY: Double, button: Int) -> Boolean)? = null
+
+    internal val drawCallbacks = mutableListOf<Window.() -> Unit>()
 
     /**
      *  State managers to avoid global states
@@ -157,7 +158,7 @@ class Window @JvmOverloads constructor(
             }
         }
         currentWindow.set(null)
-        InspectorManager.onDraw(this)
+        drawCallbacks.forEach{ it() }
     }
 
     internal fun drawEmbedded(matrixStack: UMatrixStack) {

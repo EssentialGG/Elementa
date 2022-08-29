@@ -7,8 +7,8 @@ import gg.essential.elementa.components.image.BlurHashImage
 import gg.essential.elementa.components.input.UIMultilineTextInput
 import gg.essential.elementa.components.input.UITextInput
 import gg.essential.elementa.components.inspector.CompactToggle
+import gg.essential.elementa.components.inspector.Inspector
 import gg.essential.elementa.constraints.*
-import gg.essential.elementa.debug.InspectorManager
 import gg.essential.elementa.dsl.*
 import gg.essential.elementa.effects.OutlineEffect
 import gg.essential.elementa.markdown.*
@@ -312,6 +312,10 @@ class ComponentsGui : WindowScreen(ElementaVersion.V2) {
             constrain {
                 width = 250.pixels
             }
+            val startDetached = Inspector.startDetached
+            Inspector.startDetached = false
+            val inspector = Inspector(window)
+            Inspector.startDetached = startDetached
 
             val inspectorTextDescription by MarkdownComponent(
                 """The Elementa inspector provides useful debug features for creating UIs with Elementa.  
@@ -350,7 +354,7 @@ class ComponentsGui : WindowScreen(ElementaVersion.V2) {
 
 
             inspectorExternal.onSetValue {
-                InspectorManager.toggleInspectorDetached(window)
+                inspector.setDetached(it)
             }
 
             val inspectorFeaturesDescription by UIWrappedText(
@@ -375,8 +379,8 @@ class ComponentsGui : WindowScreen(ElementaVersion.V2) {
                 y = SiblingConstraint(10f)
             } childOf this
 
-            InspectorManager.startDetached = false
-            InspectorManager.toggleInspector(window)
+            inspector childOf window
+
         } childOf window
 
     }

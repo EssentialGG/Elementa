@@ -3,11 +3,16 @@ package gg.essential.elementa.components.inspector
 import gg.essential.elementa.ElementaVersion
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.components.*
+import gg.essential.elementa.components.inspector.display.awt.AwtInspectorDisplay
+import gg.essential.elementa.components.inspector.display.glfw.GLFWDisplay
 import gg.essential.elementa.constraints.*
 import gg.essential.elementa.dsl.*
 import gg.essential.elementa.effects.OutlineEffect
 import gg.essential.elementa.effects.ScissorEffect
 import gg.essential.elementa.font.DefaultFonts
+import gg.essential.elementa.impl.ExternalInspectorDisplay
+import gg.essential.elementa.impl.Platform
+import gg.essential.elementa.manager.ResolutionManager
 import gg.essential.elementa.utils.ObservableAddEvent
 import gg.essential.elementa.utils.ObservableClearEvent
 import gg.essential.elementa.utils.ObservableRemoveEvent
@@ -21,29 +26,16 @@ import java.awt.Color
 import java.text.NumberFormat
 
 class Inspector @JvmOverloads constructor(
-    private val rootComponent: Window,
+    private val rootComponent: UIComponent,
     backgroundColor: Color = Color(40, 40, 40),
     outlineColor: Color = Color(20, 20, 20),
     outlineWidth: Float = 2f,
     maxSectionHeight: HeightConstraint? = null,
-    private val externalCleanupCallback: Inspector.() -> Unit,
 ) : UIContainer() {
 
-    @JvmOverloads
-    constructor(
-        rootComponent: UIComponent,
-        backgroundColor: Color = Color(40, 40, 40),
-        outlineColor: Color = Color(20, 20, 20),
-        outlineWidth: Float = 2f,
-        maxSectionHeight: HeightConstraint? = null,
-    ) : this(
-        rootComponent as Window,
-        backgroundColor,
-        outlineColor,
-        outlineWidth,
-        maxSectionHeight,
-        externalCleanupCallback = {})
 
+    private val inspectorContent by InspectorContent()
+    private val displayManager = DisplayManager()
     private val rootNode = componentToNode(rootComponent)
     private val treeBlock: UIContainer
     private var TreeListComponent: TreeListComponent
@@ -103,7 +95,7 @@ class Inspector @JvmOverloads constructor(
         container = UIBlock(backgroundColor).constrain {
             width = ChildBasedMaxSizeConstraint()
             height = ChildBasedSizeConstraint()
-        } effect outlineEffect childOf this
+        } effect outlineEffect childOf inspectorContent
 
         val titleBlock = UIContainer().constrain {
             x = CenterConstraint()
@@ -123,13 +115,9 @@ class Inspector @JvmOverloads constructor(
                 return@onMouseDrag
 
             if (button == 0) {
-                this@Inspector.constrain {
-                    x = (this@Inspector.getLeft() + mouseX - clickPos!!.first).pixels()
-                        .coerceAtLeast(0.pixels)
-                        .coerceAtMost(0.pixels(alignOpposite = true))
-                    y = (this@Inspector.getTop() + mouseY - clickPos!!.second).pixels()
-                        .coerceAtLeast(0.pixels)
-                        .coerceAtMost(0.pixels(alignOpposite = true))
+                inspectorContent.constrain {
+                    x = (inspectorContent.getLeft() + mouseX - clickPos!!.first).pixels()
+                    y = (inspectorContent.getTop() + mouseY - clickPos!!.second).pixels()
                 }
             }
         } childOf container
@@ -198,7 +186,7 @@ class Inspector @JvmOverloads constructor(
     private fun openComponentSelector() {
         isClickSelecting = true
 
-        val rootWindow = rootComponent
+        val rootWindow = Window.of(rootComponent)
         rootWindow.clickInterceptor = { mouseX, mouseY, _ ->
             rootWindow.clickInterceptor = null
             isClickSelecting = false
@@ -250,12 +238,13 @@ class Inspector @JvmOverloads constructor(
         return node
     }
 
-    fun cleanup() {
+    private fun cleanup() {
         drawObserver.hide(instantly = true)
         rootComponent.keyTypedListeners.remove(keyTypeListener)
         if (this in parent.children) {
             parent.children.remove(this)
         }
+        displayManager.cleanup()
     }
 
     internal fun setSelectedNode(node: InspectorNode?) {
@@ -309,7 +298,7 @@ class Inspector @JvmOverloads constructor(
 
         // Make sure we are the top-most component (last to draw and first to receive input)
         Window.enqueueRenderOperation {
-            ensureLastComponent(this@Inspector)
+            ensureLastComponent(inspectorContent)
         }
 
 
@@ -329,7 +318,7 @@ class Inspector @JvmOverloads constructor(
             // If we got removed from our parent, we need to un-float ourselves
             if (!isMounted()) {
                 Window.enqueueRenderOperation { setFloating(false) }
-                this@Inspector.externalCleanupCallback()
+                cleanup()
                 return
             }
             val targetComponent = selectedNode?.targetComponent
@@ -580,26 +569,102 @@ class Inspector @JvmOverloads constructor(
     }
 
     private fun ensureLastComponent(component: UIComponent) {
+        val componentOrder = listOf(
+            WindowDrawObserver::class.java,
+            InspectorContent::class.java,
+            Inspector::class.java,
+        )
         component.setFloating(false)
         if (component.isMounted()) { // only if we are still mounted
             component.setFloating(true)
             val siblings = component.parent.children
-            val index = siblings.indexOf(component)
-            if (index != siblings.size - 1) {
-                if (siblings.size > 1 && index == siblings.size - 2) {
+            siblings.sortBy {
+                componentOrder.indexOf(it.javaClass)
+            }
+        }
+    }
 
-                    // The draw observer should be below the inspector itself
-                    if (siblings[siblings.size - 1] is Inspector && component is WindowDrawObserver) {
-                        return
+    fun setDetached(external: Boolean) {
+        displayManager.setDetached(external)
+    }
+
+    // Class created so that we can reliability detect if a container is this type
+    internal inner class InspectorContent : UIContainer() {
+
+        init {
+            constrain {
+                width = ChildBasedSizeConstraint()
+                height = ChildBasedSizeConstraint()
+            }
+        }
+    }
+
+    internal inner class DisplayManager {
+
+        private var externalInspectorDisplay: ExternalInspectorDisplay? = null
+
+        // Create separate constraints so that the position of the inspector in the overlay
+        // can be different from it in the external window
+        private val externalContentConstraints = inspectorContent.constraints.copy()
+        private val overlayContentConstraints = inspectorContent.constraints.copy()
+        private var detached = !startDetached // Default to opposite state of startDetached so setDetached will run
+        private val drawCallback: Window.() -> Unit = {
+            draw(resolutionManager)
+        }
+
+        init {
+            setDetached(startDetached)
+            Window.of(rootComponent).drawCallbacks.add(drawCallback)
+        }
+
+        fun cleanup() {
+            externalInspectorDisplay?.cleanup()
+            Window.of(rootComponent).drawCallbacks.remove(drawCallback)
+        }
+
+        fun draw(resolutionManager: ResolutionManager) {
+            externalInspectorDisplay?.updateFrameBuffer(resolutionManager)
+        }
+
+        fun setDetached(detached: Boolean) {
+            if (detached == this.detached) {
+                return
+            }
+            this.detached = detached
+            val window = Window.of(rootComponent)
+            if (detached) {
+                var externalInspectorDisplay = externalInspectorDisplay
+                if (externalInspectorDisplay == null) {
+                    externalInspectorDisplay = createExternalDisplay().also {
+                        this.externalInspectorDisplay = it
                     }
                 }
-                siblings.remove(component)
-                siblings.add(component)
+                inspectorContent.constraints = externalContentConstraints
+
+                externalInspectorDisplay.addComponent(inspectorContent)
+                window.removeChild(inspectorContent)
+                window.removeFloatingComponent(inspectorContent)
+            } else {
+                externalInspectorDisplay?.removeComponent(inspectorContent)
+                window.addChild(inspectorContent)
+                inspectorContent.constraints = overlayContentConstraints
+            }
+        }
+
+        private fun createExternalDisplay(): ExternalInspectorDisplay {
+            return when (Platform.platform.mcVersion) {
+                11202, 10809 -> AwtInspectorDisplay()
+                else -> GLFWDisplay()
             }
         }
     }
 
     companion object {
         internal val percentFormat: NumberFormat = NumberFormat.getPercentInstance()
+
+        /**
+         * Controls whether new inspectors or debug components open in a detached window or on the window they are debugging.
+         */
+        internal var startDetached = System.getProperty("elementa.inspector.detached", "true") == "true"
     }
 }

@@ -1133,14 +1133,8 @@ public final class gg/essential/elementa/components/inspector/Inspector : gg/ess
 	public fun <init> (Lgg/essential/elementa/UIComponent;Ljava/awt/Color;Ljava/awt/Color;F)V
 	public fun <init> (Lgg/essential/elementa/UIComponent;Ljava/awt/Color;Ljava/awt/Color;FLgg/essential/elementa/constraints/HeightConstraint;)V
 	public synthetic fun <init> (Lgg/essential/elementa/UIComponent;Ljava/awt/Color;Ljava/awt/Color;FLgg/essential/elementa/constraints/HeightConstraint;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public fun <init> (Lgg/essential/elementa/components/Window;Ljava/awt/Color;Ljava/awt/Color;FLgg/essential/elementa/constraints/HeightConstraint;Lkotlin/jvm/functions/Function1;)V
-	public synthetic fun <init> (Lgg/essential/elementa/components/Window;Ljava/awt/Color;Ljava/awt/Color;FLgg/essential/elementa/constraints/HeightConstraint;Lkotlin/jvm/functions/Function1;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public fun <init> (Lgg/essential/elementa/components/Window;Ljava/awt/Color;Ljava/awt/Color;FLkotlin/jvm/functions/Function1;)V
-	public fun <init> (Lgg/essential/elementa/components/Window;Ljava/awt/Color;Ljava/awt/Color;Lkotlin/jvm/functions/Function1;)V
-	public fun <init> (Lgg/essential/elementa/components/Window;Ljava/awt/Color;Lkotlin/jvm/functions/Function1;)V
-	public fun <init> (Lgg/essential/elementa/components/Window;Lkotlin/jvm/functions/Function1;)V
-	public final fun cleanup ()V
 	public fun draw (Lgg/essential/universal/UMatrixStack;)V
+	public final fun setDetached (Z)V
 }
 
 public final class gg/essential/elementa/components/inspector/Inspector$Companion {
@@ -2489,16 +2483,6 @@ public final class gg/essential/elementa/constraints/resolution/ResolverNode {
 
 public final class gg/essential/elementa/debug/InspectorDisplay$DefaultImpls {
 	public static fun inspectorDisplayName (Lgg/essential/elementa/debug/InspectorDisplay;)Ljava/lang/String;
-}
-
-public final class gg/essential/elementa/debug/InspectorManager {
-	public static final field INSTANCE Lgg/essential/elementa/debug/InspectorManager;
-	public final fun addCustomDebugComponent (Lgg/essential/elementa/components/Window;Lgg/essential/elementa/UIComponent;)V
-	public final fun getStartDetached ()Z
-	public final fun removeCustomDebugComponent (Lgg/essential/elementa/components/Window;Lgg/essential/elementa/UIComponent;)V
-	public final fun setStartDetached (Z)V
-	public final fun toggleInspector (Lgg/essential/elementa/components/Window;)V
-	public final fun toggleInspectorDetached (Lgg/essential/elementa/components/Window;)V
 }
 
 public final class gg/essential/elementa/dsl/AnimationsKt {
