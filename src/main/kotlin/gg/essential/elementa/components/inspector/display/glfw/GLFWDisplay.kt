@@ -1,4 +1,4 @@
-package gg.essential.elementa.debug.inspector.glfw
+package gg.essential.elementa.components.inspector.display.glfw
 
 import gg.essential.elementa.ElementaVersion
 import gg.essential.elementa.UIComponent
@@ -7,11 +7,9 @@ import gg.essential.elementa.debug.ExternalResolutionManager
 import gg.essential.elementa.debug.FrameBufferedWindow
 import gg.essential.elementa.impl.ExternalInspectorDisplay
 import gg.essential.elementa.manager.ResolutionManager
-import org.jetbrains.annotations.ApiStatus
 import org.lwjgl.glfw.GLFW.*
 
-@ApiStatus.Internal
-class GLFWDisplay : ExternalInspectorDisplay {
+internal class GLFWDisplay : ExternalInspectorDisplay {
 
     private val window = Window(ElementaVersion.V2)
     private val buffer = FrameBufferedWindow(window, this)

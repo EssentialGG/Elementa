@@ -15,8 +15,6 @@ interface Platform {
 
     fun isCallingFromMinecraftThread(): Boolean
 
-    fun generateExternalDisplay(): ExternalInspectorDisplay
-
     fun deleteFramebuffers(buffer: Int)
 
     fun genFrameBuffers(): Int

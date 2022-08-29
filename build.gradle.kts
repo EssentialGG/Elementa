@@ -40,12 +40,20 @@ dependencies {
     implementation(prebundle(internal))
 
     // Depending on LWJGL3 instead of 2 so we can choose opengl bindings only
-    compileOnly("org.lwjgl:lwjgl-opengl:3.3.1")
+    compileOnly("org.lwjgl:lwjgl-opengl:3.2.2")
     // Depending on 1.8.9 for all of these because that's the oldest version we support
     compileOnly(libs.versions.universalcraft.map { "gg.essential:universalcraft-1.8.9-forge:$it" }) {
         attributes { attribute(common, true) }
     }
     compileOnly("com.google.code.gson:gson:2.2.4")
+
+    // For external inspector display on LWJGL2
+    compileOnly("org.lwjgl.lwjgl:lwjgl:2.9.3")
+    compileOnly("org.lwjgl.lwjgl:lwjgl_util:2.9.3")
+
+    // For external inspector display on LWJGL3
+    compileOnly("org.lwjgl:lwjgl:3.2.2")
+    compileOnly("org.lwjgl:lwjgl-glfw:3.2.2")
 }
 
 apiValidation {

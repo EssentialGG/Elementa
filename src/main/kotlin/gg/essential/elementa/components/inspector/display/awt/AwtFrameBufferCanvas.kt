@@ -1,8 +1,6 @@
-package gg.essential.elementa.debug.inspector.awt
+package gg.essential.elementa.components.inspector.display.awt
 
-//#if MC<=11202
 import gg.essential.elementa.debug.FrameBufferedWindow
-import org.jetbrains.annotations.ApiStatus
 import org.lwjgl.opengl.AWTGLCanvas
 import org.lwjgl.opengl.Display
 import org.lwjgl.opengl.GL11.*
@@ -14,8 +12,7 @@ import java.awt.GraphicsEnvironment
 /**
  * A Java AWT component that renders the contents of the supplied [bufferedWindow]
  */
-@ApiStatus.Internal
-class AwtFrameBufferCanvas(
+internal class AwtFrameBufferCanvas(
     private val bufferedWindow: FrameBufferedWindow,
 ) : AWTGLCanvas(
     GraphicsEnvironment.getLocalGraphicsEnvironment().defaultScreenDevice,
@@ -41,4 +38,3 @@ class AwtFrameBufferCanvas(
         repaint()
     }
 }
-//#endif

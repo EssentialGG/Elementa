@@ -1,15 +1,13 @@
-package gg.essential.elementa.debug.inspector.glfw
+package gg.essential.elementa.components.inspector.display.glfw
 
 import gg.essential.elementa.debug.FrameBufferedWindow
-import org.jetbrains.annotations.ApiStatus
 import org.lwjgl.glfw.GLFW
 import org.lwjgl.opengl.GL
 import org.lwjgl.opengl.GL11
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
-@ApiStatus.Internal
-class GLFWRenderer(
+internal class GLFWRenderer(
     private val frameBuffer: FrameBufferedWindow,
     private val window: Long,
     private val display: GLFWDisplay,

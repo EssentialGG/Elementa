@@ -1,6 +1,5 @@
-package gg.essential.elementa.debug.inspector.awt
+package gg.essential.elementa.components.inspector.display.awt
 
-//#if MC<=11202
 import gg.essential.elementa.ElementaVersion
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.components.Window
@@ -8,7 +7,6 @@ import gg.essential.elementa.debug.ExternalResolutionManager
 import gg.essential.elementa.debug.FrameBufferedWindow
 import gg.essential.elementa.impl.ExternalInspectorDisplay
 import gg.essential.elementa.manager.ResolutionManager
-import org.jetbrains.annotations.ApiStatus
 import java.awt.Dimension
 import java.util.concurrent.Executors
 import javax.swing.JFrame
@@ -18,8 +16,7 @@ import javax.swing.WindowConstants
 /**
  * Implementation for [ExternalInspectorDisplay] using Java AWT for LWJGL2
  */
-@ApiStatus.Internal
-class AwtInspectorDisplay : ExternalInspectorDisplay {
+internal class AwtInspectorDisplay : ExternalInspectorDisplay {
 
     private val window = Window(ElementaVersion.V2)
     private val buffer = FrameBufferedWindow(window, this)
@@ -84,4 +81,3 @@ class AwtInspectorDisplay : ExternalInspectorDisplay {
     }
 
 }
-//#endif

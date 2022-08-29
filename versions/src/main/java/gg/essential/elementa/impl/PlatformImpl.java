@@ -24,11 +24,6 @@ import static net.minecraft.client.renderer.OpenGlHelper.glFramebufferTexture2D;
 import static net.minecraft.client.renderer.OpenGlHelper.glGenFramebuffers;
 //#endif
 
-//#if MC<=11202
-import gg.essential.elementa.debug.inspector.awt.AwtInspectorDisplay;
-//#else
-//$$ import gg.essential.elementa.debug.inspector.glfw.GLFWDisplay;
-//#endif
 
 @ApiStatus.Internal
 @SuppressWarnings("unused") // instantiated via reflection from Platform.Companion
@@ -122,15 +117,6 @@ public class PlatformImpl implements Platform {
         //#endif
     }
 
-    @NotNull
-    @Override
-    public ExternalInspectorDisplay generateExternalDisplay() {
-        //#if MC<=11202
-        return new AwtInspectorDisplay();
-        //#else
-        //$$ return new GLFWDisplay();
-        //#endif
-    }
 
     @Override
     public void runOnMinecraftThread(@NotNull Function0<Unit> runnable) {

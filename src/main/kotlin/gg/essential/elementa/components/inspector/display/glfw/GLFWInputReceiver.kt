@@ -1,16 +1,15 @@
-package gg.essential.elementa.debug.inspector.glfw
+package gg.essential.elementa.components.inspector.display.glfw
 
 import gg.essential.elementa.components.Window
+import gg.essential.elementa.impl.Platform
 import gg.essential.elementa.manager.KeyboardManager
 import gg.essential.elementa.manager.MousePositionManager
 import gg.essential.elementa.manager.ResolutionManager
 import gg.essential.universal.UKeyboard
-import gg.essential.universal.UMinecraft
-import org.jetbrains.annotations.ApiStatus
 import org.lwjgl.glfw.GLFW
 
-@ApiStatus.Internal
-class GLFWInputReceiver(
+
+internal class GLFWInputReceiver(
     private val windowPointer: Long,
     private val resolutionManager: ResolutionManager,
     private val window: Window,
@@ -30,7 +29,7 @@ class GLFWInputReceiver(
     private var allowRepeatEvents = true
 
     private fun runOnMinecraftThread(runnable: () -> Unit) {
-        UMinecraft.getMinecraft().enqueue(runnable)
+        Platform.platform.runOnMinecraftThread(runnable)
     }
 
 

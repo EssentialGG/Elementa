@@ -1,15 +1,12 @@
-package gg.essential.elementa.debug.inspector.awt
+package gg.essential.elementa.components.inspector.display.awt
 
-//#if MC<=11202
 import gg.essential.elementa.manager.MousePositionManager
 import gg.essential.elementa.manager.ResolutionManager
-import org.jetbrains.annotations.ApiStatus
 
 /**
  * A [MousePositionManager] that supplies its values from the supplied [frame]
  */
-@ApiStatus.Internal
-class AwtMousePositionManager(
+internal class AwtMousePositionManager(
     private val frame: AwtFrameBufferCanvas,
     private val resolutionManager: ResolutionManager,
 ) : MousePositionManager {
@@ -26,4 +23,3 @@ class AwtMousePositionManager(
     override val scaledY: Double
         get() = rawY / resolutionManager.scaleFactor
 }
-//#endif

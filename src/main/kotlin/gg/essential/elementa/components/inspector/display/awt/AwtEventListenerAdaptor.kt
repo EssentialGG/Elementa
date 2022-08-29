@@ -1,19 +1,17 @@
-package gg.essential.elementa.debug.inspector.awt
+package gg.essential.elementa.components.inspector.display.awt
 
 import gg.essential.elementa.components.Window
 import gg.essential.elementa.debug.ExternalResolutionManager
+import gg.essential.elementa.impl.Platform
 import gg.essential.elementa.manager.KeyboardManager
 import gg.essential.universal.UKeyboard
-import gg.essential.universal.UMinecraft
 import org.jetbrains.annotations.ApiStatus
 import java.awt.event.*
 
-//#if MC<=11202
 /**
  * A [KeyboardManager] implementation that receives its values from a Java AWT
  */
-@ApiStatus.Internal
-class AwtEventListenerAdaptor(
+internal class AwtEventListenerAdaptor(
     private val resolutionManager: ExternalResolutionManager,
     private val window: Window,
 ) : MouseListener, KeyListener, MouseWheelListener, KeyboardManager {
@@ -22,7 +20,7 @@ class AwtEventListenerAdaptor(
     private var modifiers = UKeyboard.Modifiers(isCtrl = false, isShift = false, isAlt = false)
 
     private fun runOnMinecraftThread(runnable: () -> Unit) {
-        UMinecraft.getMinecraft().addScheduledTask(runnable)
+        Platform.platform.runOnMinecraftThread(runnable)
     }
 
     override fun mouseReleased(e: MouseEvent) = runOnMinecraftThread { window.mouseRelease() }
@@ -208,4 +206,3 @@ class AwtEventListenerAdaptor(
 
 
 }
-//#endif
