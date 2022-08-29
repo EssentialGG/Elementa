@@ -1,5 +1,7 @@
 package gg.essential.elementa.impl;
 
+import kotlin.Unit;
+import kotlin.jvm.functions.Function0;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.shader.Framebuffer;
@@ -127,6 +129,15 @@ public class PlatformImpl implements Platform {
         return new AwtInspectorDisplay();
         //#else
         //$$ return new GLFWDisplay();
+        //#endif
+    }
+
+    @Override
+    public void runOnMinecraftThread(@NotNull Function0<Unit> runnable) {
+        //#if MC<=11202
+        Minecraft.getMinecraft().addScheduledTask(runnable::invoke);
+        //#else
+        //$$ Minecraft.getInstance().execute(runnable::invoke);
         //#endif
     }
 }

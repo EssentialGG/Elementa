@@ -25,6 +25,8 @@ interface Platform {
 
     fun bindFramebuffer(target: Int, framebuffer: Int)
 
+    fun runOnMinecraftThread(runnable: () -> Unit)
+
     @ApiStatus.Internal
     companion object {
         internal val platform: Platform =
