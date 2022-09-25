@@ -40,14 +40,14 @@ a lot of sense to simply wrap said components in a UIContainer and right-align
 the container.
 
 ```kotlin
-val bar = UIBlock().constrain {
+val bar by UIBlock().constrain {
     x = 2.pixels()
     y = SiblingConstraint() + 5.pixels()
     width = 150.pixels()
     height = 50.pixels()
 } childOf this
 
-val container = UIContainer().constrain {
+val container by UIContainer().constrain {
     x = 0.pixels(true)
     width = ChildBasedSizeConstraint(padding = 2f)
     height = ChildBasedMaxSizeConstraint()
@@ -172,6 +172,10 @@ to simple `UIBlock` components that can provide a little flair if needed. All ro
 a `radius` parameter to determine how much to round the corners of the rectangle.
 Higher values indicate more rounded corners as seen below.
 
+> **Note**
+> This component doesn't behave as expected while using [OutlineEffect](../src/main/kotlin/gg/essential/elementa/effects/OutlineEffect.kt).
+> It doesn't properly outline following the edge but rather the bounding box of the component.
+
 ```kotlin
 UIRoundedRectangle(2f).constrain {
     x = 2.pixels()
@@ -216,6 +220,10 @@ do not use the width & height constraints. Instead, they deal with the x, y, and
 The `x` and `y` position of the circle specifies the center of the circle rather than the top-left corner
 like most other components. The radius constraint can have the value of any other size (width/height) constraint.
 
+> **Note**
+> This component doesn't behave as expected while using [OutlineEffect](../src/main/kotlin/gg/essential/elementa/effects/OutlineEffect.kt).
+> It doesn't properly outline following the edge but rather the bounding box of the component.
+
 ```kotlin
 UICircle().constrain {
     // These x & y positions describe the CENTER of the circle
@@ -255,8 +263,12 @@ UIPoints are also interesting because they are an infinitesimally small point wi
 
 Note: `UIPoint`s can be animated just like any other component, which means the shape itself is animatable.
 
+> **Warning**
+> This component is now deprecated due to only supporting convex shapes.
+> It is recommended that you instead create your own component for your use case.
+
 ```kotlin
-val shapeHolder = UIContainer().constrain {
+val shapeHolder by UIContainer().constrain {
     x = 2.pixels()
     y = SiblingConstraint() + 5.pixels()
 
@@ -380,7 +392,7 @@ and [UIMultilineTextInput](../src/main/kotlin/gg/essential/elementa/components/i
 of these input components are extremely powerful: they support cursor movement, selection via both keyboard and mouse,
 copy/paste, undo/redo, and so much more! In order to activate these components, simply give them window focus,
 and they will handle the rest. Pressing `<esc>`, on these components or clicking off of them will automatically
-deactivate them as well. Enabling `ScissorEffect` on these components is unnecessary, as they already have it enabled
+deactivate them as well. Enabling [`ScissorEffect`](../src/main/kotlin/gg/essential/elementa/effects/ScissorEffect.kt) on these components is unnecessary, as they already have it enabled
 by default.
 
 The first Text Input component is a single-line text input, similar to the type of text box you would find
@@ -388,7 +400,7 @@ being used for your browser's search bar. With this type of input, overflowing t
 sideways, and moves the earlier text off to the left.
 
 ```kotlin
-val box1 = UIBlock(Color(50, 50, 50)).constrain {
+val box1 by UIBlock(Color(50, 50, 50)).constrain {
     x = 2.pixels()
     y = SiblingConstraint() + 5.pixels()
 
@@ -396,7 +408,7 @@ val box1 = UIBlock(Color(50, 50, 50)).constrain {
     height = 12.pixels()
 } childOf this
 
-val textInput1 = UITextInput("My single line text input!").constrain {
+val textInput1 by UITextInput("My single line text input!").constrain {
     x = 2.pixels()
     y = 2.pixels()
 
@@ -410,7 +422,7 @@ The other type of Text Input is a multi-line text input component. This is the t
 Discord's message box. It supports text wrapping across lines, new-lines, scrolling vertically, and more.
 
 ```kotlin
-val box2 = UIBlock(Color(50, 50, 50)).constrain {
+val box2 by UIBlock(Color(50, 50, 50)).constrain {
     x = 2.pixels()
     y = SiblingConstraint() + 5.pixels()
 
@@ -418,7 +430,7 @@ val box2 = UIBlock(Color(50, 50, 50)).constrain {
     height = ChildBasedSizeConstraint() + 4.pixels()
 } childOf this
 
-val textInput2 = UIMultilineTextInput("My multiline text input!").constrain {
+val textInput2 by UIMultilineTextInput("My multiline text input!").constrain {
     x = 2.pixels()
     y = 2.pixels()
 
@@ -428,8 +440,9 @@ val textInput2 = UIMultilineTextInput("My multiline text input!").constrain {
 box2.onMouseClick { textInput2.grabWindowFocus() }
 ```
 
-Note: Make sure you are passing mouse & keyboard events to your window if your inputs are not working. (Or just use 
-[WindowScreen](../src/main/kotlin/gg/essential/elementa/WindowScreen.kt)!)
+> **Note**
+> Make sure you are passing mouse & keyboard events to your window if your inputs are not working. 
+> (Or just use [WindowScreen](../src/main/kotlin/gg/essential/elementa/WindowScreen.kt)!)
 
 The inputs before selecting or typing:
 
@@ -439,7 +452,7 @@ The text inputs after typing:
 
 ![UITextInput Example after typing](https://i.imgur.com/gBIH4bn.png)
 
-It's worth booting up the `ComponentsGui` playground to see how these inputs work and feel.
+It's worth booting up the [`ComponentsGui`](../src/main/java/com/example/examplemod/ComponentsGui.kt) playground to see how these inputs work and feel.
 
 ### ScrollComponent
 
@@ -448,12 +461,12 @@ order to make sure they are all visible, we need to be able to scroll in that ar
 again provides an extremely easy way to accomplish this, a
 [ScrollComponent](../src/main/kotlin/gg/essential/elementa/components/ScrollComponent.kt). Scroll components have a fixed
 height, and you can add children to them just like any other component. In theory, they should be treated just
-like a `UIContainer`.
+like a [`UIContainer`](../src/main/kotlin/gg/essential/elementa/components/UIContainer.kt).
 
 A basic scroll component with a few components would look like the following:
 
 ```kotlin
-val scroll1 = ScrollComponent().constrain {
+val scroll1 by ScrollComponent().constrain {
     x = 2.pixels()
     y = SiblingConstraint() + 5.pixels()
 
@@ -501,7 +514,7 @@ What the scroll components look like with debug outlines enabled:
 
 A [MarkdownComponent](../src/main/kotlin/gg/essential/elementa/markdown/MarkdownComponent.kt) is used to render
 any Markdown document natively. This is a great way to display rich text in your GUI, whether it be changelogs or
-whatever you require. Simply pass your markdown document to the `MarkdownComponent`'s constructor, where it is then
+whatever you require. Simply pass your markdown document to the [`MarkdownComponent`](../src/main/kotlin/gg/essential/elementa/markdown/MarkdownComponent.kt)'s constructor, where it is then
 parsed and ready to be rendered!
 
 ```kotlin
@@ -525,13 +538,13 @@ parsed and ready to be rendered!
 
 `MarkdownComponent` in action:
 
-![MarkdownComponent Example](https://i.imgur.com/VATxhMk.png)
+![MarkdownComponent Example](https://i.imgur.com/5LQehTK.png)
 
 ### SVG
 
 An [SVGComponent](../src/main/kotlin/gg/essential/elementa/components/SVGComponent.kt) is used to render
 (simple!) SVG documents natively. This is extremely useful for high resolution icons in your GUI, though keep in mind,
-the Elementa SVG parser/renderer are very simple, and support an extremely limited subset of the SVG standard. To ensure
+**the Elementa SVG parser/renderer are very simple, and support an extremely limited subset of the SVG standard**. To ensure
 your icon will properly render, please use icons from [TablerIcons](https://github.com/tabler/tabler-icons).
 
 ```kotlin
@@ -574,9 +587,9 @@ and `stroke-linejoin` attributes from the topmost `<svg>` element in your SVG fi
 
 ### PlotComponent
 
-The [PlotComponent](../src/main/kotlin/gg/essential/elementa/components/graph/PlotComponent.kt), as its name implies,
+The [PlotComponent](../src/main/kotlin/gg/essential/elementa/components/plot/PlotComponent.kt), as its name implies,
 allow the user to display a graph of information to the user. The great thing about this component is that it is
-extremely customizable. Everything can be changed, from the axis labels to the line widths. Lets look at a basic 
+extremely customizable. Everything can be changed, from the axis labels to the line widths. Let's look at a basic 
 example:
 
 ```kotlin
@@ -591,7 +604,7 @@ PlotComponent(listOf(
 ))
 ```
 
-With no styling applied, using only the defaults provided by the component, we get a pretty good looking graph:
+With no styling applied, using only the defaults provided by the component, we get a pretty good-looking graph:
 
 ![basic graph component](https://i.imgur.com/miJmnqz.png)
 
@@ -660,7 +673,7 @@ Now that we have a node class, let's create a `TreeListComponent`. We provide a 
 easily:
 
 ```kotlin
-val rootNode = TextNode("root node").withChildren {
+val rootNode by TextNode("root node").withChildren {
     add(TextNode("item 1"))
     add(TextNode("item 2").withChildren {
         add(TextNode("sub-item 1"))
@@ -670,7 +683,7 @@ val rootNode = TextNode("root node").withChildren {
     add(TextNode("item 3"))
 }
 
-val TreeListComponent = TreeListComponent(rootNode).constrain {
+val TreeListComponent by TreeListComponent(rootNode).constrain {
     // ...
 }
 ```
@@ -681,7 +694,7 @@ tree start in a closed position.
 The `TreeListComponent` is convenient because the user only has to worry about the layout of each particular node. The user
 does not have to worry about aligning the children, or even aligning the arrow component.
 
-A few things to note:
+##### A few things to note:
 - You can provide a list of `TreeNode`s to the `TreeListComponent` constructor to have multiple roots.
 - All nodes of the tree start in a closed position, and the `close` methods of the `TreeArrowComponent`s are _not_ 
 initially called.
