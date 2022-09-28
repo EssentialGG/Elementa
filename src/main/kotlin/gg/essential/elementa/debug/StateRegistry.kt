@@ -69,7 +69,7 @@ sealed class ManagedState(
         }
 
     @ApiStatus.Internal
-    class OfObject<T>(
+    class OfEnumerable<T>(
         val state: State<T>,
         val allValues: List<T>,
         val displayName: (T) -> String,
@@ -160,7 +160,7 @@ object StateRegistryComponentFactory {
             is ManagedState.OfEnum<*> -> {
                managedState.createSelector()
             }
-            is ManagedState.OfObject<*> -> {
+            is ManagedState.OfEnumerable<*> -> {
                 managedState.createSelector()
             }
         }
