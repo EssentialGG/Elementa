@@ -117,9 +117,12 @@ class AlphaAspectColorConstraint(
  * a chroma effect.
  */
 class RainbowColorConstraint(
-    private val alphaState: State<Int>,
-    private val speedState: State<Float>,
+    alpha: State<Int>,
+    speed: State<Float>,
 ) : ColorConstraint, StateRegistry {
+
+    private val alphaState = alpha.map { it }
+    private val speedState = speed.map { it }
 
     @JvmOverloads
     constructor(alpha: Int = 255, speed: Float = 50f) : this(BasicState(alpha), BasicState(speed))
