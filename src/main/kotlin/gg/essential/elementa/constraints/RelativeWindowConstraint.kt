@@ -64,7 +64,8 @@ class RelativeWindowConstraint(
     }
 
     @ApiStatus.Internal
-    override fun getManagedStates(): List<ManagedState> = listOf(
+    @get:ApiStatus.Internal
+    override val managedStates = listOf(
         ManagedState.ManagedFloatState(valueState, "value", true),
     )
 }

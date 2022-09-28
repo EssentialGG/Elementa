@@ -138,7 +138,8 @@ class PixelConstraint @JvmOverloads constructor(
     }
 
     @ApiStatus.Internal
-    override fun getManagedStates(): List<ManagedState> = listOf(
+    @get:ApiStatus.Internal
+    override val managedStates = listOf(
         ManagedState.ManagedFloatState(valueState, "value", true),
         ManagedState.ManagedBooleanState(alignOppositeState, "alignOpposite", true),
         ManagedState.ManagedBooleanState(alignOutsideState, "alignOutside", true),

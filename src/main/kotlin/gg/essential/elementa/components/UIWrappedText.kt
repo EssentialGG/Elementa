@@ -94,7 +94,8 @@ open class UIWrappedText @JvmOverloads constructor(
     }
 
     @ApiStatus.Internal
-    override fun getManagedStates(): List<ManagedState> = listOf(
+    @get:ApiStatus.Internal
+    override val managedStates = listOf(
         ManagedState.ManagedStringState(textState, "text", true),
         ManagedState.ManagedBooleanState(shadowState, "shadow", true),
         ManagedState.ManagedColorStateNullable(shadowColorState, "shadowColor", true),

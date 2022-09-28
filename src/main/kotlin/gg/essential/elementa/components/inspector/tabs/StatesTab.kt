@@ -19,7 +19,7 @@ class StatesTab : InspectorTab("States") {
     override fun updateWithComponent(component: UIComponent) {
         clearChildren()
         if (component is StateRegistry) {
-            val managedStates = component.getManagedStates()
+            val managedStates = component.managedStates
             managedStates.forEach {
                 createStateViewer(it, this)
             }

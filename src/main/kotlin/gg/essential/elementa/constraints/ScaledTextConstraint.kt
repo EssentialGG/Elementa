@@ -54,7 +54,8 @@ class ScaledTextConstraint(
     override fun visitImpl(visitor: ConstraintVisitor, type: ConstraintType) { }
 
     @ApiStatus.Internal
-    override fun getManagedStates(): List<ManagedState> = listOf(
+    @get:ApiStatus.Internal
+    override val managedStates = listOf(
         ManagedState.ManagedFloatState(scaleState, "scale", true),
     )
 }

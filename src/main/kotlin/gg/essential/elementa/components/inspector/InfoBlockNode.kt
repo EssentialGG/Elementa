@@ -26,7 +26,7 @@ class InfoBlockNode<T>(private val constraint: SuperConstraint<T>, private val n
             } childOf this
 
             val states = if (constraint is StateRegistry) {
-                constraint.getManagedStates()
+                constraint.managedStates
             } else {
                 emptyList()
             }

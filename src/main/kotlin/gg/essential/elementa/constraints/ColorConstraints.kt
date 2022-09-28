@@ -52,7 +52,8 @@ class ConstantColorConstraint(
     override fun visitImpl(visitor: ConstraintVisitor, type: ConstraintType) {}
 
     @ApiStatus.Internal
-    override fun getManagedStates(): List<ManagedState> = listOf(
+    @get:ApiStatus.Internal
+    override val managedStates = listOf(
         ManagedState.ManagedColorState(colorState, "color", true)
     )
 }
@@ -104,7 +105,8 @@ class AlphaAspectColorConstraint(
     override fun visitImpl(visitor: ConstraintVisitor, type: ConstraintType) {}
 
     @ApiStatus.Internal
-    override fun getManagedStates(): List<ManagedState> = listOf(
+    @get:ApiStatus.Internal
+    override val managedStates = listOf(
         ManagedState.ManagedColorState(colorState, "color", true),
         ManagedState.ManagedFloatState(alphaState, "alpha", true)
     )
@@ -160,7 +162,8 @@ class RainbowColorConstraint(
     override fun visitImpl(visitor: ConstraintVisitor, type: ConstraintType) {}
 
     @ApiStatus.Internal
-    override fun getManagedStates(): List<ManagedState> = listOf(
+    @get:ApiStatus.Internal
+    override val managedStates = listOf(
         ManagedState.ManagedFloatState(speedState, "speed", true),
         ManagedState.ManagedIntState(alphaState, "alpha", true)
     )

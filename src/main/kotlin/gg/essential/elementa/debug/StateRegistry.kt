@@ -14,16 +14,15 @@ import java.awt.Color
 
 /**
  * Components and constraints can implement this interface and provide managed states through
- * [getManagedStates]. Any managed state will have its value display in the [Inspector]
+ * [managedStates]. Any managed state will have its value display in the [Inspector]
  * and have its value configurable if it is mutable.
  */
-@ApiStatus.Internal
-interface StateRegistry {
+internal interface StateRegistry {
 
     /**
      * Returns a list of managed states that govern some aspect of this component or constraint.
      */
-    fun getManagedStates(): List<ManagedState>
+    val managedStates: List<ManagedState>
 }
 
 /**
