@@ -9,11 +9,12 @@ import gg.essential.elementa.effects.OutlineEffect
 import gg.essential.elementa.state.State
 import gg.essential.elementa.utils.onLeftClick
 import org.jetbrains.annotations.ApiStatus
+import gg.essential.elementa.components.inspector.Inspector
 import java.awt.Color
 
 /**
  * Components and constraints can implement this interface and provide managed states through
- * [getManagedStates]. Any managed state will have its value display in the [gg.essential.elementa.components.inspector.Inspector]
+ * [getManagedStates]. Any managed state will have its value display in the [Inspector]
  * and have its value configurable if it is mutable.
  */
 @ApiStatus.Internal
@@ -26,7 +27,7 @@ interface StateRegistry {
 }
 
 /**
- * Managed states are used to display and configure the value of a state inside the [gg.essential.elementa.components.inspector.Inspector].
+ * Managed states are used to display and configure the value of a state inside the [Inspector].
  */
 @ApiStatus.Internal
 sealed class ManagedState(
@@ -92,7 +93,7 @@ sealed class ManagedState(
 interface InspectorDisplay {
 
     /**
-     * The display name in the [gg.essential.elementa.components.inspector.Inspector] for this value
+     * The display name in the [Inspector] for this value
      */
     fun inspectorDisplayName(): String = toString()
 
