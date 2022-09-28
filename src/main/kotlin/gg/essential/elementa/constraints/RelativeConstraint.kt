@@ -76,6 +76,6 @@ class RelativeConstraint constructor(
     @ApiStatus.Internal
     @get:ApiStatus.Internal
     override val managedStates = listOf(
-        ManagedState.ManagedFloatState(valueState, "value", true),
+        ManagedState.OfFloat(valueState, "value", true),
     )
 }

@@ -72,6 +72,6 @@ class RoundingConstraint constructor(
     @ApiStatus.Internal
     @get:ApiStatus.Internal
     override val managedStates = listOf(
-        ManagedState.ManagedEnumState(roundingModeState, "mode", true),
+        ManagedState.OfEnum(roundingModeState, "mode", true),
     )
 }

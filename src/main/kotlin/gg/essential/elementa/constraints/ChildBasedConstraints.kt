@@ -54,7 +54,7 @@ class ChildBasedSizeConstraint(
     @ApiStatus.Internal
     @get:ApiStatus.Internal
     override val managedStates = listOf(
-        ManagedState.ManagedFloatState(paddingState, "padding", true)
+        ManagedState.OfFloat(paddingState, "padding", true)
     )
 }
 

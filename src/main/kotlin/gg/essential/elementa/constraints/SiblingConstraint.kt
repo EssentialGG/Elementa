@@ -207,7 +207,7 @@ open class SiblingConstraint constructor(
     @ApiStatus.Internal
     @get:ApiStatus.Internal
     override val managedStates = listOf(
-        ManagedState.ManagedFloatState(paddingState, "padding", true),
-        ManagedState.ManagedBooleanState(alignOppositeState, "alignOpposite", true),
+        ManagedState.OfFloat(paddingState, "padding", true),
+        ManagedState.OfBoolean(alignOppositeState, "alignOpposite", true),
     )
 }

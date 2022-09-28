@@ -63,9 +63,9 @@ constructor(
     @ApiStatus.Internal
     @get:ApiStatus.Internal
     override val managedStates = listOf(
-        ManagedState.ManagedStringState(textState, "text", true),
-        ManagedState.ManagedBooleanState(shadowState, "shadow", true),
-        ManagedState.ManagedColorOrNullState(shadowColorState, "shadowColor", true),
+        ManagedState.OfString(textState, "text", true),
+        ManagedState.OfBoolean(shadowState, "shadow", true),
+        ManagedState.OfColorOrNull(shadowColorState, "shadowColor", true),
     )
 
 

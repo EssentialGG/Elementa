@@ -56,6 +56,6 @@ class ScaledTextConstraint(
     @ApiStatus.Internal
     @get:ApiStatus.Internal
     override val managedStates = listOf(
-        ManagedState.ManagedFloatState(scaleState, "scale", true),
+        ManagedState.OfFloat(scaleState, "scale", true),
     )
 }

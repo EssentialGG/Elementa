@@ -35,29 +35,29 @@ sealed class ManagedState(
 ) {
 
     @ApiStatus.Internal
-    class ManagedStringState(val state: State<String>, name: String, mutable: Boolean) : ManagedState(name, mutable)
+    class OfString(val state: State<String>, name: String, mutable: Boolean) : ManagedState(name, mutable)
 
     @ApiStatus.Internal
-    class ManagedBooleanState(val state: State<Boolean>, name: String, mutable: Boolean) : ManagedState(name, mutable)
+    class OfBoolean(val state: State<Boolean>, name: String, mutable: Boolean) : ManagedState(name, mutable)
 
     @ApiStatus.Internal
-    class ManagedColorState(val state: State<Color>, name: String, mutable: Boolean) : ManagedState(name, mutable)
+    class OfColor(val state: State<Color>, name: String, mutable: Boolean) : ManagedState(name, mutable)
 
     @ApiStatus.Internal
-    class ManagedColorOrNullState(val state: State<Color?>, name: String, mutable: Boolean) :
+    class OfColorOrNull(val state: State<Color?>, name: String, mutable: Boolean) :
         ManagedState(name, mutable)
 
     @ApiStatus.Internal
-    class ManagedIntState(val state: State<Int>, name: String, mutable: Boolean) : ManagedState(name, mutable)
+    class OfInt(val state: State<Int>, name: String, mutable: Boolean) : ManagedState(name, mutable)
 
     @ApiStatus.Internal
-    class ManagedFloatState(val state: State<Float>, name: String, mutable: Boolean) : ManagedState(name, mutable)
+    class OfFloat(val state: State<Float>, name: String, mutable: Boolean) : ManagedState(name, mutable)
 
     @ApiStatus.Internal
-    class ManagedDoubleState(val state: State<Double>, name: String, mutable: Boolean) : ManagedState(name, mutable)
+    class OfDouble(val state: State<Double>, name: String, mutable: Boolean) : ManagedState(name, mutable)
 
     @ApiStatus.Internal
-    class ManagedEnumState<E : Enum<E>>(val state: State<E>, name: String, mutable: Boolean) :
+    class OfEnum<E : Enum<E>>(val state: State<E>, name: String, mutable: Boolean) :
         ManagedState(name, mutable) {
 
             fun createSelector(): UIComponent {
@@ -69,7 +69,7 @@ sealed class ManagedState(
         }
 
     @ApiStatus.Internal
-    class ManagedObjectState<T : InspectorDisplay>(
+    class OfObject<T : InspectorDisplay>(
         val state: State<T>,
         val allValues: List<T>,
         name: String,
@@ -86,7 +86,7 @@ sealed class ManagedState(
 }
 
 /**
- * Implemented by an object that is used as a valid entry for [ManagedState.ManagedObjectState].
+ * Implemented by an object that is used as a valid entry for [ManagedState.OfObject].
  */
 @ApiStatus.Internal
 interface InspectorDisplay {
@@ -103,7 +103,7 @@ object StateRegistryComponentFactory {
 
     fun createInspectorComponent(managedState: ManagedState): UIComponent {
         return when (managedState) {
-            is ManagedState.ManagedFloatState -> {
+            is ManagedState.OfFloat -> {
                 createInputComponent(managedState.state, managedState.mutable) {
                     try {
                         it.toFloat()
@@ -112,7 +112,7 @@ object StateRegistryComponentFactory {
                     }
                 }
             }
-            is ManagedState.ManagedDoubleState -> {
+            is ManagedState.OfDouble -> {
                 createInputComponent(managedState.state, managedState.mutable) {
                     try {
                         it.toDouble()
@@ -121,7 +121,7 @@ object StateRegistryComponentFactory {
                     }
                 }
             }
-            is ManagedState.ManagedBooleanState -> {
+            is ManagedState.OfBoolean -> {
                 CompactToggle(managedState.state).apply {
                     if (!managedState.mutable) {
                         mouseClickListeners.clear() // Disables the toggle
@@ -134,7 +134,7 @@ object StateRegistryComponentFactory {
                     }
                 }
             }
-            is ManagedState.ManagedIntState -> {
+            is ManagedState.OfInt -> {
                 createInputComponent(managedState.state, managedState.mutable) {
                     try {
                         it.toInt()
@@ -143,12 +143,12 @@ object StateRegistryComponentFactory {
                     }
                 }
             }
-            is ManagedState.ManagedStringState -> {
+            is ManagedState.OfString -> {
                 createInputComponent(managedState.state, managedState.mutable) {
                     it
                 }
             }
-            is ManagedState.ManagedColorOrNullState -> {
+            is ManagedState.OfColorOrNull -> {
                 createInputComponent(managedState.state, managedState.mutable) {
                     if (it.isEmpty()) {
                         return@createInputComponent null
@@ -160,7 +160,7 @@ object StateRegistryComponentFactory {
                     }
                 }
             }
-            is ManagedState.ManagedColorState -> {
+            is ManagedState.OfColor -> {
                 createInputComponent(managedState.state, managedState.mutable) {
                     try {
                         Color(it.lowercase().toInt(16) or 0xFF000000.toInt())
@@ -169,10 +169,10 @@ object StateRegistryComponentFactory {
                     }
                 }
             }
-            is ManagedState.ManagedEnumState<*> -> {
+            is ManagedState.OfEnum<*> -> {
                managedState.createSelector()
             }
-            is ManagedState.ManagedObjectState<*> -> {
+            is ManagedState.OfObject<*> -> {
                 managedState.createSelector()
             }
         }

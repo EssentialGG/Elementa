@@ -43,7 +43,7 @@ class StatesTab : InspectorTab("States") {
                 x = SiblingConstraint(3f)
             }
 
-            if (managedState is ManagedState.ManagedColorState) {
+            if (managedState is ManagedState.OfColor) {
                 UIBlock(managedState.state).constrain {
                     width = 7.pixels
                     height = AspectConstraint()

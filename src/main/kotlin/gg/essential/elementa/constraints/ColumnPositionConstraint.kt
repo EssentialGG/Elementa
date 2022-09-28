@@ -43,6 +43,6 @@ class ColumnPositionConstraint(
     @ApiStatus.Internal
     @get:ApiStatus.Internal
     override val managedStates = listOf(
-        ManagedState.ManagedFloatState(padding, "padding", true)
+        ManagedState.OfFloat(padding, "padding", true)
     )
 }

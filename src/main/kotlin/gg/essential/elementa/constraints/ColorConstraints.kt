@@ -54,7 +54,7 @@ class ConstantColorConstraint(
     @ApiStatus.Internal
     @get:ApiStatus.Internal
     override val managedStates = listOf(
-        ManagedState.ManagedColorState(colorState, "color", true)
+        ManagedState.OfColor(colorState, "color", true)
     )
 }
 
@@ -107,8 +107,8 @@ class AlphaAspectColorConstraint(
     @ApiStatus.Internal
     @get:ApiStatus.Internal
     override val managedStates = listOf(
-        ManagedState.ManagedColorState(colorState, "color", true),
-        ManagedState.ManagedFloatState(alphaState, "alpha", true)
+        ManagedState.OfColor(colorState, "color", true),
+        ManagedState.OfFloat(alphaState, "alpha", true)
     )
 }
 
@@ -164,7 +164,7 @@ class RainbowColorConstraint(
     @ApiStatus.Internal
     @get:ApiStatus.Internal
     override val managedStates = listOf(
-        ManagedState.ManagedFloatState(speedState, "speed", true),
-        ManagedState.ManagedIntState(alphaState, "alpha", true)
+        ManagedState.OfFloat(speedState, "speed", true),
+        ManagedState.OfInt(alphaState, "alpha", true)
     )
 }

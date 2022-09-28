@@ -60,6 +60,6 @@ class AspectConstraint(private val valueState: State<Float>) : PositionConstrain
     @ApiStatus.Internal
     @get:ApiStatus.Internal
     override val managedStates = listOf(
-        ManagedState.ManagedFloatState(valueState, "value", true)
+        ManagedState.OfFloat(valueState, "value", true)
     )
 }
