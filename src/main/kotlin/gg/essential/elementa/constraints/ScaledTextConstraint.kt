@@ -17,10 +17,12 @@ import java.lang.UnsupportedOperationException
  * Sets the width/height to be a scale of the default text width and height
  */
 class ScaledTextConstraint(
-    private val scaleState: State<Float>,
+    scale: State<Float>,
 ) : SizeConstraint, StateRegistry {
 
     constructor(scale: Float): this(BasicState(scale))
+
+    private val scaleState: State<Float> = scale.map { it }
 
     var scale: Float by scaleState
 
