@@ -36,7 +36,9 @@ interface KeyboardManager {
     @ApiStatus.Internal
     fun isCtrlKeyDown(): Boolean = if (UMinecraft.isRunningOnMac) {
         isKeyDown(UKeyboard.KEY_LMETA) || isKeyDown(UKeyboard.KEY_RMETA)
-    } else isKeyDown(UKeyboard.KEY_LCONTROL) || isKeyDown(UKeyboard.KEY_RCONTROL)
+    } else {
+        isKeyDown(UKeyboard.KEY_LCONTROL) || isKeyDown(UKeyboard.KEY_RCONTROL)
+    }
 
     @ApiStatus.Internal
     fun isKeyComboCtrlA(key: Int): Boolean =
