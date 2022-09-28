@@ -44,7 +44,7 @@ sealed class ManagedState(
     class ManagedColorState(val state: State<Color>, name: String, mutable: Boolean) : ManagedState(name, mutable)
 
     @ApiStatus.Internal
-    class ManagedColorStateNullable(val state: State<Color?>, name: String, mutable: Boolean) :
+    class ManagedColorOrNullState(val state: State<Color?>, name: String, mutable: Boolean) :
         ManagedState(name, mutable)
 
     @ApiStatus.Internal
@@ -148,7 +148,7 @@ object StateRegistryComponentFactory {
                     it
                 }
             }
-            is ManagedState.ManagedColorStateNullable -> {
+            is ManagedState.ManagedColorOrNullState -> {
                 createInputComponent(managedState.state, managedState.mutable) {
                     if (it.isEmpty()) {
                         return@createInputComponent null

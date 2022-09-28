@@ -65,7 +65,7 @@ constructor(
     override val managedStates = listOf(
         ManagedState.ManagedStringState(textState, "text", true),
         ManagedState.ManagedBooleanState(shadowState, "shadow", true),
-        ManagedState.ManagedColorStateNullable(shadowColorState, "shadowColor", true),
+        ManagedState.ManagedColorOrNullState(shadowColorState, "shadowColor", true),
     )
 
 
