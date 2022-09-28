@@ -22,11 +22,11 @@ import kotlin.math.round
 import kotlin.math.sign
 import kotlin.reflect.KProperty
 
-@Deprecated("This relies on global states", replaceWith = ReplaceWith("guiHint(roundDown, component)"))
+//@Deprecated("This relies on global states", replaceWith = ReplaceWith("guiHint(roundDown, component)"))
 @Suppress("DEPRECATION")
 fun Float.guiHint(roundDown: Boolean) = UIComponent.guiHint(this, roundDown)
 
-@Deprecated("This relies on global states", replaceWith = ReplaceWith("guiHint(roundDown, component)"))
+//@Deprecated("This relies on global states", replaceWith = ReplaceWith("guiHint(roundDown, component)"))
 @Suppress("DEPRECATION")
 fun Double.guiHint(roundDown: Boolean) = UIComponent.guiHint(this, roundDown)
 
@@ -34,7 +34,7 @@ fun Float.guiHint(roundDown: Boolean, component: UIComponent) = UIComponent.guiH
 
 fun Double.guiHint(roundDown: Boolean, component: UIComponent) = UIComponent.guiHint(this, roundDown, component)
 
-@Deprecated("This relies on global states", replaceWith = ReplaceWith("roundToRealPixels(component)"))
+//@Deprecated("This relies on global states", replaceWith = ReplaceWith("roundToRealPixels(component)"))
 fun Float.roundToRealPixels(): Float {
     val factor = Window.resolutionManager.scaleFactor.toFloat()
     return round(this * factor).let { if (it == 0f && this != 0f) sign(this) else it } / factor
@@ -45,7 +45,7 @@ fun Float.roundToRealPixels(component: UIComponent): Float {
     return round(this * factor).let { if (it == 0f && this != 0f) sign(this) else it } / factor
 }
 
-@Deprecated("This relies on global states", replaceWith = ReplaceWith("roundToRealPixels(component)"))
+//@Deprecated("This relies on global states", replaceWith = ReplaceWith("roundToRealPixels(component)"))
 fun Double.roundToRealPixels(): Double {
     val factor = Window.resolutionManager.scaleFactor
     return round(this * factor).let { if (it == 0.0 && this != 0.0) sign(this) else it } / factor

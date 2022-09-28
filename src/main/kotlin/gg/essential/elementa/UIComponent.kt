@@ -1237,7 +1237,7 @@ abstract class UIComponent : Observable() {
         /**
          * Hints a number with respect to the current GUI scale.
          */
-        @Deprecated("This relies on global states", replaceWith = ReplaceWith("guiHint(number, roundDown, component)"))
+//        @Deprecated("This relies on global states", replaceWith = ReplaceWith("guiHint(number, roundDown, component)"))
         fun guiHint(number: Float, roundDown: Boolean): Float {
             val factor = Window.resolutionManager.scaleFactor.toFloat()
             return (number * factor).let {
@@ -1258,7 +1258,7 @@ abstract class UIComponent : Observable() {
         /**
          * Hints a number with respect to the current GUI scale.
          */
-        @Deprecated("This relies on global states", replaceWith = ReplaceWith("guiHint(number, roundDown, component)"))
+//        @Deprecated("This relies on global states", replaceWith = ReplaceWith("guiHint(number, roundDown, component)"))
         fun guiHint(number: Double, roundDown: Boolean): Double {
             val factor = Window.resolutionManager.scaleFactor
             return (number * factor).let {
