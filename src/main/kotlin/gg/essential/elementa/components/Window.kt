@@ -78,7 +78,6 @@ class Window @JvmOverloads constructor(
     private fun doDraw(matrixStack: UMatrixStack) {
         if (cancelDrawing)
             return
-        currentWindow.set(this)
 
         requireMainThread()
 
@@ -94,6 +93,8 @@ class Window @JvmOverloads constructor(
             systemTime = System.currentTimeMillis()
 
         try {
+
+            currentWindow.set(this)
 
             //If this Window is more than 5 seconds behind, reset it be only 5 seconds.
             //This will drop missed frames but avoid the game freezing as the Window tries
@@ -156,8 +157,9 @@ class Window @JvmOverloads constructor(
                     null
                 }
             }
+        } finally {
+            currentWindow.set(null)
         }
-        currentWindow.set(null)
         drawCallbacks.forEach{ it() }
     }
 
