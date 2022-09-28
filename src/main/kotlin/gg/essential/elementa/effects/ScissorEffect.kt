@@ -17,13 +17,23 @@ import kotlin.math.roundToInt
  *
  * [scissorIntersection] will try to combine this scissor with all of it's parents scissors (if any).
  */
-class ScissorEffect @JvmOverloads constructor(
+class ScissorEffect private constructor(
     private val customBoundingBox: UIComponent? = null,
-    private val scissorIntersection: Boolean = true
+    private val scissorIntersection: Boolean = true,
+    private val unroundedScissorBounds: ScissorBounds? = null,
 ) : Effect() {
     private var oldState: ScissorState? = null
-    private var unroundedScissorBounds: ScissorBounds? = null
-    private var roundedScissorBounds: ScissorBounds? = null
+    private val roundedScissorBounds: ScissorBounds? by lazy {
+        if (unroundedScissorBounds == null) {
+            return@lazy null
+        }
+        ScissorBounds(
+            unroundedScissorBounds.x1.roundToRealPixels(boundComponent),
+            unroundedScissorBounds.y1.roundToRealPixels(boundComponent),
+            unroundedScissorBounds.x2.roundToRealPixels(boundComponent),
+            unroundedScissorBounds.y2.roundToRealPixels(boundComponent),
+        )
+    }
 
     /**
      * Create a custom bounding box using precise coordinates.
@@ -35,26 +45,27 @@ class ScissorEffect @JvmOverloads constructor(
         x2: Number,
         y2: Number,
         scissorIntersection: Boolean = true
-    ) : this(scissorIntersection = scissorIntersection) {
+    ) : this(
+        scissorIntersection = scissorIntersection,
         unroundedScissorBounds = ScissorBounds(
             x1.toFloat(),
             y1.toFloat(),
             x2.toFloat(),
             y2.toFloat(),
-        )
-    }
+        ),
+    )
+
+    @JvmOverloads
+    constructor(
+        customBoundingBox: UIComponent? = null,
+        scissorIntersection: Boolean = true,
+    ) : this(
+        customBoundingBox,
+        scissorIntersection,
+        null,
+    )
 
     override fun beforeDraw(matrixStack: UMatrixStack) {
-        val unroundedScissorBounds = roundedScissorBounds
-        if (unroundedScissorBounds !=null) {
-            roundedScissorBounds = ScissorBounds(
-                unroundedScissorBounds.x1.roundToRealPixels(boundComponent),
-                unroundedScissorBounds.y1.roundToRealPixels(boundComponent),
-                unroundedScissorBounds.x2.roundToRealPixels(boundComponent),
-                unroundedScissorBounds.y2.roundToRealPixels(boundComponent),
-            )
-            this.unroundedScissorBounds = null
-        }
         val bounds = customBoundingBox?.getScissorBounds() ?: roundedScissorBounds ?: boundComponent.getScissorBounds()
         val resolutionManager = boundComponent.resolutionManager
         val scaleFactor = resolutionManager.scaleFactor.toInt()
