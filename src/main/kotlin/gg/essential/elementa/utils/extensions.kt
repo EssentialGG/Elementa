@@ -74,13 +74,13 @@ val UIComponent.window: Window?
     get() = Window.ofOrNull(this)
 
 internal val UIComponent.resolutionManager: ResolutionManager
-    get() = this.window?.resolutionManager ?: DefaultResolutionManager
+    get() = window?.resolutionManager ?: DefaultResolutionManager
 
 internal val UIComponent.mousePositionManager: MousePositionManager
-    get() = this.window?.mousePositionManager ?: DefaultMousePositionManager
+    get() = window?.mousePositionManager ?: DefaultMousePositionManager
 
 internal val UIComponent.keyboardManager: KeyboardManager
-    get() = this.window?.keyboardManager ?: DefaultKeyboardManager
+    get() = window?.keyboardManager ?: DefaultKeyboardManager
 
 inline fun UIComponent.onLeftClick(crossinline method: UIComponent.(event: UIClickEvent) -> Unit) = onMouseClick {
     if (it.mouseButton == 0) {
