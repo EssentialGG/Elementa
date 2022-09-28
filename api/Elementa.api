@@ -2481,10 +2481,6 @@ public final class gg/essential/elementa/constraints/resolution/ResolverNode {
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class gg/essential/elementa/debug/InspectorDisplay$DefaultImpls {
-	public static fun inspectorDisplayName (Lgg/essential/elementa/debug/InspectorDisplay;)Ljava/lang/String;
-}
-
 public final class gg/essential/elementa/dsl/AnimationsKt {
 	public static final fun animate (Lgg/essential/elementa/UIComponent;Lkotlin/jvm/functions/Function1;)Lgg/essential/elementa/UIComponent;
 }

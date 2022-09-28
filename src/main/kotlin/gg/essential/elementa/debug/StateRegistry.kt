@@ -69,32 +69,20 @@ sealed class ManagedState(
         }
 
     @ApiStatus.Internal
-    class OfObject<T : InspectorDisplay>(
+    class OfObject<T>(
         val state: State<T>,
         val allValues: List<T>,
+        val displayName: (T) -> String,
         name: String,
         mutable: Boolean,
     ) : ManagedState(name, mutable) {
 
         fun createSelector(): UIComponent {
             return CompactSelector(allValues, state) {
-                it.inspectorDisplayName()
+                displayName(it)
             }
         }
     }
-
-}
-
-/**
- * Implemented by an object that is used as a valid entry for [ManagedState.OfObject].
- */
-@ApiStatus.Internal
-interface InspectorDisplay {
-
-    /**
-     * The display name in the [Inspector] for this value
-     */
-    fun inspectorDisplayName(): String = toString()
 
 }
 
