@@ -39,17 +39,6 @@ interface KeyboardManager {
     } else isKeyDown(UKeyboard.KEY_LCONTROL) || isKeyDown(UKeyboard.KEY_RCONTROL)
 
     @ApiStatus.Internal
-    fun isCtrlKeyDown(key: Int): Boolean = if (UMinecraft.isRunningOnMac) {
-        isKeyDown(UKeyboard.KEY_LMETA) || isKeyDown(UKeyboard.KEY_RMETA)
-    } else isKeyDown(UKeyboard.KEY_LCONTROL) || isKeyDown(UKeyboard.KEY_RCONTROL)
-
-    @ApiStatus.Internal
-    fun isShiftKeyDown(key: Int): Boolean = isKeyDown(UKeyboard.KEY_LSHIFT) || isKeyDown(UKeyboard.KEY_RSHIFT)
-
-    @ApiStatus.Internal
-    fun isAltKeyDown(key: Int): Boolean = isKeyDown(UKeyboard.KEY_LMENU) || isKeyDown(UKeyboard.KEY_RMENU)
-
-    @ApiStatus.Internal
     fun isKeyComboCtrlA(key: Int): Boolean =
         key == UKeyboard.KEY_A && isCtrlKeyDown() && !isShiftKeyDown() && !isAltKeyDown()
 
