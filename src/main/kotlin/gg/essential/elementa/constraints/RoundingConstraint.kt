@@ -19,13 +19,15 @@ import kotlin.math.round
  */
 class RoundingConstraint constructor(
     val constraint: SuperConstraint<Float>,
-    private val roundingModeState: State<Mode>,
+    roundingMode: State<Mode>,
 ) : MasterConstraint, StateRegistry {
 
     @JvmOverloads constructor(
         constraint: SuperConstraint<Float>,
         roundingMode: Mode = Mode.Round,
     ): this(constraint, BasicState(roundingMode))
+
+    private val roundingModeState: State<Mode> = roundingMode.map { it }
 
     var roundingMode by roundingModeState
 
