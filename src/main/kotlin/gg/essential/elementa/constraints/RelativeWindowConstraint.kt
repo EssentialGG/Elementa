@@ -15,9 +15,11 @@ import org.jetbrains.annotations.ApiStatus
  * of the Window
  */
 class RelativeWindowConstraint(
-    private val valueState: State<Float>,
+    value: State<Float>,
 ) : PositionConstraint, SizeConstraint, StateRegistry {
     @JvmOverloads constructor(value: Float = 1f): this(BasicState(value))
+
+    private val valueState: State<Float> = value.map { it }
 
     val value by valueState
 
