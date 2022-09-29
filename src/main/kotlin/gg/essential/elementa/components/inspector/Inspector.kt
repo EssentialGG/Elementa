@@ -519,6 +519,21 @@ class Inspector @JvmOverloads constructor(
             )
         }
 
+        fun drawDistanceText(
+            matrixStack: UMatrixStack,
+            distance: Float,
+            xCenter: Float,
+            yCenter: Float,
+        ) {
+            val string = String.format("%.2f", distance).dropLastWhile { it == '0' }.dropLastWhile { it == '.' }
+            drawShadedText(
+                matrixStack,
+                "${string}px",
+                xCenter,
+                yCenter,
+            )
+        }
+
         fun measureVerticalDistance(
             matrixStack: UMatrixStack,
             y1: Float,
@@ -535,11 +550,10 @@ class Inspector @JvmOverloads constructor(
                     (x + 1).toDouble(),
                     (y2).toDouble()
                 )
-                val string = String.format("%.2f", distance).dropLastWhile { it == '0' }.dropLastWhile { it == '.' }
-                drawShadedText(
+                drawDistanceText(
                     matrixStack,
-                    "${string}px",
-                    x + string.width() + 5,
+                    distance,
+                    x,
                     y1 + distance / 2,
                 )
             }
@@ -561,9 +575,9 @@ class Inspector @JvmOverloads constructor(
                     x2.toDouble(),
                     (y + 1).toDouble()
                 )
-                drawShadedText(
+                drawDistanceText(
                     matrixStack,
-                    "${String.format("%.2f", distance).dropLastWhile { it == '0' }.dropLastWhile { it == '.' }}px",
+                    distance,
                     x1 + distance / 2,
                     y + 10,
                 )
