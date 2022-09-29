@@ -27,7 +27,7 @@ class FrameBufferedWindow(
     /**
      * Called on the Minecraft thread update the buffer
      */
-    fun updateFrameBuffer(resolutionManager: ResolutionManager) {
+    fun updateFrameBuffer(outerResolutionManager: ResolutionManager) {
 
         val frameWidth = externalDisplay.getWidth()
         val frameHeight = externalDisplay.getHeight()
@@ -53,17 +53,17 @@ class FrameBufferedWindow(
 
             // Undo MC's scaling and the distortion caused by different viewport size with same projection matrix
             val stack = UMatrixStack()
-            val scale = wrappedWindow.resolutionManager.scaleFactor / resolutionManager.scaleFactor
+            val scale = wrappedWindow.resolutionManager.scaleFactor / outerResolutionManager.scaleFactor
             stack.scale(
-                scale * resolutionManager.viewportWidth / frameWidth,
-                scale * resolutionManager.viewportHeight / frameHeight,
+                scale * outerResolutionManager.viewportWidth / frameWidth,
+                scale * outerResolutionManager.viewportHeight / frameHeight,
                 1.0,
             )
 
             // Rendering
             wrappedWindow.draw(stack)
 
-            glViewport(0, 0, resolutionManager.viewportWidth, resolutionManager.viewportHeight)
+            glViewport(0, 0, outerResolutionManager.viewportWidth, outerResolutionManager.viewportHeight)
 
 
             if (scissorState) glEnable(GL_SCISSOR_TEST)
