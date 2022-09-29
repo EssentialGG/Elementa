@@ -76,14 +76,7 @@ class FrameBufferedWindow(
      * If the frame buffer already exits, it will be deleted and recreated with the new size.
      */
     private fun reconfigureFrameBuffer(width: Int, height: Int) {
-        if (frameBuffer != -1) {
-            platform.deleteFramebuffers(frameBuffer)
-            frameBuffer = -1
-        }
-        if (frameBufferTexture != -1) {
-            glDeleteTextures(frameBufferTexture)
-            frameBufferTexture = -1
-        }
+        deleteFrameBuffer()
         frameBuffer = platform.genFrameBuffers()
         frameBufferTexture = glGenTextures()
         UGraphics.configureTexture(frameBufferTexture) {
