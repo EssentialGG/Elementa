@@ -53,7 +53,13 @@ class ColumnPositionConstraint(
     }
 
     override fun getHorizontalPadding(component: UIComponent): Float {
-        return paddingState.get()
+        val currentRow = component.parent
+        val previousColumnIndex = currentRow.children.indexOf(component) - 1
+        return if (previousColumnIndex < 0) {
+            return 0f
+        } else {
+            paddingState.get()
+        }
     }
 
     override fun getVerticalPadding(component: UIComponent): Float {
