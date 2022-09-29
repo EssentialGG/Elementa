@@ -323,13 +323,13 @@ class Inspector @JvmOverloads constructor(
     @ApiStatus.Internal
     inner class Overlay : UIComponent() {
         override fun draw(matrixStack: UMatrixStack) {
-            beforeDraw(matrixStack)
             // If we got removed from our parent, we need to un-float ourselves
             if (!isMounted()) {
                 Window.enqueueRenderOperation { setFloating(false) }
                 cleanup()
                 return
             }
+            beforeDraw(matrixStack)
             val targetComponent = selectedNode?.targetComponent
             if (isClickSelecting) {
                 val (mouseX, mouseY) = getMousePosition()
