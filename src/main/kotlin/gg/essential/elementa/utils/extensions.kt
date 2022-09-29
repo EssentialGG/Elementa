@@ -93,7 +93,6 @@ fun <T> State<T>.onSetValueAndNow(listener: (T) -> Unit) = onSetValue(listener).
 operator fun <T> State<T>.getValue(obj: Any, property: KProperty<*>): T = get()
 operator fun <T> State<T>.setValue(obj: Any, property: KProperty<*>, value: T) = set(value)
 
-fun State<String>.empty() = map { it.isBlank() }
 operator fun State<Boolean>.not() = map { !it }
 infix fun State<Boolean>.and(other: State<Boolean>) = zip(other).map { (a, b) -> a && b }
 infix fun State<Boolean>.or(other: State<Boolean>) = zip(other).map { (a, b) -> a || b }
