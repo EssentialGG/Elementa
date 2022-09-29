@@ -3,7 +3,7 @@ package gg.essential.elementa.debug
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.components.inspector.CompactToggle
 import gg.essential.elementa.components.inspector.state.CompactSelector
-import gg.essential.elementa.components.inspector.state.MappedTextInput
+import gg.essential.elementa.components.inspector.state.StateTextInput
 import gg.essential.elementa.dsl.effect
 import gg.essential.elementa.effects.OutlineEffect
 import gg.essential.elementa.state.State
@@ -96,7 +96,7 @@ object StateRegistryComponentFactory {
                     try {
                         it.toFloat()
                     } catch (e: NumberFormatException) {
-                        throw MappedTextInput.ParseException()
+                        throw StateTextInput.ParseException()
                     }
                 }
             }
@@ -105,7 +105,7 @@ object StateRegistryComponentFactory {
                     try {
                         it.toDouble()
                     } catch (e: NumberFormatException) {
-                        throw MappedTextInput.ParseException()
+                        throw StateTextInput.ParseException()
                     }
                 }
             }
@@ -127,7 +127,7 @@ object StateRegistryComponentFactory {
                     try {
                         it.toInt()
                     } catch (e: NumberFormatException) {
-                        throw MappedTextInput.ParseException()
+                        throw StateTextInput.ParseException()
                     }
                 }
             }
@@ -144,7 +144,7 @@ object StateRegistryComponentFactory {
                     try {
                         Color(it.lowercase().toInt(16) or 0xFF000000.toInt())
                     } catch (e: NumberFormatException) {
-                        throw MappedTextInput.ParseException()
+                        throw StateTextInput.ParseException()
                     }
                 }
             }
@@ -153,7 +153,7 @@ object StateRegistryComponentFactory {
                     try {
                         Color(it.lowercase().toInt(16) or 0xFF000000.toInt())
                     } catch (e: NumberFormatException) {
-                        throw MappedTextInput.ParseException()
+                        throw StateTextInput.ParseException()
                     }
                 }
             }
@@ -167,6 +167,6 @@ object StateRegistryComponentFactory {
     }
 
     private fun <T> createInputComponent(state: State<T>, mutable: Boolean, mapper: (String) -> T): UIComponent {
-        return MappedTextInput(state, mutable, mapper)
+        return StateTextInput(state, mutable, mapper)
     }
 }

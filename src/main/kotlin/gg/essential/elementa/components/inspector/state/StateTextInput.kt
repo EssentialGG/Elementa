@@ -14,7 +14,7 @@ import java.awt.Color
  * If input is not valid, an error animation is shown.
  */
 @ApiStatus.Internal
-class MappedTextInput<T>(
+class StateTextInput<T>(
     private val state: State<T>,
     mutable: Boolean,
     private val map: (String) -> T,

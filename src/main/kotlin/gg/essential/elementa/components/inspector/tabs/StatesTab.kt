@@ -4,7 +4,7 @@ import gg.essential.elementa.UIComponent
 import gg.essential.elementa.components.UIBlock
 import gg.essential.elementa.components.UIContainer
 import gg.essential.elementa.components.UIText
-import gg.essential.elementa.components.inspector.state.MappedTextInput
+import gg.essential.elementa.components.inspector.state.StateTextInput
 import gg.essential.elementa.constraints.*
 import gg.essential.elementa.debug.ManagedState
 import gg.essential.elementa.debug.StateRegistry
@@ -37,7 +37,7 @@ class StatesTab : InspectorTab("States") {
             val component = StateRegistryComponentFactory.createInspectorComponent(managedState) childOf container
 
             component.constrain {
-                if (component is MappedTextInput<*>) {
+                if (component is StateTextInput<*>) {
                     y = (-1).pixels
                 }
                 x = SiblingConstraint(3f)
