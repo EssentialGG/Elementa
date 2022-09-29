@@ -194,6 +194,17 @@ fun UIComponent.hoveredState(hitTest: Boolean = true, layoutSafe: Boolean = true
                     // The next animation frame should register another renderOperation
                     registerHitTest = true
 
+                    // It is possible that this component or a component in its parent tree
+                    // was removed from the component tree between the last call to animationFrame
+                    // and this evaluation in enqueueRenderOperation. If that is the case, we should not
+                    // perform the hit test because it will throw an exception.
+                    if (!this.isInComponentTree()) {
+                        // Unset the hovered state because a component can no longer
+                        // be hovered if it is not in the component tree
+                        unsafeHovered.set(false)
+                        return@enqueueRenderOperation
+                    }
+
                     // Since enqueueRenderOperation will keep polling the queue until there are no more items,
                     // the forwarding of any update to the safeHovered state will still happen this frame
                     unsafeHovered.set(hitTestHovered())
