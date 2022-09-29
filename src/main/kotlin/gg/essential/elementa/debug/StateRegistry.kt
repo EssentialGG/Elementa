@@ -141,7 +141,7 @@ object StateRegistryComponentFactory {
                     managedState.state,
                     managedState.mutable,
                     { if (it == null) "null" else Integer.toHexString(it.rgb and 0xFFFFFF) }) {
-                    if (it.isEmpty()) {
+                    if (it == "null" || it.isEmpty()) {
                         return@createInputComponent null
                     }
                     try {
