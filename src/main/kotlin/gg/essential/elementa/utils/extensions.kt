@@ -225,6 +225,9 @@ fun UIComponent.hoveredState(hitTest: Boolean = true, layoutSafe: Boolean = true
     }
 }
 
+fun UIComponent.isInComponentTree(): Boolean =
+    this is Window || hasParent && this in parent.children && parent.isInComponentTree()
+
 private fun UIComponent.isComponentInParentChain(target: UIComponent): Boolean {
     var component: UIComponent = this
     while (component.hasParent && component !is Window) {
