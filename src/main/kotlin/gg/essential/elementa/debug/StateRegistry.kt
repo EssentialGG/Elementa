@@ -140,7 +140,7 @@ object StateRegistryComponentFactory {
                 createInputComponent(
                     managedState.state,
                     managedState.mutable,
-                    { if (it == null) "null" else Integer.toHexString(it.rgb and 0xFFFFFF) }) {
+                    { if (it == null) "null" else Integer.toHexString(it.rgb) }) {
                     if (it == "null" || it.isEmpty()) {
                         return@createInputComponent null
                     }
@@ -151,7 +151,7 @@ object StateRegistryComponentFactory {
                 createInputComponent(
                     managedState.state,
                     managedState.mutable,
-                    { Integer.toHexString(it.rgb and 0xFFFFFF) }) {
+                    { Integer.toHexString(it.rgb) }) {
                     parseStringToColor(it)
                 }
             }
@@ -166,7 +166,7 @@ object StateRegistryComponentFactory {
 
     private fun parseStringToColor(string: String): Color {
         return try {
-            Color(string.lowercase().toInt(16) or 0xFF000000.toInt())
+            Color(string.lowercase().toInt(16))
         } catch (e: NumberFormatException) {
             throw StateTextInput.ParseException()
         }
