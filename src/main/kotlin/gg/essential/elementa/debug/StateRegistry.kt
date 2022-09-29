@@ -92,7 +92,7 @@ object StateRegistryComponentFactory {
     fun createInspectorComponent(managedState: ManagedState): UIComponent {
         return when (managedState) {
             is ManagedState.OfFloat -> {
-                createInputComponent(managedState.state, managedState.mutable) {
+                createInputComponent(managedState.state, managedState.mutable, { "%.2f".format(it) }) {
                     try {
                         it.toFloat()
                     } catch (e: NumberFormatException) {
@@ -101,7 +101,7 @@ object StateRegistryComponentFactory {
                 }
             }
             is ManagedState.OfDouble -> {
-                createInputComponent(managedState.state, managedState.mutable) {
+                createInputComponent(managedState.state, managedState.mutable, { "%.2f".format(it) }) {
                     try {
                         it.toDouble()
                     } catch (e: NumberFormatException) {
@@ -123,7 +123,7 @@ object StateRegistryComponentFactory {
                 }
             }
             is ManagedState.OfInt -> {
-                createInputComponent(managedState.state, managedState.mutable) {
+                createInputComponent(managedState.state, managedState.mutable, { it.toString() }) {
                     try {
                         it.toInt()
                     } catch (e: NumberFormatException) {
@@ -132,12 +132,15 @@ object StateRegistryComponentFactory {
                 }
             }
             is ManagedState.OfString -> {
-                createInputComponent(managedState.state, managedState.mutable) {
+                createInputComponent(managedState.state, managedState.mutable, { it }) {
                     it
                 }
             }
             is ManagedState.OfColorOrNull -> {
-                createInputComponent(managedState.state, managedState.mutable) {
+                createInputComponent(
+                    managedState.state,
+                    managedState.mutable,
+                    { if (it == null) "null" else Integer.toHexString(it.rgb and 0xFFFFFF) }) {
                     if (it.isEmpty()) {
                         return@createInputComponent null
                     }
@@ -149,7 +152,10 @@ object StateRegistryComponentFactory {
                 }
             }
             is ManagedState.OfColor -> {
-                createInputComponent(managedState.state, managedState.mutable) {
+                createInputComponent(
+                    managedState.state,
+                    managedState.mutable,
+                    { Integer.toHexString(it.rgb and 0xFFFFFF) }) {
                     try {
                         Color(it.lowercase().toInt(16) or 0xFF000000.toInt())
                     } catch (e: NumberFormatException) {
@@ -158,7 +164,7 @@ object StateRegistryComponentFactory {
                 }
             }
             is ManagedState.OfEnum<*> -> {
-               managedState.createSelector()
+                managedState.createSelector()
             }
             is ManagedState.OfEnumerable<*> -> {
                 managedState.createSelector()
@@ -166,7 +172,12 @@ object StateRegistryComponentFactory {
         }
     }
 
-    private fun <T> createInputComponent(state: State<T>, mutable: Boolean, mapper: (String) -> T): UIComponent {
-        return StateTextInput(state, mutable, mapper)
+    private fun <T> createInputComponent(
+        state: State<T>,
+        mutable: Boolean,
+        formatToText: (T) -> String,
+        parse: (String) -> T,
+    ): UIComponent {
+        return StateTextInput(state, mutable, formatToText = formatToText, parse = parse)
     }
 }
