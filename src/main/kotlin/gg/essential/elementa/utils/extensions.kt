@@ -167,8 +167,8 @@ fun UIComponent.hoveredState(hitTest: Boolean = true, layoutSafe: Boolean = true
         // Positions the mouse in the center of pixels so isPointInside will
         // pass for items 1 pixel wide objects. See ElementaVersion v2 for more details
         val halfPixel = 0.5f / UResolution.scaleFactor.toFloat()
-        val mouseX = UMouse.Scaled.x.toFloat() + halfPixel
-        val mouseY = UMouse.Scaled.y.toFloat() + halfPixel
+        val mouseX = mousePositionManager.scaledX.toFloat() + halfPixel
+        val mouseY = mousePositionManager.scaledY.toFloat() + halfPixel
         return if (isPointInside(mouseX, mouseY)) {
 
             val window = Window.of(this)
