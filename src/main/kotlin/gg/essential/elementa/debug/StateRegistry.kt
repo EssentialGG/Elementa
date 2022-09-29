@@ -144,11 +144,7 @@ object StateRegistryComponentFactory {
                     if (it == "null" || it.isEmpty()) {
                         return@createInputComponent null
                     }
-                    try {
-                        Color(it.lowercase().toInt(16) or 0xFF000000.toInt())
-                    } catch (e: NumberFormatException) {
-                        throw StateTextInput.ParseException()
-                    }
+                    parseStringToColor(it)
                 }
             }
             is ManagedState.OfColor -> {
@@ -156,11 +152,7 @@ object StateRegistryComponentFactory {
                     managedState.state,
                     managedState.mutable,
                     { Integer.toHexString(it.rgb and 0xFFFFFF) }) {
-                    try {
-                        Color(it.lowercase().toInt(16) or 0xFF000000.toInt())
-                    } catch (e: NumberFormatException) {
-                        throw StateTextInput.ParseException()
-                    }
+                    parseStringToColor(it)
                 }
             }
             is ManagedState.OfEnum<*> -> {
@@ -169,6 +161,14 @@ object StateRegistryComponentFactory {
             is ManagedState.OfEnumerable<*> -> {
                 managedState.createSelector()
             }
+        }
+    }
+
+    private fun parseStringToColor(string: String): Color {
+        return try {
+            Color(string.lowercase().toInt(16) or 0xFF000000.toInt())
+        } catch (e: NumberFormatException) {
+            throw StateTextInput.ParseException()
         }
     }
 
