@@ -2,7 +2,7 @@ package gg.essential.elementa.debug
 
 import gg.essential.elementa.components.Window
 import gg.essential.elementa.impl.ExternalInspectorDisplay
-import gg.essential.elementa.impl.Platform
+import gg.essential.elementa.impl.Platform.Companion.platform
 import gg.essential.elementa.manager.ResolutionManager
 import gg.essential.universal.UGraphics
 import gg.essential.universal.UMatrixStack
@@ -16,8 +16,6 @@ class FrameBufferedWindow(
     private val wrappedWindow: Window,
     private val externalDisplay: ExternalInspectorDisplay,
 ) {
-
-    private val platform = Platform.platform
 
     // Frame buffer properties
     private var frameBuffer = -1
