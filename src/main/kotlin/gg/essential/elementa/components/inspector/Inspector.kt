@@ -50,7 +50,7 @@ class Inspector @JvmOverloads constructor(
     private val outlineEffect = OutlineEffect(outlineColor, outlineWidth, drawAfterChildren = true)
 
     private var isClickSelecting = false
-    private val drawObserver by WindowDrawObserver()
+    private val drawObserver by Overlay()
 
     private var measuringDistance = false
 
@@ -321,7 +321,7 @@ class Inspector @JvmOverloads constructor(
     }
 
     @ApiStatus.Internal
-    inner class WindowDrawObserver : UIComponent() {
+    inner class Overlay : UIComponent() {
         override fun draw(matrixStack: UMatrixStack) {
             beforeDraw(matrixStack)
             // If we got removed from our parent, we need to un-float ourselves
@@ -475,7 +475,7 @@ class Inspector @JvmOverloads constructor(
             super.animationFrame()
             // Make sure we are the top-most component (last to draw and first to receive input)
             Window.enqueueRenderOperation {
-                ensureLastComponent(this@WindowDrawObserver)
+                ensureLastComponent(this@Overlay)
             }
         }
 
@@ -579,7 +579,7 @@ class Inspector @JvmOverloads constructor(
 
     private fun ensureLastComponent(component: UIComponent) {
         val componentOrder = listOf(
-            WindowDrawObserver::class.java,
+            Overlay::class.java,
             InspectorContent::class.java,
             Inspector::class.java,
         )
