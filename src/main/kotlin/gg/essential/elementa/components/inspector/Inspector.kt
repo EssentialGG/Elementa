@@ -300,8 +300,6 @@ class Inspector @JvmOverloads constructor(
 
 
     override fun draw(matrixStack: UMatrixStack) {
-        val debugState = elementaDebug
-        elementaDebug = false
 
         // Make sure we are the top-most component (last to draw and first to receive input)
         Window.enqueueRenderOperation {
@@ -312,10 +310,13 @@ class Inspector @JvmOverloads constructor(
         separator1.setWidth(container.getWidth().pixels())
         separator2.setWidth(container.getWidth().pixels())
 
-
-        super.draw(matrixStack)
-
-        elementaDebug = debugState
+        val debugState = elementaDebug
+        elementaDebug = false
+        try {
+            super.draw(matrixStack)
+        } finally {
+            elementaDebug = debugState
+        }
     }
 
     @ApiStatus.Internal
