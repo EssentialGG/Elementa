@@ -16,14 +16,17 @@ import org.jetbrains.annotations.ApiStatus
  * If you would like for components to try and fit inline, use [CramSiblingConstraint]
  */
 open class SiblingConstraint constructor(
-    private val paddingState: State<Float>,
-    private val alignOppositeState: State<Boolean>,
+    padding: State<Float>,
+    alignOpposite: State<Boolean>,
 ) : PositionConstraint, PaddingConstraint, StateRegistry {
 
     @JvmOverloads constructor(
         padding: Float = 0f,
         alignOpposite: Boolean = false
     ): this(BasicState(padding), BasicState(alignOpposite))
+
+    private val paddingState: State<Float> = padding.map { it }
+    private val alignOppositeState: State<Boolean> = alignOpposite.map { it }
 
     val padding by paddingState
     val alignOpposite by alignOppositeState
