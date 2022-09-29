@@ -42,7 +42,7 @@ class ColumnPositionConstraint(
         val currentRow = component.parent
         val previousColumnIndex = currentRow.children.indexOf(component) - 1
         if (previousColumnIndex < 0) {
-            return component.parent.getLeft()
+            return currentRow.getLeft()
         }
         return currentRow.parent.children.maxOf {
             it.children.getOrNull(previousColumnIndex)?.getRight() ?: 0f
