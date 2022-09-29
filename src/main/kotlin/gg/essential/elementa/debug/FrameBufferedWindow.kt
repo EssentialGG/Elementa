@@ -122,25 +122,17 @@ class FrameBufferedWindow(
         glBindTexture(GL_TEXTURE_2D, frameBufferTexture)
         glBegin(GL_QUADS)
 
-        val vertexData = arrayOf(
-            0f to 0f,
-            frameBufferWidth.toFloat() to 0f,
-            frameBufferWidth.toFloat() to frameBufferHeight.toFloat(),
-            0f to frameBufferHeight.toFloat()
-        )
-        val textureData = arrayOf(
-            0f to 1f,
-            1f to 1f,
-            1f to 0f,
-            0f to 0f
-        )
+        glTexCoord2f(0f, 1f)
+        glVertex2f(0f, 0f)
 
-        vertexData.forEachIndexed { index, pair ->
-            val (x, y) = pair
-            val (u, v) = textureData[index]
-            glTexCoord2f(u, v)
-            glVertex2f(x, y)
-        }
+        glTexCoord2f(1f, 1f)
+        glVertex2f(frameBufferWidth.toFloat(), 0f)
+
+        glTexCoord2f(1f, 0f)
+        glVertex2f(frameBufferWidth.toFloat(), frameBufferHeight.toFloat())
+
+        glTexCoord2f(0f, 0f)
+        glVertex2f(0f, frameBufferHeight.toFloat())
 
         glEnd()
     }
