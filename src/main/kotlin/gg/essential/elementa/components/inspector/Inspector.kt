@@ -525,10 +525,9 @@ class Inspector @JvmOverloads constructor(
             xCenter: Float,
             yCenter: Float,
         ) {
-            val string = String.format("%.2f", distance).dropLastWhile { it == '0' }.dropLastWhile { it == '.' }
             drawShadedText(
                 matrixStack,
-                "${string}px",
+                "${"%.2f".format(null, distance).trimEnd('0').trimEnd('.')}px",
                 xCenter,
                 yCenter,
             )
