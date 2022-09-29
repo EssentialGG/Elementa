@@ -298,15 +298,16 @@ class Inspector @JvmOverloads constructor(
     private fun UIComponent.isMounted(): Boolean =
         parent == this || (this in parent.children && parent.isMounted())
 
-
-    override fun draw(matrixStack: UMatrixStack) {
-
+    override fun animationFrame() {
+        super.animationFrame()
         // Make sure we are the top-most component (last to draw and first to receive input)
         Window.enqueueRenderOperation {
             ensureLastComponent(inspectorContent)
         }
 
+    }
 
+    override fun draw(matrixStack: UMatrixStack) {
         separator1.setWidth(container.getWidth().pixels())
         separator2.setWidth(container.getWidth().pixels())
 
