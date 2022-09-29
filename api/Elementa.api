@@ -1133,6 +1133,7 @@ public final class gg/essential/elementa/components/inspector/Inspector : gg/ess
 	public fun <init> (Lgg/essential/elementa/UIComponent;Ljava/awt/Color;Ljava/awt/Color;F)V
 	public fun <init> (Lgg/essential/elementa/UIComponent;Ljava/awt/Color;Ljava/awt/Color;FLgg/essential/elementa/constraints/HeightConstraint;)V
 	public synthetic fun <init> (Lgg/essential/elementa/UIComponent;Ljava/awt/Color;Ljava/awt/Color;FLgg/essential/elementa/constraints/HeightConstraint;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun animationFrame ()V
 	public fun draw (Lgg/essential/universal/UMatrixStack;)V
 	public final fun setDetached (Z)V
 }
@@ -1146,6 +1147,11 @@ public final class gg/essential/elementa/components/inspector/InspectorNode : gg
 	public fun getArrowComponent ()Lgg/essential/elementa/components/inspector/ArrowComponent;
 	public fun getPrimaryComponent ()Lgg/essential/elementa/UIComponent;
 	public final fun getTargetComponent ()Lgg/essential/elementa/UIComponent;
+}
+
+public final class gg/essential/elementa/components/inspector/state/StateTextInput : gg/essential/elementa/components/input/v2/UITextInput {
+	public fun <init> (Lgg/essential/elementa/state/State;ZFLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;)V
+	public synthetic fun <init> (Lgg/essential/elementa/state/State;ZFLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 }
 
 public final class gg/essential/elementa/components/plot/Bounds {
@@ -4341,7 +4347,6 @@ public final class gg/essential/elementa/utils/ExtensionsKt {
 	public static final fun component2 (Ljava/awt/Color;)I
 	public static final fun component3 (Ljava/awt/Color;)I
 	public static final fun component4 (Ljava/awt/Color;)I
-	public static final fun empty (Lgg/essential/elementa/state/State;)Lgg/essential/elementa/state/MappedState;
 	public static final fun getValue (Lgg/essential/elementa/state/State;Ljava/lang/Object;Lkotlin/reflect/KProperty;)Ljava/lang/Object;
 	public static final fun getWindow (Lgg/essential/elementa/UIComponent;)Lgg/essential/elementa/components/Window;
 	public static final fun guiHint (DZ)D
@@ -4351,6 +4356,7 @@ public final class gg/essential/elementa/utils/ExtensionsKt {
 	public static final fun hoveredState (Lgg/essential/elementa/UIComponent;ZZ)Lgg/essential/elementa/state/State;
 	public static synthetic fun hoveredState$default (Lgg/essential/elementa/UIComponent;ZZILjava/lang/Object;)Lgg/essential/elementa/state/State;
 	public static final fun invisible (Ljava/awt/Color;)Ljava/awt/Color;
+	public static final fun isInComponentTree (Lgg/essential/elementa/UIComponent;)Z
 	public static final fun not (Lgg/essential/elementa/state/State;)Lgg/essential/elementa/state/MappedState;
 	public static final fun onLeftClick (Lgg/essential/elementa/UIComponent;Lkotlin/jvm/functions/Function2;)Lgg/essential/elementa/UIComponent;
 	public static final fun onSetValueAndNow (Lgg/essential/elementa/state/State;Lkotlin/jvm/functions/Function1;)Lkotlin/jvm/functions/Function0;
