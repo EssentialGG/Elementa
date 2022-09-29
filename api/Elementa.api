@@ -2434,7 +2434,6 @@ public final class gg/essential/elementa/constraints/animation/YAnimationCompone
 
 public final class gg/essential/elementa/constraints/resolution/ConstraintResolutionGui : gg/essential/elementa/WindowScreen {
 	public fun <init> (Ljava/lang/String;Lgg/essential/elementa/UIComponent;Ljava/util/List;)V
-	public fun <init> (Ljava/lang/String;Lgg/essential/elementa/components/Window;Ljava/util/List;)V
 }
 
 public final class gg/essential/elementa/constraints/resolution/ConstraintResolver {

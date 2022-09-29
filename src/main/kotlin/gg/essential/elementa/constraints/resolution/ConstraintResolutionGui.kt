@@ -18,11 +18,9 @@ import java.awt.Color
 
 class ConstraintResolutionGui(
     private val guiName: String,
-    private val gui: Window,
+    private val gui: UIComponent,
     private val nodes: List<ResolverNode>?
 ) : WindowScreen(ElementaVersion.V2) {
-
-    constructor(guiName: String, gui: UIComponent, nodes: List<ResolverNode>?) : this(guiName, gui as Window, nodes)
 
     private val guiView by GuiView().constrain {
         width = 100.percent
