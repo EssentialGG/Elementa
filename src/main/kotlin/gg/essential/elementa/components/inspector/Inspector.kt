@@ -63,10 +63,7 @@ class Inspector @JvmOverloads constructor(
         if (acceptingKeyboardInput) {
             when (keyCode) {
                 UKeyboard.KEY_M -> {
-                    measuringDistance = true
-                }
-                UKeyboard.KEY_N -> {
-                    measuringDistance = false
+                    measuringDistance = !measuringDistance
                 }
                 UKeyboard.KEY_S -> {
                     openComponentSelector()
