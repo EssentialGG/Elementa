@@ -54,28 +54,35 @@ class Inspector @JvmOverloads constructor(
 
     private var measuringDistance = false
 
+    private var acceptingKeyboardInput = true
+
     private val keyTypeListener: UIComponent.(typedChar: Char, keyCode: Int) -> Unit = { _, keyCode ->
-        when (keyCode) {
-            UKeyboard.KEY_M -> {
-                measuringDistance = true
-            }
-            UKeyboard.KEY_N -> {
-                measuringDistance = false
-            }
-            UKeyboard.KEY_S -> {
-                openComponentSelector()
-            }
-            UKeyboard.KEY_C -> {
-                infoBlock.openConstraintsTab()
-            }
-            UKeyboard.KEY_V -> {
-                infoBlock.openValuesTab()
-            }
-            UKeyboard.KEY_B -> {
-                infoBlock.openStatesTab()
-            }
-            UKeyboard.KEY_D -> {
-                elementaDebug = !elementaDebug
+        if (keyCode == UKeyboard.KEY_F12) {
+            acceptingKeyboardInput = !acceptingKeyboardInput
+        }
+        if (acceptingKeyboardInput) {
+            when (keyCode) {
+                UKeyboard.KEY_M -> {
+                    measuringDistance = true
+                }
+                UKeyboard.KEY_N -> {
+                    measuringDistance = false
+                }
+                UKeyboard.KEY_S -> {
+                    openComponentSelector()
+                }
+                UKeyboard.KEY_C -> {
+                    infoBlock.openConstraintsTab()
+                }
+                UKeyboard.KEY_V -> {
+                    infoBlock.openValuesTab()
+                }
+                UKeyboard.KEY_B -> {
+                    infoBlock.openStatesTab()
+                }
+                UKeyboard.KEY_D -> {
+                    elementaDebug = !elementaDebug
+                }
             }
         }
     }
