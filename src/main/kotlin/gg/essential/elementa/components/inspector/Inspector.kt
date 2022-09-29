@@ -13,10 +13,7 @@ import gg.essential.elementa.font.DefaultFonts
 import gg.essential.elementa.impl.ExternalInspectorDisplay
 import gg.essential.elementa.impl.Platform
 import gg.essential.elementa.manager.ResolutionManager
-import gg.essential.elementa.utils.ObservableAddEvent
-import gg.essential.elementa.utils.ObservableClearEvent
-import gg.essential.elementa.utils.ObservableRemoveEvent
-import gg.essential.elementa.utils.elementaDebug
+import gg.essential.elementa.utils.*
 import gg.essential.universal.UGraphics
 import gg.essential.universal.UKeyboard
 import gg.essential.universal.UMatrixStack
@@ -494,10 +491,10 @@ class Inspector @JvmOverloads constructor(
             val stringHeight = UGraphics.getFontHeight()
 
 
-            val x1 = xCenter - stringWidth / 2.0
-            val y1 = yCenter - stringHeight / 2.0
-            val x2 = xCenter + stringWidth / 2.0
-            val y2 = yCenter + stringHeight / 2.0
+            val x1 = (xCenter - stringWidth / 2.0).roundToRealPixels()
+            val y1 = (yCenter - stringHeight / 2.0).roundToRealPixels()
+            val x2 = (xCenter + stringWidth / 2.0).roundToRealPixels()
+            val y2 = (yCenter + stringHeight / 2.0).roundToRealPixels()
 
             // Draw outline for increased visiblity
             UIBlock.drawBlock(
