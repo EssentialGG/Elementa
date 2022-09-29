@@ -116,7 +116,7 @@ class FrameBufferedWindow(
     /**
      * Renders the contents of the frame buffer
      */
-    fun renderDirect() {
+    fun renderFrameBufferTexture() {
         glEnable(GL_TEXTURE_2D)
         glDisable(GL_CULL_FACE)
         glBindTexture(GL_TEXTURE_2D, frameBufferTexture)

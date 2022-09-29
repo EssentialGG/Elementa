@@ -35,7 +35,7 @@ internal class GLFWRenderer(
             GL11.glPushMatrix()
             GL11.glColor3f(1f, 1f, 1f)
 
-            frameBuffer.renderDirect()
+            frameBuffer.renderFrameBufferTexture()
 
             GL11.glPopMatrix()
             GLFW.glfwSwapBuffers(window)

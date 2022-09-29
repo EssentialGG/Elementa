@@ -31,7 +31,7 @@ internal class AwtFrameBufferCanvas(
         glPushMatrix()
         glColor3f(1f, 1f, 1f)
 
-        bufferedWindow.renderDirect()
+        bufferedWindow.renderFrameBufferTexture()
 
         glPopMatrix()
         swapBuffers()
