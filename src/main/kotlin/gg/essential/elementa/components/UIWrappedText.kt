@@ -14,6 +14,7 @@ import gg.essential.elementa.utils.getStringSplitToWidthTruncated
 import gg.essential.universal.UGraphics
 import gg.essential.universal.UMatrixStack
 import java.awt.Color
+import kotlin.math.ceil
 import kotlin.math.max
 
 /**
@@ -208,6 +209,6 @@ open class UIWrappedText @JvmOverloads constructor(
             return 0
         }
 
-        return max(0f, (height - baseLineHeight) / lineSpacing).toInt()
+        return max(0f, ceil((height - baseLineHeight) / lineSpacing)).toInt()
     }
 }
