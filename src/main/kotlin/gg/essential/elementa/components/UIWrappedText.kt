@@ -14,6 +14,7 @@ import gg.essential.elementa.utils.getStringSplitToWidthTruncated
 import gg.essential.universal.UGraphics
 import gg.essential.universal.UMatrixStack
 import java.awt.Color
+import kotlin.math.max
 
 /**
  * Simple text component that draws its given `text` at the scale determined by
@@ -154,11 +155,12 @@ open class UIWrappedText @JvmOverloads constructor(
         UGraphics.enableBlend()
 
         val lines = if (trimText) {
+            val fontProvider = super.getFontProvider()
             getStringSplitToWidthTruncated(
                 textState.get(),
                 width,
                 textScale,
-                ((getHeight() / textScale - extraHeightState.get()) / lineSpacing).toInt(),
+                getMaxLines(),
                 ensureSpaceAtEndOfLines = false,
                 fontProvider = getFontProvider(),
                 trimmedTextSuffix = trimmedTextSuffix
@@ -195,5 +197,17 @@ open class UIWrappedText @JvmOverloads constructor(
         }
 
         super.draw(matrixStack)
+    }
+
+    private fun getMaxLines(): Int {
+        val fontProvider = super.getFontProvider()
+        val height = getHeight() / getTextScale() - extraHeightState.get()
+        val baseLineHeight = fontProvider.getBaseLineHeight() + fontProvider.getBelowLineHeight() + fontProvider.getShadowHeight()
+
+        if (height < baseLineHeight) {
+            return 0
+        }
+
+        return max(0f, (height - baseLineHeight) / lineSpacing).toInt()
     }
 }
