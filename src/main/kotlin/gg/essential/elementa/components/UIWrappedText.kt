@@ -158,7 +158,7 @@ open class UIWrappedText @JvmOverloads constructor(
                 textState.get(),
                 width,
                 textScale,
-                ((getHeight() / textScale - extraHeightState.get()) / lineSpacing).toInt(),
+                getMaxLines(),
                 ensureSpaceAtEndOfLines = false,
                 fontProvider = getFontProvider(),
                 trimmedTextSuffix = trimmedTextSuffix
@@ -195,5 +195,17 @@ open class UIWrappedText @JvmOverloads constructor(
         }
 
         super.draw(matrixStack)
+    }
+
+    private fun getMaxLines(): Int {
+        val fontProvider = getFontProvider()
+        val height = getHeight() / getTextScale() - extraHeightState.get()
+        val baseLineHeight = fontProvider.getBaseLineHeight() + fontProvider.getBelowLineHeight() + fontProvider.getShadowHeight()
+
+        if (height < baseLineHeight) {
+            return 0
+        }
+
+        return 1 + ((height - baseLineHeight) / lineSpacing).toInt()
     }
 }
