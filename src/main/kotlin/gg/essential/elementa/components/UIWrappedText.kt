@@ -156,7 +156,6 @@ open class UIWrappedText @JvmOverloads constructor(
         UGraphics.enableBlend()
 
         val lines = if (trimText) {
-            val fontProvider = super.getFontProvider()
             getStringSplitToWidthTruncated(
                 textState.get(),
                 width,
