@@ -13,6 +13,8 @@ class HeaderDrawable(
     override val children: List<Drawable> get() = listOf(paragraph)
     internal val id = paragraph.textDrawables.joinToString(separator = " ") { it.plainText() }
 
+    var dividerWidth: Double? = null
+
     init {
         paragraph.parent = this
     }
@@ -60,7 +62,7 @@ class HeaderDrawable(
                 headerConfig.dividerColor, 
                 (x + state.xShift).toDouble(),
                 (y + state.yShift).toDouble(),
-                width.toDouble(),
+                dividerWidth ?: width.toDouble(),
                 headerConfig.dividerWidth.toDouble()
             )
         }

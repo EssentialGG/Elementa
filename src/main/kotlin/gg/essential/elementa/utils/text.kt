@@ -44,15 +44,13 @@ fun getStringSplitToWidth(
     val maxLineWidthSpace = maxLineWidth - if (ensureSpaceAtEndOfLines) spaceWidth else 0f
     val lineList = mutableListOf<String>()
     val currLine = StringBuilder()
-    var currLineWidth = 0f
     var textPos = 0
     var currChatColor: ChatColor? = null
     var currChatFormatting: ChatColor? = null
 
-    fun pushLine(newLineWidth: Float = 0f) {
+    fun pushLine() {
         lineList.add(currLine.toString())
         currLine.clear()
-        currLineWidth = newLineWidth
         if (processColorCodes) {
             currChatColor?.also { currLine.append("§${it.char}") }
             currChatFormatting?.also { currLine.append("§${it.char}") }
@@ -88,37 +86,35 @@ fun getStringSplitToWidth(
 
         val newline = textPos < text.length && text[textPos] == '\n'
         val word = builder.toString()
-        val wordWidth = word.width(textScale,fontProvider)
+        val wordWidth = word.width(textScale, fontProvider)
 
         if (processColorCodes && newline) {
             currChatColor = null
             currChatFormatting = null
         }
 
-        if (currLineWidth + wordWidth > maxLineWidthSpace) {
+        if ((currLine.toString() + word).width(textScale, fontProvider) > maxLineWidthSpace) {
             if (wordWidth > maxLineWidthSpace) {
                 // Split up the word into it's own lines
-                if (currLineWidth > 0)
+                if (currLine.toString().width(textScale, fontProvider) > 0)
                     pushLine()
 
                 for (char in word.toCharArray()) {
-                    currLineWidth += char.width(textScale)
-                    if (currLineWidth > maxLineWidthSpace)
-                        pushLine(char.width(textScale))
+                    if ((currLine.toString() + char).width(textScale, fontProvider) > maxLineWidthSpace)
+                        pushLine()
                     currLine.append(char)
                 }
             } else {
-                pushLine(wordWidth)
+                pushLine()
                 currLine.append(word)
             }
 
             // Check if we have a space, and if so, append it to the new line
             if (textPos < text.length) {
                 if (!newline) {
-                    if (currLineWidth + spaceWidth > maxLineWidthSpace)
+                    if (currLine.toString().width(textScale, fontProvider) + spaceWidth > maxLineWidthSpace)
                         pushLine()
                     currLine.append(' ')
-                    currLineWidth += spaceWidth
                     textPos++
                 } else {
                     pushLine()
@@ -127,13 +123,11 @@ fun getStringSplitToWidth(
             }
         } else {
             currLine.append(word)
-            currLineWidth += wordWidth
 
             // Check if we have a space, and if so, append it to a line
             if (!newline && textPos < text.length) {
                 textPos++
                 currLine.append(' ')
-                currLineWidth += spaceWidth
             } else if (newline) {
                 pushLine()
                 textPos++

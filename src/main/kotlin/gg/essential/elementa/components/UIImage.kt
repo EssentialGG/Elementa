@@ -1,16 +1,11 @@
 package gg.essential.elementa.components
 
 import gg.essential.elementa.UIComponent
-import gg.essential.elementa.components.image.CacheableImage
-import gg.essential.elementa.components.image.DefaultLoadingImage
-import gg.essential.elementa.components.image.ImageCache
-import gg.essential.elementa.components.image.ImageProvider
-import gg.essential.elementa.svg.SVGParser
+import gg.essential.elementa.components.image.*
 import gg.essential.elementa.utils.ResourceCache
 import gg.essential.elementa.utils.drawTexture
 import gg.essential.universal.UGraphics
 import gg.essential.universal.UMatrixStack
-import gg.essential.universal.UMinecraft
 import gg.essential.universal.utils.ReleasedDynamicTexture
 import org.lwjgl.opengl.GL11
 import java.awt.Color
@@ -31,7 +26,7 @@ import javax.imageio.ImageIO
 open class UIImage @JvmOverloads constructor(
     private val imageFuture: CompletableFuture<BufferedImage>,
     private val loadingImage: ImageProvider = DefaultLoadingImage,
-    private val failureImage: ImageProvider = SVGComponent(failureSVG)
+    private val failureImage: ImageProvider = DefaultFailureImage,
 ) : UIComponent(), ImageProvider, CacheableImage {
     private var texture: ReleasedDynamicTexture? = null
 
@@ -54,14 +49,15 @@ open class UIImage @JvmOverloads constructor(
             imageHeight = it.height.toFloat()
             imageFuture.obtrudeValue(null)
 
-            //In versions before 1.15, we make the bufferedImage.getRGB call without the upload in the
+            // In versions before 1.15, we make the bufferedImage.getRGB call without the upload in the
             // constructor since that takes most of the CPU time and we upload the actual texture during the
             // first call to uploadTexture or getGlTextureId
             // Same for 1.15+ actually, except that it is not getRGB but serialization to byte[] (so we can re-parse it
             // as a NativeImage) which is slow.
-            texture = UGraphics.getTexture(it)
+            val texture = UGraphics.getTexture(it)
             Window.enqueueRenderOperation {
                 texture?.uploadTexture()
+                this.texture = texture
                 while (waiting.isEmpty().not())
                     waiting.poll().applyTexture(texture)
             }
@@ -125,7 +121,7 @@ open class UIImage @JvmOverloads constructor(
     }
 
     companion object {
-        private val failureSVG = SVGParser.parseFromResource("/svg/failure.svg")
+
         val defaultResourceCache = ResourceCache(50)
 
         @JvmStatic

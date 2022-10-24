@@ -9,8 +9,9 @@ import java.awt.Color
 import java.awt.image.BufferedImage
 import javax.imageio.ImageIO
 
-object DefaultLoadingImage : ImageProvider {
-    private var loadingImage: BufferedImage? = ImageIO.read(this::class.java.getResourceAsStream("/loading.png"))
+object DefaultFailureImage : ImageProvider {
+
+    private var loadingImage: BufferedImage? = ImageIO.read(this::class.java.getResourceAsStream("/textures/failure.png"))
     private lateinit var loadingTexture: ReleasedDynamicTexture
 
     override fun drawImage(

@@ -126,10 +126,20 @@ class ScrollComponent @JvmOverloads constructor(
         }
     }
 
+    private var lastWidth = 0f
+    private var lastHeight = 0f
     private var lastActualWidth = 0f
     private var lastActualHeight = 0f
 
     override fun draw(matrixStack: UMatrixStack) {
+        val width = getWidth()
+        val height = getHeight()
+        if (width != lastWidth || height != lastHeight) {
+            lastWidth = width
+            lastHeight = height
+            needsUpdate = true
+        }
+
         val actualWidth = calculateActualWidth()
         val actualHeight = calculateActualHeight()
         if (actualWidth != lastActualWidth || actualHeight != lastActualHeight) {
@@ -154,11 +164,11 @@ class ScrollComponent @JvmOverloads constructor(
             }
             // Run our scroll adjust event, normally updating [scrollBarGrip]
             var percent = (innerPadding - horizontalOffset) / horizontalRange.width()
-            var percentageOfParent = this.getWidth() / actualWidth
+            var percentageOfParent = width / actualWidth
             horizontalScrollAdjustEvents.forEach { it(percent, percentageOfParent) }
 
             percent = (innerPadding - verticalOffset) / verticalRange.width()
-            percentageOfParent = this.getHeight() / actualHeight
+            percentageOfParent = height / actualHeight
             verticalScrollAdjustEvents.forEach { it(percent, percentageOfParent) }
         }
 
@@ -259,61 +269,55 @@ class ScrollComponent @JvmOverloads constructor(
         needsUpdate = true
     }
 
-    fun scrollToLeft(smoothScroll: Boolean = true) {
-        // This gets clamped later
-        horizontalOffset = Float.POSITIVE_INFINITY
+    fun scrollTo(
+        horizontalOffset: Float = this.horizontalOffset,
+        verticalOffset: Float = this.verticalOffset,
+        smoothScroll: Boolean = true
+    ) {
+        val horizontalRange = calculateOffsetRange(isHorizontal = true)
+        val verticalRange = calculateOffsetRange(isHorizontal = false)
+        this.horizontalOffset =
+            if (horizontalRange.isEmpty()) innerPadding else horizontalOffset.coerceIn(horizontalRange)
+        this.verticalOffset = if (verticalRange.isEmpty()) {
+            innerPadding
+        } else {
+            verticalOffset.coerceIn(verticalRange)
+        }
 
         if (smoothScroll) {
             needsUpdate = true
             return
         }
 
-        val horizontalRange = calculateOffsetRange(isHorizontal = true)
-        actualHolder.setX(horizontalRange.endInclusive.pixels())
-        horizontalScrollAdjustEvents.forEach { it(0f, this.getWidth() / calculateActualWidth()) }
+        actualHolder.setX(this.horizontalOffset.pixels())
+        actualHolder.setY(this.verticalOffset.pixels())
+        val horizontalFraction = (innerPadding - this.horizontalOffset) / horizontalRange
+        val verticalFraction = (innerPadding -this.verticalOffset) / verticalRange
+        horizontalScrollAdjustEvents.forEach { it(horizontalFraction, this.getWidth() / calculateActualWidth()) }
+        verticalScrollAdjustEvents.forEach { it(verticalFraction, this.getHeight() / calculateActualHeight()) }
+    }
+
+    private operator fun Float.div(range: ClosedFloatingPointRange<Float>): Float {
+        val width = range.width()
+        return if (width == 0f) 0f else this / width
+    }
+
+    fun scrollToLeft(smoothScroll: Boolean = true) {
+        scrollTo(horizontalOffset = Float.POSITIVE_INFINITY, smoothScroll = smoothScroll)
     }
 
     fun scrollToRight(smoothScroll: Boolean = true) {
-        // This gets clamped later
-        horizontalOffset = Float.NEGATIVE_INFINITY
-
-        if (smoothScroll) {
-            needsUpdate = true
-            return
-        }
-
-        val horizontalRange = calculateOffsetRange(isHorizontal = true)
-        actualHolder.setX(horizontalRange.start.pixels())
-        horizontalScrollAdjustEvents.forEach { it(1f, this.getWidth() / calculateActualWidth()) }
+        scrollTo(horizontalOffset = Float.NEGATIVE_INFINITY, smoothScroll = smoothScroll)
     }
 
     fun scrollToTop(smoothScroll: Boolean = true) {
-        // This gets clamped later
-        verticalOffset = Float.POSITIVE_INFINITY
-
-        if (smoothScroll) {
-            needsUpdate = true
-            return
-        }
-
-        val verticalRange = calculateOffsetRange(isHorizontal = false)
-        actualHolder.setY(verticalRange.endInclusive.pixels())
-        verticalScrollAdjustEvents.forEach { it(0f, this.getHeight() / calculateActualHeight()) }
+        scrollTo(verticalOffset = Float.POSITIVE_INFINITY, smoothScroll = smoothScroll)
     }
 
     fun scrollToBottom(smoothScroll: Boolean = true) {
-        // This gets clamped later
-        verticalOffset = Float.NEGATIVE_INFINITY
-
-        if (smoothScroll) {
-            needsUpdate = true
-            return
-        }
-
-        val verticalRange = calculateOffsetRange(isHorizontal = false)
-        actualHolder.setY(verticalRange.start.pixels())
-        verticalScrollAdjustEvents.forEach { it(1f, this.getHeight() / calculateActualHeight()) }
+        scrollTo(verticalOffset = Float.NEGATIVE_INFINITY, smoothScroll = smoothScroll)
     }
+
 
     fun filterChildren(filter: (component: UIComponent) -> Boolean) {
         actualHolder.children.clear()
@@ -417,7 +421,7 @@ class ScrollComponent @JvmOverloads constructor(
                     Animations.IN_SIN, 0.1f, basicXConstraint { component ->
                         val offset = (component.parent.getWidth() - component.getWidth()) * scrollPercentage
 
-                        if (horizontalScrollOpposite) component.parent.getRight() - component.getHeight() - offset
+                        if (horizontalScrollOpposite) component.parent.getRight() - component.getHeight() + offset
                         else component.parent.getLeft() + offset
                     }
                 )
@@ -426,7 +430,7 @@ class ScrollComponent @JvmOverloads constructor(
                     Animations.IN_SIN, 0.1f, basicYConstraint { component ->
                         val offset = (component.parent.getHeight() - component.getHeight()) * scrollPercentage
 
-                        if (verticalScrollOpposite) component.parent.getBottom() - component.getHeight() - offset
+                        if (verticalScrollOpposite) component.parent.getBottom() - component.getHeight() + offset
                         else component.parent.getTop() + offset
                     }
                 )

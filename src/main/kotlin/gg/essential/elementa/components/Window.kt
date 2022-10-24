@@ -323,6 +323,18 @@ class Window @JvmOverloads constructor(
         floatingComponents.remove(component)
     }
 
+    /**
+     * Overridden to including floating components.
+     */
+    override fun hitTest(x: Float, y: Float): UIComponent {
+        for (component in floatingComponents.reversed()) {
+            if (component.isPointInside(x, y)) {
+                return component.hitTest(x, y)
+            }
+        }
+        return super.hitTest(x, y)
+    }
+
     /*
      * Focus API
      */

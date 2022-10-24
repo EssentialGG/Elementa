@@ -11,7 +11,6 @@ import gg.essential.elementa.markdown.MarkdownConfig
 import gg.essential.elementa.markdown.selection.TextCursor
 import gg.essential.universal.UMatrixStack
 import gg.essential.universal.UMouse
-import gg.essential.universal.UResolution
 import java.awt.Color
 
 class TextDrawable(
@@ -57,7 +56,7 @@ class TextDrawable(
 
         val styleChars = style.numFormattingChars
         formattedText = formattedText.substring(0, styleChars) +
-            formattedText.substring(styleChars, formattedText.length).trimStart()
+                formattedText.substring(styleChars, formattedText.length).trimStart()
     }
 
     fun width() = formattedText.width(scaleModifier) + if (style.isCode) {
@@ -72,39 +71,44 @@ class TextDrawable(
     fun split(maxWidth: Float, breakWords: Boolean = false): Pair<TextDrawable, TextDrawable>? {
         val styleChars = style.numFormattingChars
         val plainText = plainText()
-        if (plainText.length <= 1)
+
+        if (plainText.length <= 1) {
             return null
+        }
 
         var splitPoint = formattedText.indices.drop(styleChars).firstOrNull {
             formattedText.substring(0, it + 1).width(scaleModifier) > maxWidth
-        }
+        } ?: throw IllegalStateException("TextDrawable#split called when it should not have been called")
 
-        if (splitPoint == null)
-            throw IllegalStateException("TextDrawable#split called when it should not have been called")
-
-        splitPoint = splitPoint - 1 - styleChars
+        splitPoint -= styleChars
 
         if (!breakWords) {
-            while (splitPoint > styleChars && formattedText[splitPoint - 1] != ' ')
+            while (splitPoint > styleChars && formattedText[splitPoint] != ' ') {
                 splitPoint--
+            }
 
-            if (splitPoint == styleChars)
+            if (splitPoint == styleChars) {
                 return null
+            }
         }
-        if (splitPoint <= 0)
+
+        if (splitPoint <= 0) {
             splitPoint = 1
-        val first = TextDrawable(md, plainText.substring(0, splitPoint), style)
+        }
+
+        val first = TextDrawable(md, plainText.substring(0, splitPoint).trimEnd(), style)
         val second = TextDrawable(md, plainText.substring(splitPoint, plainText.length), style)
 
         val linkedTexts = this.linkedTexts?.also {
             // We are splitting this text drawable, so in effect this
             // drawable no longer "exists", because it isn't relevant.
-            // Therefore we remove it from this linked text group
+            // Therefore, we remove it from this linked text group
             it.unlinkText(this)
         } ?: LinkedTexts()
 
         linkedTexts.linkText(first)
         linkedTexts.linkText(second)
+
         first.linkedTexts = linkedTexts
         second.linkedTexts = linkedTexts
 

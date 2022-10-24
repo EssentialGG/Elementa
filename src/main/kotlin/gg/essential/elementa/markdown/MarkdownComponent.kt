@@ -8,15 +8,13 @@ import gg.essential.elementa.components.Window
 import gg.essential.elementa.constraints.HeightConstraint
 import gg.essential.elementa.dsl.pixels
 import gg.essential.elementa.events.UIEvent
-import gg.essential.elementa.markdown.drawables.Drawable
-import gg.essential.elementa.markdown.drawables.DrawableList
 import gg.essential.elementa.markdown.selection.Cursor
 import gg.essential.elementa.markdown.selection.Selection
 import gg.essential.elementa.state.BasicState
 import gg.essential.elementa.state.State
 import gg.essential.elementa.font.ElementaFonts
 import gg.essential.elementa.font.FontProvider
-import gg.essential.elementa.markdown.drawables.HeaderDrawable
+import gg.essential.elementa.markdown.drawables.*
 import gg.essential.elementa.utils.elementaDebug
 import gg.essential.universal.UDesktop
 import gg.essential.universal.UKeyboard
@@ -32,7 +30,7 @@ import gg.essential.universal.UMatrixStack
  */
 class MarkdownComponent(
     text: String,
-    val config: MarkdownConfig = MarkdownConfig(),
+    config: MarkdownConfig = MarkdownConfig(),
     private val codeFontPointSize: Float = 10f,
     private val codeFontRenderer: FontProvider = ElementaFonts.JETBRAINS_MONO,
     private val disableSelection: Boolean = false,
@@ -45,6 +43,10 @@ class MarkdownComponent(
         codeFontPointSize: Float = 10f,
         codeFontRenderer: FontProvider = ElementaFonts.JETBRAINS_MONO,
     ) : this(text, config, codeFontPointSize, codeFontRenderer, false)
+
+    private val configState = BasicState(config)
+    val config: MarkdownConfig
+        get() = configState.get()
 
     private var textState: State<String> = BasicState(text)
     private var removeListener = textState.onSetValue {
@@ -64,6 +66,9 @@ class MarkdownComponent(
     private var canDrag = false
     private var needsInitialLayout = true
     private val linkClickListeners = mutableListOf<MarkdownComponent.(LinkClickEvent) -> Unit>()
+
+    var maxTextLineWidth = 0f
+        private set
 
     init {
         onMouseClick {
@@ -107,6 +112,10 @@ class MarkdownComponent(
                     UDesktop.setClipboardString(drawables.selectedText(UKeyboard.isShiftKeyDown()))
                 }
             }
+        }
+        configState.onSetValue {
+            reparse()
+            layout()
         }
     }
 
@@ -153,6 +162,16 @@ class MarkdownComponent(
         sectionOffsets = drawables.filterIsInstance<HeaderDrawable>().associate { it.id to it.y }
 
         setHeight((currY - baseY).coerceAtMost(maxHeight.getHeight(this)).pixels())
+
+        maxTextLineWidth = drawables.maxOfOrNull { drawable ->
+            when (drawable) {
+                is ParagraphDrawable -> drawable.maxTextLineWidth
+                is HeaderDrawable -> drawable.children.filterIsInstance<ParagraphDrawable>().maxOfOrNull { it.maxTextLineWidth } ?: 0f
+                is ListDrawable -> drawable.maxTextLineWidth
+                is BlockquoteDrawable -> drawable.maxTextLineWidth
+                else -> 0f
+            }
+        } ?: 0f
     }
 
     override fun animationFrame() {
@@ -170,6 +189,13 @@ class MarkdownComponent(
         if (currentValues != lastValues)
             layout()
         lastValues = currentValues
+    }
+
+    /**
+     * Updates the MarkdownConfig this component uses.
+     */
+    fun updateConfig(config: MarkdownConfig)  {
+        configState.set(config)
     }
 
     /**

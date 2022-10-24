@@ -369,6 +369,8 @@ public final class gg/essential/elementa/components/ScrollComponent : gg/essenti
 	public fun removeChild (Lgg/essential/elementa/UIComponent;)Lgg/essential/elementa/components/ScrollComponent;
 	public synthetic fun replaceChild (Lgg/essential/elementa/UIComponent;Lgg/essential/elementa/UIComponent;)Lgg/essential/elementa/UIComponent;
 	public fun replaceChild (Lgg/essential/elementa/UIComponent;Lgg/essential/elementa/UIComponent;)Lgg/essential/elementa/components/ScrollComponent;
+	public final fun scrollTo (FFZ)V
+	public static synthetic fun scrollTo$default (Lgg/essential/elementa/components/ScrollComponent;FFZILjava/lang/Object;)V
 	public final fun scrollToBottom (Z)V
 	public static synthetic fun scrollToBottom$default (Lgg/essential/elementa/components/ScrollComponent;ZILjava/lang/Object;)V
 	public final fun scrollToLeft (Z)V
@@ -734,6 +736,7 @@ public final class gg/essential/elementa/components/Window : gg/essential/elemen
 	public fun getRight ()F
 	public fun getTop ()F
 	public fun getWidth ()F
+	public fun hitTest (FF)Lgg/essential/elementa/UIComponent;
 	public final fun isAreaVisible (DDDD)Z
 	public fun keyType (CI)V
 	public fun mouseClick (DDI)V
@@ -773,6 +776,11 @@ public final class gg/essential/elementa/components/image/BlurHashImage$Companio
 public abstract interface class gg/essential/elementa/components/image/CacheableImage {
 	public abstract fun applyTexture (Lgg/essential/universal/utils/ReleasedDynamicTexture;)V
 	public abstract fun supply (Lgg/essential/elementa/components/image/CacheableImage;)V
+}
+
+public final class gg/essential/elementa/components/image/DefaultFailureImage : gg/essential/elementa/components/image/ImageProvider {
+	public static final field INSTANCE Lgg/essential/elementa/components/image/DefaultFailureImage;
+	public fun drawImage (Lgg/essential/universal/UMatrixStack;DDDDLjava/awt/Color;)V
 }
 
 public final class gg/essential/elementa/components/image/DefaultLoadingImage : gg/essential/elementa/components/image/ImageProvider {
@@ -3151,10 +3159,12 @@ public final class gg/essential/elementa/markdown/MarkdownComponent : gg/essenti
 	public fun draw (Lgg/essential/universal/UMatrixStack;)V
 	public final fun getConfig ()Lgg/essential/elementa/markdown/MarkdownConfig;
 	public final fun getDrawables ()Lgg/essential/elementa/markdown/drawables/DrawableList;
+	public final fun getMaxTextLineWidth ()F
 	public final fun getSectionOffsets ()Ljava/util/Map;
 	public final fun layout ()V
 	public final fun onLinkClicked (Lkotlin/jvm/functions/Function2;)V
 	public final fun setMaxHeight (Lgg/essential/elementa/constraints/HeightConstraint;)Lgg/essential/elementa/markdown/MarkdownComponent;
+	public final fun updateConfig (Lgg/essential/elementa/markdown/MarkdownConfig;)V
 }
 
 public final class gg/essential/elementa/markdown/MarkdownComponent$Companion {
@@ -3310,6 +3320,7 @@ public final class gg/essential/elementa/markdown/drawables/BlockquoteDrawable :
 	public fun draw (Lgg/essential/universal/UMatrixStack;Lgg/essential/elementa/markdown/DrawState;)V
 	public fun getChildren ()Ljava/util/List;
 	public final fun getDrawables ()Lgg/essential/elementa/markdown/drawables/DrawableList;
+	public final fun getMaxTextLineWidth ()F
 	public fun selectedText (Z)Ljava/lang/String;
 }
 
@@ -3502,7 +3513,9 @@ public final class gg/essential/elementa/markdown/drawables/HeaderDrawable : gg/
 	public fun cursorAtStart ()Lgg/essential/elementa/markdown/selection/Cursor;
 	public fun draw (Lgg/essential/universal/UMatrixStack;Lgg/essential/elementa/markdown/DrawState;)V
 	public fun getChildren ()Ljava/util/List;
+	public final fun getDividerWidth ()Ljava/lang/Double;
 	public fun selectedText (Z)Ljava/lang/String;
+	public final fun setDividerWidth (Ljava/lang/Double;)V
 }
 
 public final class gg/essential/elementa/markdown/drawables/ImageDrawable : gg/essential/elementa/markdown/drawables/Drawable {
@@ -3534,6 +3547,7 @@ public final class gg/essential/elementa/markdown/drawables/ListDrawable : gg/es
 	public fun cursorAtStart ()Lgg/essential/elementa/markdown/selection/Cursor;
 	public fun draw (Lgg/essential/universal/UMatrixStack;Lgg/essential/elementa/markdown/DrawState;)V
 	public fun getChildren ()Ljava/util/List;
+	public final fun getMaxTextLineWidth ()F
 	public fun selectedText (Z)Ljava/lang/String;
 }
 
@@ -3556,6 +3570,7 @@ public final class gg/essential/elementa/markdown/drawables/ParagraphDrawable : 
 	public fun draw (Lgg/essential/universal/UMatrixStack;Lgg/essential/elementa/markdown/DrawState;)V
 	public fun getChildren ()Ljava/util/List;
 	public final fun getDrawables ()Lgg/essential/elementa/markdown/drawables/DrawableList;
+	public final fun getMaxTextLineWidth ()F
 	public final fun getScaleModifier ()F
 	public final fun getTextDrawables ()Ljava/util/List;
 	public fun selectedText (Z)Ljava/lang/String;

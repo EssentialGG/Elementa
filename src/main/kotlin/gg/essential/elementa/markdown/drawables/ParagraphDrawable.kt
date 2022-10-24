@@ -29,6 +29,10 @@ class ParagraphDrawable(
     val textDrawables: List<TextDrawable>
         get() = children.filterIsInstance<TextDrawable>()
 
+    // The width of the longest TextDrawable line after lines are split
+    var maxTextLineWidth = 0f
+        private set
+
     // Used by HeaderDrawable
     internal var headerConfig: HeaderLevelConfig? = null
         set(value) {
@@ -76,7 +80,11 @@ class ParagraphDrawable(
         val currentLine = mutableListOf<Drawable>()
         var maxLineHeight = Float.MIN_VALUE
 
+        var prevY = y
+
         fun gotoNextLine() {
+            prevY = currY
+
             currX = x
             currY += maxLineHeight * scaleModifier + config.paragraphConfig.spaceBetweenLines
 
@@ -246,6 +254,10 @@ class ParagraphDrawable(
             }
         }
 
+        maxTextLineWidth = lines.maxOfOrNull { line ->
+            line.sumOf { (it as? TextDrawable)?.width()?.toDouble() ?: it.width.toDouble() }.toFloat()
+        } ?: 0f
+
         newDrawables.forEach {
             if (it is TextDrawable)
                 it.scaleModifier = scaleModifier
@@ -253,9 +265,8 @@ class ParagraphDrawable(
 
         drawables.setDrawables(newDrawables)
 
-        val height = currY - y + 9f * scaleModifier + if (insertSpaceAfter) {
-            config.paragraphConfig.spaceAfter
-        } else 0f
+        val height = (if (currentLine.isNotEmpty()) currY else prevY) - y + 9f * scaleModifier +
+                if (insertSpaceAfter) config.paragraphConfig.spaceAfter else 0f
 
         return Layout(
             x,
