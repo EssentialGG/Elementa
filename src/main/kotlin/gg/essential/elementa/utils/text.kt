@@ -23,9 +23,9 @@ fun getStringSplitToWidthTruncated(
     val suffixWidth = trimmedTextSuffix.width(textScale,fontProvider)
 
     return lines.subList(0, maxLines).mapIndexed { index, contents ->
-        if (index == maxLines - 1) {
-            var length = contents.lastIndex
-            while (contents.substring(0, length).width(textScale,fontProvider) + suffixWidth > maxLineWidth * textScale)
+        var length = contents.lastIndex
+        if (index == maxLines - 1 && length > 0) {
+            while (length > 0 && contents.substring(0, length).width(textScale,fontProvider) + suffixWidth > maxLineWidth * textScale)
                 length--
             contents.substring(0, length) + trimmedTextSuffix
         } else contents
