@@ -161,6 +161,10 @@ class Window @JvmOverloads constructor(
     }
 
     override fun mouseScroll(delta: Double) {
+        if (cancelDrawing) {
+            return
+        }
+
         requireMainThread()
 
         val (mouseX, mouseY) = getMousePosition()
@@ -175,6 +179,10 @@ class Window @JvmOverloads constructor(
     }
 
     override fun mouseClick(mouseX: Double, mouseY: Double, button: Int) {
+        if (cancelDrawing) {
+            return
+        }
+
         requireMainThread()
 
         //  Override mouse positions to be in the center of the pixel on Elementa versions
@@ -220,6 +228,10 @@ class Window @JvmOverloads constructor(
     }
 
     override fun mouseRelease() {
+        if (cancelDrawing) {
+            return
+        }
+
         requireMainThread()
 
         super.mouseRelease()
@@ -228,6 +240,10 @@ class Window @JvmOverloads constructor(
     }
 
     override fun keyType(typedChar: Char, keyCode: Int) {
+        if (cancelDrawing) {
+            return
+        }
+
         requireMainThread()
 
         if (focusedComponent != null) {
