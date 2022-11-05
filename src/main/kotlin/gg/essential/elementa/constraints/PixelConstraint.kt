@@ -2,9 +2,12 @@ package gg.essential.elementa.constraints
 
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.constraints.resolution.ConstraintVisitor
+import gg.essential.elementa.debug.ManagedState
+import gg.essential.elementa.debug.StateRegistry
 import gg.essential.elementa.state.BasicState
 import gg.essential.elementa.state.MappedState
 import gg.essential.elementa.state.State
+import org.jetbrains.annotations.ApiStatus
 
 /**
  * Sets this component's X/Y position or width/height to be a constant
@@ -13,8 +16,8 @@ import gg.essential.elementa.state.State
 class PixelConstraint @JvmOverloads constructor(
     value: State<Float>,
     alignOpposite: State<Boolean> = BasicState(false),
-    alignOutside: State<Boolean> = BasicState(false)
-) : MasterConstraint {
+    alignOutside: State<Boolean> = BasicState(false),
+) : MasterConstraint, StateRegistry {
     @JvmOverloads constructor(
         value: Float,
         alignOpposite: Boolean = false,
@@ -133,4 +136,12 @@ class PixelConstraint @JvmOverloads constructor(
             else -> throw IllegalArgumentException(type.prettyName)
         }
     }
+
+    @ApiStatus.Internal
+    @get:ApiStatus.Internal
+    override val managedStates = listOf(
+        ManagedState.OfFloat(valueState, "value", true),
+        ManagedState.OfBoolean(alignOppositeState, "alignOpposite", true),
+        ManagedState.OfBoolean(alignOutsideState, "alignOutside", true),
+    )
 }

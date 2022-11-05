@@ -16,6 +16,7 @@ import gg.essential.elementa.font.ElementaFonts
 import gg.essential.elementa.font.FontProvider
 import gg.essential.elementa.markdown.drawables.*
 import gg.essential.elementa.utils.elementaDebug
+import gg.essential.elementa.utils.keyboardManager
 import gg.essential.universal.UDesktop
 import gg.essential.universal.UKeyboard
 import gg.essential.universal.UMatrixStack
@@ -108,8 +109,8 @@ class MarkdownComponent(
             }
 
             onKeyType { _, keyCode ->
-                if (selection != null && keyCode == UKeyboard.KEY_C && UKeyboard.isCtrlKeyDown()) {
-                    UDesktop.setClipboardString(drawables.selectedText(UKeyboard.isShiftKeyDown()))
+                if (selection != null && keyCode == UKeyboard.KEY_C && keyboardManager.isCtrlKeyDown()) {
+                    UDesktop.setClipboardString(drawables.selectedText(keyboardManager.isShiftKeyDown()))
                 }
             }
         }

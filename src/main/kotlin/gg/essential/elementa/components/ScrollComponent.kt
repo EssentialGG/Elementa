@@ -7,9 +7,9 @@ import gg.essential.elementa.constraints.resolution.ConstraintVisitor
 import gg.essential.elementa.dsl.*
 import gg.essential.elementa.effects.ScissorEffect
 import gg.essential.elementa.utils.bindLast
-import gg.essential.universal.UKeyboard
+import gg.essential.elementa.utils.keyboardManager
+import gg.essential.elementa.utils.mousePositionManager
 import gg.essential.universal.UMatrixStack
-import gg.essential.universal.UMouse
 import java.awt.Color
 import java.util.concurrent.CopyOnWriteArrayList
 import kotlin.math.abs
@@ -112,9 +112,9 @@ class ScrollComponent @JvmOverloads constructor(
         scrollIconComponent.hide(instantly = true)
 
         onMouseScroll {
-            if (UKeyboard.isShiftKeyDown() && horizontalScrollEnabled) {
+            if (keyboardManager.isShiftKeyDown() && horizontalScrollEnabled) {
                 onScroll(it.delta.toFloat(), isHorizontal = true)
-            } else if (!UKeyboard.isShiftKeyDown() && verticalScrollEnabled) {
+            } else if (!keyboardManager.isShiftKeyDown() && verticalScrollEnabled) {
                 onScroll(it.delta.toFloat(), isHorizontal = false)
             }
 
@@ -229,7 +229,7 @@ class ScrollComponent @JvmOverloads constructor(
         }
 
         component.onMouseScroll {
-            if (isHorizontal && horizontalScrollEnabled && UKeyboard.isShiftKeyDown()) {
+            if (isHorizontal && horizontalScrollEnabled && keyboardManager.isShiftKeyDown()) {
                 onScroll(it.delta.toFloat(), isHorizontal = true)
             } else if (!isHorizontal && verticalScrollEnabled) {
                 onScroll(it.delta.toFloat(), isHorizontal = false)
@@ -498,7 +498,7 @@ class ScrollComponent @JvmOverloads constructor(
 
         if (horizontalScrollEnabled) {
             val xBegin = autoScrollBegin.first + getLeft()
-            val currentX = UMouse.Scaled.x
+            val currentX = mousePositionManager.scaledX
 
             if (currentX in getLeft()..getRight()) {
                 val deltaX = currentX - xBegin
@@ -510,7 +510,7 @@ class ScrollComponent @JvmOverloads constructor(
 
         if (verticalScrollEnabled) {
             val yBegin = autoScrollBegin.second + getTop()
-            val currentY = UMouse.Scaled.y
+            val currentY = mousePositionManager.scaledY
 
             if (currentY in getTop()..getBottom()) {
                 val deltaY = currentY - yBegin

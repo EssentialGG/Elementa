@@ -15,10 +15,10 @@ internal interface ConstraintDebugger {
 
     fun invokeImpl(constraint: SuperConstraint<Float>, type: ConstraintType, component: UIComponent): Float =
         when (type) {
-            ConstraintType.X -> (constraint as XConstraint).getXPositionImpl(component).roundToRealPixels()
-            ConstraintType.Y -> (constraint as YConstraint).getYPositionImpl(component).roundToRealPixels()
-            ConstraintType.WIDTH -> (constraint as WidthConstraint).getWidthImpl(component).roundToRealPixels()
-            ConstraintType.HEIGHT -> (constraint as HeightConstraint).getHeightImpl(component).roundToRealPixels()
+            ConstraintType.X -> (constraint as XConstraint).getXPositionImpl(component).roundToRealPixels(component)
+            ConstraintType.Y -> (constraint as YConstraint).getYPositionImpl(component).roundToRealPixels(component)
+            ConstraintType.WIDTH -> (constraint as WidthConstraint).getWidthImpl(component).roundToRealPixels(component)
+            ConstraintType.HEIGHT -> (constraint as HeightConstraint).getHeightImpl(component).roundToRealPixels(component)
             ConstraintType.RADIUS -> (constraint as RadiusConstraint).getRadiusImpl(component)
             else -> throw UnsupportedOperationException()
         }

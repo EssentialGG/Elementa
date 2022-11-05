@@ -5,7 +5,7 @@ import gg.essential.elementa.dsl.coerceAtMost
 import gg.essential.elementa.dsl.pixels
 import gg.essential.elementa.dsl.width
 import gg.essential.elementa.utils.getStringSplitToWidthTruncated
-import gg.essential.universal.UKeyboard
+import gg.essential.elementa.utils.keyboardManager
 import gg.essential.universal.UMatrixStack
 import java.awt.Color
 
@@ -64,7 +64,7 @@ class UIMultilineTextInput @JvmOverloads constructor(
     }
 
     override fun onEnterPressed() {
-        if (UKeyboard.isShiftKeyDown()) {
+        if (keyboardManager.isShiftKeyDown()) {
             commitTextAddition("\n")
             updateAction(getText())
         } else {

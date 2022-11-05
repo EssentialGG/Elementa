@@ -1,9 +1,9 @@
 package gg.essential.elementa.effects
 
 import gg.essential.elementa.UIComponent
+import gg.essential.elementa.utils.resolutionManager
 import gg.essential.elementa.utils.roundToRealPixels
 import gg.essential.universal.UMatrixStack
-import gg.essential.universal.UResolution
 import org.lwjgl.opengl.GL11.*
 import kotlin.math.max
 import kotlin.math.min
@@ -17,12 +17,23 @@ import kotlin.math.roundToInt
  *
  * [scissorIntersection] will try to combine this scissor with all of it's parents scissors (if any).
  */
-class ScissorEffect @JvmOverloads constructor(
+class ScissorEffect private constructor(
     private val customBoundingBox: UIComponent? = null,
-    private val scissorIntersection: Boolean = true
+    private val scissorIntersection: Boolean = true,
+    private val unroundedScissorBounds: ScissorBounds? = null,
 ) : Effect() {
     private var oldState: ScissorState? = null
-    private var scissorBounds: ScissorBounds? = null
+    private val roundedScissorBounds: ScissorBounds? by lazy {
+        if (unroundedScissorBounds == null) {
+            return@lazy null
+        }
+        ScissorBounds(
+            unroundedScissorBounds.x1.roundToRealPixels(boundComponent),
+            unroundedScissorBounds.y1.roundToRealPixels(boundComponent),
+            unroundedScissorBounds.x2.roundToRealPixels(boundComponent),
+            unroundedScissorBounds.y2.roundToRealPixels(boundComponent),
+        )
+    }
 
     /**
      * Create a custom bounding box using precise coordinates.
@@ -34,18 +45,30 @@ class ScissorEffect @JvmOverloads constructor(
         x2: Number,
         y2: Number,
         scissorIntersection: Boolean = true
-    ) : this(scissorIntersection = scissorIntersection) {
-        scissorBounds = ScissorBounds(
-            x1.toFloat().roundToRealPixels(),
-            y1.toFloat().roundToRealPixels(),
-            x2.toFloat().roundToRealPixels(),
-            y2.toFloat().roundToRealPixels(),
-        )
-    }
+    ) : this(
+        scissorIntersection = scissorIntersection,
+        unroundedScissorBounds = ScissorBounds(
+            x1.toFloat(),
+            y1.toFloat(),
+            x2.toFloat(),
+            y2.toFloat(),
+        ),
+    )
+
+    @JvmOverloads
+    constructor(
+        customBoundingBox: UIComponent? = null,
+        scissorIntersection: Boolean = true,
+    ) : this(
+        customBoundingBox,
+        scissorIntersection,
+        null,
+    )
 
     override fun beforeDraw(matrixStack: UMatrixStack) {
-        val bounds = customBoundingBox?.getScissorBounds() ?: scissorBounds ?: boundComponent.getScissorBounds()
-        val scaleFactor = UResolution.scaleFactor.toInt()
+        val bounds = customBoundingBox?.getScissorBounds() ?: roundedScissorBounds ?: boundComponent.getScissorBounds()
+        val resolutionManager = boundComponent.resolutionManager
+        val scaleFactor = resolutionManager.scaleFactor.toInt()
 
         if (currentScissorState == null) {
             glEnable(GL_SCISSOR_TEST)
@@ -57,7 +80,7 @@ class ScissorEffect @JvmOverloads constructor(
         // TODO ideally we should respect matrixStack offset and maybe scale, though we do not currently care about
         //      global gl state either, so not really important until someone needs it
         var x = (bounds.x1 * scaleFactor).roundToInt()
-        var y = UResolution.viewportHeight - (bounds.y2 * scaleFactor).roundToInt()
+        var y = resolutionManager.viewportHeight - (bounds.y2 * scaleFactor).roundToInt()
         var width = (bounds.width * scaleFactor).roundToInt()
         var height = (bounds.height * scaleFactor).roundToInt()
 
@@ -96,10 +119,10 @@ class ScissorEffect @JvmOverloads constructor(
     }
 
     private fun UIComponent.getScissorBounds(): ScissorBounds = ScissorBounds(
-        getLeft().roundToRealPixels(),
-        getTop().roundToRealPixels(),
-        getRight().roundToRealPixels(),
-        getBottom().roundToRealPixels(),
+        getLeft().roundToRealPixels(this),
+        getTop().roundToRealPixels(this),
+        getRight().roundToRealPixels(this),
+        getBottom().roundToRealPixels(this),
     )
 
     data class ScissorState(val x: Int, val y: Int, val width: Int, val height: Int)

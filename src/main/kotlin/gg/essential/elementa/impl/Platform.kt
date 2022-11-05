@@ -15,6 +15,16 @@ interface Platform {
 
     fun isCallingFromMinecraftThread(): Boolean
 
+    fun deleteFramebuffers(buffer: Int)
+
+    fun genFrameBuffers(): Int
+
+    fun framebufferTexture2D(targt: Int, attachment: Int, textarget: Int, texture: Int, level: Int)
+
+    fun bindFramebuffer(target: Int, framebuffer: Int)
+
+    fun runOnMinecraftThread(runnable: () -> Unit)
+
     @ApiStatus.Internal
     companion object {
         internal val platform: Platform =

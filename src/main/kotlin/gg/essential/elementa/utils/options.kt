@@ -11,8 +11,3 @@ var elementaDev: Boolean = devPropSet
     }
 
 var elementaDebug: Boolean = debugPropSet
-    set(value) {
-        if (debugPropSet) {
-            field = value
-        }
-    }

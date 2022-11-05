@@ -16,8 +16,6 @@ import gg.essential.elementa.utils.*
 import gg.essential.elementa.utils.requireMainThread
 import gg.essential.elementa.utils.requireState
 import gg.essential.universal.UMatrixStack
-import gg.essential.universal.UMouse
-import gg.essential.universal.UResolution
 import org.lwjgl.opengl.GL11
 import java.awt.Color
 import java.util.*
@@ -383,13 +381,15 @@ abstract class UIComponent : Observable() {
     }
 
     protected fun getMousePosition(): Pair<Float, Float> {
-        return pixelCoordinatesToPixelCenter(UMouse.Scaled.x, UMouse.Scaled.y).let { (x, y) -> x.toFloat() to y.toFloat() }
+        return pixelCoordinatesToPixelCenter(mousePositionManager.scaledX, mousePositionManager.scaledY)
+            .let { (x, y) -> x.toFloat() to y.toFloat() }
     }
 
     internal fun pixelCoordinatesToPixelCenter(mouseX: Double, mouseY: Double): Pair<Double, Double> {
         // Move the position of a click to the center of a pixel. See [ElementaVersion.v2] for more info
-        return if ((Window.ofOrNull(this)?.version ?: ElementaVersion.v0) >= ElementaVersion.v2) {
-            val halfPixel = 0.5 / UResolution.scaleFactor
+        val window = Window.ofOrNull(this)
+        return if (window !=null && window.version >= ElementaVersion.v2) {
+            val halfPixel = 0.5 / window.resolutionManager.scaleFactor
             mouseX + halfPixel to mouseY + halfPixel
         } else {
             mouseX to mouseY
@@ -1237,8 +1237,9 @@ abstract class UIComponent : Observable() {
         /**
          * Hints a number with respect to the current GUI scale.
          */
+//        @Deprecated("This relies on global states", replaceWith = ReplaceWith("guiHint(number, roundDown, component)"))
         fun guiHint(number: Float, roundDown: Boolean): Float {
-            val factor = UResolution.scaleFactor.toFloat()
+            val factor = Window.resolutionManager.scaleFactor.toFloat()
             return (number * factor).let {
                 if (roundDown) floor(it) else ceil(it)
             } / factor
@@ -1247,19 +1248,33 @@ abstract class UIComponent : Observable() {
         /**
          * Hints a number with respect to the current GUI scale.
          */
-        fun guiHint(number: Double, roundDown: Boolean): Double {
-            val factor = UResolution.scaleFactor
+        fun guiHint(number: Float, roundDown: Boolean, component: UIComponent): Float {
+            val factor = component.resolutionManager.scaleFactor.toFloat()
             return (number * factor).let {
                 if (roundDown) floor(it) else ceil(it)
             } / factor
         }
 
-        internal fun getMouseX(): Float {
-            return UMouse.Scaled.x.toFloat()
+        /**
+         * Hints a number with respect to the current GUI scale.
+         */
+//        @Deprecated("This relies on global states", replaceWith = ReplaceWith("guiHint(number, roundDown, component)"))
+        fun guiHint(number: Double, roundDown: Boolean): Double {
+            val factor = Window.resolutionManager.scaleFactor
+            return (number * factor).let {
+                if (roundDown) floor(it) else ceil(it)
+            } / factor
         }
 
-        internal fun getMouseY(): Float {
-            return UMouse.Scaled.y.toFloat()
+        /**
+         * Hints a number with respect to the current GUI scale.
+         */
+        fun guiHint(number: Double, roundDown: Boolean, component: UIComponent): Double {
+            val factor = component.resolutionManager.scaleFactor
+            return (number * factor).let {
+                if (roundDown) floor(it) else ceil(it)
+            } / factor
         }
+
     }
 }

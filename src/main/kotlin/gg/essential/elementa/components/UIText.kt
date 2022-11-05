@@ -3,6 +3,8 @@ package gg.essential.elementa.components
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.UIConstraints
 import gg.essential.elementa.constraints.CenterConstraint
+import gg.essential.elementa.debug.ManagedState
+import gg.essential.elementa.debug.StateRegistry
 import gg.essential.elementa.dsl.width
 import gg.essential.elementa.state.BasicState
 import gg.essential.elementa.state.MappedState
@@ -10,6 +12,7 @@ import gg.essential.elementa.state.State
 import gg.essential.elementa.state.pixels
 import gg.essential.universal.UGraphics
 import gg.essential.universal.UMatrixStack
+import org.jetbrains.annotations.ApiStatus
 import java.awt.Color
 
 /**
@@ -20,12 +23,12 @@ open class UIText
 constructor(
     text: State<String>,
     shadow: State<Boolean> = BasicState(true),
-    shadowColor: State<Color?> = BasicState(null)
-) : UIComponent() {
+    shadowColor: State<Color?> = BasicState(null),
+) : UIComponent(), StateRegistry {
     @JvmOverloads constructor(
         text: String = "",
         shadow: Boolean = true,
-        shadowColor: Color? = null
+        shadowColor: Color? = null,
     ) : this(BasicState(text), BasicState(shadow), BasicState(shadowColor))
 
     private val textState: MappedState<String, String> = text.map { it } // extra map so we can easily rebind it
@@ -56,6 +59,15 @@ constructor(
             above + center + below
         }.pixels())
     }
+
+    @ApiStatus.Internal
+    @get:ApiStatus.Internal
+    override val managedStates = listOf(
+        ManagedState.OfString(textState, "text", true),
+        ManagedState.OfBoolean(shadowState, "shadow", true),
+        ManagedState.OfColorOrNull(shadowColorState, "shadowColor", true),
+    )
+
 
     fun bindText(newTextState: State<String>) = apply {
         textState.rebind(newTextState)

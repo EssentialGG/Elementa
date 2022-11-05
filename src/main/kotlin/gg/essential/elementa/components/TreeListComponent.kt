@@ -6,7 +6,7 @@ import gg.essential.elementa.dsl.basicWidthConstraint
 import gg.essential.elementa.dsl.childOf
 import gg.essential.elementa.dsl.constrain
 import gg.essential.elementa.dsl.pixels
-import gg.essential.universal.UKeyboard
+import gg.essential.elementa.utils.keyboardManager
 import kotlin.math.max
 
 abstract class TreeArrowComponent : UIComponent() {
@@ -124,7 +124,7 @@ abstract class TreeNode {
 
             arrowComponent.onMouseClick { event ->
                 event.stopImmediatePropagation()
-                val isRecursive = UKeyboard.isShiftKeyDown()
+                val isRecursive = keyboardManager.isShiftKeyDown()
 
                 if (opened) {
                     close(isRecursive)

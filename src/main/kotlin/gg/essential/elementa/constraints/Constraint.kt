@@ -79,7 +79,7 @@ interface XConstraint : SuperConstraint<Float> {
         }
 
         if (recalculate) {
-            cachedValue = getXPositionImpl(component).roundToRealPixels()
+            cachedValue = getXPositionImpl(component).roundToRealPixels(component)
             recalculate = false
         }
 
@@ -97,7 +97,7 @@ interface YConstraint : SuperConstraint<Float> {
         }
 
         if (recalculate) {
-            cachedValue = getYPositionImpl(component).roundToRealPixels()
+            cachedValue = getYPositionImpl(component).roundToRealPixels(component)
             recalculate = false
         }
 
@@ -135,7 +135,7 @@ interface WidthConstraint : SuperConstraint<Float> {
         }
 
         if (recalculate) {
-            cachedValue = getWidthImpl(component).roundToRealPixels()
+            cachedValue = getWidthImpl(component).roundToRealPixels(component)
             recalculate = false
         }
 
@@ -153,7 +153,7 @@ interface HeightConstraint : SuperConstraint<Float> {
         }
 
         if (recalculate) {
-            cachedValue = getHeightImpl(component).roundToRealPixels()
+            cachedValue = getHeightImpl(component).roundToRealPixels(component)
             recalculate = false
         }
 

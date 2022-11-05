@@ -16,9 +16,9 @@ class CenterConstraint : PositionConstraint {
         val parent = constrainTo ?: component.parent
 
         return if (component.isPositionCenter()) {
-            parent.getLeft() + (parent.getWidth() / 2).roundToRealPixels()
+            parent.getLeft() + (parent.getWidth() / 2).roundToRealPixels(component)
         } else {
-            parent.getLeft() + (parent.getWidth() / 2 - component.getWidth() / 2).roundToRealPixels()
+            parent.getLeft() + (parent.getWidth() / 2 - component.getWidth() / 2).roundToRealPixels(component)
         }
     }
 
@@ -26,9 +26,9 @@ class CenterConstraint : PositionConstraint {
         val parent = constrainTo ?: component.parent
 
         return if (component.isPositionCenter()) {
-            parent.getTop() + (parent.getHeight() / 2).roundToRealPixels()
+            parent.getTop() + (parent.getHeight() / 2).roundToRealPixels(component)
         } else {
-            parent.getTop() + (parent.getHeight() / 2 - component.getHeight() / 2).roundToRealPixels()
+            parent.getTop() + (parent.getHeight() / 2 - component.getHeight() / 2).roundToRealPixels(component)
         }
     }
 

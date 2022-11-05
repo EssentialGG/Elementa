@@ -4,12 +4,11 @@ import gg.essential.elementa.UIComponent
 import gg.essential.elementa.components.TreeNode
 import gg.essential.elementa.components.UIContainer
 import gg.essential.elementa.components.UIText
+import gg.essential.elementa.components.inspector.tabs.StatesTab
 import gg.essential.elementa.constraints.*
 import gg.essential.elementa.constraints.animation.AnimationComponent
-import gg.essential.elementa.dsl.childOf
-import gg.essential.elementa.dsl.constrain
-import gg.essential.elementa.dsl.pixels
-import gg.essential.elementa.dsl.plus
+import gg.essential.elementa.debug.StateRegistry
+import gg.essential.elementa.dsl.*
 import java.awt.Color
 
 class InfoBlockNode<T>(private val constraint: SuperConstraint<T>, private val name: String? = null) : TreeNode() {
@@ -26,22 +25,10 @@ class InfoBlockNode<T>(private val constraint: SuperConstraint<T>, private val n
                 x = SiblingConstraint()
             } childOf this
 
-            val properties = when (constraint) {
-                is AlphaAspectColorConstraint -> listOf(constraint::color, constraint::alpha)
-                is AspectConstraint -> listOf(constraint::value)
-                is ChildBasedSizeConstraint -> listOf(constraint::padding)
-                is ConstantColorConstraint -> listOf(constraint::color)
-                is CramSiblingConstraint -> listOf(constraint::padding)
-                is PixelConstraint -> listOf(
-                    constraint::value,
-                    constraint::alignOpposite,
-                    constraint::alignOutside
-                )
-                is RainbowColorConstraint -> listOf(constraint::alpha, constraint::speed)
-                is RelativeConstraint -> listOf(constraint::value)
-                is ScaledTextConstraint -> listOf(constraint::scale)
-                is SiblingConstraint -> listOf(constraint::padding, constraint::alignOpposite)
-                else -> listOf()
+            val states = if (constraint is StateRegistry) {
+                constraint.managedStates
+            } else {
+                emptyList()
             }
 
             fun toString(o: Any) = when (o) {
@@ -59,19 +46,21 @@ class InfoBlockNode<T>(private val constraint: SuperConstraint<T>, private val n
 
             if (constraint is AnimationComponent<*>) {
                 createStringComponent("§7Strategy: ${constraint.strategy}§r")
-                val percentComplete = constraint.elapsedFrames.toFloat() / (constraint.totalFrames + constraint.delayFrames)
+                val percentComplete =
+                    constraint.elapsedFrames.toFloat() / (constraint.totalFrames + constraint.delayFrames)
                 createStringComponent("§7Completion Percentage: ${Inspector.percentFormat.format(percentComplete)}§r")
                 createStringComponent("§7Paused: ${constraint.animationPaused}§r")
             }
 
-            properties.forEach {
-                createStringComponent("§7${it.name}: ${toString(it.get())}§r")
+            states.forEach { managedState ->
+                StatesTab.createStateViewer(managedState, stringHolder)
             }
         }
 
         fun createStringComponent(text: String) {
             UIText(text).constrain {
                 y = SiblingConstraint()
+                color = Color(0xAAAAAA).toConstraint()
             } childOf stringHolder
         }
 
