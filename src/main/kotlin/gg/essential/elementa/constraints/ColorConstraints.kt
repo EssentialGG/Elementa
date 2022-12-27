@@ -98,6 +98,7 @@ class RainbowColorConstraint(val alpha: Int = 255, val speed: Float = 50f) : Col
     }
 
     override fun animationFrame() {
+        super.animationFrame()
         currentStep++
 
         val red = ((sin((currentStep / speed).toDouble()) + 0.75) * 170).toInt()
