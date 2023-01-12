@@ -136,6 +136,18 @@ private open class BasicState<T>(private var valueBacker: T) : MutableState<T> {
   private val referenceQueue = ReferenceQueue<Any>()
   private val listeners = mutableListOf<ListenerEntry<T>>()
 
+  /**
+   * Contains the size of the [listeners] list which we currently iterate over.
+   * We must not directly modify these entries as that may mess up the iteration, anything after those entries is fair
+   * game though.
+   * Additions always happen at the end of the list, so those are trivial.
+   * For removals we instead set the [ListenerEntry.removed] flag and let the iteration code clean up the entry when
+   * it passes over it.
+   * We can't solely rely on that for all cleanup because we only iterate the listener list when the value of the state
+   * changes, so if it doesn't, we need to clean up entries immediately.
+   */
+  private var liveSize = 0
+
   override fun get() = valueBacker
 
   override fun onSetValue(owner: ReferenceHolder, listener: (T) -> Unit): () -> Unit {
@@ -152,7 +164,23 @@ private open class BasicState<T>(private var valueBacker: T) : MutableState<T> {
     }
 
     valueBacker = newValue
-    listeners.forEach { it.get()?.invoke(newValue) }
+
+    // Iterate over listeners while allowing for concurrent add to the end of the list (newly added entries will not get
+    // called) and concurrent remove from anywhere in the list (via `removed` flag in each entry, or directly for newly
+    // added listeners). See [liveSize] docs.
+    liveSize = listeners.size
+    var i = 0
+    while (i < liveSize) {
+      val entry = listeners[i]
+      if (entry.removed) {
+        listeners.removeAt(i)
+        liveSize--
+      } else {
+        entry.get()?.invoke(newValue)
+        i++
+      }
+    }
+    liveSize = 0
   }
 
   private fun cleanupStaleListeners() {
@@ -167,8 +195,18 @@ private open class BasicState<T>(private var valueBacker: T) : MutableState<T> {
       listenerCallback: (T) -> Unit,
       private val ownerCallback: WeakReference<() -> Unit>,
   ) : WeakReference<(T) -> Unit>(listenerCallback, state.referenceQueue), () -> Unit {
+    var removed = false
+
     override fun invoke() {
-      state.listeners.remove(this@ListenerEntry)
+      // If we do not currently iterate over the listener list, we can directly remove this entry from the list,
+      // otherwise we merely mark it as deleted and let the iteration code take care of it.
+      val index = state.listeners.indexOf(this@ListenerEntry)
+      if (index >= state.liveSize) {
+        state.listeners.removeAt(index)
+      } else {
+        removed = true
+      }
+
       ownerCallback.get()?.invoke()
     }
   }
