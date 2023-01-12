@@ -19,7 +19,7 @@ import java.lang.ref.WeakReference
  * Another advantage arises when using Kotlin, as States can be delegated to. For more information,
  * see delegation.kt.
  */
-interface State<T> {
+interface State<out T> {
   /** Get the value of this State object */
   fun get(): T
 
