@@ -4440,6 +4440,8 @@ public final class gg/essential/elementa/utils/TextKt {
 	public static synthetic fun getStringSplitToWidthTruncated$default (Ljava/lang/String;FFIZZLgg/essential/elementa/font/FontProvider;Ljava/lang/String;ILjava/lang/Object;)Ljava/util/List;
 	public static final fun isFormatColor (I)Z
 	public static final fun sizeStringToWidth (Ljava/lang/String;F)I
+	public static final fun splitStringToWidthTruncated (Ljava/lang/String;FFIZZLgg/essential/elementa/font/FontProvider;Ljava/lang/String;)Ljava/util/List;
+	public static synthetic fun splitStringToWidthTruncated$default (Ljava/lang/String;FFIZZLgg/essential/elementa/font/FontProvider;Ljava/lang/String;ILjava/lang/Object;)Ljava/util/List;
 }
 
 public abstract interface class gg/essential/elementa/utils/TriConsumer {
