@@ -10,7 +10,7 @@ import gg.essential.elementa.state.MappedState
 import gg.essential.elementa.state.State
 import gg.essential.elementa.state.pixels
 import gg.essential.elementa.utils.getStringSplitToWidth
-import gg.essential.elementa.utils.getStringSplitToWidthTruncated
+import gg.essential.elementa.utils.splitStringToWidthTruncated
 import gg.essential.universal.UGraphics
 import gg.essential.universal.UMatrixStack
 import java.awt.Color
@@ -154,7 +154,7 @@ open class UIWrappedText @JvmOverloads constructor(
         UGraphics.enableBlend()
 
         val lines = if (trimText) {
-            getStringSplitToWidthTruncated(
+            splitStringToWidthTruncated(
                 textState.get(),
                 width,
                 textScale,
