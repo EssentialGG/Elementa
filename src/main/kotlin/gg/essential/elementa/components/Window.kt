@@ -230,10 +230,14 @@ class Window @JvmOverloads constructor(
     override fun keyType(typedChar: Char, keyCode: Int) {
         requireMainThread()
 
+        // If the typed character is in a PUA (https://en.wikipedia.org/wiki/Private_Use_Areas), we don't want to
+        // pass down the character, only the keycode.
+        val character = if (typedChar in CharCategory.PRIVATE_USE) Char.MIN_VALUE else typedChar
+
         if (focusedComponent != null) {
-            focusedComponent?.keyType(typedChar, keyCode)
+            focusedComponent?.keyType(character, keyCode)
         } else {
-            super.keyType(typedChar, keyCode)
+            super.keyType(character, keyCode)
         }
     }
 
