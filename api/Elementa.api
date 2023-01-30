@@ -11,7 +11,7 @@ public final class gg/essential/elementa/ElementaVersion : java/lang/Enum {
 public final class gg/essential/elementa/ElementaVersion$Companion {
 }
 
-public abstract class gg/essential/elementa/UIComponent : java/util/Observable {
+public abstract class gg/essential/elementa/UIComponent : java/util/Observable, gg/essential/elementa/state/v2/ReferenceHolder {
 	public static final field Companion Lgg/essential/elementa/UIComponent$Companion;
 	public field parent Lgg/essential/elementa/UIComponent;
 	public fun <init> ()V
@@ -88,6 +88,7 @@ public abstract class gg/essential/elementa/UIComponent : java/util/Observable {
 	public final fun hide (Z)V
 	public static synthetic fun hide$default (Lgg/essential/elementa/UIComponent;ZILjava/lang/Object;)V
 	public fun hitTest (FF)Lgg/essential/elementa/UIComponent;
+	public fun holdOnto (Ljava/lang/Object;)Lkotlin/jvm/functions/Function0;
 	public fun insertChildAfter (Lgg/essential/elementa/UIComponent;Lgg/essential/elementa/UIComponent;)Lgg/essential/elementa/UIComponent;
 	public fun insertChildAt (Lgg/essential/elementa/UIComponent;I)Lgg/essential/elementa/UIComponent;
 	public fun insertChildBefore (Lgg/essential/elementa/UIComponent;Lgg/essential/elementa/UIComponent;)Lgg/essential/elementa/UIComponent;
@@ -3835,6 +3836,15 @@ public final class gg/essential/elementa/state/ZippedState : gg/essential/elemen
 
 public final class gg/essential/elementa/state/ZippedStateDelegator : gg/essential/elementa/state/StateDelegator {
 	public fun <init> (Lgg/essential/elementa/state/State;Lgg/essential/elementa/state/State;)V
+}
+
+public abstract interface class gg/essential/elementa/state/v2/ReferenceHolder {
+	public abstract fun holdOnto (Ljava/lang/Object;)Lkotlin/jvm/functions/Function0;
+}
+
+public final class gg/essential/elementa/state/v2/ReferenceHolder$Weak : gg/essential/elementa/state/v2/ReferenceHolder {
+	public static final field INSTANCE Lgg/essential/elementa/state/v2/ReferenceHolder$Weak;
+	public fun holdOnto (Ljava/lang/Object;)Lkotlin/jvm/functions/Function0;
 }
 
 public final class gg/essential/elementa/svg/PathParser {
