@@ -62,8 +62,6 @@ class RecursiveFadeEffect constructor(
         override var constrainTo: UIComponent? = null
         override var recalculate = true
 
-        private var originalAlpha: Int? = null
-
         init {
             isOverridden.onSetValue {
                 recalculate = true
@@ -74,14 +72,17 @@ class RecursiveFadeEffect constructor(
             }
         }
 
+        override fun animationFrame() {
+            // We still want the original constraint's colour to recalculate while we are animating
+            originalConstraint.animationFrame()
+        }
+
         override fun getColorImpl(component: UIComponent): Color {
             val originalColor = originalConstraint.getColorImpl(component)
-
-            if (originalAlpha == null)
-                originalAlpha = originalColor.alpha
+            val originalAlpha = originalColor.alpha
 
             if (isOverridden.get())
-                return originalColor.withAlpha((originalAlpha!! * overriddenAlphaPercentage.get()).roundToInt().coerceIn(0, 255))
+                return originalColor.withAlpha((originalAlpha * overriddenAlphaPercentage.get()).roundToInt().coerceIn(0, 255))
             return originalColor
         }
 
