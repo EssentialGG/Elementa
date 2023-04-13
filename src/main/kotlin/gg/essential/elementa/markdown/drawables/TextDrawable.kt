@@ -411,6 +411,16 @@ class TextDrawable(
             }
 
             if (isLink && isHovered) {
+                if (config.textConfig.hasShadow) {
+                    UIBlock.drawBlockSized(
+                        matrixStack,
+                        config.textConfig.shadowColor,
+                        x.toDouble() + 1,
+                        y.toDouble() + 9,
+                        string.width().toDouble(),
+                        1.0,
+                    )
+                }
                 UIBlock.drawBlockSized(
                     matrixStack,
                     config.textConfig.linkColor,
