@@ -59,13 +59,17 @@ class HeaderDrawable(
             val y = layout.bottom - layout.margin.bottom - headerConfig.dividerWidth
             UIBlock.drawBlockSized(
                 matrixStack,
-                headerConfig.dividerColor, 
+                headerConfig.dividerColor,
                 (x + state.xShift).toDouble(),
                 (y + state.yShift).toDouble(),
                 dividerWidth ?: width.toDouble(),
                 headerConfig.dividerWidth.toDouble()
             )
         }
+    }
+
+    override fun beforeDraw(state: DrawState) {
+        paragraph.beforeDraw(state)
     }
 
     override fun cursorAt(mouseX: Float, mouseY: Float, dragged: Boolean, mouseButton: Int) = paragraph.cursorAt(mouseX, mouseY, dragged, mouseButton)

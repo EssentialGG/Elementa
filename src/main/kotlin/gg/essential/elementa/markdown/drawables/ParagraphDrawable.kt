@@ -1,6 +1,7 @@
 package gg.essential.elementa.markdown.drawables
 
 import gg.essential.elementa.components.UIBlock
+import gg.essential.elementa.components.UIImage
 import gg.essential.elementa.dsl.width
 import gg.essential.elementa.markdown.DrawState
 import gg.essential.elementa.markdown.HeaderLevelConfig
@@ -80,13 +81,11 @@ class ParagraphDrawable(
         val currentLine = mutableListOf<Drawable>()
         var maxLineHeight = Float.MIN_VALUE
 
-        var prevY = y
-
         fun gotoNextLine() {
-            prevY = currY
+            if (parent is HeaderDrawable) println("new line")
 
             currX = x
-            currY += maxLineHeight * scaleModifier + config.paragraphConfig.spaceBetweenLines
+            currY += maxLineHeight + config.paragraphConfig.spaceBetweenLines
 
             if (maxLineHeight > 9f) {
                 for (drawable in currentLine)
@@ -113,8 +112,12 @@ class ParagraphDrawable(
                 if (it.height > maxLineHeight)
                     maxLineHeight = it.height
             }
-            widthRemaining -= newWidth
-            currX += newWidth
+            widthRemaining -= drawable.width
+            currX += drawable.width
+            if (drawable is ImageDrawable) config.paragraphConfig.spaceBetweenImages.let {
+                widthRemaining -= it
+                currX += it
+            }
             trimNextText = false
             currentLine.add(drawable)
             newDrawables.add(drawable)
@@ -156,9 +159,11 @@ class ParagraphDrawable(
             }
 
             if (text is ImageDrawable) {
-                gotoNextLine()
+                //if (currentLine.isNotEmpty()) gotoNextLine()
+                if (widthRemaining - text.getImageWidth() <= 0)
+                    gotoNextLine()
                 layout(text, width)
-                gotoNextLine()
+                //gotoNextLine()
                 continue
             }
 
@@ -238,8 +243,13 @@ class ParagraphDrawable(
 
         // We can have extra drawables in the current line that didn't get handled
         // by the last iteration of the loop
-        if (currentLine.isNotEmpty())
+        if (currentLine.isNotEmpty()) {
             lines.add(currentLine.toList())
+            currY += maxLineHeight
+        } else {
+            // There isn't a next line, so this space shouldn't be there
+            currY -= config.paragraphConfig.spaceBetweenLines
+        }
 
         if (centered) {
             // Offset each text component by half of the space at the end of each line
@@ -265,8 +275,7 @@ class ParagraphDrawable(
 
         drawables.setDrawables(newDrawables)
 
-        val height = (if (currentLine.isNotEmpty()) currY else prevY) - y + 9f * scaleModifier +
-                if (insertSpaceAfter) config.paragraphConfig.spaceAfter else 0f
+        val height = currY - y + if (insertSpaceAfter) config.paragraphConfig.spaceAfter else 0f
 
         return Layout(
             x,
@@ -278,7 +287,6 @@ class ParagraphDrawable(
     }
 
     override fun draw(matrixStack: UMatrixStack, state: DrawState) {
-        drawables.filterIsInstance<TextDrawable>().forEach { it.beforeDraw(state) }
         drawables.forEach { it.drawCompat(matrixStack, state) }
 
         // TODO: Remove
@@ -292,6 +300,10 @@ class ParagraphDrawable(
                 layout.elementHeight.toDouble()
             )
         }
+    }
+
+    override fun beforeDraw(state: DrawState) {
+        drawables.forEach { it.beforeDraw(state) }
     }
 
     override fun cursorAt(mouseX: Float, mouseY: Float, dragged: Boolean, mouseButton: Int): Cursor<*> {
@@ -387,7 +399,8 @@ class ParagraphDrawable(
 
         // Step 5: Get the string offset position in the current text
 
-        fun textWidth(offset: Int) = currentDrawable.formattedText.substring(0, offset).width(currentDrawable.scaleModifier)
+        fun textWidth(offset: Int) =
+            currentDrawable.formattedText.substring(0, offset).width(currentDrawable.scaleModifier)
 
         var offset = currentDrawable.style.numFormattingChars
         var cachedWidth = 0f

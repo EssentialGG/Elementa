@@ -56,6 +56,7 @@ class ExamplesGui : WindowScreen(ElementaVersion.V2) {
         val examples = mutableMapOf<String, () -> UScreen>(
             "ExampleGui" to ::ExampleGui,
             "ComponentsGui" to ::ComponentsGui,
+            "MarkdownTestGui" to ::MarkdownTestGui
         )
     }
 }

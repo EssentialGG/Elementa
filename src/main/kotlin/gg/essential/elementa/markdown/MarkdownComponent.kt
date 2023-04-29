@@ -166,7 +166,9 @@ class MarkdownComponent(
         maxTextLineWidth = drawables.maxOfOrNull { drawable ->
             when (drawable) {
                 is ParagraphDrawable -> drawable.maxTextLineWidth
-                is HeaderDrawable -> drawable.children.filterIsInstance<ParagraphDrawable>().maxOfOrNull { it.maxTextLineWidth } ?: 0f
+                is HeaderDrawable -> drawable.children.filterIsInstance<ParagraphDrawable>()
+                    .maxOfOrNull { it.maxTextLineWidth } ?: 0f
+
                 is ListDrawable -> drawable.maxTextLineWidth
                 is BlockquoteDrawable -> drawable.maxTextLineWidth
                 else -> 0f
@@ -194,7 +196,7 @@ class MarkdownComponent(
     /**
      * Updates the MarkdownConfig this component uses.
      */
-    fun updateConfig(config: MarkdownConfig)  {
+    fun updateConfig(config: MarkdownConfig) {
         configState.set(config)
     }
 
@@ -219,12 +221,14 @@ class MarkdownComponent(
         val drawState = DrawState(getLeft() - baseX, getTop() - baseY)
         val parentWindow = Window.of(this)
 
-        drawables.forEach {
+        drawables.forEach { it.beforeDraw(drawState) }
 
+        drawables.forEach {
             if (!parentWindow.isAreaVisible(
                     it.layout.left.toDouble() + drawState.xShift, it.layout.top.toDouble() + drawState.yShift,
                     it.layout.right.toDouble() + drawState.xShift, it.layout.bottom.toDouble() + drawState.yShift
-            )) return@forEach
+                )
+            ) return@forEach
 
             if (elementaDebug) {
                 drawDebugOutline(

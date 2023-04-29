@@ -52,7 +52,8 @@ data class ParagraphConfig @JvmOverloads constructor(
     val spaceBefore: Float = 5f,
     val spaceAfter: Float = 5f,
     val softBreakIsNewline: Boolean = false,
-    val centered: Boolean = false
+    val centered: Boolean = false,
+    val spaceBetweenImages: Float = 4f
 )
 
 data class TextConfig @JvmOverloads constructor(
