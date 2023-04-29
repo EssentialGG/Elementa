@@ -81,8 +81,6 @@ class ParagraphDrawable(
         var maxLineHeight = Float.MIN_VALUE
 
         fun gotoNextLine() {
-            if (parent is HeaderDrawable) println("new line")
-
             currX = x
             currY += maxLineHeight + config.paragraphConfig.spaceBetweenLines
 
@@ -299,10 +297,6 @@ class ParagraphDrawable(
                 layout.elementHeight.toDouble()
             )
         }
-    }
-
-    override fun beforeDraw(state: DrawState) {
-        drawables.forEach { it.beforeDraw(state) }
     }
 
     override fun cursorAt(mouseX: Float, mouseY: Float, dragged: Boolean, mouseButton: Int): Cursor<*> {

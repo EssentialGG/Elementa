@@ -68,10 +68,6 @@ class HeaderDrawable(
         }
     }
 
-    override fun beforeDraw(state: DrawState) {
-        paragraph.beforeDraw(state)
-    }
-
     override fun cursorAt(mouseX: Float, mouseY: Float, dragged: Boolean, mouseButton: Int) = paragraph.cursorAt(mouseX, mouseY, dragged, mouseButton)
     override fun cursorAtStart() = paragraph.cursorAtStart()
     override fun cursorAtEnd() = paragraph.cursorAtEnd()
