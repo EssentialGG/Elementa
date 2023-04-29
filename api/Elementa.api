@@ -3236,19 +3236,22 @@ public final class gg/essential/elementa/markdown/ParagraphConfig {
 	public fun <init> (FFF)V
 	public fun <init> (FFFZ)V
 	public fun <init> (FFFZZ)V
-	public synthetic fun <init> (FFFZZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (FFFZZF)V
+	public synthetic fun <init> (FFFZZFILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()F
 	public final fun component2 ()F
 	public final fun component3 ()F
 	public final fun component4 ()Z
 	public final fun component5 ()Z
-	public final fun copy (FFFZZ)Lgg/essential/elementa/markdown/ParagraphConfig;
-	public static synthetic fun copy$default (Lgg/essential/elementa/markdown/ParagraphConfig;FFFZZILjava/lang/Object;)Lgg/essential/elementa/markdown/ParagraphConfig;
+	public final fun component6 ()F
+	public final fun copy (FFFZZF)Lgg/essential/elementa/markdown/ParagraphConfig;
+	public static synthetic fun copy$default (Lgg/essential/elementa/markdown/ParagraphConfig;FFFZZFILjava/lang/Object;)Lgg/essential/elementa/markdown/ParagraphConfig;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getCentered ()Z
 	public final fun getSoftBreakIsNewline ()Z
 	public final fun getSpaceAfter ()F
 	public final fun getSpaceBefore ()F
+	public final fun getSpaceBetweenImages ()F
 	public final fun getSpaceBetweenLines ()F
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
@@ -3338,6 +3341,7 @@ public abstract class gg/essential/elementa/markdown/drawables/Drawable {
 	public static final field Companion Lgg/essential/elementa/markdown/drawables/Drawable$Companion;
 	public field layout Lgg/essential/elementa/markdown/drawables/Drawable$Layout;
 	public fun <init> (Lgg/essential/elementa/markdown/MarkdownComponent;)V
+	public fun beforeDraw (Lgg/essential/elementa/markdown/DrawState;)V
 	public abstract fun cursorAt (FFZI)Lgg/essential/elementa/markdown/selection/Cursor;
 	public abstract fun cursorAtEnd ()Lgg/essential/elementa/markdown/selection/Cursor;
 	public abstract fun cursorAtStart ()Lgg/essential/elementa/markdown/selection/Cursor;
@@ -3509,6 +3513,7 @@ public final class gg/essential/elementa/markdown/drawables/HardBreakDrawable : 
 
 public final class gg/essential/elementa/markdown/drawables/HeaderDrawable : gg/essential/elementa/markdown/drawables/Drawable {
 	public fun <init> (Lgg/essential/elementa/markdown/MarkdownComponent;ILgg/essential/elementa/markdown/drawables/ParagraphDrawable;)V
+	public fun beforeDraw (Lgg/essential/elementa/markdown/DrawState;)V
 	public fun cursorAt (FFZI)Lgg/essential/elementa/markdown/selection/Cursor;
 	public fun cursorAtEnd ()Lgg/essential/elementa/markdown/selection/Cursor;
 	public fun cursorAtStart ()Lgg/essential/elementa/markdown/selection/Cursor;
@@ -3521,6 +3526,7 @@ public final class gg/essential/elementa/markdown/drawables/HeaderDrawable : gg/
 
 public final class gg/essential/elementa/markdown/drawables/ImageDrawable : gg/essential/elementa/markdown/drawables/Drawable {
 	public fun <init> (Lgg/essential/elementa/markdown/MarkdownComponent;Ljava/net/URL;Lgg/essential/elementa/markdown/drawables/Drawable;)V
+	public fun beforeDraw (Lgg/essential/elementa/markdown/DrawState;)V
 	public synthetic fun cursorAt (FFZI)Lgg/essential/elementa/markdown/selection/Cursor;
 	public fun cursorAt (FFZI)Ljava/lang/Void;
 	public synthetic fun cursorAtEnd ()Lgg/essential/elementa/markdown/selection/Cursor;
@@ -3528,6 +3534,7 @@ public final class gg/essential/elementa/markdown/drawables/ImageDrawable : gg/e
 	public synthetic fun cursorAtStart ()Lgg/essential/elementa/markdown/selection/Cursor;
 	public fun cursorAtStart ()Lgg/essential/elementa/markdown/selection/ImageCursor;
 	public fun draw (Lgg/essential/universal/UMatrixStack;Lgg/essential/elementa/markdown/DrawState;)V
+	public final fun getImageWidth ()F
 	public final fun getSelected ()Z
 	public final fun getUrl ()Ljava/net/URL;
 	public fun hasSelectedText ()Z
@@ -3565,6 +3572,7 @@ public final class gg/essential/elementa/markdown/drawables/ListDrawable$ListEnt
 
 public final class gg/essential/elementa/markdown/drawables/ParagraphDrawable : gg/essential/elementa/markdown/drawables/Drawable {
 	public fun <init> (Lgg/essential/elementa/markdown/MarkdownComponent;Lgg/essential/elementa/markdown/drawables/DrawableList;)V
+	public fun beforeDraw (Lgg/essential/elementa/markdown/DrawState;)V
 	public fun cursorAt (FFZI)Lgg/essential/elementa/markdown/selection/Cursor;
 	public fun cursorAtEnd ()Lgg/essential/elementa/markdown/selection/Cursor;
 	public fun cursorAtStart ()Lgg/essential/elementa/markdown/selection/Cursor;
@@ -3590,7 +3598,7 @@ public final class gg/essential/elementa/markdown/drawables/SoftBreakDrawable : 
 public final class gg/essential/elementa/markdown/drawables/TextDrawable : gg/essential/elementa/markdown/drawables/Drawable {
 	public static final field Companion Lgg/essential/elementa/markdown/drawables/TextDrawable$Companion;
 	public fun <init> (Lgg/essential/elementa/markdown/MarkdownComponent;Ljava/lang/String;Lgg/essential/elementa/markdown/drawables/TextDrawable$Style;)V
-	public final fun beforeDraw (Lgg/essential/elementa/markdown/DrawState;)V
+	public fun beforeDraw (Lgg/essential/elementa/markdown/DrawState;)V
 	public synthetic fun cursorAt (FFZI)Lgg/essential/elementa/markdown/selection/Cursor;
 	public fun cursorAt (FFZI)Ljava/lang/Void;
 	public synthetic fun cursorAtEnd ()Lgg/essential/elementa/markdown/selection/Cursor;

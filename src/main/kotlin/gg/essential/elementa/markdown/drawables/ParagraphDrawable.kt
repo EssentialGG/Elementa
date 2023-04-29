@@ -1,7 +1,6 @@
 package gg.essential.elementa.markdown.drawables
 
 import gg.essential.elementa.components.UIBlock
-import gg.essential.elementa.components.UIImage
 import gg.essential.elementa.dsl.width
 import gg.essential.elementa.markdown.DrawState
 import gg.essential.elementa.markdown.HeaderLevelConfig
