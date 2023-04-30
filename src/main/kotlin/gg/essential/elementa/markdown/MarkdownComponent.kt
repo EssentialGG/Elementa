@@ -44,7 +44,8 @@ class MarkdownComponent(
         config: MarkdownConfig = MarkdownConfig(),
         codeFontPointSize: Float = 10f,
         codeFontRenderer: FontProvider = ElementaFonts.JETBRAINS_MONO,
-    ) : this(text, config, codeFontPointSize, codeFontRenderer, false)
+        disableSelection: Boolean = false,
+    ) : this(text, config, codeFontPointSize, codeFontRenderer, disableSelection, null)
 
     private val configState = BasicState(config)
     val config: MarkdownConfig

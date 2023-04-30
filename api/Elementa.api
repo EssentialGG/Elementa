@@ -3152,7 +3152,8 @@ public final class gg/essential/elementa/markdown/MarkdownComponent : gg/essenti
 	public fun <init> (Ljava/lang/String;Lgg/essential/elementa/markdown/MarkdownConfig;)V
 	public fun <init> (Ljava/lang/String;Lgg/essential/elementa/markdown/MarkdownConfig;F)V
 	public fun <init> (Ljava/lang/String;Lgg/essential/elementa/markdown/MarkdownConfig;FLgg/essential/elementa/font/FontProvider;)V
-	public synthetic fun <init> (Ljava/lang/String;Lgg/essential/elementa/markdown/MarkdownConfig;FLgg/essential/elementa/font/FontProvider;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/String;Lgg/essential/elementa/markdown/MarkdownConfig;FLgg/essential/elementa/font/FontProvider;Z)V
+	public synthetic fun <init> (Ljava/lang/String;Lgg/essential/elementa/markdown/MarkdownConfig;FLgg/essential/elementa/font/FontProvider;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun <init> (Ljava/lang/String;Lgg/essential/elementa/markdown/MarkdownConfig;FLgg/essential/elementa/font/FontProvider;ZLgg/essential/elementa/components/image/ImageCache;)V
 	public synthetic fun <init> (Ljava/lang/String;Lgg/essential/elementa/markdown/MarkdownConfig;FLgg/essential/elementa/font/FontProvider;ZLgg/essential/elementa/components/image/ImageCache;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun animationFrame ()V
