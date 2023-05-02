@@ -76,6 +76,10 @@ abstract class Drawable(val md: MarkdownComponent) {
     open fun draw(matrixStack: UMatrixStack, state: DrawState) {
     }
 
+    open fun beforeDraw(state: DrawState) {
+        children.forEach { it.beforeDraw(state) }
+    }
+
     fun isHovered(mouseX: Float, mouseY: Float): Boolean {
         return mouseX in layout.left..layout.right && mouseY in layout.top..layout.bottom
     }

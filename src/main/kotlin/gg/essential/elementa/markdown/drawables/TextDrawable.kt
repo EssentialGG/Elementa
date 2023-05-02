@@ -129,7 +129,7 @@ class TextDrawable(
         )
     }
 
-    fun beforeDraw(state: DrawState) {
+    override fun beforeDraw(state: DrawState) {
         texts.clear()
 
         if (selectionStart == -1 && selectionEnd == -1) {

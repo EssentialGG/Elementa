@@ -219,6 +219,8 @@ class MarkdownComponent(
         val drawState = DrawState(getLeft() - baseX, getTop() - baseY)
         val parentWindow = Window.of(this)
 
+        drawables.forEach { it.beforeDraw(drawState) }
+
         drawables.forEach {
 
             if (!parentWindow.isAreaVisible(
