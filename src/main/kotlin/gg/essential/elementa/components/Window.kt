@@ -82,7 +82,7 @@ class Window @JvmOverloads constructor(
                 this.systemTime = System.currentTimeMillis() - TimeUnit.SECONDS.toMillis(5)
 
             val target = System.currentTimeMillis() + 1000 / animationFPS
-            val animationFrames = (target - this.systemTime).toInt() / animationFPS
+            val animationFrames = (target - this.systemTime).toInt() * animationFPS / 1000
             // If the window is sufficiently complex, it's possible for the average `animationFrame` to take so long
             // we'll start falling behind with no way to ever catch up. And the amount of frames we're behind will
             // quickly grow to the point where we'll be spending five seconds in `animationFrame` before we can get a
