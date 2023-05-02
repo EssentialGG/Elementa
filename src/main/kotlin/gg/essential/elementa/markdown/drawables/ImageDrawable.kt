@@ -83,6 +83,8 @@ class ImageDrawable(md: MarkdownComponent, val url: URL, private val fallback: D
     // TODO: Rename this function?
     override fun hasSelectedText() = selected
 
+    fun getImageWidth(): Float = image.imageWidth
+
     private inner class ShiftableMDPixelConstraint(val base: Float, var shift: Float) : XConstraint, YConstraint {
         override var cachedValue = 0f
         override var recalculate = true

@@ -152,9 +152,8 @@ class ParagraphDrawable(
             }
 
             if (text is ImageDrawable) {
-                if (currentLine.isNotEmpty()) gotoNextLine()
+                if (widthRemaining - text.getImageWidth() <= 0) gotoNextLine()
                 layout(text, width)
-                gotoNextLine()
                 continue
             }
 
