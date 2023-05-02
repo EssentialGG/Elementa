@@ -83,11 +83,11 @@ class TextDrawable(
         splitPoint -= styleChars
 
         if (!breakWords) {
-            while (splitPoint > styleChars && formattedText[splitPoint] != ' ') {
+            while (splitPoint > 0 && plainText[splitPoint] != ' ') {
                 splitPoint--
             }
 
-            if (splitPoint == styleChars) {
+            if (splitPoint == 0) {
                 return null
             }
         }
