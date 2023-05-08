@@ -35,8 +35,16 @@ class MarkdownComponent(
     private val codeFontPointSize: Float = 10f,
     private val codeFontRenderer: FontProvider = ElementaFonts.JETBRAINS_MONO,
     private val disableSelection: Boolean = false,
-    val imageCache: ImageCache? = null
+    val imageCache: ImageCache? = null,
 ) : UIComponent() {
+
+    constructor(
+        text: String,
+        config: MarkdownConfig = MarkdownConfig(),
+        codeFontPointSize: Float = 10f,
+        codeFontRenderer: FontProvider = ElementaFonts.JETBRAINS_MONO,
+        disableSelection: Boolean = false,
+    ) : this(text, config, codeFontPointSize, codeFontRenderer, disableSelection, null)
 
     @JvmOverloads
     constructor(
@@ -44,8 +52,7 @@ class MarkdownComponent(
         config: MarkdownConfig = MarkdownConfig(),
         codeFontPointSize: Float = 10f,
         codeFontRenderer: FontProvider = ElementaFonts.JETBRAINS_MONO,
-        disableSelection: Boolean = false
-    ) : this(text, config, codeFontPointSize, codeFontRenderer, disableSelection, null)
+    ) : this(text, config, codeFontPointSize, codeFontRenderer, false)
 
     private val configState = BasicState(config)
     val config: MarkdownConfig
