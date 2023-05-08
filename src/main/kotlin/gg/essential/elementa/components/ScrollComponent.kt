@@ -595,7 +595,7 @@ class ScrollComponent @JvmOverloads constructor(
         actualHolder.removeChild(component)
         allChildren.remove(component)
 
-        if (allChildren.isEmpty())
+        if (actualHolder.children.isEmpty())
             actualHolder.addChild(emptyText)
 
         needsUpdate = true
