@@ -3338,6 +3338,7 @@ public abstract class gg/essential/elementa/markdown/drawables/Drawable {
 	public static final field Companion Lgg/essential/elementa/markdown/drawables/Drawable$Companion;
 	public field layout Lgg/essential/elementa/markdown/drawables/Drawable$Layout;
 	public fun <init> (Lgg/essential/elementa/markdown/MarkdownComponent;)V
+	public fun beforeDraw (Lgg/essential/elementa/markdown/DrawState;)V
 	public abstract fun cursorAt (FFZI)Lgg/essential/elementa/markdown/selection/Cursor;
 	public abstract fun cursorAtEnd ()Lgg/essential/elementa/markdown/selection/Cursor;
 	public abstract fun cursorAtStart ()Lgg/essential/elementa/markdown/selection/Cursor;
@@ -3521,6 +3522,7 @@ public final class gg/essential/elementa/markdown/drawables/HeaderDrawable : gg/
 
 public final class gg/essential/elementa/markdown/drawables/ImageDrawable : gg/essential/elementa/markdown/drawables/Drawable {
 	public fun <init> (Lgg/essential/elementa/markdown/MarkdownComponent;Ljava/net/URL;Lgg/essential/elementa/markdown/drawables/Drawable;)V
+	public fun beforeDraw (Lgg/essential/elementa/markdown/DrawState;)V
 	public synthetic fun cursorAt (FFZI)Lgg/essential/elementa/markdown/selection/Cursor;
 	public fun cursorAt (FFZI)Ljava/lang/Void;
 	public synthetic fun cursorAtEnd ()Lgg/essential/elementa/markdown/selection/Cursor;
@@ -3590,7 +3592,7 @@ public final class gg/essential/elementa/markdown/drawables/SoftBreakDrawable : 
 public final class gg/essential/elementa/markdown/drawables/TextDrawable : gg/essential/elementa/markdown/drawables/Drawable {
 	public static final field Companion Lgg/essential/elementa/markdown/drawables/TextDrawable$Companion;
 	public fun <init> (Lgg/essential/elementa/markdown/MarkdownComponent;Ljava/lang/String;Lgg/essential/elementa/markdown/drawables/TextDrawable$Style;)V
-	public final fun beforeDraw (Lgg/essential/elementa/markdown/DrawState;)V
+	public fun beforeDraw (Lgg/essential/elementa/markdown/DrawState;)V
 	public synthetic fun cursorAt (FFZI)Lgg/essential/elementa/markdown/selection/Cursor;
 	public fun cursorAt (FFZI)Ljava/lang/Void;
 	public synthetic fun cursorAtEnd ()Lgg/essential/elementa/markdown/selection/Cursor;
