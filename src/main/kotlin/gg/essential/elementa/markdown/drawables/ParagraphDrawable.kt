@@ -234,13 +234,10 @@ class ParagraphDrawable(
 
         // We can have extra drawables in the current line that didn't get handled
         // by the last iteration of the loop
-        if (currentLine.isNotEmpty()) {
-            lines.add(currentLine.toList())
-            currY += maxLineHeight
-        } else {
-            // There isn't a next line, so this space shouldn't be there
-            currY -= config.paragraphConfig.spaceBetweenLines
-        }
+        if (currentLine.isNotEmpty()) gotoNextLine()
+
+        // There isn't a next line, so this space shouldn't be there
+        if (lines.isNotEmpty()) currY -= config.paragraphConfig.spaceBetweenLines
 
         if (centered) {
             // Offset each text component by half of the space at the end of each line
