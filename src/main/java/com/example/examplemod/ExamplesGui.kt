@@ -45,6 +45,8 @@ class ExamplesGui : WindowScreen(ElementaVersion.V2) {
                 }
             } childOf container
 
+            button.componentName = "$name Button"
+
             UIText(name).constrain {
                 x = CenterConstraint()
                 y = CenterConstraint()

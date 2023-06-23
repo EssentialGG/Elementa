@@ -16,10 +16,10 @@ import gg.essential.elementa.utils.withAlpha
 import java.awt.Color
 
 class KtTestGui : WindowScreen(ElementaVersion.V2) {
-    private val myTextBox = UIBlock(Color(0, 0, 0, 255))
+    private val myTextBox by UIBlock(Color(0, 0, 0, 255))
 
     init {
-        val container = UIContainer().constrain {
+        val container by UIContainer().constrain {
             x = RelativeConstraint(.25f)
             y = RelativeConstraint(.25f)
             width = RelativeConstraint(.5f)

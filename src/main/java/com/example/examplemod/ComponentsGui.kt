@@ -17,14 +17,14 @@ import java.net.URL
 class ComponentsGui : WindowScreen(ElementaVersion.V2) {
     init {
         ComponentType("UIContainer") {
-            val bar = UIBlock().constrain {
+            val bar by UIBlock().constrain {
                 x = 2.pixels()
                 y = SiblingConstraint() + 5.pixels()
                 width = 150.pixels()
                 height = 50.pixels()
             } childOf this
 
-            val container = UIContainer().constrain {
+            val container by UIContainer().constrain {
                 x = 0.pixels(true)
                 width = ChildBasedSizeConstraint(padding = 2f)
                 height = ChildBasedMaxSizeConstraint()
@@ -129,7 +129,7 @@ class ComponentsGui : WindowScreen(ElementaVersion.V2) {
         } childOf window
 
         ComponentType("UIShape") {
-            val shapeHolder = UIContainer().constrain {
+            val shapeHolder by UIContainer().constrain {
                 x = 2.pixels()
                 y = SiblingConstraint() + 5.pixels()
 
@@ -203,7 +203,7 @@ class ComponentsGui : WindowScreen(ElementaVersion.V2) {
         } childOf window
 
         ComponentType("Text Input") {
-            val box1 = UIBlock(Color(50, 50, 50)).constrain {
+            val box1 by UIBlock(Color(50, 50, 50)).constrain {
                 x = 2.pixels()
                 y = SiblingConstraint() + 5.pixels()
 
@@ -211,7 +211,7 @@ class ComponentsGui : WindowScreen(ElementaVersion.V2) {
                 height = 12.pixels()
             } childOf this
 
-            val textInput1 = UITextInput("My single line text input!").constrain {
+            val textInput1 by UITextInput("My single line text input!").constrain {
                 x = 2.pixels()
                 y = 2.pixels()
 
@@ -220,7 +220,7 @@ class ComponentsGui : WindowScreen(ElementaVersion.V2) {
 
             box1.onMouseClick { textInput1.grabWindowFocus() }
 
-            val box2 = UIBlock(Color(50, 50, 50)).constrain {
+            val box2 by UIBlock(Color(50, 50, 50)).constrain {
                 x = 2.pixels()
                 y = SiblingConstraint() + 5.pixels()
 
@@ -228,7 +228,7 @@ class ComponentsGui : WindowScreen(ElementaVersion.V2) {
                 height = ChildBasedSizeConstraint() + 4.pixels()
             } childOf this
 
-            val textInput2 = UIMultilineTextInput("My multiline text input!").constrain {
+            val textInput2 by UIMultilineTextInput("My multiline text input!").constrain {
                 x = 2.pixels()
                 y = 2.pixels()
 
@@ -239,7 +239,7 @@ class ComponentsGui : WindowScreen(ElementaVersion.V2) {
         } childOf window
 
         ComponentType("ScrollComponent") {
-            val scroll1 = ScrollComponent().constrain {
+            val scroll1 by ScrollComponent().constrain {
                 x = 2.pixels()
                 y = SiblingConstraint() + 5.pixels()
 
@@ -317,6 +317,8 @@ class ComponentsGui : WindowScreen(ElementaVersion.V2) {
                 width = ChildBasedMaxSizeConstraint() + 5.pixels()
                 height = ChildBasedSizeConstraint(padding = 5f) + 5.pixels()
             }
+
+            super.componentName = this.componentName
 
             enableEffect(OutlineEffect(OUTLINE_COLOR, OUTLINE_WIDTH))
 

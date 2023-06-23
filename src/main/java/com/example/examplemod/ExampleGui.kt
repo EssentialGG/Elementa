@@ -37,7 +37,7 @@ class ExampleGui : WindowScreen(ElementaVersion.V2) {
         // a nice pastel light-gray.
         // This component will be a child of the window because it will be positioned
         // in the top left of the window, and it doesn't make sense for it to have any other parent.
-        val createNoteButton = UIBlock(Color(207, 207, 196)).constrain {
+        val createNoteButton by UIBlock(Color(207, 207, 196)).constrain {
             // Position ourselves 2 pixels from the top & 2 pixels from the right
             // of our parent component (the window). The number 2 is fairly arbitrary
             // in this case, its just preference how far we want it from the sides of
@@ -226,7 +226,7 @@ class ExampleGui : WindowScreen(ElementaVersion.V2) {
             // that will be what the user drags, and holds the delete button.
             // We want this block to be a child of [this] because it will
             // be contained inside our sticky note.
-            val topBar = UIBlock(Color.YELLOW).constrain {
+            val topBar by UIBlock(Color.YELLOW).constrain {
                 // We want our block to start in the top-left corner
                 // of this sticky note component, but we want to leave a bit of room,
                 // so we can let the sticky note's background show,
@@ -353,7 +353,7 @@ class ExampleGui : WindowScreen(ElementaVersion.V2) {
 
             // Now we need to make the background of the area that will actually hold
             // the sticky note's text area. A darkish gray color will suffice.
-            val textHolder = UIBlock(Color(80, 80, 80)).constrain {
+            val textHolder by UIBlock(Color(80, 80, 80)).constrain {
                 // We want this to also start at the far left of the parent.
                 x = 1.pixel()
 
