@@ -9,6 +9,8 @@ public final class gg/essential/elementa/ElementaVersion : java/lang/Enum {
 }
 
 public final class gg/essential/elementa/ElementaVersion$Companion {
+	public final fun getActive ()Lgg/essential/elementa/ElementaVersion;
+	public final fun setActive (Lgg/essential/elementa/ElementaVersion;)V
 }
 
 public abstract class gg/essential/elementa/UIComponent : java/util/Observable, gg/essential/elementa/state/v2/ReferenceHolder {

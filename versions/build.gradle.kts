@@ -53,7 +53,7 @@ dependencies {
         }
         fabricApiModules.forEach { module ->
             // Using this combo to add it to our deps but not to our maven publication cause it's only for the example
-            modRuntime(modCompileOnly(fabricApi.module("fabric-$module", fabricApiVersion))!!)
+            modLocalRuntime(modCompileOnly(fabricApi.module("fabric-$module", fabricApiVersion))!!)
         }
     }
 }
