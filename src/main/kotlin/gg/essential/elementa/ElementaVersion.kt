@@ -57,7 +57,18 @@ enum class ElementaVersion {
      * override of that method. If you do, then you should switch to using the new override at the same time as you
      * upgrade to the new version (or override both if you need to maintain support for old versions).
      */
+    @Deprecated(DEPRECATION_MESSAGE)
     V2,
+
+    /**
+     * When there are multiple [gg.essential.elementa.effects.Effect] applied to a single component, their [gg.essential.elementa.effects.Effect.afterDraw]
+     * are now called in reverse order, such that they form a stack around the draw itself:
+     * `effectA.beforeDraw effectB.beforeDraw component.draw effectB.afterDraw effectA.afterDraw`
+     *
+     * Prior versions called `effectA.afterDraw` before `effectB.afterDraw` which could result in inproper cleanup when
+     * both effects modify the same thing.
+     */
+    V3,
 
     ;
 
@@ -95,6 +106,8 @@ Be sure to read through all the changes between your current version and your ne
         internal val v1 = V1
         @Suppress("DEPRECATION")
         internal val v2 = V2
+        @Suppress("DEPRECATION")
+        internal val v3 = V3
 
 
         @PublishedApi

@@ -513,7 +513,11 @@ abstract class UIComponent : Observable(), ReferenceHolder {
     }
 
     open fun afterDraw(matrixStack: UMatrixStack) {
-        effects.forEach { it.afterDraw(matrixStack) }
+        if (ElementaVersion.active >= ElementaVersion.v3) {
+            effects.asReversed().forEach { it.afterDraw(matrixStack) }
+        } else {
+            effects.forEach { it.afterDraw(matrixStack) }
+        }
     }
 
     open fun beforeChildrenDraw(matrixStack: UMatrixStack) {
