@@ -57,7 +57,13 @@ enum class ElementaVersion {
      * override of that method. If you do, then you should switch to using the new override at the same time as you
      * upgrade to the new version (or override both if you need to maintain support for old versions).
      */
+    @Deprecated(DEPRECATION_MESSAGE)
     V2,
+
+    /**
+     * [gg.essential.elementa.UIComponent.afterDraw] is now called in the opposite order to [gg.essential.elementa.UIComponent.beforeDraw].
+     */
+    V3,
 
     ;
 
@@ -95,6 +101,8 @@ Be sure to read through all the changes between your current version and your ne
         internal val v1 = V1
         @Suppress("DEPRECATION")
         internal val v2 = V2
+        @Suppress("DEPRECATION")
+        internal val v3 = V3
 
 
         @PublishedApi
