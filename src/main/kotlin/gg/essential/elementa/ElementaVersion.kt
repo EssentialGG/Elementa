@@ -61,7 +61,12 @@ enum class ElementaVersion {
     V2,
 
     /**
-     * [gg.essential.elementa.UIComponent.afterDraw] is now called in the opposite order to [gg.essential.elementa.UIComponent.beforeDraw].
+     * When there are multiple [gg.essential.elementa.effects.Effect] applied to a single component, their [gg.essential.elementa.effects.Effect.afterDraw]
+     * are now called in reverse order, such that they form a stack around the draw itself:
+     * `effectA.beforeDraw effectB.beforeDraw component.draw effectB.afterDraw effectA.afterDraw`
+     *
+     * Prior versions called `effectA.afterDraw` before `effectB.afterDraw` which could result in inproper cleanup when
+     * both effects modify the same thing.
      */
     V3,
 
