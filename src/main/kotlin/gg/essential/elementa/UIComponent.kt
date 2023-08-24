@@ -450,9 +450,11 @@ abstract class UIComponent : Observable(), ReferenceHolder {
      * Also does some housekeeping dealing with hovering and effects.
      */
     open fun draw(matrixStack: UMatrixStack) {
-        if (!isInitialized) {
-            isInitialized = true
-            afterInitialization()
+        if (ElementaVersion.active < ElementaVersion.V4) {
+            if (!isInitialized) {
+                isInitialized = true
+                afterInitialization()
+            }
         }
         if (!didCallBeforeDraw && !warnedAboutBeforeDraw) {
             warnedAboutBeforeDraw = true
@@ -508,6 +510,13 @@ abstract class UIComponent : Observable(), ReferenceHolder {
             handleInvalidUsage("${javaClass.name} called `beforeDraw` more than once without a call to `draw`. $advice")
         }
         didCallBeforeDraw = true
+
+        if (ElementaVersion.active >= ElementaVersion.V4) {
+            if (!isInitialized) {
+                isInitialized = true
+                afterInitialization()
+            }
+        }
 
         effects.forEach { it.beforeDraw(matrixStack) }
     }

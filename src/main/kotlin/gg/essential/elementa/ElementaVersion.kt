@@ -68,7 +68,17 @@ enum class ElementaVersion {
      * Prior versions called `effectA.afterDraw` before `effectB.afterDraw` which could result in inproper cleanup when
      * both effects modify the same thing.
      */
+    @Deprecated(DEPRECATION_MESSAGE)
     V3,
+
+    /**
+     * Mark components as initialized and call [gg.essential.elementa.UIComponent.afterInitialization] during `beforeDraw` instead of `draw`.
+     *
+     * This ensures that [gg.essential.elementa.effects.Effect.setup] is always called before [gg.essential.elementa.effects.Effect.beforeDraw].
+     * On prior versions, calling [gg.essential.elementa.UIComponent.enableEffect] on a component that wasn't yet initialized would result
+     * in the Effect's `beforeDraw` being called once before `setup`.
+     */
+    V4,
 
     ;
 
@@ -108,6 +118,7 @@ Be sure to read through all the changes between your current version and your ne
         internal val v2 = V2
         @Suppress("DEPRECATION")
         internal val v3 = V3
+        internal val v4 = V4
 
 
         @PublishedApi
