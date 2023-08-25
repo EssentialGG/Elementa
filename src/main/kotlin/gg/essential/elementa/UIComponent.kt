@@ -450,7 +450,7 @@ abstract class UIComponent : Observable(), ReferenceHolder {
      * Also does some housekeeping dealing with hovering and effects.
      */
     open fun draw(matrixStack: UMatrixStack) {
-        if (ElementaVersion.active < ElementaVersion.V4) {
+        if (ElementaVersion.active < ElementaVersion.v4) {
             if (!isInitialized) {
                 isInitialized = true
                 afterInitialization()
@@ -511,7 +511,7 @@ abstract class UIComponent : Observable(), ReferenceHolder {
         }
         didCallBeforeDraw = true
 
-        if (ElementaVersion.active >= ElementaVersion.V4) {
+        if (ElementaVersion.active >= ElementaVersion.v4) {
             if (!isInitialized) {
                 isInitialized = true
                 afterInitialization()
