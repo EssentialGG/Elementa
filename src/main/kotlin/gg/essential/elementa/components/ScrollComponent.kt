@@ -24,14 +24,57 @@ class ScrollComponent @JvmOverloads constructor(
     emptyString: String = "",
     private val innerPadding: Float = 0f,
     private val scrollIconColor: Color = Color.WHITE,
-    private val horizontalScrollEnabled: Boolean = false,
-    private val verticalScrollEnabled: Boolean = true,
+    private val scrollDirection: Direction = Direction.PreferVertical,
     private val horizontalScrollOpposite: Boolean = false,
     private val verticalScrollOpposite: Boolean = false,
     private val pixelsPerScroll: Float = 15f,
     private val scrollAcceleration: Float = 1.0f,
     customScissorBoundingBox: UIComponent? = null
 ) : UIContainer() {
+    @JvmOverloads constructor(
+        emptyString: String = "",
+        innerPadding: Float = 0f,
+        scrollIconColor: Color = Color.WHITE,
+        horizontalScrollEnabled: Boolean = false,
+        verticalScrollEnabled: Boolean = true,
+        horizontalScrollOpposite: Boolean = false,
+        verticalScrollOpposite: Boolean = false,
+        pixelsPerScroll: Float = 15f,
+        scrollAcceleration: Float = 1.0f,
+        customScissorBoundingBox: UIComponent? = null
+    ) : this (
+        emptyString,
+        innerPadding,
+        scrollIconColor,
+        when {
+            horizontalScrollEnabled && verticalScrollEnabled -> Direction.PreferVertical
+            horizontalScrollEnabled && !verticalScrollEnabled -> Direction.Horizontal
+            !horizontalScrollEnabled && verticalScrollEnabled -> Direction.Vertical
+            else -> throw IllegalArgumentException("ScrollComponent must have at least one direction of scrolling enabled")
+        },
+        horizontalScrollOpposite,
+        verticalScrollOpposite,
+        pixelsPerScroll,
+        scrollAcceleration,
+        customScissorBoundingBox
+    )
+
+    private val primaryScrollDirection
+        get() = when (scrollDirection) {
+            Direction.Horizontal, Direction.PreferHorizontal -> Direction.Horizontal
+            Direction.Vertical, Direction.PreferVertical -> Direction.Vertical
+        }
+    private val secondaryScrollDirection
+        get() = when (scrollDirection) {
+            Direction.PreferHorizontal -> Direction.Vertical
+            Direction.PreferVertical -> Direction.Horizontal
+            else -> null
+        }
+    private val horizontalScrollEnabled
+        get() = primaryScrollDirection == Direction.Horizontal || secondaryScrollDirection == Direction.Horizontal
+    private val verticalScrollEnabled
+        get() = primaryScrollDirection == Direction.Vertical || secondaryScrollDirection == Direction.Vertical
+
     private var animationFPS: Int? = null
 
     private val actualHolder = UIContainer().constrain {
@@ -101,9 +144,6 @@ class ScrollComponent @JvmOverloads constructor(
             height = ScrollChildConstraint() coerceAtMost 100.percentOfWindow()
         }
 
-        if (!horizontalScrollEnabled && !verticalScrollEnabled)
-            throw IllegalArgumentException("ScrollComponent must have at least one direction of scrolling enabled")
-
         super.addChild(actualHolder)
         actualHolder.addChild(emptyText)
         this.enableEffects(ScissorEffect(customScissorBoundingBox))
@@ -112,10 +152,12 @@ class ScrollComponent @JvmOverloads constructor(
         scrollIconComponent.hide(instantly = true)
 
         onMouseScroll {
-            if (UKeyboard.isShiftKeyDown() && horizontalScrollEnabled) {
-                onScroll(it.delta.toFloat(), isHorizontal = true)
-            } else if (!UKeyboard.isShiftKeyDown() && verticalScrollEnabled) {
-                onScroll(it.delta.toFloat(), isHorizontal = false)
+            if (UKeyboard.isShiftKeyDown()) {
+                secondaryScrollDirection?.let { direction ->
+                    onScroll(it.delta.toFloat(), isHorizontal = direction == Direction.Horizontal)
+                }
+            } else if (!UKeyboard.isShiftKeyDown()) {
+                onScroll(it.delta.toFloat(), isHorizontal = primaryScrollDirection == Direction.Vertical)
             }
 
             it.stopPropagation()
@@ -229,10 +271,12 @@ class ScrollComponent @JvmOverloads constructor(
         }
 
         component.onMouseScroll {
-            if (isHorizontal && horizontalScrollEnabled && UKeyboard.isShiftKeyDown()) {
-                onScroll(it.delta.toFloat(), isHorizontal = true)
-            } else if (!isHorizontal && verticalScrollEnabled) {
-                onScroll(it.delta.toFloat(), isHorizontal = false)
+            if (UKeyboard.isShiftKeyDown()) {
+                secondaryScrollDirection?.let { direction ->
+                    onScroll(it.delta.toFloat(), isHorizontal = direction == Direction.Horizontal)
+                }
+            } else if (!UKeyboard.isShiftKeyDown()) {
+                onScroll(it.delta.toFloat(), isHorizontal = primaryScrollDirection == Direction.Vertical)
             }
 
             it.stopPropagation()
@@ -741,6 +785,13 @@ class ScrollComponent @JvmOverloads constructor(
             }
         }
 
+    }
+
+    enum class Direction {
+        Vertical,
+        Horizontal,
+        /*BothBut*/PreferVertical,
+        /*BothBut*/PreferHorizontal,
     }
 
     companion object {
