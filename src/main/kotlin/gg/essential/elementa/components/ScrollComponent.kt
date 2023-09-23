@@ -20,7 +20,7 @@ import kotlin.math.max
  *
  * Also prevents scrolling past what should be reasonable.
  */
-class ScrollComponent @JvmOverloads constructor(
+class ScrollComponent constructor(
     emptyString: String = "",
     private val innerPadding: Float = 0f,
     private val scrollIconColor: Color = Color.WHITE,
