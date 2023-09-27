@@ -1,0 +1,61 @@
+name: Build & Publish
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      ORG_GRADLE_PROJECT_branch: ${{ github.head_ref || github.ref_name }}
+    steps:
+      - uses: actions/checkout@v1
+
+      - uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: |
+            8
+            16
+            17
+
+      # Can't use setup-java for this because https://github.com/actions/setup-java/issues/366
+      - uses: actions/cache@v3
+        with:
+          path: ~/.gradle/wrapper
+          key: gradle-wrapper-${{ hashFiles('**/gradle-wrapper.properties') }}
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            **/loom-cache
+          key: gradle-caches-${{ hashFiles('**/*.gradle*') }}-${{ hashFiles('**/gradle.properties', 'gradle/*.versions.toml') }}
+          restore-keys: |
+            gradle-caches-${{ hashFiles('**/*.gradle*') }}
+            gradle-caches-
+
+      - name: Setup environment
+        run: |
+          echo "ORG_GRADLE_PROJECT_BUILD_ID=$(expr ${{ github.run_number }} + 605)" >> "$GITHUB_ENV"
+          # GitHub runners are limited to 7GB of RAM, so we'll limit our Gradle Daemon process to about half of that
+          # which is enough so long as parallel task execution is limited.
+          # We also need to limit the Kotlin Compiler Daemon to its default value (which it seems to be perfectly
+          # fine with) as otherwise it inherits the Gradle Daemon's jvmargs putting us above the runner limit.
+          # We also pin the amount of workers, so it doesn't break should GitHub increase the default available vCPUs.
+          # We write these to GRADLE_USER_HOME to overrule the local "gradle.properties" of the project.
+          mkdir -p "${GRADLE_USER_HOME:=$HOME/.gradle}"
+          echo "org.gradle.jvmargs=-Xmx2G -Dkotlin.daemon.jvm.options=-Xmx512M" >> "$GRADLE_USER_HOME/gradle.properties"
+          echo "org.gradle.workers.max=2" >> "$GRADLE_USER_HOME/gradle.properties"
+
+      - name: Build
+        run: ./gradlew build --stacktrace
+
+      - name: Publish
+        run: ./gradlew publish --stacktrace
+        if: env.ORG_GRADLE_PROJECT_nexus_user != null
+        env:
+          ORG_GRADLE_PROJECT_nexus_user: ${{ secrets.NEXUS_USER }}
+          ORG_GRADLE_PROJECT_nexus_password: ${{ secrets.NEXUS_PASSWORD }}
