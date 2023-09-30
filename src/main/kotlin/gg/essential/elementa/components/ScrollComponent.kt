@@ -1,11 +1,13 @@
 package gg.essential.elementa.components
 
+import gg.essential.elementa.ElementaVersion
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.constraints.*
 import gg.essential.elementa.constraints.animation.Animations
 import gg.essential.elementa.constraints.resolution.ConstraintVisitor
 import gg.essential.elementa.dsl.*
 import gg.essential.elementa.effects.ScissorEffect
+import gg.essential.elementa.events.UIScrollEvent
 import gg.essential.elementa.utils.bindLast
 import gg.essential.universal.UKeyboard
 import gg.essential.universal.UMatrixStack
@@ -138,6 +140,32 @@ class ScrollComponent constructor(
     val verticalOverhang: Float
         get() = max(0f, calculateActualHeight() - getHeight())
 
+
+
+    val mouseScrollLambda: UIComponent.(UIScrollEvent) -> Unit = {
+        if (Window.of(this).version >= ElementaVersion.v5) {
+            // new behavior
+            if (UKeyboard.isShiftKeyDown()) {
+                secondaryScrollDirection?.let { direction ->
+                    onScroll(it.delta.toFloat(), isHorizontal = direction == Direction.Horizontal)
+                }
+            } else if (!UKeyboard.isShiftKeyDown()) {
+                onScroll(it.delta.toFloat(), isHorizontal = primaryScrollDirection == Direction.Vertical)
+            }
+
+            it.stopPropagation()
+        } else {
+            // old behavior
+            if (UKeyboard.isShiftKeyDown() && horizontalScrollEnabled) {
+                onScroll(it.delta.toFloat(), isHorizontal = true)
+            } else if (!UKeyboard.isShiftKeyDown() && verticalScrollEnabled) {
+                onScroll(it.delta.toFloat(), isHorizontal = false)
+            }
+
+            it.stopPropagation()
+        }
+    }
+
     init {
         this.constrain {
             width = ScrollChildConstraint() coerceAtMost 100.percentOfWindow()
@@ -151,17 +179,7 @@ class ScrollComponent constructor(
         super.addChild(scrollIconComponent)
         scrollIconComponent.hide(instantly = true)
 
-        onMouseScroll {
-            if (UKeyboard.isShiftKeyDown()) {
-                secondaryScrollDirection?.let { direction ->
-                    onScroll(it.delta.toFloat(), isHorizontal = direction == Direction.Horizontal)
-                }
-            } else if (!UKeyboard.isShiftKeyDown()) {
-                onScroll(it.delta.toFloat(), isHorizontal = primaryScrollDirection == Direction.Vertical)
-            }
-
-            it.stopPropagation()
-        }
+        onMouseScroll(mouseScrollLambda)
 
         onMouseClick { event ->
             onClick(event.relativeX, event.relativeY, event.mouseButton)
@@ -270,17 +288,7 @@ class ScrollComponent constructor(
             verticalHideScrollWhenUseless = hideWhenUseless
         }
 
-        component.onMouseScroll {
-            if (UKeyboard.isShiftKeyDown()) {
-                secondaryScrollDirection?.let { direction ->
-                    onScroll(it.delta.toFloat(), isHorizontal = direction == Direction.Horizontal)
-                }
-            } else if (!UKeyboard.isShiftKeyDown()) {
-                onScroll(it.delta.toFloat(), isHorizontal = primaryScrollDirection == Direction.Vertical)
-            }
-
-            it.stopPropagation()
-        }
+        component.onMouseScroll(mouseScrollLambda)
 
         component.onMouseClick { event ->
             if (isHorizontal) {
