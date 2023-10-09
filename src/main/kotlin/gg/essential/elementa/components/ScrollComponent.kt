@@ -655,7 +655,7 @@ class ScrollComponent @JvmOverloads constructor(
     private fun ClosedFloatingPointRange<Double>.width() = abs(this.start - this.endInclusive)
     private fun ClosedFloatingPointRange<Float>.width() = abs(this.start - this.endInclusive)
 
-    class DefaultScrollBar(isHorizontal: Boolean) : UIComponent() {
+    class DefaultScrollBar(isHorizontal: Boolean) : UIContainer() {
         val grip: UIComponent
 
         init {
