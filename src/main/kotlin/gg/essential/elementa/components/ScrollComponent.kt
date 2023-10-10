@@ -145,12 +145,11 @@ class ScrollComponent constructor(
     val mouseScrollLambda: UIComponent.(UIScrollEvent) -> Unit = {
         if (Window.of(this).version >= ElementaVersion.v5) {
             // new behavior
-            if (UKeyboard.isShiftKeyDown()) {
-                secondaryScrollDirection?.let { direction ->
-                    onScroll(it.delta.toFloat(), isHorizontal = direction == Direction.Horizontal)
+            val scrollDirection = if (!UKeyboard.isShiftKeyDown()) primaryScrollDirection else secondaryScrollDirection
+            scrollDirection?.let { direction ->
+                if (!onScroll(it.delta.toFloat(), isHorizontal = direction == Direction.Horizontal)) {
+                    getNextHighestScrollComponent()?.fireScrollEvent(it)
                 }
-            } else if (!UKeyboard.isShiftKeyDown()) {
-                onScroll(it.delta.toFloat(), isHorizontal = primaryScrollDirection == Direction.Vertical)
             }
 
             it.stopPropagation()
@@ -430,17 +429,24 @@ class ScrollComponent constructor(
         needsUpdate = true
     }
 
-    private fun onScroll(delta: Float, isHorizontal: Boolean) {
-        if (isHorizontal) {
-            horizontalOffset += delta * pixelsPerScroll * currentScrollAcceleration
-        } else {
-            verticalOffset += delta * pixelsPerScroll * currentScrollAcceleration
+    /**
+     * @return whether the offset changed
+     */
+    private fun onScroll(delta: Float, isHorizontal: Boolean): Boolean {
+        var changed = false
+        val offset = if (isHorizontal) ::horizontalOffset else ::verticalOffset
+        val range = calculateOffsetRange(isHorizontal)
+        val newOffset = if(range.isEmpty()) innerPadding else offset.get() + delta * pixelsPerScroll * currentScrollAcceleration
+        if (newOffset in range) {
+            changed = true
+            offset.set(newOffset.coerceIn(range))
         }
 
         currentScrollAcceleration =
             (currentScrollAcceleration + (scrollAcceleration - 1.0f) * 0.15f).coerceIn(0f, scrollAcceleration)
 
         needsUpdate = true
+        return changed
     }
 
     private fun updateScrollBar(scrollPercentage: Float, percentageOfParent: Float, isHorizontal: Boolean) {
@@ -706,6 +712,16 @@ class ScrollComponent constructor(
 
     private fun ClosedFloatingPointRange<Double>.width() = abs(this.start - this.endInclusive)
     private fun ClosedFloatingPointRange<Float>.width() = abs(this.start - this.endInclusive)
+
+    private fun getNextHighestScrollComponent(): ScrollComponent? {
+        var current: UIComponent = this.parent
+
+        while (current !is ScrollComponent && current.hasParent && current.parent != current) {
+            current = current.parent
+        }
+
+        return current as? ScrollComponent
+    }
 
     class DefaultScrollBar(isHorizontal: Boolean) : UIComponent() {
         val grip: UIComponent
