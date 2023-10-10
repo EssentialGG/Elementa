@@ -29,6 +29,7 @@ class ScrollComponent constructor(
     private val scrollDirection: Direction = Direction.PreferVertical,
     private val horizontalScrollOpposite: Boolean = false,
     private val verticalScrollOpposite: Boolean = false,
+    private val passthroughScroll: Boolean = true,
     private val pixelsPerScroll: Float = 15f,
     private val scrollAcceleration: Float = 1.0f,
     customScissorBoundingBox: UIComponent? = null
@@ -43,7 +44,8 @@ class ScrollComponent constructor(
         verticalScrollOpposite: Boolean = false,
         pixelsPerScroll: Float = 15f,
         scrollAcceleration: Float = 1.0f,
-        customScissorBoundingBox: UIComponent? = null
+        customScissorBoundingBox: UIComponent? = null,
+        passthroughScroll: Boolean = true
     ) : this (
         emptyString,
         innerPadding,
@@ -56,6 +58,7 @@ class ScrollComponent constructor(
         },
         horizontalScrollOpposite,
         verticalScrollOpposite,
+        passthroughScroll,
         pixelsPerScroll,
         scrollAcceleration,
         customScissorBoundingBox
@@ -147,7 +150,7 @@ class ScrollComponent constructor(
             // new behavior
             val scrollDirection = if (!UKeyboard.isShiftKeyDown()) primaryScrollDirection else secondaryScrollDirection
             scrollDirection?.let { direction ->
-                if (!onScroll(it.delta.toFloat(), isHorizontal = direction == Direction.Horizontal)) {
+                if (!onScroll(it.delta.toFloat(), isHorizontal = direction == Direction.Horizontal) && passthroughScroll) {
                     getNextHighestScrollComponent()?.fireScrollEvent(it)
                 }
             }
