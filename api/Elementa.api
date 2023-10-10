@@ -5,6 +5,7 @@ public final class gg/essential/elementa/ElementaVersion : java/lang/Enum {
 	public static final field V2 Lgg/essential/elementa/ElementaVersion;
 	public static final field V3 Lgg/essential/elementa/ElementaVersion;
 	public static final field V4 Lgg/essential/elementa/ElementaVersion;
+	public static final field V5 Lgg/essential/elementa/ElementaVersion;
 	public final fun enableFor (Lkotlin/jvm/functions/Function0;)Ljava/lang/Object;
 	public static fun valueOf (Ljava/lang/String;)Lgg/essential/elementa/ElementaVersion;
 	public static fun values ()[Lgg/essential/elementa/ElementaVersion;
@@ -337,6 +338,8 @@ public final class gg/essential/elementa/components/ScrollComponent : gg/essenti
 	public fun <init> (Ljava/lang/String;)V
 	public fun <init> (Ljava/lang/String;F)V
 	public fun <init> (Ljava/lang/String;FLjava/awt/Color;)V
+	public fun <init> (Ljava/lang/String;FLjava/awt/Color;Lgg/essential/elementa/components/ScrollComponent$Direction;ZZZFFLgg/essential/elementa/UIComponent;)V
+	public synthetic fun <init> (Ljava/lang/String;FLjava/awt/Color;Lgg/essential/elementa/components/ScrollComponent$Direction;ZZZFFLgg/essential/elementa/UIComponent;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun <init> (Ljava/lang/String;FLjava/awt/Color;Z)V
 	public fun <init> (Ljava/lang/String;FLjava/awt/Color;ZZ)V
 	public fun <init> (Ljava/lang/String;FLjava/awt/Color;ZZZ)V
@@ -344,7 +347,8 @@ public final class gg/essential/elementa/components/ScrollComponent : gg/essenti
 	public fun <init> (Ljava/lang/String;FLjava/awt/Color;ZZZZF)V
 	public fun <init> (Ljava/lang/String;FLjava/awt/Color;ZZZZFF)V
 	public fun <init> (Ljava/lang/String;FLjava/awt/Color;ZZZZFFLgg/essential/elementa/UIComponent;)V
-	public synthetic fun <init> (Ljava/lang/String;FLjava/awt/Color;ZZZZFFLgg/essential/elementa/UIComponent;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/String;FLjava/awt/Color;ZZZZFFLgg/essential/elementa/UIComponent;Z)V
+	public synthetic fun <init> (Ljava/lang/String;FLjava/awt/Color;ZZZZFFLgg/essential/elementa/UIComponent;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public synthetic fun addChild (Lgg/essential/elementa/UIComponent;)Lgg/essential/elementa/UIComponent;
 	public fun addChild (Lgg/essential/elementa/UIComponent;)Lgg/essential/elementa/components/ScrollComponent;
 	public final fun addScrollAdjustEvent (ZLkotlin/jvm/functions/Function2;)V
@@ -360,6 +364,7 @@ public final class gg/essential/elementa/components/ScrollComponent : gg/essenti
 	public final fun getEmptyText ()Lgg/essential/elementa/components/UIWrappedText;
 	public final fun getHorizontalOffset ()F
 	public final fun getHorizontalOverhang ()F
+	public final fun getMouseScrollLambda ()Lkotlin/jvm/functions/Function2;
 	public final fun getVerticalOffset ()F
 	public final fun getVerticalOverhang ()F
 	public fun hitTest (FF)Lgg/essential/elementa/UIComponent;
@@ -407,6 +412,15 @@ public final class gg/essential/elementa/components/ScrollComponent$Companion {
 public final class gg/essential/elementa/components/ScrollComponent$DefaultScrollBar : gg/essential/elementa/UIComponent {
 	public fun <init> (Z)V
 	public final fun getGrip ()Lgg/essential/elementa/UIComponent;
+}
+
+public final class gg/essential/elementa/components/ScrollComponent$Direction : java/lang/Enum {
+	public static final field Horizontal Lgg/essential/elementa/components/ScrollComponent$Direction;
+	public static final field PreferHorizontal Lgg/essential/elementa/components/ScrollComponent$Direction;
+	public static final field PreferVertical Lgg/essential/elementa/components/ScrollComponent$Direction;
+	public static final field Vertical Lgg/essential/elementa/components/ScrollComponent$Direction;
+	public static fun valueOf (Ljava/lang/String;)Lgg/essential/elementa/components/ScrollComponent$Direction;
+	public static fun values ()[Lgg/essential/elementa/components/ScrollComponent$Direction;
 }
 
 public final class gg/essential/elementa/components/ScrollComponent$ScrollChildConstraint : gg/essential/elementa/constraints/HeightConstraint, gg/essential/elementa/constraints/WidthConstraint {
