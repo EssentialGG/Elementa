@@ -150,12 +150,10 @@ class ScrollComponent constructor(
             // new behavior
             val scrollDirection = if (!UKeyboard.isShiftKeyDown()) primaryScrollDirection else secondaryScrollDirection
             scrollDirection?.let { direction ->
-                if (!onScroll(it.delta.toFloat(), isHorizontal = direction == Direction.Horizontal) && passthroughScroll) {
-                    getNextHighestScrollComponent()?.fireScrollEvent(it)
+                if (onScroll(it.delta.toFloat(), isHorizontal = direction == Direction.Horizontal) || !passthroughScroll) {
+                    it.stopPropagation()
                 }
             }
-
-            it.stopPropagation()
         } else {
             // old behavior
             if (UKeyboard.isShiftKeyDown() && horizontalScrollEnabled) {
@@ -715,16 +713,6 @@ class ScrollComponent constructor(
 
     private fun ClosedFloatingPointRange<Double>.width() = abs(this.start - this.endInclusive)
     private fun ClosedFloatingPointRange<Float>.width() = abs(this.start - this.endInclusive)
-
-    private fun getNextHighestScrollComponent(): ScrollComponent? {
-        var current: UIComponent = this.parent
-
-        while (current !is ScrollComponent && current.hasParent && current.parent != current) {
-            current = current.parent
-        }
-
-        return current as? ScrollComponent
-    }
 
     class DefaultScrollBar(isHorizontal: Boolean) : UIComponent() {
         val grip: UIComponent
