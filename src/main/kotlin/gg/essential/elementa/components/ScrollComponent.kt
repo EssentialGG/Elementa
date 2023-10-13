@@ -435,10 +435,10 @@ class ScrollComponent constructor(
         var changed = false
         val offset = if (isHorizontal) ::horizontalOffset else ::verticalOffset
         val range = calculateOffsetRange(isHorizontal)
-        val newOffset = if(range.isEmpty()) innerPadding else offset.get() + delta * pixelsPerScroll * currentScrollAcceleration
-        if (newOffset in range) {
+        val newOffset = (if(range.isEmpty()) innerPadding else offset.get() + delta * pixelsPerScroll * currentScrollAcceleration).coerceIn(range)
+        if (newOffset != offset.get()) {
             changed = true
-            offset.set(newOffset.coerceIn(range))
+            offset.set(newOffset)
         }
 
         currentScrollAcceleration =
