@@ -338,8 +338,8 @@ public final class gg/essential/elementa/components/ScrollComponent : gg/essenti
 	public fun <init> (Ljava/lang/String;)V
 	public fun <init> (Ljava/lang/String;F)V
 	public fun <init> (Ljava/lang/String;FLjava/awt/Color;)V
-	public fun <init> (Ljava/lang/String;FLjava/awt/Color;Lgg/essential/elementa/components/ScrollComponent$Direction;ZZZFFLgg/essential/elementa/UIComponent;)V
-	public synthetic fun <init> (Ljava/lang/String;FLjava/awt/Color;Lgg/essential/elementa/components/ScrollComponent$Direction;ZZZFFLgg/essential/elementa/UIComponent;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/String;FLjava/awt/Color;Lgg/essential/elementa/components/ScrollComponent$Direction;ZZFFLgg/essential/elementa/UIComponent;Z)V
+	public synthetic fun <init> (Ljava/lang/String;FLjava/awt/Color;Lgg/essential/elementa/components/ScrollComponent$Direction;ZZFFLgg/essential/elementa/UIComponent;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun <init> (Ljava/lang/String;FLjava/awt/Color;Z)V
 	public fun <init> (Ljava/lang/String;FLjava/awt/Color;ZZ)V
 	public fun <init> (Ljava/lang/String;FLjava/awt/Color;ZZZ)V
@@ -347,8 +347,7 @@ public final class gg/essential/elementa/components/ScrollComponent : gg/essenti
 	public fun <init> (Ljava/lang/String;FLjava/awt/Color;ZZZZF)V
 	public fun <init> (Ljava/lang/String;FLjava/awt/Color;ZZZZFF)V
 	public fun <init> (Ljava/lang/String;FLjava/awt/Color;ZZZZFFLgg/essential/elementa/UIComponent;)V
-	public fun <init> (Ljava/lang/String;FLjava/awt/Color;ZZZZFFLgg/essential/elementa/UIComponent;Z)V
-	public synthetic fun <init> (Ljava/lang/String;FLjava/awt/Color;ZZZZFFLgg/essential/elementa/UIComponent;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (Ljava/lang/String;FLjava/awt/Color;ZZZZFFLgg/essential/elementa/UIComponent;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public synthetic fun addChild (Lgg/essential/elementa/UIComponent;)Lgg/essential/elementa/UIComponent;
 	public fun addChild (Lgg/essential/elementa/UIComponent;)Lgg/essential/elementa/components/ScrollComponent;
 	public final fun addScrollAdjustEvent (ZLkotlin/jvm/functions/Function2;)V

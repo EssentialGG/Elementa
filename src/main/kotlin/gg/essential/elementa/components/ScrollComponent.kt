@@ -26,13 +26,13 @@ class ScrollComponent constructor(
     emptyString: String = "",
     private val innerPadding: Float = 0f,
     private val scrollIconColor: Color = Color.WHITE,
-    private val scrollDirection: Direction = Direction.PreferVertical,
+    private val scrollDirection: Direction,
     private val horizontalScrollOpposite: Boolean = false,
     private val verticalScrollOpposite: Boolean = false,
-    private val passthroughScroll: Boolean = true,
     private val pixelsPerScroll: Float = 15f,
     private val scrollAcceleration: Float = 1.0f,
-    customScissorBoundingBox: UIComponent? = null
+    customScissorBoundingBox: UIComponent? = null,
+    private val passthroughScroll: Boolean = true
 ) : UIContainer() {
     @JvmOverloads constructor(
         emptyString: String = "",
@@ -44,8 +44,7 @@ class ScrollComponent constructor(
         verticalScrollOpposite: Boolean = false,
         pixelsPerScroll: Float = 15f,
         scrollAcceleration: Float = 1.0f,
-        customScissorBoundingBox: UIComponent? = null,
-        passthroughScroll: Boolean = true
+        customScissorBoundingBox: UIComponent? = null
     ) : this (
         emptyString,
         innerPadding,
@@ -58,7 +57,6 @@ class ScrollComponent constructor(
         },
         horizontalScrollOpposite,
         verticalScrollOpposite,
-        passthroughScroll,
         pixelsPerScroll,
         scrollAcceleration,
         customScissorBoundingBox
