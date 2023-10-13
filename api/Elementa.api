@@ -363,7 +363,6 @@ public final class gg/essential/elementa/components/ScrollComponent : gg/essenti
 	public final fun getEmptyText ()Lgg/essential/elementa/components/UIWrappedText;
 	public final fun getHorizontalOffset ()F
 	public final fun getHorizontalOverhang ()F
-	public final fun getMouseScrollLambda ()Lkotlin/jvm/functions/Function2;
 	public final fun getVerticalOffset ()F
 	public final fun getVerticalOverhang ()F
 	public fun hitTest (FF)Lgg/essential/elementa/UIComponent;

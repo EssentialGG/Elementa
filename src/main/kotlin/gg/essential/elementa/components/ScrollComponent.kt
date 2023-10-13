@@ -143,7 +143,7 @@ class ScrollComponent constructor(
 
 
 
-    val mouseScrollLambda: UIComponent.(UIScrollEvent) -> Unit = {
+    private val mouseScrollLambda: UIComponent.(UIScrollEvent) -> Unit = {
         if (Window.of(this).version >= ElementaVersion.v5) {
             // new behavior
             val scrollDirection = if (!UKeyboard.isShiftKeyDown()) primaryScrollDirection else secondaryScrollDirection
