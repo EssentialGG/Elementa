@@ -147,8 +147,8 @@ class ScrollComponent constructor(
         if (Window.of(this).version >= ElementaVersion.v5) {
             // new behavior
             val scrollDirection = if (!UKeyboard.isShiftKeyDown()) primaryScrollDirection else secondaryScrollDirection
-            scrollDirection?.let { direction ->
-                if (onScroll(it.delta.toFloat(), isHorizontal = direction == Direction.Horizontal) || !passthroughScroll) {
+            if (scrollDirection != null) {
+                if (onScroll(it.delta.toFloat(), isHorizontal = scrollDirection == Direction.Horizontal) || !passthroughScroll) {
                     it.stopPropagation()
                 }
             }
