@@ -78,7 +78,13 @@ enum class ElementaVersion {
      * On prior versions, calling [gg.essential.elementa.UIComponent.enableEffect] on a component that wasn't yet initialized would result
      * in the Effect's `beforeDraw` being called once before `setup`.
      */
+    @Deprecated(DEPRECATION_MESSAGE)
     V4,
+
+    /**
+     * Change the behavior of scroll components to no longer require holding down shift when horizontal is the only possible scrolling direction.
+     */
+    V5,
 
     ;
 
@@ -118,7 +124,9 @@ Be sure to read through all the changes between your current version and your ne
         internal val v2 = V2
         @Suppress("DEPRECATION")
         internal val v3 = V3
+        @Suppress("DEPRECATION")
         internal val v4 = V4
+        internal val v5 = V5
 
 
         @PublishedApi
