@@ -116,12 +116,12 @@ enum class Animations : AnimationStrategy {
     },
     IN_EXP {
         override fun getValue(percentComplete: Float): Float {
-            return 2f.pow(10 * (percentComplete - 1))
+            return if(percentComplete == 0f) 0f else 2f.pow(10 * (percentComplete - 1))
         }
     },
     OUT_EXP {
         override fun getValue(percentComplete: Float): Float {
-            return -(2f.pow(-10 * percentComplete)) + 1
+            return if(percentComplete == 1f) 1f else -(2f.pow(-10 * percentComplete)) + 1
         }
     },
     IN_OUT_EXP {
