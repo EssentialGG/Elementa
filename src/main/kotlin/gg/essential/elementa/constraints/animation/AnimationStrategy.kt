@@ -116,20 +116,23 @@ enum class Animations : AnimationStrategy {
     },
     IN_EXP {
         override fun getValue(percentComplete: Float): Float {
-            return 2f.pow(10 * (percentComplete - 1))
+            return if (percentComplete <= 0f) 0f else 2f.pow(10 * (percentComplete - 1))
         }
     },
     OUT_EXP {
         override fun getValue(percentComplete: Float): Float {
-            return -(2f.pow(-10 * percentComplete)) + 1
+            return if (percentComplete >= 1f) 1f else -(2f.pow(-10 * percentComplete)) + 1
         }
     },
     IN_OUT_EXP {
         override fun getValue(percentComplete: Float): Float {
-            var t = percentComplete * 2
-            if (t < 1) return 0.5f * 2f.pow(10 * (t - 1))
-            t--
-            return 0.5f * (-(2f.pow(-10 * t)) + 2)
+            // We don't need the extra checks, as those are now handled by the functions we call
+            // multiply percentComplete by 2 to normalize range before calling getValue
+            // then divide by two to shrink it to 0.0-0.5
+            return if (percentComplete < 0.5) IN_EXP.getValue(percentComplete * 2) / 2
+            // multiply percentComplete by 2 and subtract one to normalize range before calling getValue
+            // then divide by two to shrink it and add 0.5 to move it upwards, as a continuation of the first half
+            else OUT_EXP.getValue((percentComplete * 2) - 1) / 2 + 0.5f
         }
     },
     IN_CIRCULAR {
