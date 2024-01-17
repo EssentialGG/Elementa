@@ -4,8 +4,8 @@
 
 ### TextInput
 
-There are two newly updated TextInput components now: [UITextInput](../src/main/kotlin/club/sk1er/elementa/components/input/UITextInput.kt)
-and [UIMultilineTextInput](../src/main/kotlin/club/sk1er/elementa/components/input/UIMultilineTextInput.kt). These are
+There are two newly updated TextInput components now: [UITextInput](../src/main/kotlin/gg/essential/elementa/components/input/UITextInput.kt)
+and [UIMultilineTextInput](../src/main/kotlin/gg/essential/elementa/components/input/UIMultilineTextInput.kt). These are
 very powerful and useful classes. Read more about these components and how to use them [here](components.md#textinput).
 
 ### Inspector
@@ -21,25 +21,25 @@ rich text. Read more about the features of the `MarkdownComponent` and how to us
 
 ### PlotComponent
 
-The [PlotComponent](../src/main/kotlin/club/sk1er/elementa/components/graph/PlotComponent.kt) allows the user to 
+The [PlotComponent](../src/main/kotlin/gg/essential/elementa/components/plot/PlotComponent.kt) allows the user to 
 display an extremely customizable point graph. Nearly every aspect of the way the graph is drawn is configurable. Read more
 [here](components.md#PlotComponent)
 
 ### TreeListComponent
 
-Added a new [TreeListComponent](../src/main/kotlin/club/sk1er/elementa/components/TreeListComponent.kt) component. It is 
+Added a new [TreeListComponent](../src/main/kotlin/gg/essential/elementa/components/TreeListComponent.kt) component. It is 
 used to display tree-like information in a collapsible list-like hierarchy. This is the primary component used by the 
 Inspector, and is highly customizable. Read more [here](components.md#TreeListComponent)
 
 ### TreeGraphComponent
 
-The [TreeGraphComponent](../src/main/kotlin/club/sk1er/elementa/components/TreeGraphComponent.kt) displays nodes in a 
+The [TreeGraphComponent](../src/main/kotlin/gg/essential/elementa/components/TreeGraphComponent.kt) displays nodes in a 
 top-down tree view. It shows the exact same information as the `TreeListComponent` but in a different visual style. Read
 more [here](components.md#TreeGraphComponent).
 
 ### WindowScreen
 
-There is now a [WindowScreen](../src/main/kotlin/club/sk1er/elementa/WindowScreen.kt) class provided for an easy way to
+There is now a [WindowScreen](../src/main/kotlin/gg/essential/elementa/WindowScreen.kt) class provided for an easy way to
 avoid the boilerplate of calling all of the `Window` events manually. Rather than extending `GuiScreen` (or `Screen` in
 new Minecraft versions) in your GUI class, you can simply extend `WindowScreen` and not worry about overriding the
 `keyTyped`, `mouseReleased`, etc. methods. Additionally, it automatically declares a `Window` instance for you to use,
@@ -121,12 +121,12 @@ Pixel constraint now allows changing of the pixel value dynamically with `PixelC
 
 ### MousePositionConstraint
 
-Added the [MousePositionConstraint](../src/main/kotlin/club/sk1er/elementa/constraints/MousePositionConstraint.kt) which
+Added the [MousePositionConstraint](../src/main/kotlin/gg/essential/elementa/constraints/MousePositionConstraint.kt) which
 will evaluate to the current mouse X/Y position.
 
 ### ChildBasedRangeConstraint
 
-Added the [ChildBasedRangeConstraint](../src/main/kotlin/club/sk1er/elementa/constraints/ChildBasedConstraints.kt) which
+Added the [ChildBasedRangeConstraint](../src/main/kotlin/gg/essential/elementa/constraints/ChildBasedConstraints.kt) which
 evaluates the width/height difference between the component's two furthest children. This constraint is tricky to use
 as this component and all of its children need to have their X/Y position not reliant on any parental width/height.
 
