@@ -178,7 +178,7 @@ open class UIWrappedText @JvmOverloads constructor(
 
         lines.forEachIndexed { i, line ->
             val xOffset = if (centered) {
-                (width - line.width(textScale)) / 2f
+                (width - line.width(textScale, getFontProvider())) / 2f
             } else 0f
 
             getFontProvider().drawString(
