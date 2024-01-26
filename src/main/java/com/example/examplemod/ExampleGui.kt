@@ -378,7 +378,7 @@ class ExampleGui : WindowScreen(ElementaVersion.V2) {
                 // of our parent would make us taller than we need. This is where [FillConstraint] comes in.
                 // It will make sure we are the correct height to go exactly to the bottom of our parent,
                 // the sticky note.
-                height = FillConstraint()
+                height = FillConstraint() - 2.pixels()
             } childOf this
 
             // Currently, text input areas will simply overflow if they have too much text inside them.
@@ -407,6 +407,7 @@ class ExampleGui : WindowScreen(ElementaVersion.V2) {
                 // As we've seen before, we could have used a [RelativeConstraint] here
                 // and subtracted by 4 pixels, but this way, using a [FillConstraint] is a little easier to grasp.
                 height = FillConstraint() - 2.pixels()
+                width = FillConstraint()
             }.onMouseClick {
                 // When we click inside of this text area, we want to activate it. To do so, we need to make sure
                 // that this text input has the Window's focus. This means that the Window will route keyboard
