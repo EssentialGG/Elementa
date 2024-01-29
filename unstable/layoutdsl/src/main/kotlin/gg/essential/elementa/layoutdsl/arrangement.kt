@@ -1,6 +1,5 @@
 package gg.essential.elementa.layoutdsl
 
-import gg.essential.config.FeatureFlags
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.constraints.*
 import gg.essential.elementa.constraints.resolution.ConstraintVisitor
@@ -8,7 +7,6 @@ import gg.essential.elementa.utils.ObservableAddEvent
 import gg.essential.elementa.utils.ObservableClearEvent
 import gg.essential.elementa.utils.ObservableListEvent
 import gg.essential.elementa.utils.ObservableRemoveEvent
-import gg.essential.elementa.utils.roundToRealPixels
 
 abstract class Arrangement {
     internal lateinit var mainAxis: Axis
@@ -93,47 +91,20 @@ abstract class Arrangement {
         val SpaceBetween: Arrangement get() = SpaceBetweenArrangement()
         val SpaceEvenly: Arrangement get() = SpaceEvenlyArrangement()
 
-        fun spacedBy(spacing: Float = 0f, float: FloatPosition? = null): Arrangement = SpacedArrangement(spacing, float)
+        fun spacedBy(spacing: Float = 0f, float: FloatPosition = FloatPosition.CENTER): Arrangement = SpacedArrangement(spacing, float)
         fun equalWeight(spacing: Float = 0f): Arrangement = EqualWeightArrangement(spacing)
     }
 }
 
 private open class SpacedArrangement(
     protected val spacing: Float = 0f,
-    protected val floatPosition: FloatPosition? = null,
+    protected val floatPosition: FloatPosition = FloatPosition.CENTER,
 ) : Arrangement() {
-    private var floatWarningFrames = 0
-    private var floatWarningBacktrace: Throwable? = if (FeatureFlags.INTERNAL_ENABLED)
-        Throwable("Default for `float` will change. " +
-                "For the time being you should explicitly pass the value you want in cases where it matters.")
-    else null
-
     open fun getSpacing(parent: UIComponent) = spacing
 
     open fun getStartOffset(parent: UIComponent, spacing: Float): Float {
         val childrenSize = parent.children.sumOf { it.getMainAxisSize() } + spacing * (parent.children.size - 1)
         return when (floatPosition) {
-            null -> {
-                if (FeatureFlags.INTERNAL_ENABLED) {
-                    val startResult = 0f
-                    val centerResult = parent.getMainAxisSize() / 2 - childrenSize / 2
-                    if (startResult == centerResult.roundToRealPixels()) {
-                        floatWarningFrames = 0
-                        startResult
-                    } else {
-                        // Only log if it's for more than ten frames. Temporarily incorrect results can easily happen
-                        // because Elementa does not invalidate all constraints every frame, so if a child is added, its
-                        // parent size might already be fixed until the next animationFrame.
-                        if (floatWarningFrames++ > 10) {
-                            floatWarningBacktrace?.printStackTrace()
-                            floatWarningBacktrace = null
-                        }
-                        100000f // should hopefully get their attention
-                    }
-                } else {
-                    0f
-                }
-            }
             FloatPosition.START -> 0f
             FloatPosition.CENTER -> parent.getMainAxisSize() / 2 - childrenSize / 2
             FloatPosition.END -> parent.getMainAxisSize() - childrenSize
