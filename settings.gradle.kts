@@ -22,6 +22,7 @@ project(":platform").apply {
     projectDir = file("versions/")
     buildFileName = "root.gradle.kts"
 }
+include(":unstable:statev2")
 
 listOf(
     "1.8.9-forge",
