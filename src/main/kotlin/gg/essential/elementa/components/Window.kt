@@ -33,7 +33,8 @@ class Window @JvmOverloads constructor(
         private set
     private var componentRequestingFocus: UIComponent? = null
 
-    private var cancelDrawing = false
+    var hasErrored = false
+        private set
 
     internal var clickInterceptor: ((mouseX: Double, mouseY: Double, button: Int) -> Boolean)? = null
 
@@ -57,7 +58,7 @@ class Window @JvmOverloads constructor(
         version.enableFor { doDraw(matrixStack) }
 
     private fun doDraw(matrixStack: UMatrixStack) {
-        if (cancelDrawing)
+        if (hasErrored)
             return
 
         requireMainThread()
@@ -107,7 +108,7 @@ class Window @JvmOverloads constructor(
             beforeDraw(matrixStack)
             super.draw(matrixStack)
         } catch (e: Throwable) {
-            cancelDrawing = true
+            hasErrored = true
 
             val guiName = platform.currentScreen?.javaClass?.simpleName ?: "<unknown>"
             when (e) {
@@ -169,7 +170,7 @@ class Window @JvmOverloads constructor(
     }
 
     override fun mouseScroll(delta: Double) {
-        if (cancelDrawing) {
+        if (hasErrored) {
             return
         }
 
@@ -187,7 +188,7 @@ class Window @JvmOverloads constructor(
     }
 
     override fun mouseClick(mouseX: Double, mouseY: Double, button: Int) {
-        if (cancelDrawing) {
+        if (hasErrored) {
             return
         }
 
@@ -236,7 +237,7 @@ class Window @JvmOverloads constructor(
     }
 
     override fun mouseRelease() {
-        if (cancelDrawing) {
+        if (hasErrored) {
             return
         }
 
@@ -248,7 +249,7 @@ class Window @JvmOverloads constructor(
     }
 
     override fun keyType(typedChar: Char, keyCode: Int) {
-        if (cancelDrawing) {
+        if (hasErrored) {
             return
         }
 
