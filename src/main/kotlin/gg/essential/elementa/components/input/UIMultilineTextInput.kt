@@ -4,7 +4,7 @@ import gg.essential.elementa.constraints.HeightConstraint
 import gg.essential.elementa.dsl.coerceAtMost
 import gg.essential.elementa.dsl.pixels
 import gg.essential.elementa.dsl.width
-import gg.essential.elementa.utils.getStringSplitToWidthTruncated
+import gg.essential.elementa.utils.splitStringToWidthTruncated
 import gg.essential.universal.UKeyboard
 import gg.essential.universal.UMatrixStack
 import java.awt.Color
@@ -77,7 +77,7 @@ class UIMultilineTextInput @JvmOverloads constructor(
 
         val textScale = getTextScale()
         if (!active && !hasText()) {
-            val textToDraw = getStringSplitToWidthTruncated(placeholder, getWidth(), textScale, 1)[0]
+            val textToDraw = splitStringToWidthTruncated(placeholder, getWidth(), textScale, 1)[0]
             drawUnselectedText(matrixStack, textToDraw, getLeft(), 0)
             return super.draw(matrixStack)
         }

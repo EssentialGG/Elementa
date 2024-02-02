@@ -52,17 +52,21 @@ class ImageDrawable(md: MarkdownComponent, val url: URL, private val fallback: D
     }
 
     override fun draw(matrixStack: UMatrixStack, state: DrawState) {
-        if (!image.isLoaded) {
+        if (!hasLoaded) {
             fallback.drawCompat(matrixStack, state)
         } else {
-            if (!hasLoaded) {
-                hasLoaded = true
-                md.layout()
-            }
+            image.drawCompat(matrixStack)
+        }
+    }
 
+    override fun beforeDraw(state: DrawState) {
+        if (image.isLoaded && !hasLoaded) {
+            hasLoaded = true
+            md.layout()
+        }
+        if (hasLoaded) {
             imageX.shift = state.xShift
             imageY.shift = state.yShift
-            image.drawCompat(matrixStack)
         }
     }
 
@@ -83,7 +87,12 @@ class ImageDrawable(md: MarkdownComponent, val url: URL, private val fallback: D
     // TODO: Rename this function?
     override fun hasSelectedText() = selected
 
-    private inner class ShiftableMDPixelConstraint(val base: Float, var shift: Float) : XConstraint, YConstraint {
+    private inner class ShiftableMDPixelConstraint(val base: Float, shift: Float) : XConstraint, YConstraint {
+        var shift: Float = shift
+            set(value) {
+                recalculate = true
+                field = value
+            }
         override var cachedValue = 0f
         override var recalculate = true
         override var constrainTo: UIComponent? = null

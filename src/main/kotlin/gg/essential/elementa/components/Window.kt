@@ -81,7 +81,15 @@ class Window @JvmOverloads constructor(
             if (System.currentTimeMillis() - this.systemTime > TimeUnit.SECONDS.toMillis(5))
                 this.systemTime = System.currentTimeMillis() - TimeUnit.SECONDS.toMillis(5)
 
-            while (this.systemTime < System.currentTimeMillis() + 1000 / animationFPS) {
+            val target = System.currentTimeMillis() + 1000 / animationFPS
+            val animationFrames = (target - this.systemTime).toInt() * animationFPS / 1000
+            // If the window is sufficiently complex, it's possible for the average `animationFrame` to take so long
+            // we'll start falling behind with no way to ever catch up. And the amount of frames we're behind will
+            // quickly grow to the point where we'll be spending five seconds in `animationFrame` before we can get a
+            // real frame on the screen.
+            // To prevent that, we limit the `animationFrame` calls we make per real frame such that we'll still be able
+            // to render approximately 30 real frames per second at the cost of animations slowing down.
+            repeat(animationFrames.coerceAtMost((animationFPS / 30).coerceAtLeast(1))) {
                 animationFrame()
                 this.systemTime += 1000 / animationFPS
             }
@@ -246,10 +254,14 @@ class Window @JvmOverloads constructor(
 
         requireMainThread()
 
+        // If the typed character is in a PUA (https://en.wikipedia.org/wiki/Private_Use_Areas), we don't want to
+        // pass down the character, only the keycode.
+        val character = if (typedChar in CharCategory.PRIVATE_USE) Char.MIN_VALUE else typedChar
+
         if (focusedComponent != null) {
-            focusedComponent?.keyType(typedChar, keyCode)
+            focusedComponent?.keyType(character, keyCode)
         } else {
-            super.keyType(typedChar, keyCode)
+            super.keyType(character, keyCode)
         }
     }
 

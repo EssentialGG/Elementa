@@ -12,6 +12,7 @@ import gg.essential.elementa.effects.ScissorEffect
 import gg.essential.elementa.events.UIClickEvent
 import gg.essential.elementa.events.UIScrollEvent
 import gg.essential.elementa.font.FontProvider
+import gg.essential.elementa.state.v2.ReferenceHolder
 import gg.essential.elementa.utils.*
 import gg.essential.elementa.utils.requireMainThread
 import gg.essential.elementa.utils.requireState
@@ -32,7 +33,7 @@ import kotlin.reflect.KMutableProperty0
  * UIComponent is the base of all drawing, meaning
  * everything visible on the screen is a UIComponent.
  */
-abstract class UIComponent : Observable() {
+abstract class UIComponent : Observable(), ReferenceHolder {
 
     // Except when debugging, the component name does not need to be resolved
     // and the performance hit of eagerly resolving the name via the java class
@@ -105,6 +106,8 @@ abstract class UIComponent : Observable() {
     // We have to store stopped timers separately to avoid ConcurrentModificationException
     private val stoppedTimers = mutableSetOf<Int>()
     private var nextTimerId = 0
+
+    private var heldReferences = mutableListOf<Any>()
 
     protected var isInitialized = false
     private var isFloating = false
@@ -447,9 +450,11 @@ abstract class UIComponent : Observable() {
      * Also does some housekeeping dealing with hovering and effects.
      */
     open fun draw(matrixStack: UMatrixStack) {
-        if (!isInitialized) {
-            isInitialized = true
-            afterInitialization()
+        if (ElementaVersion.active < ElementaVersion.v4) {
+            if (!isInitialized) {
+                isInitialized = true
+                afterInitialization()
+            }
         }
         if (!didCallBeforeDraw && !warnedAboutBeforeDraw) {
             warnedAboutBeforeDraw = true
@@ -506,11 +511,22 @@ abstract class UIComponent : Observable() {
         }
         didCallBeforeDraw = true
 
+        if (ElementaVersion.active >= ElementaVersion.v4) {
+            if (!isInitialized) {
+                isInitialized = true
+                afterInitialization()
+            }
+        }
+
         effects.forEach { it.beforeDraw(matrixStack) }
     }
 
     open fun afterDraw(matrixStack: UMatrixStack) {
-        effects.forEach { it.afterDraw(matrixStack) }
+        if (ElementaVersion.active >= ElementaVersion.v3) {
+            effects.asReversed().forEach { it.afterDraw(matrixStack) }
+        } else {
+            effects.forEach { it.afterDraw(matrixStack) }
+        }
     }
 
     open fun beforeChildrenDraw(matrixStack: UMatrixStack) {
@@ -1176,6 +1192,11 @@ abstract class UIComponent : Observable() {
                 timeLeft = interval
             }
         }
+    }
+
+    override fun holdOnto(listener: Any): () -> Unit {
+        heldReferences.add(listener)
+        return { heldReferences.remove(listener) }
     }
 
     companion object {

@@ -40,7 +40,10 @@ open class UIImage @JvmOverloads constructor(
     var textureMagFilter = TextureScalingMode.NEAREST
 
     init {
-        imageFuture.thenAcceptAsync {
+        imageFuture.exceptionally {
+            it.printStackTrace()
+            return@exceptionally null
+        }.thenAcceptAsync {
             if (it == null) {
                 destroy = false
                 return@thenAcceptAsync

@@ -57,7 +57,34 @@ enum class ElementaVersion {
      * override of that method. If you do, then you should switch to using the new override at the same time as you
      * upgrade to the new version (or override both if you need to maintain support for old versions).
      */
+    @Deprecated(DEPRECATION_MESSAGE)
     V2,
+
+    /**
+     * When there are multiple [gg.essential.elementa.effects.Effect] applied to a single component, their [gg.essential.elementa.effects.Effect.afterDraw]
+     * are now called in reverse order, such that they form a stack around the draw itself:
+     * `effectA.beforeDraw effectB.beforeDraw component.draw effectB.afterDraw effectA.afterDraw`
+     *
+     * Prior versions called `effectA.afterDraw` before `effectB.afterDraw` which could result in inproper cleanup when
+     * both effects modify the same thing.
+     */
+    @Deprecated(DEPRECATION_MESSAGE)
+    V3,
+
+    /**
+     * Mark components as initialized and call [gg.essential.elementa.UIComponent.afterInitialization] during `beforeDraw` instead of `draw`.
+     *
+     * This ensures that [gg.essential.elementa.effects.Effect.setup] is always called before [gg.essential.elementa.effects.Effect.beforeDraw].
+     * On prior versions, calling [gg.essential.elementa.UIComponent.enableEffect] on a component that wasn't yet initialized would result
+     * in the Effect's `beforeDraw` being called once before `setup`.
+     */
+    @Deprecated(DEPRECATION_MESSAGE)
+    V4,
+
+    /**
+     * Change the behavior of scroll components to no longer require holding down shift when horizontal is the only possible scrolling direction.
+     */
+    V5,
 
     ;
 
@@ -95,6 +122,11 @@ Be sure to read through all the changes between your current version and your ne
         internal val v1 = V1
         @Suppress("DEPRECATION")
         internal val v2 = V2
+        @Suppress("DEPRECATION")
+        internal val v3 = V3
+        @Suppress("DEPRECATION")
+        internal val v4 = V4
+        internal val v5 = V5
 
 
         @PublishedApi

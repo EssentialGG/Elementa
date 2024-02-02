@@ -3,15 +3,20 @@ public final class gg/essential/elementa/ElementaVersion : java/lang/Enum {
 	public static final field V0 Lgg/essential/elementa/ElementaVersion;
 	public static final field V1 Lgg/essential/elementa/ElementaVersion;
 	public static final field V2 Lgg/essential/elementa/ElementaVersion;
+	public static final field V3 Lgg/essential/elementa/ElementaVersion;
+	public static final field V4 Lgg/essential/elementa/ElementaVersion;
+	public static final field V5 Lgg/essential/elementa/ElementaVersion;
 	public final fun enableFor (Lkotlin/jvm/functions/Function0;)Ljava/lang/Object;
 	public static fun valueOf (Ljava/lang/String;)Lgg/essential/elementa/ElementaVersion;
 	public static fun values ()[Lgg/essential/elementa/ElementaVersion;
 }
 
 public final class gg/essential/elementa/ElementaVersion$Companion {
+	public final fun getActive ()Lgg/essential/elementa/ElementaVersion;
+	public final fun setActive (Lgg/essential/elementa/ElementaVersion;)V
 }
 
-public abstract class gg/essential/elementa/UIComponent : java/util/Observable {
+public abstract class gg/essential/elementa/UIComponent : java/util/Observable, gg/essential/elementa/state/v2/ReferenceHolder {
 	public static final field Companion Lgg/essential/elementa/UIComponent$Companion;
 	public field parent Lgg/essential/elementa/UIComponent;
 	public fun <init> ()V
@@ -88,6 +93,7 @@ public abstract class gg/essential/elementa/UIComponent : java/util/Observable {
 	public final fun hide (Z)V
 	public static synthetic fun hide$default (Lgg/essential/elementa/UIComponent;ZILjava/lang/Object;)V
 	public fun hitTest (FF)Lgg/essential/elementa/UIComponent;
+	public fun holdOnto (Ljava/lang/Object;)Lkotlin/jvm/functions/Function0;
 	public fun insertChildAfter (Lgg/essential/elementa/UIComponent;Lgg/essential/elementa/UIComponent;)Lgg/essential/elementa/UIComponent;
 	public fun insertChildAt (Lgg/essential/elementa/UIComponent;I)Lgg/essential/elementa/UIComponent;
 	public fun insertChildBefore (Lgg/essential/elementa/UIComponent;Lgg/essential/elementa/UIComponent;)Lgg/essential/elementa/UIComponent;
@@ -332,6 +338,8 @@ public final class gg/essential/elementa/components/ScrollComponent : gg/essenti
 	public fun <init> (Ljava/lang/String;)V
 	public fun <init> (Ljava/lang/String;F)V
 	public fun <init> (Ljava/lang/String;FLjava/awt/Color;)V
+	public fun <init> (Ljava/lang/String;FLjava/awt/Color;Lgg/essential/elementa/components/ScrollComponent$Direction;ZZFFLgg/essential/elementa/UIComponent;Z)V
+	public synthetic fun <init> (Ljava/lang/String;FLjava/awt/Color;Lgg/essential/elementa/components/ScrollComponent$Direction;ZZFFLgg/essential/elementa/UIComponent;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun <init> (Ljava/lang/String;FLjava/awt/Color;Z)V
 	public fun <init> (Ljava/lang/String;FLjava/awt/Color;ZZ)V
 	public fun <init> (Ljava/lang/String;FLjava/awt/Color;ZZZ)V
@@ -399,9 +407,18 @@ public final class gg/essential/elementa/components/ScrollComponent$Companion {
 	public final fun getScrollImage ()Lgg/essential/elementa/components/UIImage;
 }
 
-public final class gg/essential/elementa/components/ScrollComponent$DefaultScrollBar : gg/essential/elementa/UIComponent {
+public final class gg/essential/elementa/components/ScrollComponent$DefaultScrollBar : gg/essential/elementa/components/UIContainer {
 	public fun <init> (Z)V
 	public final fun getGrip ()Lgg/essential/elementa/UIComponent;
+}
+
+public final class gg/essential/elementa/components/ScrollComponent$Direction : java/lang/Enum {
+	public static final field Horizontal Lgg/essential/elementa/components/ScrollComponent$Direction;
+	public static final field PreferHorizontal Lgg/essential/elementa/components/ScrollComponent$Direction;
+	public static final field PreferVertical Lgg/essential/elementa/components/ScrollComponent$Direction;
+	public static final field Vertical Lgg/essential/elementa/components/ScrollComponent$Direction;
+	public static fun valueOf (Ljava/lang/String;)Lgg/essential/elementa/components/ScrollComponent$Direction;
+	public static fun values ()[Lgg/essential/elementa/components/ScrollComponent$Direction;
 }
 
 public final class gg/essential/elementa/components/ScrollComponent$ScrollChildConstraint : gg/essential/elementa/constraints/HeightConstraint, gg/essential/elementa/constraints/WidthConstraint {
@@ -3337,6 +3354,7 @@ public abstract class gg/essential/elementa/markdown/drawables/Drawable {
 	public static final field Companion Lgg/essential/elementa/markdown/drawables/Drawable$Companion;
 	public field layout Lgg/essential/elementa/markdown/drawables/Drawable$Layout;
 	public fun <init> (Lgg/essential/elementa/markdown/MarkdownComponent;)V
+	public fun beforeDraw (Lgg/essential/elementa/markdown/DrawState;)V
 	public abstract fun cursorAt (FFZI)Lgg/essential/elementa/markdown/selection/Cursor;
 	public abstract fun cursorAtEnd ()Lgg/essential/elementa/markdown/selection/Cursor;
 	public abstract fun cursorAtStart ()Lgg/essential/elementa/markdown/selection/Cursor;
@@ -3520,6 +3538,7 @@ public final class gg/essential/elementa/markdown/drawables/HeaderDrawable : gg/
 
 public final class gg/essential/elementa/markdown/drawables/ImageDrawable : gg/essential/elementa/markdown/drawables/Drawable {
 	public fun <init> (Lgg/essential/elementa/markdown/MarkdownComponent;Ljava/net/URL;Lgg/essential/elementa/markdown/drawables/Drawable;)V
+	public fun beforeDraw (Lgg/essential/elementa/markdown/DrawState;)V
 	public synthetic fun cursorAt (FFZI)Lgg/essential/elementa/markdown/selection/Cursor;
 	public fun cursorAt (FFZI)Ljava/lang/Void;
 	public synthetic fun cursorAtEnd ()Lgg/essential/elementa/markdown/selection/Cursor;
@@ -3589,7 +3608,7 @@ public final class gg/essential/elementa/markdown/drawables/SoftBreakDrawable : 
 public final class gg/essential/elementa/markdown/drawables/TextDrawable : gg/essential/elementa/markdown/drawables/Drawable {
 	public static final field Companion Lgg/essential/elementa/markdown/drawables/TextDrawable$Companion;
 	public fun <init> (Lgg/essential/elementa/markdown/MarkdownComponent;Ljava/lang/String;Lgg/essential/elementa/markdown/drawables/TextDrawable$Style;)V
-	public final fun beforeDraw (Lgg/essential/elementa/markdown/DrawState;)V
+	public fun beforeDraw (Lgg/essential/elementa/markdown/DrawState;)V
 	public synthetic fun cursorAt (FFZI)Lgg/essential/elementa/markdown/selection/Cursor;
 	public fun cursorAt (FFZI)Ljava/lang/Void;
 	public synthetic fun cursorAtEnd ()Lgg/essential/elementa/markdown/selection/Cursor;
@@ -3835,6 +3854,15 @@ public final class gg/essential/elementa/state/ZippedState : gg/essential/elemen
 
 public final class gg/essential/elementa/state/ZippedStateDelegator : gg/essential/elementa/state/StateDelegator {
 	public fun <init> (Lgg/essential/elementa/state/State;Lgg/essential/elementa/state/State;)V
+}
+
+public abstract interface class gg/essential/elementa/state/v2/ReferenceHolder {
+	public abstract fun holdOnto (Ljava/lang/Object;)Lkotlin/jvm/functions/Function0;
+}
+
+public final class gg/essential/elementa/state/v2/ReferenceHolder$Weak : gg/essential/elementa/state/v2/ReferenceHolder {
+	public static final field INSTANCE Lgg/essential/elementa/state/v2/ReferenceHolder$Weak;
+	public fun holdOnto (Ljava/lang/Object;)Lkotlin/jvm/functions/Function0;
 }
 
 public final class gg/essential/elementa/svg/PathParser {
@@ -4440,6 +4468,8 @@ public final class gg/essential/elementa/utils/TextKt {
 	public static synthetic fun getStringSplitToWidthTruncated$default (Ljava/lang/String;FFIZZLgg/essential/elementa/font/FontProvider;Ljava/lang/String;ILjava/lang/Object;)Ljava/util/List;
 	public static final fun isFormatColor (I)Z
 	public static final fun sizeStringToWidth (Ljava/lang/String;F)I
+	public static final fun splitStringToWidthTruncated (Ljava/lang/String;FFIZZLgg/essential/elementa/font/FontProvider;Ljava/lang/String;)Ljava/util/List;
+	public static synthetic fun splitStringToWidthTruncated$default (Ljava/lang/String;FFIZZLgg/essential/elementa/font/FontProvider;Ljava/lang/String;ILjava/lang/Object;)Ljava/util/List;
 }
 
 public abstract interface class gg/essential/elementa/utils/TriConsumer {

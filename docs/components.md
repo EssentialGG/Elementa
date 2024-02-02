@@ -574,7 +574,7 @@ and `stroke-linejoin` attributes from the topmost `<svg>` element in your SVG fi
 
 ### PlotComponent
 
-The [PlotComponent](../src/main/kotlin/gg/essential/elementa/components/graph/PlotComponent.kt), as its name implies,
+The [PlotComponent](../src/main/kotlin/gg/essential/elementa/components/plot/PlotComponent.kt), as its name implies,
 allow the user to display a graph of information to the user. The great thing about this component is that it is
 extremely customizable. Everything can be changed, from the axis labels to the line widths. Lets look at a basic 
 example:
@@ -610,7 +610,7 @@ PlotComponent(
     ),
     xBounds = Bounds(0, 6, 7, showLabels = true, labelColor = Color(101, 101, 101)),
     yBounds = Bounds(0, 10, 4, showLabels = true, labelColor = Color(101, 101, 101)),
-    style = GraphStyle(
+    style = PlotStyle(
         lineStyle = LineStyle(color = Color(1, 165, 82), width = 3f),
         padding = Padding(10, 6, 10, 4)
     )
@@ -621,8 +621,8 @@ Now we can see the true power of this component -- with only six lines of stylin
 
 ![cool graph component](https://i.imgur.com/KqTlBZ1.png)
 
-The `GraphStyle` class has many more configuration options that aren't shown above. Check it out 
-[here](../src/main/kotlin/gg/essential/elementa/components/graph/GraphStyle.kt)!
+The `PlotStyle` class has many more configuration options that aren't shown above. Check it out 
+[here](../src/main/kotlin/gg/essential/elementa/components/plot/PlotStyle.kt)!
 
 ### TreeListComponent
 

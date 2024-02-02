@@ -83,11 +83,11 @@ class TextDrawable(
         splitPoint -= styleChars
 
         if (!breakWords) {
-            while (splitPoint > styleChars && formattedText[splitPoint] != ' ') {
+            while (splitPoint > 0 && plainText[splitPoint] != ' ') {
                 splitPoint--
             }
 
-            if (splitPoint == styleChars) {
+            if (splitPoint == 0) {
                 return null
             }
         }
@@ -129,7 +129,7 @@ class TextDrawable(
         )
     }
 
-    fun beforeDraw(state: DrawState) {
+    override fun beforeDraw(state: DrawState) {
         texts.clear()
 
         if (selectionStart == -1 && selectionEnd == -1) {
@@ -411,6 +411,16 @@ class TextDrawable(
             }
 
             if (isLink && isHovered) {
+                if (config.textConfig.hasShadow) {
+                    UIBlock.drawBlockSized(
+                        matrixStack,
+                        config.textConfig.shadowColor,
+                        x.toDouble() + 1,
+                        y.toDouble() + 9,
+                        string.width().toDouble(),
+                        1.0,
+                    )
+                }
                 UIBlock.drawBlockSized(
                     matrixStack,
                     config.textConfig.linkColor,

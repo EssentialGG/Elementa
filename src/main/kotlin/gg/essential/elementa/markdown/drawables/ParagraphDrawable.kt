@@ -278,7 +278,6 @@ class ParagraphDrawable(
     }
 
     override fun draw(matrixStack: UMatrixStack, state: DrawState) {
-        drawables.filterIsInstance<TextDrawable>().forEach { it.beforeDraw(state) }
         drawables.forEach { it.drawCompat(matrixStack, state) }
 
         // TODO: Remove

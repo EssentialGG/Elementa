@@ -287,8 +287,7 @@ sealed class FieldAnimationComponent<T>(
     override fun animationFrame() {
         super.animationFrame()
 
-        if (!isComplete())
-            setValue(getPercentComplete())
+        setValue(getPercentComplete())
     }
 
     abstract fun setValue(percentComplete: Float)

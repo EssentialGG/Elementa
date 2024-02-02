@@ -1,11 +1,13 @@
 package gg.essential.elementa.components
 
+import gg.essential.elementa.ElementaVersion
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.constraints.*
 import gg.essential.elementa.constraints.animation.Animations
 import gg.essential.elementa.constraints.resolution.ConstraintVisitor
 import gg.essential.elementa.dsl.*
 import gg.essential.elementa.effects.ScissorEffect
+import gg.essential.elementa.events.UIScrollEvent
 import gg.essential.elementa.utils.bindLast
 import gg.essential.universal.UKeyboard
 import gg.essential.universal.UMatrixStack
@@ -20,18 +22,62 @@ import kotlin.math.max
  *
  * Also prevents scrolling past what should be reasonable.
  */
-class ScrollComponent @JvmOverloads constructor(
+class ScrollComponent constructor(
     emptyString: String = "",
     private val innerPadding: Float = 0f,
     private val scrollIconColor: Color = Color.WHITE,
-    private val horizontalScrollEnabled: Boolean = false,
-    private val verticalScrollEnabled: Boolean = true,
+    private val scrollDirection: Direction,
     private val horizontalScrollOpposite: Boolean = false,
     private val verticalScrollOpposite: Boolean = false,
     private val pixelsPerScroll: Float = 15f,
     private val scrollAcceleration: Float = 1.0f,
-    customScissorBoundingBox: UIComponent? = null
+    customScissorBoundingBox: UIComponent? = null,
+    private val passthroughScroll: Boolean = true
 ) : UIContainer() {
+    @JvmOverloads constructor(
+        emptyString: String = "",
+        innerPadding: Float = 0f,
+        scrollIconColor: Color = Color.WHITE,
+        horizontalScrollEnabled: Boolean = false,
+        verticalScrollEnabled: Boolean = true,
+        horizontalScrollOpposite: Boolean = false,
+        verticalScrollOpposite: Boolean = false,
+        pixelsPerScroll: Float = 15f,
+        scrollAcceleration: Float = 1.0f,
+        customScissorBoundingBox: UIComponent? = null
+    ) : this (
+        emptyString,
+        innerPadding,
+        scrollIconColor,
+        when {
+            horizontalScrollEnabled && verticalScrollEnabled -> Direction.PreferVertical
+            horizontalScrollEnabled && !verticalScrollEnabled -> Direction.Horizontal
+            !horizontalScrollEnabled && verticalScrollEnabled -> Direction.Vertical
+            else -> throw IllegalArgumentException("ScrollComponent must have at least one direction of scrolling enabled")
+        },
+        horizontalScrollOpposite,
+        verticalScrollOpposite,
+        pixelsPerScroll,
+        scrollAcceleration,
+        customScissorBoundingBox
+    )
+
+    private val primaryScrollDirection
+        get() = when (scrollDirection) {
+            Direction.Horizontal, Direction.PreferHorizontal -> Direction.Horizontal
+            Direction.Vertical, Direction.PreferVertical -> Direction.Vertical
+        }
+    private val secondaryScrollDirection
+        get() = when (scrollDirection) {
+            Direction.PreferHorizontal -> Direction.Vertical
+            Direction.PreferVertical -> Direction.Horizontal
+            else -> null
+        }
+    private val horizontalScrollEnabled
+        get() = primaryScrollDirection == Direction.Horizontal || secondaryScrollDirection == Direction.Horizontal
+    private val verticalScrollEnabled
+        get() = primaryScrollDirection == Direction.Vertical || secondaryScrollDirection == Direction.Vertical
+
     private var animationFPS: Int? = null
 
     private val actualHolder = UIContainer().constrain {
@@ -95,23 +141,19 @@ class ScrollComponent @JvmOverloads constructor(
     val verticalOverhang: Float
         get() = max(0f, calculateActualHeight() - getHeight())
 
-    init {
-        this.constrain {
-            width = ScrollChildConstraint() coerceAtMost 100.percentOfWindow()
-            height = ScrollChildConstraint() coerceAtMost 100.percentOfWindow()
-        }
 
-        if (!horizontalScrollEnabled && !verticalScrollEnabled)
-            throw IllegalArgumentException("ScrollComponent must have at least one direction of scrolling enabled")
 
-        super.addChild(actualHolder)
-        actualHolder.addChild(emptyText)
-        this.enableEffects(ScissorEffect(customScissorBoundingBox))
-        emptyText.setFontProvider(getFontProvider())
-        super.addChild(scrollIconComponent)
-        scrollIconComponent.hide(instantly = true)
-
-        onMouseScroll {
+    private val mouseScrollLambda: UIComponent.(UIScrollEvent) -> Unit = {
+        if (Window.of(this).version >= ElementaVersion.v5) {
+            // new behavior
+            val scrollDirection = if (!UKeyboard.isShiftKeyDown()) primaryScrollDirection else secondaryScrollDirection
+            if (scrollDirection != null) {
+                if (onScroll(it.delta.toFloat(), isHorizontal = scrollDirection == Direction.Horizontal) || !passthroughScroll) {
+                    it.stopPropagation()
+                }
+            }
+        } else {
+            // old behavior
             if (UKeyboard.isShiftKeyDown() && horizontalScrollEnabled) {
                 onScroll(it.delta.toFloat(), isHorizontal = true)
             } else if (!UKeyboard.isShiftKeyDown() && verticalScrollEnabled) {
@@ -120,6 +162,22 @@ class ScrollComponent @JvmOverloads constructor(
 
             it.stopPropagation()
         }
+    }
+
+    init {
+        this.constrain {
+            width = ScrollChildConstraint() coerceAtMost 100.percentOfWindow()
+            height = ScrollChildConstraint() coerceAtMost 100.percentOfWindow()
+        }
+
+        super.addChild(actualHolder)
+        actualHolder.addChild(emptyText)
+        this.enableEffects(ScissorEffect(customScissorBoundingBox))
+        emptyText.setFontProvider(getFontProvider())
+        super.addChild(scrollIconComponent)
+        scrollIconComponent.hide(instantly = true)
+
+        onMouseScroll(mouseScrollLambda)
 
         onMouseClick { event ->
             onClick(event.relativeX, event.relativeY, event.mouseButton)
@@ -228,15 +286,7 @@ class ScrollComponent @JvmOverloads constructor(
             verticalHideScrollWhenUseless = hideWhenUseless
         }
 
-        component.onMouseScroll {
-            if (isHorizontal && horizontalScrollEnabled && UKeyboard.isShiftKeyDown()) {
-                onScroll(it.delta.toFloat(), isHorizontal = true)
-            } else if (!isHorizontal && verticalScrollEnabled) {
-                onScroll(it.delta.toFloat(), isHorizontal = false)
-            }
-
-            it.stopPropagation()
-        }
+        component.onMouseScroll(mouseScrollLambda)
 
         component.onMouseClick { event ->
             if (isHorizontal) {
@@ -378,17 +428,24 @@ class ScrollComponent @JvmOverloads constructor(
         needsUpdate = true
     }
 
-    private fun onScroll(delta: Float, isHorizontal: Boolean) {
-        if (isHorizontal) {
-            horizontalOffset += delta * pixelsPerScroll * currentScrollAcceleration
-        } else {
-            verticalOffset += delta * pixelsPerScroll * currentScrollAcceleration
+    /**
+     * @return whether the offset changed
+     */
+    private fun onScroll(delta: Float, isHorizontal: Boolean): Boolean {
+        var changed = false
+        val offset = if (isHorizontal) ::horizontalOffset else ::verticalOffset
+        val range = calculateOffsetRange(isHorizontal)
+        val newOffset = if(range.isEmpty()) innerPadding else (offset.get() + delta * pixelsPerScroll * currentScrollAcceleration).coerceIn(range)
+        if (newOffset != offset.get()) {
+            changed = true
+            offset.set(newOffset)
         }
 
         currentScrollAcceleration =
             (currentScrollAcceleration + (scrollAcceleration - 1.0f) * 0.15f).coerceIn(0f, scrollAcceleration)
 
         needsUpdate = true
+        return changed
     }
 
     private fun updateScrollBar(scrollPercentage: Float, percentageOfParent: Float, isHorizontal: Boolean) {
@@ -595,7 +652,7 @@ class ScrollComponent @JvmOverloads constructor(
         actualHolder.removeChild(component)
         allChildren.remove(component)
 
-        if (allChildren.isEmpty())
+        if (actualHolder.children.isEmpty())
             actualHolder.addChild(emptyText)
 
         needsUpdate = true
@@ -655,7 +712,7 @@ class ScrollComponent @JvmOverloads constructor(
     private fun ClosedFloatingPointRange<Double>.width() = abs(this.start - this.endInclusive)
     private fun ClosedFloatingPointRange<Float>.width() = abs(this.start - this.endInclusive)
 
-    class DefaultScrollBar(isHorizontal: Boolean) : UIComponent() {
+    class DefaultScrollBar(isHorizontal: Boolean) : UIContainer() {
         val grip: UIComponent
 
         init {
@@ -741,6 +798,13 @@ class ScrollComponent @JvmOverloads constructor(
             }
         }
 
+    }
+
+    enum class Direction {
+        Vertical,
+        Horizontal,
+        /*BothBut*/PreferVertical,
+        /*BothBut*/PreferHorizontal,
     }
 
     companion object {
