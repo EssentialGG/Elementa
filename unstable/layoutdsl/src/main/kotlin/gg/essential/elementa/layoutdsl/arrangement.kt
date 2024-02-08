@@ -7,6 +7,7 @@ import gg.essential.elementa.utils.ObservableAddEvent
 import gg.essential.elementa.utils.ObservableClearEvent
 import gg.essential.elementa.utils.ObservableListEvent
 import gg.essential.elementa.utils.ObservableRemoveEvent
+import gg.essential.elementa.utils.roundToRealPixels
 
 abstract class Arrangement {
     internal lateinit var mainAxis: Axis
@@ -112,8 +113,8 @@ private open class SpacedArrangement(
     }
 
     override fun layoutPositions() {
-        val spacing = getSpacing(boundComponent)
-        var nextStart = boundComponent.getMainAxisStart() + getStartOffset(boundComponent, spacing)
+        val spacing = getSpacing(boundComponent).roundToRealPixels()
+        var nextStart = boundComponent.getMainAxisStart() + getStartOffset(boundComponent, spacing).roundToRealPixels()
         boundComponent.children.forEach {
             lastPosValues[it] = nextStart
             nextStart += it.getMainAxisSize() + spacing
@@ -121,7 +122,7 @@ private open class SpacedArrangement(
     }
 
     override fun getPadding(child: UIComponent): Float {
-        return if (child === boundComponent.children.last()) 0f else getSpacing(boundComponent)
+        return if (child === boundComponent.children.last()) 0f else getSpacing(boundComponent).roundToRealPixels()
     }
 }
 
