@@ -3,8 +3,11 @@ package gg.essential.elementa.layoutdsl
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.events.UIClickEvent
 import gg.essential.elementa.state.v2.toV2
+import gg.essential.elementa.util.Tag
 import gg.essential.elementa.util.hoverScope
 import gg.essential.elementa.util.makeHoverScope
+import gg.essential.elementa.util.addTag
+import gg.essential.elementa.util.removeTag
 
 import gg.essential.elementa.state.State as StateV1
 import gg.essential.elementa.state.v2.State as StateV2
@@ -69,3 +72,6 @@ fun Modifier.whenHovered(hoverModifier: Modifier, noHoverModifier: Modifier = Mo
  */
 fun Modifier.withHoverState(func: (StateV2<Boolean>) -> Modifier) =
     then { func(hoverScope().toV2()).applyToComponent(this) }
+
+/** Applies a Tag to this component. See [UIComponent.addTag]. */
+fun Modifier.tag(tag: Tag) = then { addTag(tag); { removeTag(tag) } }

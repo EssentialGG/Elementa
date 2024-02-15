@@ -271,6 +271,38 @@ fun UIComponent.hoverScope(parentOnly: Boolean = false): State<Boolean> {
     return consumer.state
 }
 
+/** Once inherited, you can apply this to a component via [addTag] to be able to [findChildrenByTag]. */
+interface Tag
+
+/** Holder effect for a [Tag] */
+private class TagEffect(val tag: Tag) : Effect()
+
+/** Applies a [Tag] to this component. */
+fun UIComponent.addTag(tag: Tag) = apply { enableEffect(TagEffect(tag)) }
+
+/** Removes a [Tag] from this component. */
+fun UIComponent.removeTag(tag: Tag) = apply { effects.removeIf { it is TagEffect && it.tag == tag } }
+
+/**
+ * Searches for any children which contain a certain [Tag].
+ * See [addTag] for applying a [Tag] to a component.
+ */
+fun UIComponent.findChildrenByTag(tag: Tag, recursive: Boolean = false): List<UIComponent> {
+    val found = mutableListOf<UIComponent>()
+
+    for (child in children) {
+        if (child.effects.filterIsInstance<TagEffect>().any { it.tag == tag }) {
+            found.add(child)
+        }
+
+        if (recursive) {
+            found.addAll(child.findChildrenByTag(tag, true))
+        }
+    }
+
+    return found
+}
+
 /** Returns a [Sequence] consisting of this component and its parents (including the Window) in that order. */
 fun UIComponent.selfAndParents() =
     generateSequence(this) { if (it.parent != it) it.parent else null }
