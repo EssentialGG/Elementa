@@ -1,8 +1,6 @@
 package gg.essential.elementa.layoutdsl
 
 import gg.essential.elementa.UIComponent
-import gg.essential.elementa.UIConstraints
-import gg.essential.elementa.effects.Effect
 
 interface Modifier {
     /**

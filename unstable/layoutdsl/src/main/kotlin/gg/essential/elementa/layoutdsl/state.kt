@@ -3,7 +3,6 @@ package gg.essential.elementa.layoutdsl
 import gg.essential.elementa.state.State
 import gg.essential.elementa.common.onSetValueAndNow
 import gg.essential.elementa.state.v2.combinators.map
-import java.awt.Color
 import gg.essential.elementa.state.v2.State as StateV2
 
 @Deprecated("Using StateV1 is discouraged, use StateV2 instead")

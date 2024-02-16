@@ -1,7 +1,6 @@
 package gg.essential.elementa.state.v2
 
 
-import gg.essential.elementa.UIComponent
 import gg.essential.elementa.state.v2.ReferenceHolder
 import java.lang.ref.ReferenceQueue
 import java.lang.ref.WeakReference
