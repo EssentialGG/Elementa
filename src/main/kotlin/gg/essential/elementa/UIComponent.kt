@@ -752,6 +752,7 @@ abstract class UIComponent : Observable(), ReferenceHolder {
         }
 
         stoppedTimers.forEach { activeTimers.remove(it) }
+        stoppedTimers.clear()
     }
 
     open fun alwaysDrawChildren(): Boolean {
