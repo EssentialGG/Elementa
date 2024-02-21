@@ -13,7 +13,7 @@ group = "gg.essential"
 dependencies {
     compileOnly(project(":"))
 }
-tasks.compileKotlin.setJvmDefault("all-compatibility")
+tasks.compileKotlin.setJvmDefault("all")
 
 kotlin.jvmToolchain {
     (this as JavaToolchainSpec).languageVersion.set(JavaLanguageVersion.of(8))
