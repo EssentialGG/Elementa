@@ -23,6 +23,7 @@ project(":platform").apply {
     buildFileName = "root.gradle.kts"
 }
 include(":unstable:statev2")
+include(":unstable:layoutdsl")
 
 listOf(
     "1.8.9-forge",
