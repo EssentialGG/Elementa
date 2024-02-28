@@ -1,0 +1,11 @@
+package gg.essential.elementa.common
+
+import gg.essential.elementa.state.State
+import gg.essential.elementa.state.v2.ReferenceHolder
+
+fun <T> State<T>.onSetValueAndNow(listener: (T) -> Unit) = onSetValue(listener).also { listener(get()) }
+
+fun <T> gg.essential.elementa.state.v2.State<T>.onSetValueAndNow(owner: ReferenceHolder, listener: (T) -> Unit) =
+    onSetValue(owner, listener).also { listener(get()) }
+
+operator fun State<Boolean>.not() = map { !it }
