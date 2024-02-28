@@ -1,3 +1,4 @@
+import gg.essential.gradle.multiversion.StripReferencesTransform.Companion.registerStripReferencesAttribute
 import gg.essential.gradle.util.setJvmDefault
 import gg.essential.gradle.util.versionFromBuildIdAndBranch
 
@@ -13,6 +14,13 @@ group = "gg.essential"
 dependencies {
     compileOnly(project(":"))
     api(project(":unstable:statev2"))
+
+    val common = registerStripReferencesAttribute("common") {
+        excludes.add("net.minecraft")
+    }
+    compileOnly(libs.versions.universalcraft.map { "gg.essential:universalcraft-1.8.9-forge:$it" }) {
+        attributes { attribute(common, true) }
+    }
 }
 tasks.compileKotlin.setJvmDefault("all")
 
