@@ -51,4 +51,5 @@ fun <T> MutableListState<T>.add(index: Int, element: T) = set { it.add(index, el
 fun <T> MutableListState<T>.addAll(elements: List<T>) = set { it.addAll(elements) }
 fun <T> MutableListState<T>.remove(element: T) = set { it.remove(element) }
 fun <T> MutableListState<T>.removeAt(index: Int) = set { it.removeAt(index) }
+fun <T> MutableListState<T>.removeAll(predicate: (T) -> Boolean) = set { it.removeAll(it.filter(predicate)) }
 fun <T> MutableListState<T>.clear() = set { it.clear() }
