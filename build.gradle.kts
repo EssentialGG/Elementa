@@ -49,7 +49,7 @@ dependencies {
 }
 
 apiValidation {
-    ignoredProjects.add("platform")
+    ignoredProjects.addAll(listOf("platform", "statev2", "layoutdsl"))
     ignoredPackages.add("com.example")
     nonPublicMarkers.add("org.jetbrains.annotations.ApiStatus\$Internal")
 }
