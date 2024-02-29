@@ -283,6 +283,18 @@ fun UIComponent.addTag(tag: Tag) = apply { enableEffect(TagEffect(tag)) }
 /** Removes a [Tag] from this component. */
 fun UIComponent.removeTag(tag: Tag) = apply { effects.removeIf { it is TagEffect && it.tag == tag } }
 
+/** Returns a [Tag] of [T] which may or may not be attached to this component. */
+inline fun <reified T: Tag> UIComponent.getTag(): T? = getTag(T::class.java)
+
+/** Returns a [Tag] of [T] which may or may not be attached to this component. */
+fun <T: Tag> UIComponent.getTag(type: Class<T>): T? {
+    val effect = effects.firstNotNullOfOrNull {
+        effect -> (effect as? TagEffect)?.takeIf { type.isInstance(it.tag) }
+    } ?: return null
+
+    return type.cast(effect.tag)
+}
+
 /**
  * Searches for any children which contain a certain [Tag].
  * See [addTag] for applying a [Tag] to a component.
