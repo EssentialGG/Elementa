@@ -5,7 +5,7 @@ import gg.essential.gradle.util.versionFromBuildIdAndBranch
 plugins {
     kotlin("jvm")
     id("gg.essential.defaults")
-    id("maven-publish")
+    id("gg.essential.defaults.maven-publish")
 }
 
 version = versionFromBuildIdAndBranch()
@@ -29,9 +29,7 @@ kotlin.jvmToolchain {
 
 publishing {
     publications {
-        register<MavenPublication>("maven") {
-            from(components["java"])
-
+        named<MavenPublication>("maven") {
             artifactId = "elementa-unstable-${project.name}"
         }
     }
