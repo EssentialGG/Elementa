@@ -4,10 +4,13 @@ import gg.essential.elementa.state.v2.ReferenceHolder
 import gg.essential.elementa.state.v2.DelegatingMutableState
 import gg.essential.elementa.state.v2.DelegatingState
 import gg.essential.elementa.state.v2.MutableState
+import gg.essential.elementa.state.v2.Observer
 import gg.essential.elementa.state.v2.State
 
 internal interface Impl {
     fun <T> mutableState(value: T): MutableState<T>
+    fun <T> memo(func: Observer.() -> T): State<T>
+    fun effect(referenceHolder: ReferenceHolder, func: Observer.() -> Unit): () -> Unit
 
     fun <T> stateDelegatingTo(state: State<T>): DelegatingState<T>
 

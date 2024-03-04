@@ -6,6 +6,32 @@ import gg.essential.elementa.state.v2.impl.legacy.LegacyImpl
 
 private val impl: Impl = LegacyImpl
 
+interface Observer {
+    /**
+     * Get the current value of the State object and subscribe the observer to be re-evaluated when it changes.
+     */
+    operator fun <T> State<T>.invoke(): T = with(this@Observer) { get() }
+}
+
+object Untracked : Observer
+
+fun <T> memo(func: Observer.() -> T): State<T> = impl.memo(func)
+fun <T> State<T>.memo(): State<T> = memo inner@{ this@memo() }
+
+fun effect(referenceHolder: ReferenceHolder, func: Observer.() -> Unit): () -> Unit = impl.effect(referenceHolder, func)
+
+fun <T> State<T>.onChange(referenceHolder: ReferenceHolder, func: Observer.(value: T) -> Unit): () -> Unit {
+    var first = true
+    return effect(referenceHolder) {
+        val value = this@onChange()
+        if (first) {
+            first = false
+        } else {
+            func(value)
+        }
+    }
+}
+
 /**
  * The base for all Elementa State objects.
  *
@@ -21,9 +47,20 @@ private val impl: Impl = LegacyImpl
  * Another advantage arises when using Kotlin, as States can be delegated to. For more information,
  * see delegation.kt.
  */
-interface State<out T> {
+fun interface State<out T> {
+    /**
+     * Get the current value of this State object and subscribe the observer to be re-evaluated when it changes.
+     */
+    fun Observer.get(): T
+
+    /**
+     * Get the current value of this State object.
+     */
+    fun getUntracked(): T = with(Untracked) { get() }
+
   /** Get the value of this State object */
-  fun get(): T
+  @Deprecated("Calls to this method are not tracked. If this is intentional, use `getUntracked` instead.")
+  fun get(): T = getUntracked()
 
   /**
    * Register a listener which will be called whenever the value of this State object changes
@@ -49,7 +86,15 @@ interface State<out T> {
    *
    * @return A callback which, when invoked, removes this listener
    */
-  fun onSetValue(owner: ReferenceHolder, listener: (T) -> Unit): () -> Unit
+  @Deprecated("If this method is used to update dependent states, use `stateBy` instead.\n" +
+          "Otherwise the State system cannot be guaranteed that downsteam states have a consistent view of upstream" +
+          "values (i.e. so called \"glitches\" may occur) and all dependences will be forced to evaluate eagerly" +
+          "instead of the usual lazy behavior (where states are only updated if there is a consumer).\n" +
+          "\n" +
+          "If this method is used to drive a final effect (e.g. updating some non-State UI property), and you also" +
+          "care about the initial value of the state, consider using `effect` instead.\n" +
+          "If you really only care about changes and not the inital value, use `onChange`.")
+  fun onSetValue(owner: ReferenceHolder, listener: (T) -> Unit): () -> Unit = onChange(owner) { listener(it) }
 }
 
 /* ReferenceHolder is defined in Elementa as:
@@ -122,6 +167,7 @@ fun <T> mutableStateDelegatingTo(state: MutableState<T>): DelegatingMutableState
     impl.mutableStateDelegatingTo(state)
 
 /** Creates a [State] which derives its value in a user-defined way from one or more other states */
+@Deprecated("See `State.onSetValue`. Use `stateBy` instead.")
 fun <T> derivedState(
     initialValue: T,
     builder: (owner: ReferenceHolder, derivedState: MutableState<T>) -> Unit,
@@ -131,6 +177,8 @@ fun <T> derivedState(
 private class ImmutableState<T>(private val value: T) : State<T> {
   override fun get(): T = value
   override fun onSetValue(owner: ReferenceHolder, listener: (T) -> Unit): () -> Unit = {}
+  override fun Observer.get(): T = value
+  override fun getUntracked(): T = value
 }
 
 /** A simple implementation of [ReferenceHolder] */

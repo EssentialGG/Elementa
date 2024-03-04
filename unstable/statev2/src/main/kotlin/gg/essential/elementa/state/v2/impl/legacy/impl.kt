@@ -5,6 +5,7 @@ import gg.essential.elementa.state.v2.ReferenceHolder
 import gg.essential.elementa.state.v2.DelegatingMutableState
 import gg.essential.elementa.state.v2.DelegatingState
 import gg.essential.elementa.state.v2.MutableState
+import gg.essential.elementa.state.v2.Observer
 import gg.essential.elementa.state.v2.State
 import gg.essential.elementa.state.v2.impl.Impl
 import java.lang.ref.ReferenceQueue
@@ -13,6 +14,50 @@ import java.lang.ref.WeakReference
 /** Legacy implementation based around `onSetValue` which makes no attempt at being glitch-free. */
 internal object LegacyImpl : Impl {
     override fun <T> mutableState(value: T): MutableState<T> = BasicState(value)
+
+    override fun <T> memo(func: Observer.() -> T): State<T> {
+        val subscribed = mutableMapOf<State<*>, () -> Unit>()
+        val observed = mutableSetOf<State<*>>()
+        val scope = ObserverImpl(observed)
+
+        return derivedState(initialValue = func(scope)) { owner, derivedState ->
+            fun updateSubscriptions() {
+                for (state in observed) {
+                    if (state in subscribed) continue
+
+                    subscribed[state] = state.onSetValue(owner) {
+                        val newValue = func(scope)
+                        updateSubscriptions()
+                        derivedState.set(newValue)
+                    }
+                }
+
+                subscribed.entries.removeAll { (state, unregister) ->
+                    if (state !in observed) {
+                        unregister()
+                        true
+                    } else {
+                        false
+                    }
+                }
+
+                observed.clear()
+            }
+            updateSubscriptions()
+        }
+    }
+
+    override fun effect(referenceHolder: ReferenceHolder, func: Observer.() -> Unit): () -> Unit {
+        var disposed = false
+        val release = referenceHolder.holdOnto(memo {
+            if (disposed) return@memo
+            func()
+        })
+        return {
+            disposed = true
+            release()
+        }
+    }
 
     override fun <T> stateDelegatingTo(state: State<T>): DelegatingState<T> = DelegatingStateImpl(state)
 
@@ -23,6 +68,8 @@ internal object LegacyImpl : Impl {
         builder: (owner: ReferenceHolder, derivedState: MutableState<T>) -> Unit
     ): State<T> = ReferenceHoldingBasicState(initialValue).apply { builder(this, this) }
 }
+
+private class ObserverImpl(val observed: MutableSet<State<*>>) : Observer
 
 /** A simple implementation of [MutableState], containing only a backing field */
 private open class BasicState<T>(private var valueBacker: T) : MutableState<T> {
@@ -41,7 +88,12 @@ private open class BasicState<T>(private var valueBacker: T) : MutableState<T> {
      */
     private var liveSize = 0
 
-    override fun get() = valueBacker
+    override fun Observer.get(): T {
+        (this@get as? ObserverImpl)?.observed?.add(this@BasicState)
+        return getUntracked()
+    }
+
+    override fun getUntracked(): T = valueBacker
 
     override fun onSetValue(owner: ReferenceHolder, listener: (T) -> Unit): () -> Unit {
         cleanupStaleListeners()
@@ -110,7 +162,12 @@ private open class DelegatingStateBase<T, S : State<T>>(protected var delegate: 
     private val referenceQueue = ReferenceQueue<Any>()
     private var listeners = mutableListOf<ListenerEntry<T>>()
 
-    override fun get(): T = delegate.get()
+    override fun Observer.get(): T {
+        (this@get as? ObserverImpl)?.observed?.add(this@DelegatingStateBase)
+        return getUntracked()
+    }
+
+    override fun getUntracked(): T = delegate.get()
 
     override fun onSetValue(owner: ReferenceHolder, listener: (T) -> Unit): () -> Unit {
         cleanupStaleListeners()
