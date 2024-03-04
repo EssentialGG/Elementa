@@ -7,20 +7,31 @@ typealias ListState<T> = State<TrackedList<T>>
 typealias MutableListState<T> = MutableState<MutableTrackedList<T>>
 
 fun <T> State<List<T>>.toListState(): ListState<T> {
-    return derivedState(MutableTrackedList(get().toMutableList())) { owner, derivedState ->
-        onSetValue(owner) { newList ->
-            derivedState.set { it.applyChanges(TrackedList.Change.estimate(it, newList)) }
-        }
+    var oldList = MutableTrackedList<T>()
+    return memo {
+        val newList = get()
+        oldList.applyChanges(TrackedList.Change.estimate(oldList, newList)).also { oldList = it }
     }
 }
 
 fun <T, U> ListState<T>.mapChanges(init: (TrackedList<T>) -> U, update: (old: U, changes: Sequence<TrackedList.Change<T>>) -> U): State<U> {
-    var oldList = get()
-    return derivedState(init(oldList)) { owner, derivedState ->
-        onSetValue(owner) { newList ->
-            val changes = newList.getChangesSince(oldList).also { oldList = newList }
-            derivedState.set { update(it, changes) }
-        }
+    var trackedList: TrackedList<T>? = null
+    var trackedValue: U? = null
+    return memo {
+        val newList = get()
+        val oldList = trackedList
+        val newValue =
+            if (oldList == null) {
+                init(newList)
+            } else {
+                @Suppress("UNCHECKED_CAST")
+                update(trackedValue as U, newList.getChangesSince(oldList))
+            }
+
+        trackedList = newList
+        trackedValue = newValue
+
+        newValue
     }
 }
 

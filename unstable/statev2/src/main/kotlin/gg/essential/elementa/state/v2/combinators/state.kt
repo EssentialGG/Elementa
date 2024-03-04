@@ -2,13 +2,11 @@ package gg.essential.elementa.state.v2.combinators
 
 import gg.essential.elementa.state.v2.MutableState
 import gg.essential.elementa.state.v2.State
-import gg.essential.elementa.state.v2.derivedState
+import gg.essential.elementa.state.v2.memo
 
 /** Maps this state into a new state */
 fun <T, U> State<T>.map(mapper: (T) -> U): State<U> {
-    return derivedState(mapper(get())) { owner, derivedState ->
-        onSetValue(owner) { derivedState.set(mapper(it)) }
-    }
+    return memo { mapper(get()) }
 }
 
 /** Maps this mutable state into a new mutable state. */
@@ -25,8 +23,5 @@ fun <T, U> State<T>.zip(other: State<U>): State<Pair<T, U>> = zip(other, ::Pair)
 
 /** Zips this state with another state using [mapper] */
 fun <T, U, V> State<T>.zip(other: State<U>, mapper: (T, U) -> V): State<V> {
-    return derivedState(mapper(this.get(), other.get())) { owner, derivedState ->
-        this.onSetValue(owner) { derivedState.set(mapper(it, other.get())) }
-        other.onSetValue(owner) { derivedState.set(mapper(this.get(), it)) }
-    }
+    return memo { mapper(this@zip(), other()) }
 }

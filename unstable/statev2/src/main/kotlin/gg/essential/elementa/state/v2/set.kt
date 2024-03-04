@@ -6,20 +6,31 @@ typealias SetState<T> = State<TrackedSet<T>>
 typealias MutableSetState<T> = MutableState<MutableTrackedSet<T>>
 
 fun <T> State<Set<T>>.toSetState(): SetState<T> {
-    return derivedState(MutableTrackedSet(get().toMutableSet())) { owner, derivedState ->
-        onSetValue(owner) { newSet ->
-            derivedState.set { it.applyChanges(TrackedSet.Change.estimate(it, newSet)) }
-        }
+    var oldSet = MutableTrackedSet<T>()
+    return memo {
+        val newSet = get()
+        oldSet.applyChanges(TrackedSet.Change.estimate(oldSet, newSet)).also { oldSet = it }
     }
 }
 
 fun <T, U> SetState<T>.mapChanges(init: (TrackedSet<T>) -> U, update: (old: U, changes: Sequence<TrackedSet.Change<T>>) -> U): State<U> {
-    var oldSet = get()
-    return derivedState(init(oldSet)) { owner, derivedState ->
-        onSetValue(owner) { newSet ->
-            val changes = newSet.getChangesSince(oldSet).also { oldSet = newSet }
-            derivedState.set { update(it, changes) }
-        }
+    var trackedSet: TrackedSet<T>? = null
+    var trackedValue: U? = null
+    return memo {
+        val newSet = get()
+        val oldSet = trackedSet
+        val newValue =
+            if (oldSet == null) {
+                init(newSet)
+            } else {
+                @Suppress("UNCHECKED_CAST")
+                update(trackedValue as U, newSet.getChangesSince(oldSet))
+            }
+
+        trackedSet = newSet
+        trackedValue = newValue
+
+        newValue
     }
 }
 
