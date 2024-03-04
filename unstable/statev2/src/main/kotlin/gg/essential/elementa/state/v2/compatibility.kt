@@ -1,6 +1,7 @@
 package gg.essential.elementa.state.v2
 
 import gg.essential.elementa.state.v2.ReferenceHolder
+import java.util.function.Consumer
 import gg.essential.elementa.state.State as V1State
 
 private class V2AsV1State<T>(private val v2State: State<T>, owner: ReferenceHolder) : V1State<T>() {
@@ -22,17 +23,6 @@ private class V2AsV1State<T>(private val v2State: State<T>, owner: ReferenceHold
   }
 }
 
-private class V1AsV2State<T>(private val v1State: V1State<T>) : MutableState<T> {
-  override fun get(): T =
-      v1State.get()
-
-  override fun onSetValue(owner: ReferenceHolder, listener: (T) -> Unit): () -> Unit =
-      v1State.onSetValue(listener)
-
-  override fun set(mapper: (T) -> T) =
-      v1State.set(mapper)
-}
-
 /**
  * Converts this state into a v1 [State][V1State].
  *
@@ -49,11 +39,30 @@ fun <T> State<T>.toV1(owner: ReferenceHolder): V1State<T> = V2AsV1State(this, ow
 /**
  * Converts this state into a v2 [MutableState].
  *
- * Note that unlike regular v2 state, listeners registered on this state will not by default be automatically
- * garbage-collected unless the entire v1 state itself can be garbage collected.
+ * The returned state is registered as a listener on the v1 state and as such will live as long as the v1 state.
  * This matches v1 state behavior. If this is not desired, stop using v1 state.
  */
-fun <T> V1State<T>.toV2(): MutableState<T> = V1AsV2State(this)
+fun <T> V1State<T>.toV2(): MutableState<T> {
+  val referenceHolder = ReferenceHolderImpl()
+  val v1 = this
+  val v2 = mutableStateOf(get())
+
+  v2.onSetValue(referenceHolder) { value ->
+    if (v1.get() != value) {
+      v1.set(value)
+    }
+  }
+  v1.onSetValue(object : Consumer<T> {
+    @Suppress("unused") // keep this alive for as long as the v1 state
+    val referenceHolder = referenceHolder
+
+    override fun accept(value: T) {
+      v2.set(value)
+    }
+  })
+
+  return v2
+}
 
 /**
  * Returns a delegating state with internal mutability. That is, the value of the returned state generally follows the
