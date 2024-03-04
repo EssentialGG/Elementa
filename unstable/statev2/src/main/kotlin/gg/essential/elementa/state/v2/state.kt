@@ -2,9 +2,9 @@ package gg.essential.elementa.state.v2
 
 import gg.essential.elementa.state.v2.ReferenceHolder
 import gg.essential.elementa.state.v2.impl.Impl
-import gg.essential.elementa.state.v2.impl.legacy.LegacyImpl
+import gg.essential.elementa.state.v2.impl.simple.MarkThenPullImpl
 
-private val impl: Impl = LegacyImpl
+private val impl: Impl = MarkThenPullImpl
 
 interface Observer {
     /**
