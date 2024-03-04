@@ -118,10 +118,10 @@ fun <T, U> ListState<T>.mapList(mapper: (List<T>) -> List<U>): ListState<U> =
     map(mapper).toListState()
 
 fun <T, U, V> ListState<T>.zipWithEachElement(otherState: State<U>, transform: (T, U) -> V) =
-    zip(otherState).map { (list, other) -> list.map { transform(it, other) } }.toListState()
+    zip(otherState) { list, other -> list.map { transform(it, other) } }.toListState()
 
 fun <T, U, V> ListState<T>.zipElements(otherList: ListState<U>, transform: (T, U) -> V) =
-    zip(otherList).map { (a, b) -> a.zip(b, transform) }.toListState()
+    zip(otherList) { a, b -> a.zip(b, transform) }.toListState()
 
 fun <T, U> ListState<T>.mapEachNotNull(mapper: (T) -> U?) = mapList { it.mapNotNull(mapper) }
 

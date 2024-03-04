@@ -4,10 +4,10 @@ import gg.essential.elementa.state.v2.MutableState
 import gg.essential.elementa.state.v2.State
 
 infix fun State<Boolean>.and(other: State<Boolean>) =
-    zip(other).map { (a, b) -> a && b }
+    zip(other) { a, b -> a && b }
 
 infix fun State<Boolean>.or(other: State<Boolean>) =
-    zip(other).map { (a, b) -> a || b }
+    zip(other) { a, b -> a || b }
 
 operator fun State<Boolean>.not() = map { !it }
 

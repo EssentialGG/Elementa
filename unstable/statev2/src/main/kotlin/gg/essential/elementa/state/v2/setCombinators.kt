@@ -71,7 +71,7 @@ fun <T, U> SetState<T>.mapSet(mapper: (Set<T>) -> Set<U>): SetState<U> =
     map(mapper).toSetState()
 
 fun <T, U, V> SetState<T>.zipWithEachElement(otherState: State<U>, transform: (T, U) -> V) =
-    zip(otherState).map { (set, other) -> set.mapTo(mutableSetOf()) { transform(it, other) } }.toSetState()
+    zip(otherState) { set, other -> set.mapTo(mutableSetOf()) { transform(it, other) } }.toSetState()
 
 fun <T, U : Any> SetState<T>.mapEachNotNull(mapper: (T) -> U?) = mapSet { it.mapNotNullTo(mutableSetOf(), mapper) }
 
