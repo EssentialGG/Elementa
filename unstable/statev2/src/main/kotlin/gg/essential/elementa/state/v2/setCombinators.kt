@@ -34,13 +34,14 @@ fun <T> SetState<T>.filter(filter: (T) -> Boolean): SetState<T> =
 fun <T, U> SetState<T>.mapEach(mapper: (T) -> U): SetState<U> {
     val mappedValues = mutableMapOf<T, U>()
     val mappedCount = mutableMapOf<U, Int>()
-    val init = MutableTrackedSet(get().mapTo(mutableSetOf()) { value ->
-        mapper(value).also { mappedValue ->
-            mappedValues[value] = mappedValue
-            mappedCount.compute(mappedValue) { _, i -> (i ?: 0) + 1}
-        }
-    })
-    return mapChange({ init }) { list, change ->
+    return mapChange({ set ->
+        MutableTrackedSet(set.mapTo(mutableSetOf()) { value ->
+            mapper(value).also { mappedValue ->
+                mappedValues[value] = mappedValue
+                mappedCount.compute(mappedValue) { _, i -> (i ?: 0) + 1}
+            }
+        })
+    }) { list, change ->
         when (change) {
             is TrackedSet.Add -> {
                 val mappedValue = mapper(change.element)
