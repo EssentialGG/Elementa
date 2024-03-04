@@ -21,6 +21,8 @@ import java.lang.ref.WeakReference
  * In particular if we have a large mutable state (like a list) which is then split off into many smaller ones (like its
  * items), all effects attached to all of the smaller nodes need to be visited, even if only a single item was modified
  * in the list.
+ *
+ * For a more performant algorithm, see [gg.essential.elementa.state.v2.impl.markpushpull.MarkThenPushAndPullImpl].
  */
 internal object MarkThenPullImpl : Impl {
     override fun <T> mutableState(value: T): MutableState<T> {

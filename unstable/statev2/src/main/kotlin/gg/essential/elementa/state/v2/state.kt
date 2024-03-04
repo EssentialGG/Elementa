@@ -2,9 +2,9 @@ package gg.essential.elementa.state.v2
 
 import gg.essential.elementa.state.v2.ReferenceHolder
 import gg.essential.elementa.state.v2.impl.Impl
-import gg.essential.elementa.state.v2.impl.simple.MarkThenPullImpl
+import gg.essential.elementa.state.v2.impl.basic.MarkThenPushAndPullImpl
 
-private val impl: Impl = MarkThenPullImpl
+private val impl: Impl = MarkThenPushAndPullImpl
 
 interface Observer {
     /**

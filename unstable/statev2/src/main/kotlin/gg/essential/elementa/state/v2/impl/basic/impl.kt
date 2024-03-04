@@ -9,20 +9,29 @@ import java.lang.ref.ReferenceQueue
 import java.lang.ref.WeakReference
 
 /**
- * Minimal mark-then-pull-based node graph implementation.
+ * Semi-lazy node graph implementation.
  *
- * This implementation operates in two simple phases:
- * - The first phase pushes the may-be-dirty state through the graph to all potentially affected nodes
- * - The second phase goes through all potentially affected effect nodes and recursively checks if they need to be
- *   updated.
+ * The actual code is extremely similar to [gg.essential.elementa.state.v2.impl.minimal.MarkThenPullImpl] (literally
+ * only a single line difference), however the mechanism by which it functions is not.
+ * The code has been duplicated, so we continue to have a simple reference implementation even when this implementation
+ * evolves further.
  *
- * This does make for a fully correct reference implementation.
- * However it always needs to visit all potentially affected effects on every update.
- * In particular if we have a large mutable state (like a list) which is then split off into many smaller ones (like its
- * items), all effects attached to all of the smaller nodes need to be visited, even if only a single item was modified
- * in the list.
+ * This implementation operates in three phases:
+ * - The first phase propagates a may-be-dirty state to all potentially affected nodes
+ * - The second phase goes through all dirty nodes and run the third phase for each of them
+ * - The phase phase checks if the given node needs to be updated, recursively. And if so, updates it, marks all its
+ *   direct dependents as dirty (to be processed by the second phase), and then returns to the second phase.
+ *
+ * Unlike [gg.essential.elementa.state.v2.impl.minimal.MarkThenPullImpl], this means that sub-graphs which are
+ * potentially affected but whose dependencies have not actually changed, will not be visited (more than once per
+ * them actually changing; as opposed to having to re-visit every time they are potentially affected).
+ * That does mean that this implementation will in exchange potentially visit intermediate nodes which do not actually
+ * have any effects attached to them any more (hence it only being "semi lazy").
+ * However, in practice, non-affected nodes usually vastly outnumber dead intermediate nodes (especially because
+ * those are usually garbage collected together with the respective effects that used them) by one to two orders of
+ * magnitude, making this well worth it.
  */
-internal object MarkThenPullImpl : Impl {
+internal object MarkThenPushAndPullImpl : Impl {
     override fun <T> mutableState(value: T): MutableState<T> {
         val node = Node(NodeKind.Mutable, NodeState.Clean, UNREACHABLE, value)
         return object : State<T> by node, MutableState<T> {
@@ -141,7 +150,7 @@ private class Node<T>(
             return
         }
 
-        if (kind == NodeKind.Effect && oldState == NodeState.Clean) {
+        if (newState == NodeState.Dirty) {
             update.queueNode(this)
         }
 
