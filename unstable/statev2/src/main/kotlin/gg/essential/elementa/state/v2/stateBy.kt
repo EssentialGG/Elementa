@@ -5,7 +5,7 @@ package gg.essential.elementa.state.v2
  * block via [StateByScope.invoke]. These accesses are tracked and the block is automatically re-evaluated whenever any
  * one of them changes.
  */
-@Deprecated("Use `memo` (result is cached) or `State` lambda (result is not cached)", level = DeprecationLevel.WARNING)
+@Deprecated("Use `memo` (result is cached) or `State` lambda (result is not cached)")
 fun <T> stateBy(block: StateByScope.() -> T): State<T> {
     return memo {
         val scope = object : StateByScope {
@@ -17,7 +17,7 @@ fun <T> stateBy(block: StateByScope.() -> T): State<T> {
     }
 }
 
-@Deprecated("Superseded by `Observer`", level = DeprecationLevel.WARNING)
+@Deprecated("Superseded by `Observer`")
 interface StateByScope {
     operator fun <T> State<T>.invoke(): T
 }
