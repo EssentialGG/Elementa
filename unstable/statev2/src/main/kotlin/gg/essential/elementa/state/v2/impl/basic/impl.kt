@@ -97,6 +97,11 @@ private enum class NodeState {
      * For [NodeKind.Effect], the [Node.func] needs to be re-run.
      */
     Dirty,
+
+    /**
+     * The node has been disposed off and should no longer be updated.
+     */
+    Dead,
 }
 
 private class Node<T>(
@@ -192,6 +197,10 @@ private class Node<T>(
         if (state == NodeState.Dirty) {
             val newValue = func(this)
 
+            if (state == NodeState.Dead) {
+                return
+            }
+
             for (i in dependencies.indices.reversed()) {
                 val dep = dependencies[i]
                 if (dep !in observed) {
@@ -224,6 +233,8 @@ private class Node<T>(
             dep.removeDependent(this)
         }
         dependencies.clear()
+
+        state = NodeState.Dead
     }
 
     private var referenceQueueField: ReferenceQueue<Node<*>>? = null
