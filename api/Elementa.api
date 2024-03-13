@@ -747,6 +747,7 @@ public final class gg/essential/elementa/components/Window : gg/essential/elemen
 	public final fun getAnimationFPS ()I
 	public fun getBottom ()F
 	public final fun getFocusedComponent ()Lgg/essential/elementa/UIComponent;
+	public final fun getHasErrored ()Z
 	public fun getHeight ()F
 	public final fun getHoveredFloatingComponent ()Lgg/essential/elementa/UIComponent;
 	public fun getLeft ()F
