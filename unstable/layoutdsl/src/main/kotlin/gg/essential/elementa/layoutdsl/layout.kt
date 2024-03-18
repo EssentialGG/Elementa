@@ -85,12 +85,12 @@ class LayoutScope(
 
     /** Makes available to the inner scope the value of the given [state]. */
     fun <T> bind(state: State<T>, cache: Boolean = false, block: LayoutScope.(T) -> Unit) {
-        forEach(ListState.from(state.map { listOf(it) }), cache) { block(it) }
+        bind(state.toV2(), cache, block)
     }
 
     /** Makes available to the inner scope the value of the given [state]. */
     fun <T> bind(state: StateV2<T>, cache: Boolean = false, block: LayoutScope.(T) -> Unit) {
-        bind(state.toV1(component), cache, block)
+        forEach({ trackedListOf(state()) }, cache) { block(it) }
     }
 
     /** Makes available to the inner scope the value derived from the given [stateBlock]. */
