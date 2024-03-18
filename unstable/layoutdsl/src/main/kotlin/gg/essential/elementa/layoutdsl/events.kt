@@ -12,16 +12,6 @@ import gg.essential.elementa.util.removeTag
 import gg.essential.elementa.state.State as StateV1
 import gg.essential.elementa.state.v2.State as StateV2
 
-fun Modifier.onMouseEnter(callback: UIComponent.() -> Unit) = this then {
-    onMouseEnter(callback)
-    return@then { mouseEnterListeners.remove(callback) }
-}
-
-fun Modifier.onMouseLeave(callback: UIComponent.() -> Unit) = this then {
-    onMouseLeave(callback)
-    return@then { mouseLeaveListeners.remove(callback) }
-}
-
 inline fun Modifier.onLeftClick(crossinline callback: UIComponent.() -> Unit) = this then {
     val listener: UIComponent.(event: UIClickEvent) -> Unit = {
         if (it.mouseButton == 0) {
@@ -30,13 +20,6 @@ inline fun Modifier.onLeftClick(crossinline callback: UIComponent.() -> Unit) = 
     }
     onMouseClick(listener)
     return@then { mouseClickListeners.remove(listener) }
-}
-
-fun Modifier.whenMouseEntered(hoverModifier: Modifier): Modifier {
-    lateinit var reverse: () -> Unit
-    return this
-        .onMouseEnter { reverse = hoverModifier.applyToComponent(this) }
-        .onMouseLeave { reverse() }
 }
 
 /** Declare this component and its children to be in a hover scope. See [makeHoverScope]. */
