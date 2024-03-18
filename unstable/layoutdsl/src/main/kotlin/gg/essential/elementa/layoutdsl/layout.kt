@@ -7,6 +7,9 @@ import gg.essential.elementa.state.v2.ReferenceHolder
 import gg.essential.elementa.common.ListState
 import gg.essential.elementa.common.not
 import gg.essential.elementa.state.v2.*
+import gg.essential.elementa.state.v2.collections.trackedListOf
+import gg.essential.elementa.state.v2.combinators.map
+import gg.essential.elementa.state.v2.combinators.not
 import gg.essential.elementa.util.hoveredState
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
@@ -49,21 +52,21 @@ class LayoutScope(
 
     @Suppress("FunctionName")
     fun if_(state: State<Boolean>, cache: Boolean = true, block: LayoutScope.() -> Unit): IfDsl {
-        forEach(ListState.from(state.map { if (it) listOf(Unit) else emptyList() }), cache) { block() }
-        return IfDsl({ !state }, cache)
+        return if_(state.toV2(), cache, block)
     }
 
     fun if_(state: StateV2<Boolean>, cache: Boolean = true, block: LayoutScope.() -> Unit): IfDsl {
-        return if_(state.toV1(component), cache, block)
+        forEach({ if (state()) trackedListOf(Unit) else trackedListOf() }, cache) { block() }
+        return IfDsl({ !state() }, cache)
     }
 
     fun <T> ifNotNull(state: State<T?>, cache: Boolean = false, block: LayoutScope.(T) -> Unit): IfDsl {
-        forEach(ListState.from(state.map { listOfNotNull(it) }), cache) { block(it) }
-        return IfDsl({ state.map { it == null } }, true)
+        return ifNotNull(state.toV2(), cache, block)
     }
 
     fun <T> ifNotNull(state: StateV2<T?>, cache: Boolean = false, block: LayoutScope.(T) -> Unit): IfDsl {
-        return ifNotNull(state.toV1(component), cache, block)
+        forEach({ state()?.let { trackedListOf(it) } ?: trackedListOf() }, cache) { block(it) }
+        return IfDsl({ state() == null }, true)
     }
 
     fun if_(condition: StateByScope.() -> Boolean, cache: Boolean = false, block: LayoutScope.() -> Unit): IfDsl {
@@ -74,10 +77,10 @@ class LayoutScope(
         return ifNotNull(stateBy(stateBlock), cache, block)
     }
 
-    class IfDsl(internal val elseState: () -> State<Boolean>, internal var cache: Boolean)
+    class IfDsl(internal val elseState: StateV2<Boolean>, internal var cache: Boolean)
 
     infix fun IfDsl.`else`(block: LayoutScope.() -> Unit) {
-        if_(elseState(), cache, block)
+        if_(elseState, cache, block)
     }
 
     /** Makes available to the inner scope the value of the given [state]. */
