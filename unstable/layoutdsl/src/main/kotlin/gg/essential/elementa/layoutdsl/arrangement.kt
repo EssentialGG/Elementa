@@ -9,8 +9,23 @@ import gg.essential.elementa.utils.ObservableListEvent
 import gg.essential.elementa.utils.ObservableRemoveEvent
 import gg.essential.elementa.utils.roundToRealPixels
 
-abstract class Arrangement {
-    internal lateinit var mainAxis: Axis
+interface Arrangement {
+    fun initialize(component: UIComponent, axis: Axis)
+
+    companion object {
+        val SpaceAround: Arrangement get() = SpaceAroundArrangement.Factory
+        val SpaceBetween: Arrangement get() = SpaceBetweenArrangement.Factory
+        val SpaceEvenly: Arrangement get() = SpaceEvenlyArrangement.Factory
+
+        fun spacedBy(): Arrangement = SpacedArrangement.DefaultFactory
+        fun spacedBy(spacing: Float = 0f, float: FloatPosition = FloatPosition.CENTER): Arrangement = SpacedArrangement.Factory(spacing, float)
+        fun equalWeight(spacing: Float = 0f): Arrangement = EqualWeightArrangement.Factory(spacing)
+    }
+}
+
+abstract class ArrangementInstance(
+    val mainAxis: Axis,
+) {
     internal var recalculatePositions = true
     internal var recalculateSizes = true
 
@@ -86,21 +101,13 @@ abstract class Arrangement {
         Axis.HORIZONTAL -> getTop()
         Axis.VERTICAL -> getLeft()
     }
-
-    companion object {
-        val SpaceAround: Arrangement get() = SpaceAroundArrangement()
-        val SpaceBetween: Arrangement get() = SpaceBetweenArrangement()
-        val SpaceEvenly: Arrangement get() = SpaceEvenlyArrangement()
-
-        fun spacedBy(spacing: Float = 0f, float: FloatPosition = FloatPosition.CENTER): Arrangement = SpacedArrangement(spacing, float)
-        fun equalWeight(spacing: Float = 0f): Arrangement = EqualWeightArrangement(spacing)
-    }
 }
 
 private open class SpacedArrangement(
+    axis: Axis,
     protected val spacing: Float = 0f,
     protected val floatPosition: FloatPosition = FloatPosition.CENTER,
-) : Arrangement() {
+) : ArrangementInstance(axis) {
     open fun getSpacing(parent: UIComponent) = spacing
 
     open fun getStartOffset(parent: UIComponent, spacing: Float): Float {
@@ -124,15 +131,29 @@ private open class SpacedArrangement(
     override fun getPadding(child: UIComponent): Float {
         return if (child === boundComponent.children.last()) 0f else getSpacing(boundComponent).roundToRealPixels()
     }
+
+    data class Factory(val spacing: Float, val floatPosition: FloatPosition) : Arrangement {
+        override fun initialize(component: UIComponent, axis: Axis) {
+            SpacedArrangement(axis, spacing, floatPosition).initialize(component)
+        }
+    }
+
+    object DefaultFactory : Arrangement by Factory(0f, FloatPosition.CENTER)
 }
 
-private class SpaceBetweenArrangement : SpacedArrangement() {
+private class SpaceBetweenArrangement(axis: Axis) : SpacedArrangement(axis) {
     override fun getSpacing(parent: UIComponent): Float {
         return (parent.getMainAxisSize() - parent.children.sumOf { it.getMainAxisSize() }) / (parent.children.size - 1)
     }
+
+    object Factory : Arrangement {
+        override fun initialize(component: UIComponent, axis: Axis) {
+            SpaceBetweenArrangement(axis).initialize(component)
+        }
+    }
 }
 
-private class SpaceEvenlyArrangement : SpacedArrangement() {
+private class SpaceEvenlyArrangement(axis: Axis) : SpacedArrangement(axis) {
     override fun getSpacing(parent: UIComponent): Float {
         return (parent.getMainAxisSize() - parent.children.sumOf { it.getMainAxisSize() }) / (parent.children.size + 1)
     }
@@ -140,9 +161,15 @@ private class SpaceEvenlyArrangement : SpacedArrangement() {
     override fun getStartOffset(parent: UIComponent, spacing: Float): Float {
         return spacing
     }
+
+    object Factory : Arrangement {
+        override fun initialize(component: UIComponent, axis: Axis) {
+            SpaceEvenlyArrangement(axis).initialize(component)
+        }
+    }
 }
 
-private class SpaceAroundArrangement : SpacedArrangement() {
+private class SpaceAroundArrangement(axis: Axis) : SpacedArrangement(axis) {
     override fun getSpacing(parent: UIComponent): Float {
         return (parent.getMainAxisSize() - parent.children.sumOf { it.getMainAxisSize() }) / parent.children.size
     }
@@ -150,9 +177,15 @@ private class SpaceAroundArrangement : SpacedArrangement() {
     override fun getStartOffset(parent: UIComponent, spacing: Float): Float {
         return spacing / 2
     }
+
+    object Factory : Arrangement {
+        override fun initialize(component: UIComponent, axis: Axis) {
+            SpaceAroundArrangement(axis).initialize(component)
+        }
+    }
 }
 
-private class EqualWeightArrangement(spacing: Float) : SpacedArrangement(spacing, FloatPosition.CENTER) {
+private class EqualWeightArrangement(axis: Axis, spacing: Float) : SpacedArrangement(axis, spacing, FloatPosition.CENTER) {
     override fun conformChild(child: UIComponent) {
         super.conformChild(child)
         when (mainAxis) {
@@ -168,9 +201,15 @@ private class EqualWeightArrangement(spacing: Float) : SpacedArrangement(spacing
             lastSizeValues[it] = childSize
         }
     }
+
+    data class Factory(val spacing: Float) : Arrangement {
+        override fun initialize(component: UIComponent, axis: Axis) {
+            EqualWeightArrangement(axis, spacing).initialize(component)
+        }
+    }
 }
 
-private class ArrangementControlledPositionConstraint(private val arrangement: Arrangement) : PositionConstraint, PaddingConstraint {
+private class ArrangementControlledPositionConstraint(private val arrangement: ArrangementInstance) : PositionConstraint, PaddingConstraint {
     override var cachedValue = 0f
     override var recalculate = true
         set(value) {
@@ -203,7 +242,7 @@ private class ArrangementControlledPositionConstraint(private val arrangement: A
     }
 }
 
-private class ArrangementControlledSizeConstraint(private val arrangement: Arrangement) : SizeConstraint {
+private class ArrangementControlledSizeConstraint(private val arrangement: ArrangementInstance) : SizeConstraint {
     override var cachedValue = 0f
     override var recalculate = true
         set(value) {

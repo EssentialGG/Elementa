@@ -58,8 +58,7 @@ fun LayoutScope.row(modifier: Modifier, horizontalArrangement: Arrangement = Arr
     rowContainer.addChildModifier(Modifier.alignVertical(verticalAlignment))
 
     rowContainer(modifier = modifier, block = block)
-    horizontalArrangement.mainAxis = Axis.HORIZONTAL
-    horizontalArrangement.initialize(rowContainer)
+    horizontalArrangement.initialize(rowContainer, Axis.HORIZONTAL)
 
     return rowContainer
 }
@@ -81,8 +80,7 @@ fun LayoutScope.column(modifier: Modifier, verticalArrangement: Arrangement = Ar
     columnContainer.addChildModifier(Modifier.alignHorizontal(horizontalAlignment))
 
     columnContainer(modifier = modifier, block = block)
-    verticalArrangement.mainAxis = Axis.VERTICAL
-    verticalArrangement.initialize(columnContainer)
+    verticalArrangement.initialize(columnContainer, Axis.VERTICAL)
 
     return columnContainer
 }

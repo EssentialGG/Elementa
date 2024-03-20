@@ -298,8 +298,7 @@ fun UIComponent.layoutAsRow(modifier: Modifier, horizontalArrangement: Arrangeme
     }
     addChildModifier(Modifier.alignVertical(verticalAlignment))
     layout(modifier, block)
-    horizontalArrangement.mainAxis = Axis.HORIZONTAL
-    horizontalArrangement.initialize(this)
+    horizontalArrangement.initialize(this, Axis.HORIZONTAL)
     return this
 }
 
@@ -316,8 +315,7 @@ fun UIComponent.layoutAsColumn(modifier: Modifier, verticalArrangement: Arrangem
     }
     addChildModifier(Modifier.alignHorizontal(horizontalAlignment))
     layout(modifier, block)
-    verticalArrangement.mainAxis = Axis.VERTICAL
-    verticalArrangement.initialize(this)
+    verticalArrangement.initialize(this, Axis.VERTICAL)
     return this
 }
 
