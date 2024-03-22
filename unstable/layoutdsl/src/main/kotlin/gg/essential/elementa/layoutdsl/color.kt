@@ -15,14 +15,12 @@ import gg.essential.elementa.util.hasWindow
 import java.awt.Color
 import gg.essential.elementa.state.v2.State as StateV2
 
-fun Modifier.color(color: Color) = color(color.toConstraint())
+fun Modifier.color(color: Color) = this then BasicColorModifier { color.toConstraint() }
 
 @Deprecated("Using StateV1 is discouraged, use StateV2 instead")
-fun Modifier.color(color: State<Color>) = color(color.toConstraint())
+fun Modifier.color(color: State<Color>) = this then BasicColorModifier { color.toConstraint() }
 
-fun Modifier.color(color: ColorConstraint) = this then BasicColorModifier { color }
-
-fun Modifier.color(color: StateV2<Color>) = color(color.toConstraint())
+fun Modifier.color(color: StateV2<Color>) = this then BasicColorModifier { color.toConstraint() }
 
 fun Modifier.hoverColor(color: Color, duration: Float = 0f) = hoverColor(BasicState(color), duration)
 
