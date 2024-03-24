@@ -46,6 +46,46 @@ modImplementation(include("gg.essential:elementa-$mcVersion-$mcPlatform:$buildNu
 ```
 </details>
 
+### 1.18+
+For versions above 1.18, you need to exclude UniversalCraft from Elementa and include the appropriate version of UniversalCraft.
+
+This will look something like this
+
+<details><summary>Forge</summary>
+
+Groovy
+```groovy
+implementation("gg.essential:elementa-$mcVersion-$mcPlatform:$buildNumber") {
+    exclude group: "gg.essential", module: "universalcraft-1.18.1-$mcPlatform"
+}
+implementation("gg.essential:universalcraft-$mcVersion-$mcPlatform:$buildNumber")
+```
+Kotlin
+```kotlin
+implementation("gg.essential:elementa-$mcVersion-$mcPlatform:$buildNumber") {
+    exclude(group= "gg.essential", module= "universalcraft-1.18.1-$mcPlatform")
+}
+implementation("gg.essential:universalcraft-$mcVersion-$mcPlatform:$buildNumber")
+```
+</details>
+<details><summary>Fabric</summary>
+
+Groovy
+```groovy
+modImplementation(include("gg.essential:elementa-$mcVersion-$mcPlatform:$buildNumber")) {
+    exclude group: "gg.essential", module: "universalcraft-1.18.1-$mcPlatform"
+}
+modImplementation(include("gg.essential:universalcraft-$mcVersion-$mcPlatform:$buildNumber"))
+```
+Kotlin
+```kotlin
+modImplementation(include("gg.essential:elementa-$mcVersion-$mcPlatform:$buildNumber")!!) {
+    exclude(group= "gg.essential", module= "universalcraft-1.18.1-$mcPlatform")
+}
+modImplementation(include("gg.essential:universalcraft-$mcVersion-$mcPlatform:$buildNumber")!!)
+```
+</details>
+
 ### Build Reference
 <details><summary>Build Reference</summary>
     <table>
