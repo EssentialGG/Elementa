@@ -181,6 +181,7 @@ You'll then want to relocate Elementa to your own package to avoid breaking othe
 ```groovy
 shadowJar {
     archiveClassifier.set(null)
+    mergeServiceFiles() // This allows elementa's platform SPI to work
     relocate("gg.essential.elementa", "your.package.elementa")
     // elementa dependencies
     relocate("gg.essential.universalcraft", "your.package.universalcraft")
