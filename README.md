@@ -58,14 +58,14 @@ Groovy
 implementation("gg.essential:elementa-1.18.1-$mcPlatform:$buildNumber") {
     exclude group: "gg.essential", module: "universalcraft-1.18.1-$mcPlatform"
 }
-implementation("gg.essential:universalcraft-$mcVersion-$mcPlatform:$buildNumber")
+implementation("gg.essential:universalcraft-$mcVersion-$mcPlatform:$ucBuildNumber")
 ```
 Kotlin
 ```kotlin
 implementation("gg.essential:elementa-1.18.1-$mcPlatform:$buildNumber") {
     exclude(group= "gg.essential", module= "universalcraft-1.18.1-$mcPlatform")
 }
-implementation("gg.essential:universalcraft-$mcVersion-$mcPlatform:$buildNumber")
+implementation("gg.essential:universalcraft-$mcVersion-$mcPlatform:$ucBuildNumber")
 ```
 </details>
 <details><summary>Fabric</summary>
@@ -75,14 +75,14 @@ Groovy
 modImplementation(include("gg.essential:elementa-1.18.1-$mcPlatform:$buildNumber")) {
     exclude group: "gg.essential", module: "universalcraft-1.18.1-$mcPlatform"
 }
-modImplementation(include("gg.essential:universalcraft-$mcVersion-$mcPlatform:$buildNumber"))
+modImplementation(include("gg.essential:universalcraft-$mcVersion-$mcPlatform:$ucBuildNumber"))
 ```
 Kotlin
 ```kotlin
 modImplementation(include("gg.essential:elementa-1.18.1-$mcPlatform:$buildNumber")!!) {
     exclude(group= "gg.essential", module= "universalcraft-1.18.1-$mcPlatform")
 }
-modImplementation(include("gg.essential:universalcraft-$mcVersion-$mcPlatform:$buildNumber")!!)
+modImplementation(include("gg.essential:universalcraft-$mcVersion-$mcPlatform:$ucBuildNumber")!!)
 ```
 </details>
 
