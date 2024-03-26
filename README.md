@@ -55,14 +55,14 @@ This will look something like this
 
 Groovy
 ```groovy
-implementation("gg.essential:elementa-$mcVersion-$mcPlatform:$buildNumber") {
+implementation("gg.essential:elementa-1.18.1-$mcPlatform:$buildNumber") {
     exclude group: "gg.essential", module: "universalcraft-1.18.1-$mcPlatform"
 }
 implementation("gg.essential:universalcraft-$mcVersion-$mcPlatform:$buildNumber")
 ```
 Kotlin
 ```kotlin
-implementation("gg.essential:elementa-$mcVersion-$mcPlatform:$buildNumber") {
+implementation("gg.essential:elementa-1.18.1-$mcPlatform:$buildNumber") {
     exclude(group= "gg.essential", module= "universalcraft-1.18.1-$mcPlatform")
 }
 implementation("gg.essential:universalcraft-$mcVersion-$mcPlatform:$buildNumber")
@@ -72,14 +72,14 @@ implementation("gg.essential:universalcraft-$mcVersion-$mcPlatform:$buildNumber"
 
 Groovy
 ```groovy
-modImplementation(include("gg.essential:elementa-$mcVersion-$mcPlatform:$buildNumber")) {
+modImplementation(include("gg.essential:elementa-1.18.1-$mcPlatform:$buildNumber")) {
     exclude group: "gg.essential", module: "universalcraft-1.18.1-$mcPlatform"
 }
 modImplementation(include("gg.essential:universalcraft-$mcVersion-$mcPlatform:$buildNumber"))
 ```
 Kotlin
 ```kotlin
-modImplementation(include("gg.essential:elementa-$mcVersion-$mcPlatform:$buildNumber")!!) {
+modImplementation(include("gg.essential:elementa-1.18.1-$mcPlatform:$buildNumber")!!) {
     exclude(group= "gg.essential", module= "universalcraft-1.18.1-$mcPlatform")
 }
 modImplementation(include("gg.essential:universalcraft-$mcVersion-$mcPlatform:$buildNumber")!!)
