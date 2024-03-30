@@ -313,6 +313,17 @@ inline fun <reified T: Tag> UIComponent.findChildrenByTag(
 ) = findChildrenByTag(T::class.java, recursive, predicate)
 
 /**
+ * Returns a map of [UIComponent]s (children) to their [Tag]s of [T].
+ * By default, this predicate will match any [Tag] of [T].
+ *
+ * See [addTag] for applying a [Tag] to a component.
+ */
+inline fun <reified T: Tag> UIComponent.findChildrenAndTags(
+    recursive: Boolean = false,
+    noinline predicate: (T) -> Boolean = { true },
+) = findChildrenAndTags(T::class.java, recursive, predicate)
+
+/**
  * Finds any children which have a tag which matches the [predicate].
  * By default, this predicate will match any [Tag] of [T].
  *
@@ -330,6 +341,37 @@ fun <T: Tag> UIComponent.findChildrenByTag(
             val tag = child.getTag(type)
             if (tag != null && predicate(tag)) {
                 found.add(child)
+            }
+
+            if (recursive) {
+                addToFoundIfHasTag(child)
+            }
+        }
+    }
+
+    addToFoundIfHasTag(this)
+
+    return found
+}
+
+/**
+ * Returns a map of [UIComponent]s (children) to their [Tag]s of [T].
+ * By default, this predicate will match any [Tag] of [T].
+ *
+ * See [addTag] for applying a [Tag] to a component.
+ */
+fun <T: Tag> UIComponent.findChildrenAndTags(
+    type: Class<T>,
+    recursive: Boolean = false,
+    predicate: (T) -> Boolean = { true }
+): List<Pair<UIComponent, T>> {
+    val found = mutableListOf<Pair<UIComponent, T>>()
+
+    fun addToFoundIfHasTag(component: UIComponent) {
+        for (child in component.children) {
+            val tag = child.getTag(type)
+            if (tag != null && predicate(tag)) {
+                found.add(child to tag)
             }
 
             if (recursive) {
