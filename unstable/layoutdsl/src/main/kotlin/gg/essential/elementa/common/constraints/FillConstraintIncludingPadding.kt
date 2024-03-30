@@ -18,8 +18,9 @@ class FillConstraintIncludingPadding @JvmOverloads constructor(private val useSi
         val target = constrainTo ?: component.parent
 
         return if (useSiblings) {
-            target.getWidth() - target.children.filter { it != component }.sumOf {
-                it.getWidth().toDouble() + ((it.constraints.x as? PaddingConstraint)?.getHorizontalPadding(it) ?: 0f).toDouble()
+            target.getWidth() - target.children.sumOf {
+                val width = if (it == component) 0 else it.getWidth()
+                width.toDouble() + ((it.constraints.x as? PaddingConstraint)?.getHorizontalPadding(it) ?: 0f).toDouble()
             }.toFloat()
         } else target.getRight() - component.getLeft() + ((target.constraints.x as? PaddingConstraint)?.getHorizontalPadding(target) ?: 0f)
     }
@@ -28,8 +29,9 @@ class FillConstraintIncludingPadding @JvmOverloads constructor(private val useSi
         val target = constrainTo ?: component.parent
 
         return if (useSiblings) {
-            target.getHeight() - target.children.filter { it != component }.sumOf {
-                it.getHeight().toDouble() + ((it.constraints.y as? PaddingConstraint)?.getVerticalPadding(it) ?: 0f).toDouble()
+            target.getHeight() - target.children.sumOf {
+                val height = if (it == component) 0 else it.getHeight()
+                height.toDouble() + ((it.constraints.y as? PaddingConstraint)?.getVerticalPadding(it) ?: 0f).toDouble()
             }.toFloat()
         } else target.getBottom() - component.getTop() + ((target.constraints.y as? PaddingConstraint)?.getVerticalPadding(target) ?: 0f)
     }
