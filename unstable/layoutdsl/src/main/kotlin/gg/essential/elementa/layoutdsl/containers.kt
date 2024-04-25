@@ -154,7 +154,7 @@ fun LayoutScope.scrollable(
 
     outer(modifier = modifier)
 
-    block(LayoutScope(content, this))
+    block(LayoutScope(content, this, content))
 
     return outer
 }

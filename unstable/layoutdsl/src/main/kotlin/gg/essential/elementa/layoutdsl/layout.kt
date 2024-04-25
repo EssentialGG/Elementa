@@ -3,6 +3,7 @@ package gg.essential.elementa.layoutdsl
 
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.state.State
+import gg.essential.elementa.state.v2.ReferenceHolder
 import gg.essential.elementa.common.ListState
 import gg.essential.elementa.common.not
 import gg.essential.elementa.state.v2.*
@@ -16,11 +17,12 @@ import gg.essential.elementa.state.v2.State as StateV2
 class LayoutScope(
     private val component: UIComponent,
     private val parentScope: LayoutScope?,
+    val stateScope: ReferenceHolder,
 ) {
     /**
-     * You should only use this for calling `toV1`, or any State-related methods that require a [gg.essential.elementa.state.v2.ReferenceHolder].
+     * As the name says, don't use this unless you really have to.
      */
-    val stateScope: UIComponent
+    val containerDontUseThisUnlessYouReallyHaveTo: UIComponent
         get() = component
 
     private val childrenScopes = mutableListOf<LayoutScope>()
@@ -29,7 +31,7 @@ class LayoutScope(
         this@LayoutScope.component.getChildModifier().applyToComponent(this)
         modifier.applyToComponent(this)
 
-        val childScope = LayoutScope(this, this@LayoutScope)
+        val childScope = LayoutScope(this, this@LayoutScope, this)
         childrenScopes.add(childScope)
 
         childScope.block()
@@ -106,7 +108,7 @@ class LayoutScope(
      * This requires that [T] be usable as a key in a HashMap.
      */
     fun <T> forEach(state: ListState<T>, cache: Boolean = false, block: LayoutScope.(T) -> Unit) {
-        val forEachScope = LayoutScope(component, this@LayoutScope)
+        val forEachScope = LayoutScope(component, this@LayoutScope, stateScope)
         childrenScopes.add(forEachScope)
 
         val cacheMap =
@@ -122,7 +124,11 @@ class LayoutScope(
                     cachedScope.remount()
                 }
             } else {
-                val newScope = LayoutScope(component, forEachScope)
+                // If the `forEach` is not cached, we give each child scope its own reference holder.
+                // This scope will be dropped once the child scope is removed.
+                val childStateScope = if (cache) forEachScope.stateScope else ReferenceHolderImpl()
+                val newScope = LayoutScope(component, forEachScope, childStateScope)
+
                 forEachScope.childrenScopes.add(index, newScope)
                 newScope.block(element)
                 if (!forEachScope.isVirtualScopeMounted()) {
@@ -269,7 +275,7 @@ inline fun UIComponent.layout(modifier: Modifier = Modifier, block: LayoutScope.
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
     }
     modifier.applyToComponent(this)
-    LayoutScope(this, null).block()
+    LayoutScope(this, null, this).block()
 }
 
 /**
