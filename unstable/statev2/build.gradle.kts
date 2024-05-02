@@ -13,6 +13,7 @@ group = "gg.essential"
 
 dependencies {
     compileOnly(project(":"))
+    compileOnly(libs.kotlinx.coroutines.core)
 
     val common = registerStripReferencesAttribute("common") {
         excludes.add("net.minecraft")
