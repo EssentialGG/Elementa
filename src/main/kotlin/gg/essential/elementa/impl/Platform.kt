@@ -9,8 +9,6 @@ interface Platform {
 
     var currentScreen: Any?
 
-    fun isAllowedInChat(char: Char): Boolean
-
     fun enableStencil()
 
     fun isCallingFromMinecraftThread(): Boolean
