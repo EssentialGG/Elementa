@@ -104,7 +104,7 @@ abstract class AbstractTextInput(
                 val operationToRedo = redoStack.pop()
                 operationToRedo.redo()
                 undoStack.push(operationToRedo)
-            } else if (platform.isAllowedInChat(typedChar)) { // Most of the ASCII characters
+            } else if (isAllowedCharacter(typedChar)) { // Most of the ASCII characters
                 commitTextAddition(typedChar.toString())
             } else if (keyCode == UKeyboard.KEY_LEFT) {
                 val holdingShift = UKeyboard.isShiftKeyDown()
@@ -976,6 +976,13 @@ abstract class AbstractTextInput(
         override fun undo() {
             addTextOperation.undo()
             removeTextOperation.undo()
+        }
+    }
+
+    private companion object {
+        // Mirroring ChatAllowedCharacters.isAllowedCharacter
+        private fun isAllowedCharacter(chr: Char): Boolean {
+            return chr.code != 167 && chr >= ' ' && chr.code != 127
         }
     }
 }
