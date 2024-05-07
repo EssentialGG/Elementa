@@ -169,6 +169,11 @@ public final class gg/essential/elementa/UIComponent$Companion {
 	public final fun guiHint (FZ)F
 }
 
+public final class gg/essential/elementa/UIComponent$sam$i$java_util_function_Predicate$0 : java/util/function/Predicate {
+	public fun <init> (Lkotlin/jvm/functions/Function1;)V
+	public final synthetic fun test (Ljava/lang/Object;)Z
+}
+
 public class gg/essential/elementa/UIConstraints : java/util/Observable {
 	public fun <init> (Lgg/essential/elementa/UIComponent;)V
 	public final fun copy ()Lgg/essential/elementa/UIConstraints;
