@@ -1,18 +1,26 @@
 import gg.essential.gradle.multiversion.StripReferencesTransform.Companion.registerStripReferencesAttribute
 import gg.essential.gradle.util.*
 import gg.essential.gradle.util.RelocationTransform.Companion.registerRelocationAttribute
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.6.10"
+    kotlin("jvm") version "1.9.23"
     id("org.jetbrains.kotlinx.binary-compatibility-validator") version "0.8.0"
-    id("org.jetbrains.dokka") version "1.6.10" apply false
+    id("org.jetbrains.dokka") version "1.9.20" apply false
     id("gg.essential.defaults")
 }
 
 kotlin.jvmToolchain {
     (this as JavaToolchainSpec).languageVersion.set(JavaLanguageVersion.of(8))
 }
-tasks.compileKotlin.setJvmDefault("all-compatibility")
+
+tasks.withType<KotlinCompile> {
+    setJvmDefault("all-compatibility")
+    kotlinOptions {
+        languageVersion = "1.6"
+        apiVersion = "1.6"
+    }
+}
 
 val internal by configurations.creating {
     val relocated = registerRelocationAttribute("internal-relocated") {
