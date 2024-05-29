@@ -46,6 +46,8 @@ class Window @JvmOverloads constructor(
     }
 
     override fun afterInitialization() {
+        super.afterInitialization()
+
         enqueueRenderOperation {
             FontRenderer.initShaders()
             UICircle.initShaders()
