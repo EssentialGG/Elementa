@@ -6,6 +6,7 @@ import gg.essential.elementa.state.v2.DelegatingMutableState
 import gg.essential.elementa.state.v2.DelegatingState
 import gg.essential.elementa.state.v2.MutableState
 import gg.essential.elementa.state.v2.Observer
+import gg.essential.elementa.state.v2.ObserverImpl
 import gg.essential.elementa.state.v2.State
 import gg.essential.elementa.state.v2.impl.Impl
 import java.lang.ref.ReferenceQueue
@@ -18,7 +19,7 @@ internal object LegacyImpl : Impl {
     override fun <T> memo(func: Observer.() -> T): State<T> {
         val subscribed = mutableMapOf<State<*>, () -> Unit>()
         val observed = mutableSetOf<State<*>>()
-        val scope = ObserverImpl(observed)
+        val scope = LegacyObserverImpl(observed)
 
         return derivedState(initialValue = func(scope)) { owner, derivedState ->
             fun updateSubscriptions() {
@@ -69,7 +70,10 @@ internal object LegacyImpl : Impl {
     ): State<T> = ReferenceHoldingBasicState(initialValue).apply { builder(this, this) }
 }
 
-private class ObserverImpl(val observed: MutableSet<State<*>>) : Observer
+private class LegacyObserverImpl(val observed: MutableSet<State<*>>) : Observer, ObserverImpl {
+    override val observerImpl: ObserverImpl
+        get() = this
+}
 
 /** A simple implementation of [MutableState], containing only a backing field */
 private open class BasicState<T>(private var valueBacker: T) : MutableState<T> {
@@ -89,7 +93,7 @@ private open class BasicState<T>(private var valueBacker: T) : MutableState<T> {
     private var liveSize = 0
 
     override fun Observer.get(): T {
-        (this@get as? ObserverImpl)?.observed?.add(this@BasicState)
+        (this@get.observerImpl as? LegacyObserverImpl)?.observed?.add(this@BasicState)
         return getUntracked()
     }
 
@@ -163,7 +167,7 @@ private open class DelegatingStateBase<T, S : State<T>>(protected var delegate: 
     private var listeners = mutableListOf<ListenerEntry<T>>()
 
     override fun Observer.get(): T {
-        (this@get as? ObserverImpl)?.observed?.add(this@DelegatingStateBase)
+        (this@get.observerImpl as? LegacyObserverImpl)?.observed?.add(this@DelegatingStateBase)
         return getUntracked()
     }
 

@@ -3,6 +3,7 @@ package gg.essential.elementa.state.v2.impl.minimal
 import gg.essential.elementa.state.v2.ReferenceHolder
 import gg.essential.elementa.state.v2.MutableState
 import gg.essential.elementa.state.v2.Observer
+import gg.essential.elementa.state.v2.ObserverImpl
 import gg.essential.elementa.state.v2.State
 import gg.essential.elementa.state.v2.impl.Impl
 import java.lang.ref.ReferenceQueue
@@ -102,7 +103,10 @@ private class Node<T>(
     private var state: NodeState,
     private val func: Observer.() -> T,
     private var value: T?,
-) : State<T>, Observer {
+) : State<T>, Observer, ObserverImpl {
+    override val observerImpl: ObserverImpl
+        get() = this
+
     private val observed = mutableSetOf<Node<*>>()
     private val dependencies = mutableListOf<Node<*>>()
     private val dependents: MutableList<WeakReference<Node<*>>> = mutableListOf()
@@ -112,8 +116,9 @@ private class Node<T>(
     }
 
     fun getTracked(observer: Observer): T {
-        if (observer is Node<*>) {
-            observer.observed.add(this)
+        val impl = observer.observerImpl
+        if (impl is Node<*>) {
+            impl.observed.add(this)
         }
         return getUntracked()
     }

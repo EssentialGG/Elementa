@@ -7,17 +7,22 @@ import gg.essential.elementa.state.v2.impl.basic.MarkThenPushAndPullImpl
 private val impl: Impl = MarkThenPushAndPullImpl
 
 /**
+ * Note: This interface must not be implemented by user code. The State implementation may cast it to its internal
+ *       implementation type without checking.
+ */
+interface ObserverImpl
+
+/**
  * A marker interface for an object which may observe which states are being accessed, such that it can then subscribe
  * to these states to be updated when they change.
  *
  * Note that the duration during which a given [Observer] can be used is usually limited to the call in which it was
  * received.
  * It should not be stored (neither in a field, nor implicitly in an asynchronous lambda) and then used at a later time.
- *
- * Note: This interface must not be be implemented by user code. The State implementation may cast it to its internal
- *       implementation type without checking.
  */
 interface Observer {
+    val observerImpl: ObserverImpl
+
     /**
      * Get the current value of the State object and subscribe the observer to be re-evaluated when it changes.
      */
@@ -31,7 +36,10 @@ interface Observer {
  * about future changes.
  * To get the current value of a [State], one can also use the [State.getUntracked] shortcut.
  */
-object Untracked : Observer
+object Untracked : Observer, ObserverImpl {
+    override val observerImpl: ObserverImpl
+        get() = this
+}
 
 /**
  * Creates a [State] which lazily computes its value via the given pure function [func] and caches the result until
