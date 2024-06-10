@@ -84,7 +84,9 @@ tasks.jar {
     exclude("mcmod.info")
     exclude("kotlin/**")
     manifest {
-        attributes(mapOf("FMLModType" to "LIBRARY"))
+        if (platform.isModLauncher) {
+            attributes(mapOf("FMLModType" to "GAMELIBRARY"))
+        }
     }
 }
 
