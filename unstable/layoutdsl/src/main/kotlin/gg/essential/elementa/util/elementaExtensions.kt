@@ -309,7 +309,7 @@ fun UIComponent.findChildrenByTag(tag: Tag, recursive: Boolean = false) = findCh
  */
 inline fun <reified T: Tag> UIComponent.findChildrenByTag(
     recursive: Boolean = false,
-    noinline predicate: (T) -> Boolean = { true },
+    noinline predicate: UIComponent.(T) -> Boolean = { true },
 ) = findChildrenByTag(T::class.java, recursive, predicate)
 
 /**
@@ -320,7 +320,7 @@ inline fun <reified T: Tag> UIComponent.findChildrenByTag(
  */
 inline fun <reified T: Tag> UIComponent.findChildrenAndTags(
     recursive: Boolean = false,
-    noinline predicate: (T) -> Boolean = { true },
+    noinline predicate: UIComponent.(T) -> Boolean = { true },
 ) = findChildrenAndTags(T::class.java, recursive, predicate)
 
 /**
@@ -332,14 +332,14 @@ inline fun <reified T: Tag> UIComponent.findChildrenAndTags(
 fun <T: Tag> UIComponent.findChildrenByTag(
     type: Class<T>,
     recursive: Boolean = false,
-    predicate: (T) -> Boolean = { true }
+    predicate: UIComponent.(T) -> Boolean = { true }
 ): List<UIComponent> {
     val found = mutableListOf<UIComponent>()
 
     fun addToFoundIfHasTag(component: UIComponent) {
         for (child in component.children) {
             val tag = child.getTag(type)
-            if (tag != null && predicate(tag)) {
+            if (tag != null && child.predicate(tag)) {
                 found.add(child)
             }
 
@@ -363,14 +363,14 @@ fun <T: Tag> UIComponent.findChildrenByTag(
 fun <T: Tag> UIComponent.findChildrenAndTags(
     type: Class<T>,
     recursive: Boolean = false,
-    predicate: (T) -> Boolean = { true }
+    predicate: UIComponent.(T) -> Boolean = { true }
 ): List<Pair<UIComponent, T>> {
     val found = mutableListOf<Pair<UIComponent, T>>()
 
     fun addToFoundIfHasTag(component: UIComponent) {
         for (child in component.children) {
             val tag = child.getTag(type)
-            if (tag != null && predicate(tag)) {
+            if (tag != null && child.predicate(tag)) {
                 found.add(child to tag)
             }
 
