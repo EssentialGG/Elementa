@@ -83,11 +83,6 @@ tasks.jar {
     exclude("META-INF/mods.toml")
     exclude("mcmod.info")
     exclude("kotlin/**")
-    manifest {
-        if (platform.isModLauncher) {
-            attributes(mapOf("FMLModType" to "GAMELIBRARY"))
-        }
-    }
 }
 
 tasks.named<Jar>("sourcesJar") {
