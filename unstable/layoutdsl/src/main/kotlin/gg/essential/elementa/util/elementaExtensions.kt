@@ -216,7 +216,7 @@ fun UIComponent.hoveredState(hitTest: Boolean = true, layoutSafe: Boolean = true
     hoveredStateV2(hitTest, layoutSafe).toV1(this)
 
 /** Marker effect for [makeHoverScope]/[hoverScope]. */
-private class HoverScope(val state: State<Boolean>) : Effect()
+private class HoverScope(val state: StateV2<Boolean>) : Effect()
 
 /**
  * This method declares this component and its children to be part of one hover scope.
@@ -240,12 +240,13 @@ private class HoverScope(val state: State<Boolean>) : Effect()
  * wasn't declared in the first place).
  * Note that the same rules about first-time resolving still apply.
  */
-fun UIComponent.makeHoverScope(state: State<Boolean>? = null) = apply {
-    removeEffect<HoverScope>()
-    enableEffect(HoverScope(state ?: hoveredState()))
-}
+fun UIComponent.makeHoverScope(state: State<Boolean>? = null) =
+    makeHoverScope(state?.toV2() ?: hoveredStateV2())
 
-fun UIComponent.makeHoverScope(state: StateV2<Boolean>) = makeHoverScope(state.toV1(this))
+fun UIComponent.makeHoverScope(state: StateV2<Boolean>) = apply {
+    removeEffect<HoverScope>()
+    enableEffect(HoverScope(state))
+}
 
 /**
  * Receives the hover scope which this component is subject to.
