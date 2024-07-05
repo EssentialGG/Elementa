@@ -255,18 +255,19 @@ fun UIComponent.makeHoverScope(state: StateV2<Boolean>) = apply {
  *
  * @see [makeHoverScope]
  */
-fun UIComponent.hoverScope(parentOnly: Boolean = false): State<Boolean> {
+fun UIComponent.hoverScopeV2(parentOnly: Boolean = false): StateV2<Boolean> {
     class HoverScopeConsumer : Effect() {
-        val state = BasicState(false)
+        private val boundTo = mutableStateOf<StateV2<Boolean>?>(null)
+        val state = StateV2 { (boundTo.getUntracked() ?: boundTo())?.invoke() ?: false }
 
         override fun setup() {
             val sequence = if (parentOnly) parent.selfAndParents() else selfAndParents()
             val scope =
                 sequence.firstNotNullOfOrNull { component ->
                     component.effects.firstNotNullOfOrNull { it as? HoverScope }
-                } ?: throw IllegalStateException("No hover scope found for ${this@hoverScope}.")
+                } ?: throw IllegalStateException("No hover scope found for ${this@hoverScopeV2}.")
             Window.enqueueRenderOperation {
-                scope.state.onSetValueAndNow { state.set(it) }
+                boundTo.set(scope.state)
             }
         }
     }
@@ -274,6 +275,9 @@ fun UIComponent.hoverScope(parentOnly: Boolean = false): State<Boolean> {
     enableEffect(consumer)
     return consumer.state
 }
+
+fun UIComponent.hoverScope(parentOnly: Boolean = false): State<Boolean> =
+    hoverScopeV2(parentOnly).toV1(this)
 
 /** Once inherited, you can apply this to a component via [addTag] to be able to [findChildrenByTag]. */
 interface Tag
