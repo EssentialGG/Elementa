@@ -7,6 +7,8 @@ import gg.essential.elementa.state.v2.ReferenceHolder
 import gg.essential.elementa.common.ListState
 import gg.essential.elementa.common.not
 import gg.essential.elementa.state.v2.*
+import gg.essential.elementa.state.v2.collections.MutableTrackedList
+import gg.essential.elementa.state.v2.collections.TrackedList
 import gg.essential.elementa.state.v2.collections.trackedListOf
 import gg.essential.elementa.state.v2.combinators.map
 import gg.essential.elementa.state.v2.combinators.not
@@ -111,6 +113,13 @@ class LayoutScope(
      * This requires that [T] be usable as a key in a HashMap.
      */
     fun <T> forEach(state: ListState<T>, cache: Boolean = false, block: LayoutScope.(T) -> Unit) {
+        forEach(state.toV2().toListState(), cache, block)
+    }
+
+    /**
+     * StateV2 support for forEach
+     */
+    fun <T> forEach(list: ListStateV2<T>, cache: Boolean = false, block: LayoutScope.(T) -> Unit) {
         val forEachScope = LayoutScope(component, this@LayoutScope, stateScope)
         childrenScopes.add(forEachScope)
 
@@ -154,21 +163,30 @@ class LayoutScope(
             forEachScope.childrenScopes.clear()
         }
 
-        state.get().forEachIndexed(::add)
-        state.onAdd(::add)
-        state.onRemove(::remove)
-        state.onSet { index, element, oldElement ->
-            remove(index, oldElement)
-            add(index, element)
+        fun update(change: TrackedList.Change<T>) {
+            when (change) {
+                is TrackedList.Add -> {
+                    val (index, element) = change.element
+                    add(index, element)
+                }
+                is TrackedList.Remove -> {
+                    val (index, element) = change.element
+                    remove(index, element)
+                }
+                is TrackedList.Clear -> {
+                    clear(change.oldElements)
+                }
+            }
         }
-        state.onClear(::clear)
-    }
 
-    /**
-     * StateV2 support for forEach
-     */
-    fun <T> forEach(list: ListStateV2<T>, cache: Boolean = false, block: LayoutScope.(T) -> Unit) =
-        forEach(ListState.from(list.toV1(component)), cache, block)
+        var trackedList: TrackedList<T> = MutableTrackedList()
+        effect(stateScope) {
+            val newList = list()
+            val oldList = trackedList
+            newList.getChangesSince(oldList).forEach { change -> update(change) }
+            trackedList = newList
+        }
+    }
 
     /** Whether this scope is a virtual "forEach" scope. These share their target component with their parent scope. */
     private fun isVirtual(): Boolean {
