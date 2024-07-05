@@ -131,12 +131,12 @@ fun UIComponent.onAnimationFrame(block: () -> Unit) =
  * This option will induce an additional delay of one frame because the state is updated during the next
  * [Window.enqueueRenderOperation] after the hoverState changes.
  */
-fun UIComponent.hoveredState(hitTest: Boolean = true, layoutSafe: Boolean = true): State<Boolean> {
+fun UIComponent.hoveredStateV2(hitTest: Boolean = true, layoutSafe: Boolean = true): StateV2<Boolean> {
     // "Unsafe" means that it is not safe to depend on this for layout changes
-    val unsafeHovered = BasicState(false)
+    val unsafeHovered = mutableStateOf(false)
 
     // "Safe" because layout changes can directly happen when this changes (ie in onSetValue)
-    val safeHovered = BasicState(false)
+    val safeHovered = mutableStateOf(false)
 
     // Performs a hit test based on the current mouse x / y
     fun hitTestHovered(): Boolean {
@@ -201,9 +201,9 @@ fun UIComponent.hoveredState(hitTest: Boolean = true, layoutSafe: Boolean = true
     }
 
     return if (layoutSafe) {
-        unsafeHovered.onSetValue {
+        unsafeHovered.onChange(this) { hovered ->
             Window.enqueueRenderOperation {
-                safeHovered.set(it)
+                safeHovered.set(hovered)
             }
         }
         safeHovered
@@ -211,6 +211,9 @@ fun UIComponent.hoveredState(hitTest: Boolean = true, layoutSafe: Boolean = true
         unsafeHovered
     }
 }
+
+fun UIComponent.hoveredState(hitTest: Boolean = true, layoutSafe: Boolean = true): State<Boolean> =
+    hoveredStateV2(hitTest, layoutSafe).toV1(this)
 
 /** Marker effect for [makeHoverScope]/[hoverScope]. */
 private class HoverScope(val state: State<Boolean>) : Effect()
