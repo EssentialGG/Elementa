@@ -89,7 +89,7 @@ class MutableTrackedSet<E> private constructor(
         } else {
             // Reverse diff
             val generations = generateSequence(this) { if (it == other) null else it.nextSet }.toMutableList()
-            if (generations.removeLast() != other) return TrackedSet.Change.estimate(this, other).asSequence()
+            if (generations.removeLast() != other) return TrackedSet.Change.estimate(other, this).asSequence()
             return generations.asReversed().asSequence().flatMap { it.nextDiff!!.asInverseChangeSequence() }
         }
     }
