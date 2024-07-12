@@ -343,8 +343,8 @@ public final class gg/essential/elementa/components/ScrollComponent : gg/essenti
 	public fun <init> (Ljava/lang/String;)V
 	public fun <init> (Ljava/lang/String;F)V
 	public fun <init> (Ljava/lang/String;FLjava/awt/Color;)V
-	public fun <init> (Ljava/lang/String;FLjava/awt/Color;Lgg/essential/elementa/components/ScrollComponent$Direction;ZZFFLgg/essential/elementa/UIComponent;Z)V
-	public synthetic fun <init> (Ljava/lang/String;FLjava/awt/Color;Lgg/essential/elementa/components/ScrollComponent$Direction;ZZFFLgg/essential/elementa/UIComponent;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/String;FLjava/awt/Color;Lgg/essential/elementa/components/ScrollComponent$Direction;ZZFFLgg/essential/elementa/UIComponent;ZZ)V
+	public synthetic fun <init> (Ljava/lang/String;FLjava/awt/Color;Lgg/essential/elementa/components/ScrollComponent$Direction;ZZFFLgg/essential/elementa/UIComponent;ZZILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun <init> (Ljava/lang/String;FLjava/awt/Color;Z)V
 	public fun <init> (Ljava/lang/String;FLjava/awt/Color;ZZ)V
 	public fun <init> (Ljava/lang/String;FLjava/awt/Color;ZZZ)V
@@ -352,7 +352,9 @@ public final class gg/essential/elementa/components/ScrollComponent : gg/essenti
 	public fun <init> (Ljava/lang/String;FLjava/awt/Color;ZZZZF)V
 	public fun <init> (Ljava/lang/String;FLjava/awt/Color;ZZZZFF)V
 	public fun <init> (Ljava/lang/String;FLjava/awt/Color;ZZZZFFLgg/essential/elementa/UIComponent;)V
-	public synthetic fun <init> (Ljava/lang/String;FLjava/awt/Color;ZZZZFFLgg/essential/elementa/UIComponent;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/String;FLjava/awt/Color;ZZZZFFLgg/essential/elementa/UIComponent;Z)V
+	public fun <init> (Ljava/lang/String;FLjava/awt/Color;ZZZZFFLgg/essential/elementa/UIComponent;ZZ)V
+	public synthetic fun <init> (Ljava/lang/String;FLjava/awt/Color;ZZZZFFLgg/essential/elementa/UIComponent;ZZILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public synthetic fun addChild (Lgg/essential/elementa/UIComponent;)Lgg/essential/elementa/UIComponent;
 	public fun addChild (Lgg/essential/elementa/UIComponent;)Lgg/essential/elementa/components/ScrollComponent;
 	public final fun addScrollAdjustEvent (ZLkotlin/jvm/functions/Function2;)V
@@ -424,6 +426,20 @@ public final class gg/essential/elementa/components/ScrollComponent$Direction : 
 	public static final field Vertical Lgg/essential/elementa/components/ScrollComponent$Direction;
 	public static fun valueOf (Ljava/lang/String;)Lgg/essential/elementa/components/ScrollComponent$Direction;
 	public static fun values ()[Lgg/essential/elementa/components/ScrollComponent$Direction;
+}
+
+public final class gg/essential/elementa/components/ScrollComponent$ScrollBarGripMinHeightConstraint : gg/essential/elementa/constraints/HeightConstraint {
+	public fun <init> (Lgg/essential/elementa/components/ScrollComponent;Lgg/essential/elementa/constraints/HeightConstraint;)V
+	public fun getCachedValue ()Ljava/lang/Float;
+	public synthetic fun getCachedValue ()Ljava/lang/Object;
+	public fun getConstrainTo ()Lgg/essential/elementa/UIComponent;
+	public fun getHeightImpl (Lgg/essential/elementa/UIComponent;)F
+	public fun getRecalculate ()Z
+	public fun setCachedValue (F)V
+	public synthetic fun setCachedValue (Ljava/lang/Object;)V
+	public fun setConstrainTo (Lgg/essential/elementa/UIComponent;)V
+	public fun setRecalculate (Z)V
+	public fun visitImpl (Lgg/essential/elementa/constraints/resolution/ConstraintVisitor;Lgg/essential/elementa/constraints/ConstraintType;)V
 }
 
 public final class gg/essential/elementa/components/ScrollComponent$ScrollChildConstraint : gg/essential/elementa/constraints/HeightConstraint, gg/essential/elementa/constraints/WidthConstraint {

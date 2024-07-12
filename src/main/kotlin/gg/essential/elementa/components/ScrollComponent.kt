@@ -32,7 +32,8 @@ class ScrollComponent constructor(
     private val pixelsPerScroll: Float = 15f,
     private val scrollAcceleration: Float = 1.0f,
     customScissorBoundingBox: UIComponent? = null,
-    private val passthroughScroll: Boolean = true
+    private val passthroughScroll: Boolean = true,
+    private val limitScrollBarGripHeight: Boolean = false,
 ) : UIContainer() {
     @JvmOverloads constructor(
         emptyString: String = "",
@@ -44,7 +45,9 @@ class ScrollComponent constructor(
         verticalScrollOpposite: Boolean = false,
         pixelsPerScroll: Float = 15f,
         scrollAcceleration: Float = 1.0f,
-        customScissorBoundingBox: UIComponent? = null
+        customScissorBoundingBox: UIComponent? = null,
+        passthroughScroll: Boolean = true,
+        limitScrollBarGripHeight: Boolean = false,
     ) : this (
         emptyString,
         innerPadding,
@@ -59,7 +62,9 @@ class ScrollComponent constructor(
         verticalScrollOpposite,
         pixelsPerScroll,
         scrollAcceleration,
-        customScissorBoundingBox
+        customScissorBoundingBox,
+        passthroughScroll,
+        limitScrollBarGripHeight,
     )
 
     private val primaryScrollDirection
@@ -469,7 +474,8 @@ class ScrollComponent constructor(
         if (isHorizontal) {
             component.setWidth(RelativeConstraint(clampedPercentage))
         } else {
-            component.setHeight(RelativeConstraint(clampedPercentage))
+            val heightConstraint = RelativeConstraint(clampedPercentage)
+            component.setHeight(if (limitScrollBarGripHeight) ScrollBarGripMinHeightConstraint(heightConstraint) else heightConstraint)
         }
 
         component.animate {
@@ -798,6 +804,30 @@ class ScrollComponent constructor(
             }
         }
 
+    }
+
+    /**
+     * Constraints the scrollbar grip's height to be a certain minimum height, or the [desiredHeight].
+     * This is the default constraint for vertical scrollbar grips if [limitScrollBarGripHeight] is enabled.
+     *
+     * @param desiredHeight The intended height for the scrollbar grip.
+     */
+    inner class ScrollBarGripMinHeightConstraint(
+        private val desiredHeight: HeightConstraint
+    ) : HeightConstraint {
+        override var cachedValue: Float = 0f
+        override var recalculate: Boolean = true
+        override var constrainTo: UIComponent? = null
+
+        override fun getHeightImpl(component: UIComponent): Float {
+            val parent = component.parent
+            val minimumHeight = if (parent.getHeight() < 200) { 15.percent } else { 10.percent }
+            return desiredHeight.coerceAtLeast(minimumHeight).getHeight(component)
+        }
+
+        override fun visitImpl(visitor: ConstraintVisitor, type: ConstraintType) {
+            if (type == ConstraintType.HEIGHT) visitor.visitChildren(type)
+        }
     }
 
     enum class Direction {
