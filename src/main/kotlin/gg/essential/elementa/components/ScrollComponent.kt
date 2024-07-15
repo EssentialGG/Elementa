@@ -813,7 +813,7 @@ class ScrollComponent constructor(
      *
      * @param desiredSize The intended size for the scrollbar grip.
      */
-    inner class ScrollBarGripMinSizeConstraint(
+    private class ScrollBarGripMinSizeConstraint(
         private val desiredSize: SizeConstraint
     ) : SizeConstraint {
         override var cachedValue: Float = 0f
