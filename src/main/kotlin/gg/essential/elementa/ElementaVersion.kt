@@ -88,7 +88,7 @@ enum class ElementaVersion {
     V5,
 
     /**
-     * [gg.essential.elementa.components.ScrollComponent] now has a minimum height for scrollbar grips.
+     * [gg.essential.elementa.components.ScrollComponent] now has a minimum size for scrollbar grips.
      */
     V6,
 
