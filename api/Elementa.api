@@ -427,13 +427,16 @@ public final class gg/essential/elementa/components/ScrollComponent$Direction : 
 	public static fun values ()[Lgg/essential/elementa/components/ScrollComponent$Direction;
 }
 
-public final class gg/essential/elementa/components/ScrollComponent$ScrollBarGripMinHeightConstraint : gg/essential/elementa/constraints/HeightConstraint {
-	public fun <init> (Lgg/essential/elementa/components/ScrollComponent;Lgg/essential/elementa/constraints/HeightConstraint;)V
+public final class gg/essential/elementa/components/ScrollComponent$ScrollBarGripMinSizeConstraint : gg/essential/elementa/constraints/SizeConstraint {
+	public fun <init> (Lgg/essential/elementa/components/ScrollComponent;Lgg/essential/elementa/constraints/SizeConstraint;)V
+	public fun animationFrame ()V
 	public fun getCachedValue ()Ljava/lang/Float;
 	public synthetic fun getCachedValue ()Ljava/lang/Object;
 	public fun getConstrainTo ()Lgg/essential/elementa/UIComponent;
 	public fun getHeightImpl (Lgg/essential/elementa/UIComponent;)F
+	public fun getRadiusImpl (Lgg/essential/elementa/UIComponent;)F
 	public fun getRecalculate ()Z
+	public fun getWidthImpl (Lgg/essential/elementa/UIComponent;)F
 	public fun setCachedValue (F)V
 	public synthetic fun setCachedValue (Ljava/lang/Object;)V
 	public fun setConstrainTo (Lgg/essential/elementa/UIComponent;)V

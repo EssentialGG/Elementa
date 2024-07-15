@@ -466,16 +466,17 @@ class ScrollComponent constructor(
             }
         }
 
-        if (isHorizontal) {
-            component.setWidth(RelativeConstraint(clampedPercentage))
+        val relativeConstraint = RelativeConstraint(clampedPercentage)
+        val desiredSizeConstraint = if (Window.of(this).version >= ElementaVersion.v6) {
+            ScrollBarGripMinSizeConstraint(relativeConstraint)
         } else {
-            val heightConstraint = RelativeConstraint(clampedPercentage)
+            relativeConstraint
+        }
 
-            if (Window.of(this).version >= ElementaVersion.v6) {
-                component.setHeight(ScrollBarGripMinHeightConstraint(heightConstraint))
-            } else {
-                component.setHeight(heightConstraint)
-            }
+        if (isHorizontal) {
+            component.setWidth(desiredSizeConstraint)
+        } else {
+            component.setHeight(desiredSizeConstraint)
         }
 
         component.animate {
@@ -807,21 +808,29 @@ class ScrollComponent constructor(
     }
 
     /**
-     * Constraints the scrollbar grip's height to be a certain minimum height, or the [desiredHeight].
-     * This is the default constraint for vertical scrollbar grips if [ElementaVersion.V6] is used.
+     * Constraints the scrollbar grip's size to be a certain minimum size, or the [desiredSize].
+     * This is the default constraint for horizontal scrollbar grips if [ElementaVersion.V6] is used.
      *
-     * @param desiredHeight The intended height for the scrollbar grip.
+     * @param desiredSize The intended size for the scrollbar grip.
      */
-    inner class ScrollBarGripMinHeightConstraint(
-        private val desiredHeight: HeightConstraint
-    ) : HeightConstraint {
+    inner class ScrollBarGripMinSizeConstraint(
+        private val desiredSize: SizeConstraint
+    ) : SizeConstraint {
         override var cachedValue: Float = 0f
         override var recalculate: Boolean = true
         override var constrainTo: UIComponent? = null
 
         override fun animationFrame() {
             super.animationFrame()
-            desiredHeight.animationFrame()
+            desiredSize.animationFrame()
+        }
+
+        override fun getWidthImpl(component: UIComponent): Float {
+            val parent = component.parent
+            val minimumWidthPercentage = if (parent.getWidth() < 200) { 0.15f } else { 0.10f }
+            val minimumWidth = parent.getWidth() * minimumWidthPercentage
+
+            return desiredSize.getWidth(component).coerceAtLeast(minimumWidth)
         }
 
         override fun getHeightImpl(component: UIComponent): Float {
@@ -829,10 +838,14 @@ class ScrollComponent constructor(
             val minimumHeightPercentage = if (parent.getHeight() < 200) { 0.15f } else { 0.10f }
             val minimumHeight = parent.getHeight() * minimumHeightPercentage
 
-            return desiredHeight.getHeight(component).coerceAtLeast(minimumHeight)
+            return desiredSize.getHeight(component).coerceAtLeast(minimumHeight)
         }
 
         override fun visitImpl(visitor: ConstraintVisitor, type: ConstraintType) {
+        }
+
+        override fun getRadiusImpl(component: UIComponent): Float {
+            throw IllegalStateException("`ScrollBarGripMinSizeConstraint` does not support `getRadiusImpl`.")
         }
     }
 
