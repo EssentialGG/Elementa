@@ -819,6 +819,11 @@ class ScrollComponent constructor(
         override var recalculate: Boolean = true
         override var constrainTo: UIComponent? = null
 
+        override fun animationFrame() {
+            super.animationFrame()
+            desiredHeight.animationFrame()
+        }
+
         override fun getHeightImpl(component: UIComponent): Float {
             val parent = component.parent
             val minimumHeight = if (parent.getHeight() < 200) { 15.percent } else { 10.percent }
