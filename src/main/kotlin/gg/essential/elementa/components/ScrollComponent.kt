@@ -826,8 +826,10 @@ class ScrollComponent constructor(
 
         override fun getHeightImpl(component: UIComponent): Float {
             val parent = component.parent
-            val minimumHeight = if (parent.getHeight() < 200) { 15.percent } else { 10.percent }
-            return desiredHeight.coerceAtLeast(minimumHeight).getHeight(component)
+            val minimumHeightPercentage = if (parent.getHeight() < 200) { 0.15f } else { 0.10f }
+            val minimumHeight = parent.getHeight() * minimumHeightPercentage
+
+            return desiredHeight.getHeight(component).coerceAtLeast(minimumHeight)
         }
 
         override fun visitImpl(visitor: ConstraintVisitor, type: ConstraintType) {
