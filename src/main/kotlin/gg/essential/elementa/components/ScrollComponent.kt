@@ -831,7 +831,6 @@ class ScrollComponent constructor(
         }
 
         override fun visitImpl(visitor: ConstraintVisitor, type: ConstraintType) {
-            if (type == ConstraintType.HEIGHT) visitor.visitChildren(type)
         }
     }
 
