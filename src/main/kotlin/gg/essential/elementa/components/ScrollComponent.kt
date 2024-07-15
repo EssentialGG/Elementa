@@ -33,7 +33,6 @@ class ScrollComponent constructor(
     private val scrollAcceleration: Float = 1.0f,
     customScissorBoundingBox: UIComponent? = null,
     private val passthroughScroll: Boolean = true,
-    private val limitScrollBarGripHeight: Boolean = false,
 ) : UIContainer() {
     @JvmOverloads constructor(
         emptyString: String = "",
@@ -46,8 +45,6 @@ class ScrollComponent constructor(
         pixelsPerScroll: Float = 15f,
         scrollAcceleration: Float = 1.0f,
         customScissorBoundingBox: UIComponent? = null,
-        passthroughScroll: Boolean = true,
-        limitScrollBarGripHeight: Boolean = false,
     ) : this (
         emptyString,
         innerPadding,
@@ -63,8 +60,6 @@ class ScrollComponent constructor(
         pixelsPerScroll,
         scrollAcceleration,
         customScissorBoundingBox,
-        passthroughScroll,
-        limitScrollBarGripHeight,
     )
 
     private val primaryScrollDirection
@@ -475,7 +470,12 @@ class ScrollComponent constructor(
             component.setWidth(RelativeConstraint(clampedPercentage))
         } else {
             val heightConstraint = RelativeConstraint(clampedPercentage)
-            component.setHeight(if (limitScrollBarGripHeight) ScrollBarGripMinHeightConstraint(heightConstraint) else heightConstraint)
+
+            if (Window.of(this).version >= ElementaVersion.v6) {
+                component.setHeight(ScrollBarGripMinHeightConstraint(heightConstraint))
+            } else {
+                component.setHeight(heightConstraint)
+            }
         }
 
         component.animate {
@@ -808,7 +808,7 @@ class ScrollComponent constructor(
 
     /**
      * Constraints the scrollbar grip's height to be a certain minimum height, or the [desiredHeight].
-     * This is the default constraint for vertical scrollbar grips if [limitScrollBarGripHeight] is enabled.
+     * This is the default constraint for vertical scrollbar grips if [ElementaVersion.V6] is used.
      *
      * @param desiredHeight The intended height for the scrollbar grip.
      */
