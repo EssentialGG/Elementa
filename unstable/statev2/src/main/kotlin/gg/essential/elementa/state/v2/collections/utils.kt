@@ -29,3 +29,7 @@ fun <T, K, V> ListState<T>.asMap(owner: ReferenceHolder, block: (T) -> Pair<K, V
     }
     return map
 }
+
+fun <T> trackedListOf(vararg elements: T) : TrackedList<T> = MutableTrackedList(elements.toMutableList())
+
+fun <T> mutableTrackedListOf(vararg elements: T): MutableTrackedList<T> = MutableTrackedList(elements.toMutableList())
