@@ -145,12 +145,6 @@ open class UIWrappedText @JvmOverloads constructor(
             return super.draw(matrixStack)
         }
 
-        if (width / textScale <= charWidth) {
-            // If we are smaller than a char, we can't physically split this string into
-            // "width" strings, so we'll prefer a no-op to an error.
-            return super.draw(matrixStack)
-        }
-
         UGraphics.enableBlend()
 
         val lines = if (trimText) {
