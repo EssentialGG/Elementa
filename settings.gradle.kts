@@ -29,6 +29,7 @@ include(":example")
 project(":example").apply {
     buildFileName = "root.gradle.kts"
 }
+include(":example:common")
 listOf(
     "1.8.9-forge",
     "1.12.2-forge",

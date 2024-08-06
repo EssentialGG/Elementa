@@ -71,14 +71,10 @@ tasks.processResources {
 tasks.jar {
     dependsOn(internal)
     from({ internal.map { zipTree(it) } })
-
-    // TODO move into separate project
-    exclude("com") // `com.example` package
 }
 
 apiValidation {
     ignoredProjects.addAll(subprojects.map { it.name })
-    ignoredPackages.add("com.example")
     nonPublicMarkers.add("org.jetbrains.annotations.ApiStatus\$Internal")
 }
 

@@ -18,7 +18,7 @@ dependencies {
         exclude(group = "org.jetbrains.kotlin")
     }
 
-    implementation(project(":"))
+    implementation(project(":example:common"))
 
     if (platform.isFabric) {
         val fabricApiVersion = when(platform.mcVersion) {
