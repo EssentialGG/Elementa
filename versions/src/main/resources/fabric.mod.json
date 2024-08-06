@@ -1,15 +1,10 @@
 {
   "schemaVersion": 1,
-  "id": "elementa",
-  "name": "Elementa",
-  "version": "${version}",
+  "id": "examplemod",
+  "name": "Example Mod",
+  "version": "0",
   "environment": "client",
   "entrypoints": {
     "client": ["com.example.examplemod.ExampleMod"]
-  },
-  "custom": {
-    "modmenu": {
-      "badges": [ "library" ]
-    }
   }
 }

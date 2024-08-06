@@ -2565,8 +2565,16 @@ public final class gg/essential/elementa/dsl/UtilitiesKt {
 	public static final fun toConstraint (Ljava/awt/Color;)Lgg/essential/elementa/constraints/ConstantColorConstraint;
 	public static final fun width (CF)F
 	public static final fun width (Ljava/lang/String;FLgg/essential/elementa/font/FontProvider;)F
+	public static final synthetic fun width (Lnet/minecraft/class_2561;FLgg/essential/elementa/font/FontProvider;)F
+	public static final synthetic fun width (Lnet/minecraft/network/chat/Component;FLgg/essential/elementa/font/FontProvider;)F
+	public static final synthetic fun width (Lnet/minecraft/util/IChatComponent;FLgg/essential/elementa/font/FontProvider;)F
+	public static final synthetic fun width (Lnet/minecraft/util/text/ITextComponent;FLgg/essential/elementa/font/FontProvider;)F
 	public static synthetic fun width$default (CFILjava/lang/Object;)F
 	public static synthetic fun width$default (Ljava/lang/String;FLgg/essential/elementa/font/FontProvider;ILjava/lang/Object;)F
+	public static synthetic fun width$default (Lnet/minecraft/class_2561;FLgg/essential/elementa/font/FontProvider;ILjava/lang/Object;)F
+	public static synthetic fun width$default (Lnet/minecraft/network/chat/Component;FLgg/essential/elementa/font/FontProvider;ILjava/lang/Object;)F
+	public static synthetic fun width$default (Lnet/minecraft/util/IChatComponent;FLgg/essential/elementa/font/FontProvider;ILjava/lang/Object;)F
+	public static synthetic fun width$default (Lnet/minecraft/util/text/ITextComponent;FLgg/essential/elementa/font/FontProvider;ILjava/lang/Object;)F
 }
 
 public abstract class gg/essential/elementa/effects/Effect {

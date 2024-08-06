@@ -1,24 +1,13 @@
-import gg.essential.gradle.multiversion.excludeKotlinDefaultImpls
-import gg.essential.gradle.multiversion.mergePlatformSpecifics
 import gg.essential.gradle.util.*
 
 plugins {
     kotlin("jvm")
-    id("org.jetbrains.dokka")
     id("gg.essential.multi-version")
     id("gg.essential.defaults")
-    id("gg.essential.defaults.maven-publish")
 }
 
-group = "gg.essential"
-
 java.withSourcesJar()
-tasks.compileKotlin.setJvmDefault(if (platform.mcVersion >= 11400) "all" else "all-compatibility")
 loom.noServerRunConfigs()
-
-val common by configurations.creating
-configurations.compileClasspath { extendsFrom(common) }
-configurations.runtimeClasspath { extendsFrom(common) }
 
 dependencies {
     implementation(libs.kotlin.stdlib.jdk8)
@@ -29,7 +18,7 @@ dependencies {
         exclude(group = "org.jetbrains.kotlin")
     }
 
-    common(project(":"))
+    implementation(project(":"))
 
     if (platform.isFabric) {
         val fabricApiVersion = when(platform.mcVersion) {
@@ -56,35 +45,4 @@ dependencies {
             modLocalRuntime(modCompileOnly(fabricApi.module("fabric-$module", fabricApiVersion))!!)
         }
     }
-}
-
-tasks.processResources {
-    filesMatching(listOf("fabric.mod.json")) {
-        filter { it.replace("\"com.example.examplemod.ExampleMod\"", "") }
-    }
-}
-
-tasks.dokkaHtml {
-    moduleName.set("Elementa $name")
-}
-
-tasks.jar {
-    dependsOn(common)
-    from({ common.map { zipTree(it) } })
-    mergePlatformSpecifics()
-
-    // We build the common module with legacy default impl for backwards compatibility, but we only need those for
-    // 1.12.2 and older. Newer versions have never shipped with legacy default impl.
-    if (platform.mcVersion >= 11400) {
-        excludeKotlinDefaultImpls()
-    }
-
-    exclude("com/example/examplemod/**")
-    exclude("META-INF/mods.toml")
-    exclude("mcmod.info")
-    exclude("kotlin/**")
-}
-
-tasks.named<Jar>("sourcesJar") {
-    from(project(":").sourceSets.main.map { it.allSource })
 }
