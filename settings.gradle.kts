@@ -25,9 +25,8 @@ include(":unstable:statev2")
 include(":unstable:layoutdsl")
 
 
-include(":platform")
-project(":platform").apply {
-    projectDir = file("versions/")
+include(":example")
+project(":example").apply {
     buildFileName = "root.gradle.kts"
 }
 listOf(
@@ -40,9 +39,8 @@ listOf(
     "1.18.1-fabric",
     "1.18.1-forge",
 ).forEach { version ->
-    include(":platform:$version")
-    project(":platform:$version").apply {
-        projectDir = file("versions/$version")
+    include(":example:$version")
+    project(":example:$version").apply {
         buildFileName = "../build.gradle.kts"
     }
 }
