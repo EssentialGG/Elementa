@@ -33,7 +33,8 @@ class Window @JvmOverloads constructor(
         private set
     private var componentRequestingFocus: UIComponent? = null
 
-    private var cancelDrawing = false
+    var hasErrored = false
+        private set
 
     internal var clickInterceptor: ((mouseX: Double, mouseY: Double, button: Int) -> Boolean)? = null
 
@@ -59,7 +60,7 @@ class Window @JvmOverloads constructor(
         version.enableFor { doDraw(matrixStack) }
 
     private fun doDraw(matrixStack: UMatrixStack) {
-        if (cancelDrawing)
+        if (hasErrored)
             return
 
         requireMainThread()
@@ -109,7 +110,7 @@ class Window @JvmOverloads constructor(
             beforeDraw(matrixStack)
             super.draw(matrixStack)
         } catch (e: Throwable) {
-            cancelDrawing = true
+            hasErrored = true
 
             val guiName = platform.currentScreen?.javaClass?.simpleName ?: "<unknown>"
             when (e) {
@@ -171,6 +172,10 @@ class Window @JvmOverloads constructor(
     }
 
     override fun mouseScroll(delta: Double) {
+        if (hasErrored) {
+            return
+        }
+
         requireMainThread()
 
         val (mouseX, mouseY) = getMousePosition()
@@ -185,6 +190,10 @@ class Window @JvmOverloads constructor(
     }
 
     override fun mouseClick(mouseX: Double, mouseY: Double, button: Int) {
+        if (hasErrored) {
+            return
+        }
+
         requireMainThread()
 
         //  Override mouse positions to be in the center of the pixel on Elementa versions
@@ -230,6 +239,10 @@ class Window @JvmOverloads constructor(
     }
 
     override fun mouseRelease() {
+        if (hasErrored) {
+            return
+        }
+
         requireMainThread()
 
         super.mouseRelease()
@@ -238,6 +251,10 @@ class Window @JvmOverloads constructor(
     }
 
     override fun keyType(typedChar: Char, keyCode: Int) {
+        if (hasErrored) {
+            return
+        }
+
         requireMainThread()
 
         // If the typed character is in a PUA (https://en.wikipedia.org/wiki/Private_Use_Areas), we don't want to
