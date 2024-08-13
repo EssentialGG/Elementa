@@ -78,6 +78,8 @@ apiValidation {
     nonPublicMarkers.add("org.jetbrains.annotations.ApiStatus\$Internal")
 }
 
+java.withSourcesJar()
+
 publishing.publications.named<MavenPublication>("maven") {
     artifactId = "elementa"
 }

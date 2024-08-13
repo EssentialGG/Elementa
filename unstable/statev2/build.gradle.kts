@@ -28,6 +28,8 @@ kotlin.jvmToolchain {
     (this as JavaToolchainSpec).languageVersion.set(JavaLanguageVersion.of(8))
 }
 
+java.withSourcesJar()
+
 publishing {
     publications {
         named<MavenPublication>("maven") {
