@@ -247,7 +247,9 @@ you MUST call Window#mouseClick. This is also all handled by Elementa's WindowSc
 ## All together
 
 This is a basic excerpt of code from an Elementa GUI. To see a more fleshed out
-example, look to the [ExampleGui class](src/main/java/com/example/examplemod/ExampleGui.kt).
+example, look to the [ExampleGui class](example/src/main/kotlin/gg/essential/elementa/example/ExampleGui.kt) and other
+files in that sub-project.
+You can run those examples via `./gradlew :example:run`.
 
 ```kotlin
 val window = Window()
