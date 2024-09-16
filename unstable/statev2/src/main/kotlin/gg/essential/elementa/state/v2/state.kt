@@ -270,6 +270,16 @@ fun <T> derivedState(
     builder: (owner: ReferenceHolder, derivedState: MutableState<T>) -> Unit,
 ): State<T> = impl.derivedState(initialValue, builder)
 
+/**
+ * Combines this [State] with the given custom [setter] function to create a custom [MutableState].
+ */
+fun <T, S : State<T>> S.withSetter(setter: S.(update: (value: T) -> T) -> Unit): MutableState<T> =
+    object : MutableState<T>, State<T> by this {
+        override fun set(mapper: (T) -> T) {
+            setter(mapper)
+        }
+    }
+
 /** A simple, immutable implementation of [State] */
 private class ImmutableState<T>(private val value: T) : State<T> {
   override fun get(): T = value
