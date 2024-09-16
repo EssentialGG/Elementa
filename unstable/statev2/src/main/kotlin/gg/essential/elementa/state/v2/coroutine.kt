@@ -36,3 +36,51 @@ suspend fun <T> State<T>.await(accept: (T) -> Boolean): T {
         }
     }
 }
+
+fun <T> State<T>.currentAndFutureValues(): StateIterable<T> = object : StateIterable<T> {
+    override fun iterator(): StateIterator<T> {
+        return object : StateIterator<T> {
+            private var initial = true
+            private var next: T = getUntracked()
+
+            override suspend fun hasNext(): Boolean {
+                if (initial) {
+                    return true
+                }
+                next = await { it != next }
+                return true
+            }
+
+            override fun next(): T {
+                initial = false
+                return next
+            }
+        }
+    }
+}
+
+fun <T> State<T>.futureValues(excludingInitial: T = getUntracked()): StateIterable<T> = object : StateIterable<T> {
+    override fun iterator(): StateIterator<T> {
+        return object : StateIterator<T> {
+            private var next: T = excludingInitial
+
+            override suspend fun hasNext(): Boolean {
+                next = await { it != next }
+                return true
+            }
+
+            override fun next(): T {
+                return next
+            }
+        }
+    }
+}
+
+interface StateIterable<T> {
+    operator fun iterator(): StateIterator<T>
+}
+
+interface StateIterator<T> {
+    suspend operator fun hasNext(): Boolean
+    operator fun next(): T
+}
