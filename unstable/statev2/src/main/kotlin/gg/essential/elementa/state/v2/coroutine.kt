@@ -7,6 +7,9 @@ import kotlin.coroutines.resume
 /** Waits until this [State] has a value which [equals] the given [value]. */
 suspend fun <T> State<T>.awaitValue(value: T): T = await { it == value }
 
+/** Waits until this [State] has a non-null value. */
+suspend fun <T> State<T?>.awaitNotNull(): T = await { it != null }!!
+
 /** Waits until this [State] has a value for which [accept] returns `true` and returns that value. */
 suspend fun <T> State<T>.await(accept: (T) -> Boolean): T {
     // Fast-path
