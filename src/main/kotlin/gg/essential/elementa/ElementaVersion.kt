@@ -90,7 +90,13 @@ enum class ElementaVersion {
     /**
      * [gg.essential.elementa.components.ScrollComponent] now has a minimum size for scrollbar grips.
      */
+    @Deprecated(DEPRECATION_MESSAGE)
     V6,
+
+    /**
+     * [gg.essential.elementa.components.Window] now disables input events if an error has occurred during drawing.
+     */
+    V7,
 
     ;
 
@@ -134,7 +140,9 @@ Be sure to read through all the changes between your current version and your ne
         internal val v4 = V4
         @Suppress("DEPRECATION")
         internal val v5 = V5
+        @Suppress("DEPRECATION")
         internal val v6 = V6
+        internal val v7 = V7
 
 
         @PublishedApi

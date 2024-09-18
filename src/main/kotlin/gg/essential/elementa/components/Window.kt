@@ -171,7 +171,7 @@ class Window @JvmOverloads constructor(
     }
 
     override fun mouseScroll(delta: Double) {
-        if (hasErrored) {
+        if (hasErrored && version >= ElementaVersion.v7) {
             return
         }
 
@@ -189,7 +189,7 @@ class Window @JvmOverloads constructor(
     }
 
     override fun mouseClick(mouseX: Double, mouseY: Double, button: Int) {
-        if (hasErrored) {
+        if (hasErrored && version >= ElementaVersion.v7) {
             return
         }
 
@@ -238,7 +238,7 @@ class Window @JvmOverloads constructor(
     }
 
     override fun mouseRelease() {
-        if (hasErrored) {
+        if (hasErrored && version >= ElementaVersion.v7) {
             return
         }
 
@@ -250,7 +250,7 @@ class Window @JvmOverloads constructor(
     }
 
     override fun keyType(typedChar: Char, keyCode: Int) {
-        if (hasErrored) {
+        if (hasErrored && version >= ElementaVersion.v7) {
             return
         }
 
