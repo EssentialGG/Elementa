@@ -183,30 +183,6 @@ fun interface State<out T> {
   @Deprecated("Calls to this method are not tracked. If this is intentional, use `getUntracked` instead.")
   fun get(): T = getUntracked()
 
-  /**
-   * Register a listener which will be called whenever the value of this State object changes
-   *
-   * The listener registration is weak by default. This means that no strong reference to the
-   * listener is kept in this State object and your listener may be garbage collected if no other
-   * strong references to it exist. Once a listener is garbage collected, it will (obviously) no
-   * longer receive updates.
-   *
-   * Keeping a strong reference to your own listener is easy to forget, so this method requires you
-   * to explicitly pass in an object which will maintain a strong reference to your listener for
-   * you. With that, your listener will stay active **at least** as long as the given [owner] is
-   * alive (unless the returned callback in invoked).
-   *
-   * In general, the lifetime of your listener should match the lifetime of the passed [owner],
-   * usually the thing (e.g. [UIComponent]) the listener is modifying. If the owner far outlives
-   * your listener, you may be leaking memory because the owner will keep all those listeners and
-   * anything they reference alive far beyond the point where they are needed. If your listener
-   * outlives the owner, then it may become inactive sooner than you expected and whatever it is
-   * updating might no longer update properly.
-   *
-   * If you wish to manually keep your listener alive, pass [ReferenceHolder.Weak] as the owner.
-   *
-   * @return A callback which, when invoked, removes this listener
-   */
   @Deprecated("If this method is used to update dependent states, use `stateBy` instead.\n" +
           "Otherwise the State system cannot be guaranteed that downsteam states have a consistent view of upstream" +
           "values (i.e. so called \"glitches\" may occur) and all dependences will be forced to evaluate eagerly" +

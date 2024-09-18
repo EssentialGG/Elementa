@@ -5,12 +5,8 @@ import java.util.function.Consumer
 import gg.essential.elementa.state.State as V1State
 
 private class V2AsV1State<T>(private val v2State: State<T>, owner: ReferenceHolder) : V1State<T>() {
-  // Stored in a field, so the listener is kept alive at least as long as this legacy state instance exists
-  private val listener: (T) -> Unit = { super.set(it) }
-
-  init {
-    v2State.onSetValue(owner, listener)
-  }
+  @Suppress("unused") // keep effect alive at least as long as this legacy state instance exists
+  private val effect = effect(owner) { super.set(v2State()) }
 
   override fun get(): T = v2State.get()
 
@@ -32,7 +28,7 @@ private class V2AsV1State<T>(private val v2State: State<T>, owner: ReferenceHold
  *
  * Note that as with any listener on a v2 state, the returned v1 state may be garbage collected once there are no more
  * strong references to it. This v2 state will not by itself keep it alive.
- * The [owner] argument serves to prevent this from happening too early, see [State.onSetValue].
+ * The [owner] argument serves to prevent this from happening too early, see [effect].
  */
 fun <T> State<T>.toV1(owner: ReferenceHolder): V1State<T> = V2AsV1State(this, owner)
 
