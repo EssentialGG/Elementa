@@ -4,6 +4,7 @@ import gg.essential.elementa.constraints.*
 import gg.essential.elementa.font.DefaultFonts
 import gg.essential.elementa.font.FontProvider
 import gg.essential.universal.UGraphics
+import gg.essential.universal.wrappers.message.UTextComponent
 import java.awt.Color
 
 fun Char.width(textScale: Float = 1f) = UGraphics.getCharWidth(this) * textScale
@@ -44,3 +45,20 @@ operator fun Color.component1() = red
 operator fun Color.component2() = green
 operator fun Color.component3() = blue
 operator fun Color.component4() = alpha
+
+// Fabric
+@Deprecated("Direct Minecraft dependency", level = DeprecationLevel.HIDDEN)
+fun net.minecraft.class_2561.width(textScale: Float = 1f, fontProvider: FontProvider = DefaultFonts.VANILLA_FONT_RENDERER) =
+    UTextComponent.from(this)!!.text.width(textScale, fontProvider)
+// Forge 1.8
+@Deprecated("Direct Minecraft dependency", level = DeprecationLevel.HIDDEN)
+fun net.minecraft.util.IChatComponent.width(textScale: Float = 1f, fontProvider: FontProvider = DefaultFonts.VANILLA_FONT_RENDERER) =
+    UTextComponent.from(this)!!.text.width(textScale, fontProvider)
+// Forge 1.12-1.16
+@Deprecated("Direct Minecraft dependency", level = DeprecationLevel.HIDDEN)
+fun net.minecraft.util.text.ITextComponent.width(textScale: Float = 1f, fontProvider: FontProvider = DefaultFonts.VANILLA_FONT_RENDERER) =
+    UTextComponent.from(this)!!.text.width(textScale, fontProvider)
+// Forge 1.17+
+@Deprecated("Direct Minecraft dependency", level = DeprecationLevel.HIDDEN)
+fun net.minecraft.network.chat.Component.width(textScale: Float = 1f, fontProvider: FontProvider = DefaultFonts.VANILLA_FONT_RENDERER) =
+    UTextComponent.from(this)!!.text.width(textScale, fontProvider)

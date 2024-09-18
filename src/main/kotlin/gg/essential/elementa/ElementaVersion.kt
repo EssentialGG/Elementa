@@ -84,7 +84,13 @@ enum class ElementaVersion {
     /**
      * Change the behavior of scroll components to no longer require holding down shift when horizontal is the only possible scrolling direction.
      */
+    @Deprecated(DEPRECATION_MESSAGE)
     V5,
+
+    /**
+     * [gg.essential.elementa.components.ScrollComponent] now has a minimum size for scrollbar grips.
+     */
+    V6,
 
     ;
 
@@ -126,7 +132,9 @@ Be sure to read through all the changes between your current version and your ne
         internal val v3 = V3
         @Suppress("DEPRECATION")
         internal val v4 = V4
+        @Suppress("DEPRECATION")
         internal val v5 = V5
+        internal val v6 = V6
 
 
         @PublishedApi

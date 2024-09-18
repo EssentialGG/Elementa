@@ -6,6 +6,7 @@ public final class gg/essential/elementa/ElementaVersion : java/lang/Enum {
 	public static final field V3 Lgg/essential/elementa/ElementaVersion;
 	public static final field V4 Lgg/essential/elementa/ElementaVersion;
 	public static final field V5 Lgg/essential/elementa/ElementaVersion;
+	public static final field V6 Lgg/essential/elementa/ElementaVersion;
 	public final fun enableFor (Lkotlin/jvm/functions/Function0;)Ljava/lang/Object;
 	public static fun valueOf (Ljava/lang/String;)Lgg/essential/elementa/ElementaVersion;
 	public static fun values ()[Lgg/essential/elementa/ElementaVersion;
@@ -167,6 +168,11 @@ public final class gg/essential/elementa/UIComponent$Companion {
 	public final fun getDEBUG_OUTLINE_WIDTH ()D
 	public final fun guiHint (DZ)D
 	public final fun guiHint (FZ)F
+}
+
+public final class gg/essential/elementa/UIComponent$sam$i$java_util_function_Predicate$0 : java/util/function/Predicate {
+	public fun <init> (Lkotlin/jvm/functions/Function1;)V
+	public final synthetic fun test (Ljava/lang/Object;)Z
 }
 
 public class gg/essential/elementa/UIConstraints : java/util/Observable {
@@ -2560,8 +2566,16 @@ public final class gg/essential/elementa/dsl/UtilitiesKt {
 	public static final fun toConstraint (Ljava/awt/Color;)Lgg/essential/elementa/constraints/ConstantColorConstraint;
 	public static final fun width (CF)F
 	public static final fun width (Ljava/lang/String;FLgg/essential/elementa/font/FontProvider;)F
+	public static final synthetic fun width (Lnet/minecraft/class_2561;FLgg/essential/elementa/font/FontProvider;)F
+	public static final synthetic fun width (Lnet/minecraft/network/chat/Component;FLgg/essential/elementa/font/FontProvider;)F
+	public static final synthetic fun width (Lnet/minecraft/util/IChatComponent;FLgg/essential/elementa/font/FontProvider;)F
+	public static final synthetic fun width (Lnet/minecraft/util/text/ITextComponent;FLgg/essential/elementa/font/FontProvider;)F
 	public static synthetic fun width$default (CFILjava/lang/Object;)F
 	public static synthetic fun width$default (Ljava/lang/String;FLgg/essential/elementa/font/FontProvider;ILjava/lang/Object;)F
+	public static synthetic fun width$default (Lnet/minecraft/class_2561;FLgg/essential/elementa/font/FontProvider;ILjava/lang/Object;)F
+	public static synthetic fun width$default (Lnet/minecraft/network/chat/Component;FLgg/essential/elementa/font/FontProvider;ILjava/lang/Object;)F
+	public static synthetic fun width$default (Lnet/minecraft/util/IChatComponent;FLgg/essential/elementa/font/FontProvider;ILjava/lang/Object;)F
+	public static synthetic fun width$default (Lnet/minecraft/util/text/ITextComponent;FLgg/essential/elementa/font/FontProvider;ILjava/lang/Object;)F
 }
 
 public abstract class gg/essential/elementa/effects/Effect {

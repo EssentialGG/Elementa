@@ -48,10 +48,10 @@ abstract class WindowScreen @JvmOverloads constructor(
             afterInitialization()
         }
 
-        super.onDrawScreen(matrixStack, mouseX, mouseY, partialTicks)
-
         if (drawDefaultBackground)
             super.onDrawBackground(matrixStack, 0)
+
+        super.onDrawScreen(matrixStack, mouseX, mouseY, partialTicks)
 
         // Now, we need to hook up Elementa to this GuiScreen. In practice, Elementa
         // is not constrained to being used solely inside of a GuiScreen, all the programmer
