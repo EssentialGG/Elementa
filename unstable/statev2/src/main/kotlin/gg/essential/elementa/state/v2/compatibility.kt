@@ -57,7 +57,10 @@ fun <T> V1State<T>.toV2(): MutableState<T> {
     }
   })
 
-  return v2
+  return object : MutableState<T> by v2 {
+    @Suppress("unused") // keep this alive for as long as the returned v2 state
+    val referenceHolder = referenceHolder
+  }
 }
 
 /**
