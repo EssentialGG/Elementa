@@ -7,6 +7,7 @@ public final class gg/essential/elementa/ElementaVersion : java/lang/Enum {
 	public static final field V4 Lgg/essential/elementa/ElementaVersion;
 	public static final field V5 Lgg/essential/elementa/ElementaVersion;
 	public static final field V6 Lgg/essential/elementa/ElementaVersion;
+	public static final field V7 Lgg/essential/elementa/ElementaVersion;
 	public final fun enableFor (Lkotlin/jvm/functions/Function0;)Ljava/lang/Object;
 	public static fun valueOf (Ljava/lang/String;)Lgg/essential/elementa/ElementaVersion;
 	public static fun values ()[Lgg/essential/elementa/ElementaVersion;
@@ -753,6 +754,7 @@ public final class gg/essential/elementa/components/Window : gg/essential/elemen
 	public final fun getAnimationFPS ()I
 	public fun getBottom ()F
 	public final fun getFocusedComponent ()Lgg/essential/elementa/UIComponent;
+	public final fun getHasErrored ()Z
 	public fun getHeight ()F
 	public final fun getHoveredFloatingComponent ()Lgg/essential/elementa/UIComponent;
 	public fun getLeft ()F
