@@ -1,4 +1,4 @@
-package com.example.examplemod
+package gg.essential.elementa.example
 
 import gg.essential.elementa.ElementaVersion
 import gg.essential.elementa.WindowScreen
@@ -8,6 +8,8 @@ import gg.essential.elementa.constraints.*
 import gg.essential.elementa.constraints.animation.Animations
 import gg.essential.elementa.dsl.*
 import gg.essential.elementa.effects.ScissorEffect
+import gg.essential.elementa.layoutdsl.Modifier
+import gg.essential.elementa.layoutdsl.gradient
 import java.awt.Color
 
 /**
@@ -181,6 +183,9 @@ class ExampleGui : WindowScreen(ElementaVersion.V2) {
             // constructing an instance of [ConstantColorConstraint].
             color = Color.GREEN.darker().toConstraint()
         } childOf createNoteButton
+
+        // Fancy background
+        Modifier.gradient(top = Color(0x091323), Color.BLACK).applyToComponent(window)
     }
 
     // Now, since we want to create a bunch of sticky notes, it makes sense
