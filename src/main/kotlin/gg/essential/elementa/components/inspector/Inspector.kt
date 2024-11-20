@@ -82,11 +82,13 @@ class Inspector @JvmOverloads constructor(
             height = 14.pixels()
         } childOf titleBlock
 
-        SVGComponent.ofResource("/svg/click.svg").constrain {
+        UIImage.ofResourceCached("/textures/inspector/click.png").constrain {
             x = SiblingConstraint(10f)
             y = CenterConstraint()
             width = AspectConstraint(1f)
-            height = RelativeConstraint(1f).to(title) as HeightConstraint
+            height = 12.pixels
+        }.apply {
+            textureMinFilter = UIImage.TextureScalingMode.LINEAR
         }.onMouseClick { event ->
             event.stopPropagation()
             isClickSelecting = true
