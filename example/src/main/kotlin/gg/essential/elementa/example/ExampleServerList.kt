@@ -1,4 +1,4 @@
-package com.example.examplemod
+package gg.essential.elementa.example
 
 import gg.essential.elementa.ElementaVersion
 import gg.essential.elementa.UIComponent

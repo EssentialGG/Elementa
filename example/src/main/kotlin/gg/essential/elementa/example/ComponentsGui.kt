@@ -1,4 +1,4 @@
-package com.example.examplemod
+package gg.essential.elementa.example
 
 import gg.essential.elementa.ElementaVersion
 import gg.essential.elementa.WindowScreen
@@ -10,6 +10,8 @@ import gg.essential.elementa.components.inspector.Inspector
 import gg.essential.elementa.constraints.*
 import gg.essential.elementa.dsl.*
 import gg.essential.elementa.effects.OutlineEffect
+import gg.essential.elementa.layoutdsl.Modifier
+import gg.essential.elementa.layoutdsl.gradient
 import gg.essential.elementa.markdown.MarkdownComponent
 import java.awt.Color
 import java.net.URL
@@ -167,7 +169,7 @@ class ComponentsGui : WindowScreen(ElementaVersion.V2) {
         } childOf window
 
         ComponentType("UIImage") {
-            UIImage.ofURL(URL("https://i.imgur.com/Pc6iMw3.png")).constrain {
+            UIImage.ofURL(exampleImageUrl).constrain {
                 x = 2.pixels()
                 y = SiblingConstraint() + 5.pixels()
 
@@ -175,30 +177,30 @@ class ComponentsGui : WindowScreen(ElementaVersion.V2) {
                 height = 50.pixels()
             } childOf this
 
-            UIImage.ofURL(URL("https://i.imgur.com/Pc6iMw3.png")).constrain {
+            UIImage.ofURL(exampleImageUrl).constrain {
                 x = 2.pixels()
                 y = SiblingConstraint() + 5.pixels()
 
-                width = 150.pixels()
+                width = 100.pixels()
                 height = ImageAspectConstraint()
             } childOf this
         } childOf window
 
         ComponentType("BlurHashImage") {
-            BlurHashImage("L4ESU,OD1e#:=GwwJSAr1M,r|]Ar").constrain {
+            BlurHashImage(exampleBlurHash).constrain {
                 x = 2.pixels()
                 y = SiblingConstraint() + 5.pixels()
 
-                width = 100.pixels()
-                height = 50.pixels()
+                width = 50.pixels()
+                height = 60.pixels()
             } childOf this
 
-            BlurHashImage.ofURL("L4ESU,OD1e#:=GwwJSAr1M,r|]Ar", URL("https://i.imgur.com/Pc6iMw3.png")).constrain {
+            BlurHashImage.ofURL(exampleBlurHash, exampleImageUrl).constrain {
                 x = 2.pixels()
                 y = SiblingConstraint() + 5.pixels()
 
-                width = 100.pixels()
-                height = 50.pixels()
+                width = 50.pixels()
+                height = 60.pixels()
             } childOf this
         } childOf window
 
@@ -307,6 +309,9 @@ class ComponentsGui : WindowScreen(ElementaVersion.V2) {
             x = 10.pixels(true)
             y = 10.pixels(true)
         } childOf window
+
+        // Fancy background
+        Modifier.gradient(top = Color(0x091323), Color.BLACK).applyToComponent(window)
     }
 
     class ComponentType(componentName: String, initBlock: ComponentType.() -> Unit) : UIContainer() {
@@ -334,5 +339,12 @@ class ComponentsGui : WindowScreen(ElementaVersion.V2) {
             private val OUTLINE_COLOR = Color.BLACK
             private const val OUTLINE_WIDTH = 2f
         }
+    }
+
+    companion object {
+        // AdinaVoicu, CC0, via Wikimedia Commons
+        // https://commons.wikimedia.org/wiki/File:Tabby_cat_with_blue_eyes-3336579.jpg
+        val exampleImageUrl = URL("https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Tabby_cat_with_blue_eyes-3336579.jpg/200px-Tabby_cat_with_blue_eyes-3336579.jpg")
+        val exampleBlurHash = "K8HnZ@.7|,4TIr?H01My5Y"
     }
 }
