@@ -1,4 +1,4 @@
-package com.example.examplemod
+package gg.essential.elementa.example
 
 import gg.essential.elementa.ElementaVersion
 import gg.essential.elementa.WindowScreen
@@ -6,6 +6,8 @@ import gg.essential.elementa.components.*
 import gg.essential.elementa.constraints.*
 import gg.essential.elementa.constraints.animation.Animations
 import gg.essential.elementa.dsl.*
+import gg.essential.elementa.layoutdsl.Modifier
+import gg.essential.elementa.layoutdsl.gradient
 import gg.essential.universal.UMinecraft
 import gg.essential.universal.UScreen
 import java.awt.Color
@@ -14,7 +16,7 @@ import java.awt.Color
  * List of buttons to open a specific example gui.
  * See ExampleGui (singular) for a well-commented example gui.
  */
-class ExamplesGui : WindowScreen(ElementaVersion.V2) {
+class ExamplesGui : WindowScreen(ElementaVersion.V6) {
     private val container by ScrollComponent().constrain {
         y = 3.pixels()
         width = 100.percent()
@@ -50,6 +52,9 @@ class ExamplesGui : WindowScreen(ElementaVersion.V2) {
                 y = CenterConstraint()
             } childOf button
         }
+
+        // Fancy background
+        Modifier.gradient(top = Color(0x091323), Color.BLACK).applyToComponent(window)
     }
 
     companion object {

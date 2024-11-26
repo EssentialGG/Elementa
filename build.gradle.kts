@@ -55,7 +55,7 @@ dependencies {
     // Depending on LWJGL3 instead of 2 so we can choose opengl bindings only
     compileOnly("org.lwjgl:lwjgl-opengl:3.3.1")
     // Depending on 1.8.9 for all of these because that's the oldest version we support
-    compileOnly(libs.versions.universalcraft.map { "gg.essential:universalcraft-1.8.9-forge:$it" }) {
+    compileOnly(libs.universalcraft.forge10809) {
         attributes { attribute(common, true) }
     }
     compileOnly("com.google.code.gson:gson:2.2.4")
