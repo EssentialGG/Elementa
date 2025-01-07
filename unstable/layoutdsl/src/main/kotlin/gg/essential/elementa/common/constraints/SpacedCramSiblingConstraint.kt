@@ -62,14 +62,6 @@ class SpacedCramSiblingConstraint(
 
         if (sibling.getRight() + component.getWidth() + minSeparationPixels <= component.parent.getRight() + floatErrorMargin) {
             return sibling.getTop()
-        } else if (sibling.javaClass != component.javaClass) {
-            // FIXME This workaround is broken and should never have been added in the first place. Instead of mixing
-            //       different components with SpacedCramSiblingConstraints, just put a wrapper component around the
-            //       grid.
-            //       Should be removed once the old CosmeticStudio is dead.
-            // If the previous item not a cosmetic option, position right after it so vertical padding
-            // can be made consistent. Otherwise, `itemSep` can vary and lead to inconsistent padding.
-            return sibling.getBottom()
         }
         val verticalSep = verticalSeparation?.getWidth(component.parent)
             ?: itemSep.coerceAtLeast(minSeparationPixels.toFloat())
