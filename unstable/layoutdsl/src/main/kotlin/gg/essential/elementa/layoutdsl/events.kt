@@ -17,6 +17,14 @@ inline fun Modifier.onLeftClick(crossinline callback: UIComponent.(UIClickEvent)
     return@then { mouseClickListeners.remove(listener) }
 }
 
+inline fun Modifier.onMouseRelease(crossinline callback: UIComponent.() -> Unit) = this then {
+    val listener: UIComponent.() -> Unit = {
+        callback()
+    }
+    onMouseRelease(listener)
+    return@then { mouseReleaseListeners.remove(listener) }
+}
+
 /** Declare this component and its children to be in a hover scope. See [makeHoverScope]. */
 fun Modifier.hoverScope(state: StateV1<Boolean>? = null) =
     then { makeHoverScope(state); { throw NotImplementedError() } }
