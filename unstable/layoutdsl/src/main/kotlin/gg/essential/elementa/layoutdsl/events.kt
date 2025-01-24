@@ -7,10 +7,10 @@ import gg.essential.elementa.util.*
 import gg.essential.elementa.state.State as StateV1
 import gg.essential.elementa.state.v2.State as StateV2
 
-inline fun Modifier.onLeftClick(crossinline callback: UIComponent.() -> Unit) = this then {
+inline fun Modifier.onLeftClick(crossinline callback: UIComponent.(UIClickEvent) -> Unit) = this then {
     val listener: UIComponent.(event: UIClickEvent) -> Unit = {
         if (it.mouseButton == 0) {
-            callback()
+            callback(it)
         }
     }
     onMouseClick(listener)
