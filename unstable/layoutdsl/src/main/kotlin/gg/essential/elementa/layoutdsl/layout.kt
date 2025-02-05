@@ -291,12 +291,13 @@ inline fun UIComponent.layout(modifier: Modifier = Modifier, block: LayoutScope.
  *
  * Note: This does **not** change the size constrains of `this`. These must be set up manually or via [modifier].
  */
-fun UIComponent.layoutAsBox(modifier: Modifier = Modifier, block: LayoutScope.() -> Unit) {
+fun UIComponent.layoutAsBox(modifier: Modifier = Modifier, block: LayoutScope.() -> Unit): UIComponent {
     contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
     }
     addChildModifier(Modifier.alignBoth(Alignment.Center))
     layout(modifier, block)
+    return this
 }
 
 /**
