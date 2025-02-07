@@ -71,14 +71,6 @@ class LayoutScope(
         return IfDsl({ state() == null }, true)
     }
 
-    fun if_(condition: StateByScope.() -> Boolean, cache: Boolean = false, block: LayoutScope.() -> Unit): IfDsl {
-        return if_(stateBy(condition), cache, block)
-    }
-
-    fun <T> ifNotNull(stateBlock: StateByScope.() -> T?, cache: Boolean = false, block: LayoutScope.(T) -> Unit): IfDsl {
-        return ifNotNull(stateBy(stateBlock), cache, block)
-    }
-
     class IfDsl(internal val elseState: StateV2<Boolean>, internal var cache: Boolean)
 
     infix fun IfDsl.`else`(block: LayoutScope.() -> Unit) {
@@ -93,11 +85,6 @@ class LayoutScope(
     /** Makes available to the inner scope the value of the given [state]. */
     fun <T> bind(state: StateV2<T>, cache: Boolean = false, block: LayoutScope.(T) -> Unit) {
         forEach({ trackedListOf(state()) }, cache) { block(it) }
-    }
-
-    /** Makes available to the inner scope the value derived from the given [stateBlock]. */
-    fun <T> bind(stateBlock: StateByScope.() -> T, cache: Boolean = false, block: LayoutScope.(T) -> Unit) {
-        bind(stateBy(stateBlock), cache, block)
     }
 
     /**
