@@ -53,8 +53,11 @@ abstract class UIComponent : Observable(), ReferenceHolder {
 
     private var childrenLocked = 0
     init {
-        children.addObserver { _, _ -> requireChildrenUnlocked() }
-        children.addObserver { _, event -> setWindowCacheOnChangedChild(event) }
+        children.addObserver { _, event ->
+            requireChildrenUnlocked()
+            setWindowCacheOnChangedChild(event)
+            updateFloatingComponentsOnChangedChild(event)
+        }
     }
 
     open lateinit var parent: UIComponent
@@ -110,7 +113,7 @@ abstract class UIComponent : Observable(), ReferenceHolder {
     private var heldReferences = mutableListOf<Any>()
 
     protected var isInitialized = false
-    private var isFloating = false
+    private var isLegacyFloating = false
 
     private var didCallBeforeDraw = false
     private var warnedAboutBeforeDraw = false
@@ -479,7 +482,7 @@ abstract class UIComponent : Observable(), ReferenceHolder {
         val parentWindow = Window.of(this)
 
         this.forEachChild { child ->
-            if (child.isFloating) return@forEachChild
+            if (child.isLegacyFloating || child.isFloating) return@forEachChild
 
             // If the child is outside the current viewport, don't waste time drawing
             if (!this.alwaysDrawChildren() && !parentWindow.isAreaVisible(
@@ -980,8 +983,65 @@ abstract class UIComponent : Observable(), ReferenceHolder {
      * Floating API
      */
 
+    @set:JvmName("setIsFloating") // `setFloating` is taken by the old API
+    var isFloating: Boolean = false
+        set(value) {
+            if (value == field) return
+            field = value
+            recomputeFloatingComponents()
+        }
+
+    internal var floatingComponents: List<UIComponent>? = null // only allocated if used
+
+    private fun recomputeFloatingComponents() {
+        val result = mutableListOf<UIComponent>()
+        if (isFloating) {
+            result.add(this)
+        }
+        for (child in children) {
+            child.floatingComponents?.let { result.addAll(it) }
+        }
+        if ((floatingComponents ?: emptyList()) == result) {
+            return // unchanged
+        }
+        floatingComponents = result.takeUnless { it.isEmpty() }
+
+        if (this is Window) {
+            if (hoveredFloatingComponent !in result) {
+                hoveredFloatingComponent = null
+            }
+        } else if (hasParent) {
+            parent.recomputeFloatingComponents()
+        }
+    }
+
+    private fun updateFloatingComponentsOnChangedChild(possibleEvent: Any) {
+        @Suppress("UNCHECKED_CAST")
+        when (val event = possibleEvent as? ObservableListEvent<UIComponent> ?: return) {
+            is ObservableAddEvent -> {
+                val (_, child) = event.element
+                if (child.floatingComponents != null) {
+                    recomputeFloatingComponents()
+                }
+            }
+            is ObservableRemoveEvent -> {
+                val (_, child) = event.element
+                if (child.floatingComponents != null) {
+                    recomputeFloatingComponents()
+                }
+            }
+            is ObservableClearEvent -> {
+                if (floatingComponents != null) {
+                    recomputeFloatingComponents()
+                }
+            }
+        }
+    }
+
+    @Deprecated("The legacy floating API does not behave well when a component is removed from the tree.", ReplaceWith("isFloating = floating"))
+    @Suppress("DEPRECATION")
     fun setFloating(floating: Boolean) {
-        isFloating = floating
+        isLegacyFloating = floating
 
         if (floating) {
             Window.of(this).addFloatingComponent(this)

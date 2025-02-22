@@ -25,7 +25,7 @@ class Window @JvmOverloads constructor(
     private var systemTime = -1L
     private var currentMouseButton = -1
 
-    private var floatingComponents = mutableListOf<UIComponent>()
+    private var legacyFloatingComponents = mutableListOf<UIComponent>()
 
     var hoveredFloatingComponent: UIComponent? = null
     var focusedComponent: UIComponent? = null
@@ -98,7 +98,7 @@ class Window @JvmOverloads constructor(
 
             hoveredFloatingComponent = null
             val (mouseX, mouseY) = getMousePosition()
-            for (component in floatingComponents.reversed()) {
+            for (component in allFloatingComponentsInReverseOrder()) {
                 if (component.isPointInside(mouseX, mouseY)) {
                     hoveredFloatingComponent = component
                     break
@@ -159,13 +159,16 @@ class Window @JvmOverloads constructor(
     fun drawFloatingComponents(matrixStack: UMatrixStack) {
         requireMainThread()
 
-        val it = floatingComponents.iterator()
+        val it = legacyFloatingComponents.iterator()
         while (it.hasNext()) {
             val component = it.next()
             if (ofOrNull(component) == null) {
                 it.remove()
                 continue
             }
+            component.drawCompat(matrixStack)
+        }
+        for (component in floatingComponents ?: emptyList()) {
             component.drawCompat(matrixStack)
         }
     }
@@ -178,7 +181,7 @@ class Window @JvmOverloads constructor(
         requireMainThread()
 
         val (mouseX, mouseY) = getMousePosition()
-        for (floatingComponent in floatingComponents.reversed()) {
+        for (floatingComponent in allFloatingComponentsInReverseOrder()) {
             if (floatingComponent.isPointInside(mouseX, mouseY)) {
                 floatingComponent.mouseScroll(delta)
                 return
@@ -211,7 +214,7 @@ class Window @JvmOverloads constructor(
             }
         }
 
-        for (floatingComponent in floatingComponents.reversed()) {
+        for (floatingComponent in allFloatingComponentsInReverseOrder()) {
             if (floatingComponent.isPointInside(mouseX.toFloat(), mouseY.toFloat())) {
                 floatingComponent.mouseClick(mouseX, mouseY, button)
                 dealWithFocusRequests()
@@ -335,29 +338,36 @@ class Window @JvmOverloads constructor(
      * Floating API
      */
 
+    private fun allFloatingComponentsInReverseOrder(): Sequence<UIComponent> =
+        (floatingComponents ?: emptyList()).asReversed().asSequence() +
+                // Note: needs to be copied to guard against CME and for backwards compatibility
+                legacyFloatingComponents.reversed()
+
+    @Deprecated("Internal API.", replaceWith = ReplaceWith("component.setFloating(true)"))
     fun addFloatingComponent(component: UIComponent) {
         if (isInitialized) {
             requireMainThread()
         }
 
-        if (floatingComponents.contains(component)) return
+        if (legacyFloatingComponents.contains(component)) return
 
-        floatingComponents.add(component)
+        legacyFloatingComponents.add(component)
     }
 
+    @Deprecated("Internal API.", replaceWith = ReplaceWith("component.setFloating(false)"))
     fun removeFloatingComponent(component: UIComponent) {
         if (isInitialized) {
             requireMainThread()
         }
 
-        floatingComponents.remove(component)
+        legacyFloatingComponents.remove(component)
     }
 
     /**
      * Overridden to including floating components.
      */
     override fun hitTest(x: Float, y: Float): UIComponent {
-        for (component in floatingComponents.reversed()) {
+        for (component in allFloatingComponentsInReverseOrder()) {
             if (component.isPointInside(x, y)) {
                 return component.hitTest(x, y)
             }

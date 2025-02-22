@@ -100,6 +100,7 @@ public abstract class gg/essential/elementa/UIComponent : java/util/Observable, 
 	public fun insertChildAt (Lgg/essential/elementa/UIComponent;I)Lgg/essential/elementa/UIComponent;
 	public fun insertChildBefore (Lgg/essential/elementa/UIComponent;Lgg/essential/elementa/UIComponent;)Lgg/essential/elementa/UIComponent;
 	public fun isChildOf (Lgg/essential/elementa/UIComponent;)Z
+	public final fun isFloating ()Z
 	public fun isHovered ()Z
 	protected final fun isInitialized ()Z
 	public fun isPointInside (FF)Z
@@ -144,6 +145,7 @@ public abstract class gg/essential/elementa/UIComponent : java/util/Observable, 
 	public final fun setFontProvider (Lgg/essential/elementa/font/FontProvider;)Lgg/essential/elementa/UIComponent;
 	public final fun setHeight (Lgg/essential/elementa/constraints/HeightConstraint;)Lgg/essential/elementa/UIComponent;
 	protected final fun setInitialized (Z)V
+	public final fun setIsFloating (Z)V
 	public final fun setLastDraggedMouseX (Ljava/lang/Double;)V
 	public final fun setLastDraggedMouseY (Ljava/lang/Double;)V
 	public final fun setMouseScrollListeners (Ljava/util/List;)V
