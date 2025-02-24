@@ -1,7 +1,10 @@
 package gg.essential.elementa
 
+import gg.essential.elementa.components.NOP_UPDATE_FUNC
+import gg.essential.elementa.components.NopUpdateFuncList
 import gg.essential.elementa.components.UIBlock
 import gg.essential.elementa.components.UIContainer
+import gg.essential.elementa.components.UpdateFunc
 import gg.essential.elementa.components.Window
 import gg.essential.elementa.constraints.*
 import gg.essential.elementa.constraints.animation.*
@@ -49,7 +52,11 @@ abstract class UIComponent : Observable(), ReferenceHolder {
             return field
         }
     open val children = CopyOnWriteArrayList<UIComponent>().observable()
-    val effects = mutableListOf<Effect>()
+    val effects: MutableList<Effect> = mutableListOf<Effect>().observable().apply {
+        addObserver { _, event ->
+            updateUpdateFuncsOnChangedEffect(event)
+        }
+    }
 
     private var childrenLocked = 0
     init {
@@ -57,6 +64,7 @@ abstract class UIComponent : Observable(), ReferenceHolder {
             requireChildrenUnlocked()
             setWindowCacheOnChangedChild(event)
             updateFloatingComponentsOnChangedChild(event)
+            updateUpdateFuncsOnChangedChild(event)
         }
     }
 
@@ -1050,6 +1058,258 @@ abstract class UIComponent : Observable(), ReferenceHolder {
         }
     }
 
+    //region Public UpdateFunc API
+    fun addUpdateFunc(func: UpdateFunc) {
+        val updateFuncs = updateFuncs ?: mutableListOf<UpdateFunc>().also { updateFuncs = it }
+        val index = updateFuncs.size
+        updateFuncs.add(func)
+
+        val indexInWindow = allocUpdateFuncs(index, 1)
+        if (indexInWindow != -1) {
+            cachedWindow!!.allUpdateFuncs[indexInWindow] = func
+            assertUpdateFuncInvariants()
+        }
+    }
+
+    fun removeUpdateFunc(func: UpdateFunc) {
+        val updateFuncs = updateFuncs ?: return
+        val index = updateFuncs.indexOf(func)
+        if (index == -1) return
+        updateFuncs.removeAt(index)
+
+        freeUpdateFuncs(index, 1)
+    }
+    //endregion
+
+    //region Internal UpdateFunc tracking
+    private var updateFuncParent: UIComponent? = null
+    private var updateFuncs: MutableList<UpdateFunc>? = null // only allocated if used
+    private var effectUpdateFuncs = 0 // count of effect funcs
+    private var totalUpdateFuncs = 0 // count of own funcs + effect funcs + children total funcs
+
+    private fun localUpdateFuncIndexForEffect(effectIndex: Int, indexInEffect: Int): Int {
+        var localIndex = updateFuncs?.size ?: 0
+        for ((otherEffectIndex, otherEffect) in effects.withIndex()) {
+            if (otherEffectIndex >= effectIndex) {
+                break
+            } else {
+                if (otherEffect.updateFuncParent != this) continue // can happen if added to two components at the same time
+                localIndex += otherEffect.updateFuncs?.size ?: 0
+            }
+        }
+        localIndex += indexInEffect
+        return localIndex
+    }
+
+    private fun localUpdateFuncIndexForChild(childIndex: Int, indexInChild: Int): Int {
+        var localIndex = (updateFuncs?.size ?: 0) + effectUpdateFuncs
+        for ((otherChildIndex, otherChild) in children.withIndex()) {
+            if (otherChildIndex >= childIndex) {
+                break
+            } else {
+                if (otherChild.updateFuncParent != this) continue // can happen if added to two components at the same time
+                localIndex += otherChild.totalUpdateFuncs
+            }
+        }
+        localIndex += indexInChild
+        return localIndex
+    }
+
+    internal fun addUpdateFunc(effect: Effect, indexInEffect: Int, func: UpdateFunc) {
+        effectUpdateFuncs++
+        val indexInWindow = allocUpdateFuncs(localUpdateFuncIndexForEffect(effects.indexOf(effect), indexInEffect), 1)
+        if (indexInWindow != -1) {
+            cachedWindow!!.allUpdateFuncs[indexInWindow] = func
+            assertUpdateFuncInvariants()
+        }
+    }
+
+    internal fun removeUpdateFunc(effect: Effect, indexInEffect: Int) {
+        effectUpdateFuncs--
+        freeUpdateFuncs(localUpdateFuncIndexForEffect(effects.indexOf(effect), indexInEffect), 1)
+    }
+
+    private fun allocUpdateFuncs(childIndex: Int, indexInChild: Int, count: Int): Int {
+        return allocUpdateFuncs(localUpdateFuncIndexForChild(childIndex, indexInChild), count)
+    }
+
+    private fun freeUpdateFuncs(childIndex: Int, indexInChild: Int, count: Int) {
+        freeUpdateFuncs(localUpdateFuncIndexForChild(childIndex, indexInChild), count)
+    }
+
+    private fun allocUpdateFuncs(localIndex: Int, count: Int): Int {
+        totalUpdateFuncs += count
+        if (this is Window) {
+            if (nextUpdateFuncIndex > localIndex) {
+                nextUpdateFuncIndex += count
+            }
+            if (count == 1) {
+                allUpdateFuncs.add(localIndex, NOP_UPDATE_FUNC)
+            } else {
+                allUpdateFuncs.addAll(localIndex, NopUpdateFuncList(count))
+            }
+            return localIndex
+        } else {
+            val parent = updateFuncParent ?: return -1
+            return parent.allocUpdateFuncs(parent.children.indexOf(this), localIndex, count)
+        }
+    }
+
+    private fun freeUpdateFuncs(localIndex: Int, count: Int) {
+        totalUpdateFuncs -= count
+        if (this is Window) {
+            if (nextUpdateFuncIndex > localIndex) {
+                nextUpdateFuncIndex -= min(count, nextUpdateFuncIndex - localIndex)
+            }
+            if (count == 1) {
+                allUpdateFuncs.removeAt(localIndex)
+            } else {
+                allUpdateFuncs.subList(localIndex, localIndex + count).clear()
+            }
+            assertUpdateFuncInvariants()
+        } else {
+            val parent = updateFuncParent ?: return
+            parent.freeUpdateFuncs(parent.children.indexOf(this), localIndex, count)
+        }
+    }
+
+    private fun updateUpdateFuncsOnChangedChild(possibleEvent: Any) {
+        @Suppress("UNCHECKED_CAST")
+        when (val event = possibleEvent as? ObservableListEvent<UIComponent> ?: return) {
+            is ObservableAddEvent -> {
+                val (childIndex, child) = event.element
+                child.updateFuncParent?.let { oldParent ->
+                    oldParent.updateUpdateFuncsOnChangedChild(ObservableRemoveEvent(
+                        IndexedValue(oldParent.children.indexOf(child), child)))
+                }
+                assert(child.updateFuncParent == null)
+                child.updateFuncParent = this
+
+                if (child.totalUpdateFuncs == 0) return
+                var indexInWindow = allocUpdateFuncs(childIndex, 0, child.totalUpdateFuncs)
+                if (indexInWindow == -1) return
+                val allUpdateFuncs = cachedWindow!!.allUpdateFuncs
+                fun register(component: UIComponent) {
+                    component.updateFuncs?.let { funcs ->
+                        for (func in funcs) {
+                            allUpdateFuncs[indexInWindow++] = func
+                        }
+                    }
+                    component.effects.forEach { effect ->
+                        if (effect.updateFuncParent != component) return@forEach // can happen if added to two components at the same time
+                        effect.updateFuncs?.let { funcs ->
+                            for (func in funcs) {
+                                allUpdateFuncs[indexInWindow++] = func
+                            }
+                        }
+                    }
+                    component.children.forEach { child ->
+                        if (child.updateFuncParent != component) return@forEach // can happen if added to two components at the same time
+                        register(child)
+                    }
+                }
+                register(child)
+                assertUpdateFuncInvariants()
+            }
+            is ObservableRemoveEvent -> {
+                val (childIndex, child) = event.element
+                if (child.updateFuncParent != this) return // double remove can happen if added to two component at once
+                child.updateFuncParent = null
+
+                if (child.totalUpdateFuncs == 0) return
+                freeUpdateFuncs(childIndex, 0, child.totalUpdateFuncs)
+            }
+            is ObservableClearEvent -> {
+                event.oldChildren.forEach { if (it.updateFuncParent == this) it.updateFuncParent = null }
+
+                val remainingFuncs = (updateFuncs?.size ?: 0) + effectUpdateFuncs
+                val removedFuncs = totalUpdateFuncs - remainingFuncs
+                freeUpdateFuncs(remainingFuncs, removedFuncs)
+            }
+        }
+    }
+
+    private fun updateUpdateFuncsOnChangedEffect(possibleEvent: Any) {
+        @Suppress("UNCHECKED_CAST")
+        when (val event = possibleEvent as? ObservableListEvent<Effect> ?: return) {
+            is ObservableAddEvent -> {
+                val (effectIndex, effect) = event.element
+                effect.updateFuncParent?.let { oldParent ->
+                    oldParent.updateUpdateFuncsOnChangedEffect(ObservableRemoveEvent(
+                        IndexedValue(oldParent.effects.indexOf(effect), effect)))
+                }
+                assert(effect.updateFuncParent == null)
+                effect.updateFuncParent = this
+
+                val funcs = effect.updateFuncs ?: return
+                if (funcs.isEmpty()) return
+                effectUpdateFuncs += funcs.size
+                var indexInWindow = allocUpdateFuncs(localUpdateFuncIndexForEffect(effectIndex, 0), funcs.size)
+                if (indexInWindow == -1) return
+                val allUpdateFuncs = cachedWindow!!.allUpdateFuncs
+                for (func in funcs) {
+                    allUpdateFuncs[indexInWindow++] = func
+                }
+                assertUpdateFuncInvariants()
+            }
+            is ObservableRemoveEvent -> {
+                val (effectIndex, effect) = event.element
+                if (effect.updateFuncParent != this) return // double remove can happen if added to two component at once
+                effect.updateFuncParent = null
+
+                val funcs = effect.updateFuncs?.size ?: 0
+                if (funcs == 0) return
+                effectUpdateFuncs -= funcs
+                freeUpdateFuncs(localUpdateFuncIndexForEffect(effectIndex, 0), funcs)
+            }
+            is ObservableClearEvent -> {
+                event.oldChildren.forEach { if (it.updateFuncParent == this) it.updateFuncParent = null }
+
+                val removedFuncs = effectUpdateFuncs
+                effectUpdateFuncs = 0
+                freeUpdateFuncs(updateFuncs?.size ?: 0, removedFuncs)
+            }
+        }
+    }
+
+    internal fun assertUpdateFuncInvariants() {
+        if (!ASSERT_UPDATE_FUNC_INVARINTS) return
+
+        val window = cachedWindow ?: return
+        val allUpdateFuncs = window.allUpdateFuncs
+
+        var indexInWindow = 0
+
+        fun visit(component: UIComponent) {
+            val effectUpdateFuncs = component.effects.sumOf { if (it.updateFuncParent == component) it.updateFuncs?.size ?: 0 else 0 }
+            val childUpdateFuncs = component.children.sumOf { if (it.updateFuncParent == component) it.totalUpdateFuncs else 0 }
+            assert(component.effectUpdateFuncs == effectUpdateFuncs)
+            assert(component.totalUpdateFuncs == (component.updateFuncs?.size ?: 0) + effectUpdateFuncs + childUpdateFuncs)
+
+            component.updateFuncs?.let { funcs ->
+                for (func in funcs) {
+                    assert(func == allUpdateFuncs[indexInWindow++])
+                }
+            }
+            component.effects.forEach { effect ->
+                if (effect.updateFuncParent != component) return@forEach // can happen if added to two components at the same time
+                effect.updateFuncs?.let { funcs ->
+                    for (func in funcs) {
+                        assert(func == allUpdateFuncs[indexInWindow++])
+                    }
+                }
+            }
+            component.children.forEach { child ->
+                if (child.updateFuncParent != component) return@forEach // can happen if added to two components at the same time
+                visit(child)
+            }
+        }
+        visit(window)
+
+        assert(indexInWindow == allUpdateFuncs.size)
+    }
+    //endregion
+
     /**
      * Field animation API
      */
@@ -1263,6 +1523,8 @@ abstract class UIComponent : Observable(), ReferenceHolder {
     companion object {
         // Default value for componentName used as marker for lazy init.
         private val defaultComponentName = String()
+
+        private val ASSERT_UPDATE_FUNC_INVARINTS = System.getProperty("elementa.debug.assertUpdateFuncInvariants").toBoolean()
 
         val DEBUG_OUTLINE_WIDTH = System.getProperty("elementa.debug.width")?.toDoubleOrNull() ?: 2.0
 
