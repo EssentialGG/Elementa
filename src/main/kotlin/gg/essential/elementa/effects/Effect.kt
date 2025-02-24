@@ -61,6 +61,7 @@ abstract class Effect {
     /**
      * Called in the component's animationFrame function
      */
+    @Deprecated("See [ElementaVersion.V8].")
     open fun animationFrame() {}
 
     /**
