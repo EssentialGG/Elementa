@@ -45,6 +45,8 @@ class Inspector @JvmOverloads constructor(
             height = ChildBasedSizeConstraint()
         }
 
+        isFloating = true
+
         container = UIBlock(backgroundColor).constrain {
             width = ChildBasedMaxSizeConstraint()
             height = ChildBasedSizeConstraint()
@@ -230,28 +232,7 @@ class Inspector @JvmOverloads constructor(
         }
     }
 
-    private fun UIComponent.isMounted(): Boolean =
-        parent == this || (this in parent.children && parent.isMounted())
-
-    override fun animationFrame() {
-        super.animationFrame()
-
-        // Make sure we are the top-most component (last to draw and first to receive input)
-        Window.enqueueRenderOperation {
-            setFloating(false)
-            if (isMounted()) { // only if we are still mounted
-                setFloating(true)
-            }
-        }
-    }
-
     override fun draw(matrixStack: UMatrixStack) {
-        // If we got removed from our parent, we need to un-float ourselves
-        if (!isMounted()) {
-            Window.enqueueRenderOperation { setFloating(false) }
-            return
-        }
-
         separator1.setWidth(container.getWidth().pixels())
         separator2.setWidth(container.getWidth().pixels())
 

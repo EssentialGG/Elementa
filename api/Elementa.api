@@ -1152,7 +1152,6 @@ public final class gg/essential/elementa/components/inspector/Inspector : gg/ess
 	public fun <init> (Lgg/essential/elementa/UIComponent;Ljava/awt/Color;Ljava/awt/Color;F)V
 	public fun <init> (Lgg/essential/elementa/UIComponent;Ljava/awt/Color;Ljava/awt/Color;FLgg/essential/elementa/constraints/HeightConstraint;)V
 	public synthetic fun <init> (Lgg/essential/elementa/UIComponent;Ljava/awt/Color;Ljava/awt/Color;FLgg/essential/elementa/constraints/HeightConstraint;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public fun animationFrame ()V
 	public fun draw (Lgg/essential/universal/UMatrixStack;)V
 }
 
