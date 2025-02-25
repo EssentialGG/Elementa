@@ -27,38 +27,19 @@ inline fun <reified T : Effect> UIComponent.getOrPut(init: () -> T) =
 
 fun <T> UIComponent.pollingState(initialValue: T? = null, getter: () -> T): State<T> {
     val state = BasicState(initialValue ?: getter())
-    enableEffect(object : Effect() {
-        override fun animationFrame() {
-            state.set(getter())
-        }
-    })
+    addUpdateFunc { _, _ -> state.set(getter()) }
     return state
 }
 
 fun <T> UIComponent.pollingStateV2(initialValue: T? = null, getter: () -> T): StateV2<T> {
     val state = mutableStateOf(initialValue ?: getter())
-    enableEffect(object : Effect() {
-        override fun animationFrame() {
-            state.set(getter())
-        }
-    })
+    addUpdateFunc { _, _ -> state.set(getter()) }
     return state
 }
 
+@Deprecated("pollingState is now layout-safe by default", ReplaceWith("pollingStateV2(initialValue, getter)"))
 fun <T> UIComponent.layoutSafePollingState(initialValue: T? = null, getter: () -> T): StateV2<T> {
-    val state = mutableStateOf(initialValue ?: getter())
-    enableEffect(object : Effect() {
-        override fun animationFrame() {
-            val window = Window.of(boundComponent)
-            // Start one-shot timer which will trigger immediately once the current `animationFrame` is complete
-            window.startTimer(0) { timerId ->
-                window.stopTimer(timerId)
-
-                state.set(getter())
-            }
-        }
-    })
-    return state
+    return pollingStateV2(initialValue, getter)
 }
 
 /**
