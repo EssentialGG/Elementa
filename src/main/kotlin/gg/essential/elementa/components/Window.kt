@@ -2,6 +2,7 @@ package gg.essential.elementa.components
 
 import gg.essential.elementa.ElementaVersion
 import gg.essential.elementa.UIComponent
+import gg.essential.elementa.constraints.SuperConstraint
 import gg.essential.elementa.constraints.resolution.ConstraintResolutionGui
 import gg.essential.elementa.constraints.resolution.ConstraintResolver
 import gg.essential.elementa.constraints.resolution.ConstraintResolverV2
@@ -20,14 +21,20 @@ import java.util.concurrent.TimeUnit
  */
 class Window @JvmOverloads constructor(
     internal val version: ElementaVersion,
+    @Deprecated("See [ElementaVersion.V8].")
     val animationFPS: Int = 244
 ) : UIComponent() {
-    private var systemTime = -1L
-
+    private var legacyAnimationFrameTime = -1L
     private var lastDrawTime: Long = -1
+    var animationTimeNs: Long = 0
+        private set
+    val animationTimeMs: Long
+        get() = animationTimeNs / 1_000_000
 
     internal var allUpdateFuncs: MutableList<UpdateFunc> = mutableListOf()
     internal var nextUpdateFuncIndex = 0
+
+    internal val cachedConstraints: MutableList<SuperConstraint<*>> = mutableListOf()
 
     private var currentMouseButton = -1
 
@@ -79,8 +86,8 @@ class Window @JvmOverloads constructor(
             it.remove()
         }
 
-        if (systemTime == -1L)
-            systemTime = System.currentTimeMillis()
+        if (legacyAnimationFrameTime == -1L)
+            legacyAnimationFrameTime = System.currentTimeMillis()
         if (lastDrawTime == -1L)
             lastDrawTime = System.currentTimeMillis()
 
@@ -88,7 +95,19 @@ class Window @JvmOverloads constructor(
         val dtMs = now - lastDrawTime
         lastDrawTime = now
 
+        animationTimeNs += dtMs * 1_000_000
+
         try {
+
+            if (version >= ElementaVersion.v8) {
+                dispatchMouseDragging()
+
+                if (componentRequestingFocus != null) {
+                    dealWithFocusRequests()
+                }
+
+                invalidateCachedConstraints()
+            }
 
             assertUpdateFuncInvariants()
             nextUpdateFuncIndex = 0
@@ -98,14 +117,20 @@ class Window @JvmOverloads constructor(
                 func(dtMs / 1000f, dtMs.toInt())
             }
 
+            if (version >= ElementaVersion.v8) {
+                invalidateCachedConstraints()
+            }
+
             //If this Window is more than 5 seconds behind, reset it be only 5 seconds.
             //This will drop missed frames but avoid the game freezing as the Window tries
             //to catch after a period of inactivity
-            if (System.currentTimeMillis() - this.systemTime > TimeUnit.SECONDS.toMillis(5))
-                this.systemTime = System.currentTimeMillis() - TimeUnit.SECONDS.toMillis(5)
+            if (System.currentTimeMillis() - this.legacyAnimationFrameTime > TimeUnit.SECONDS.toMillis(5))
+                this.legacyAnimationFrameTime = System.currentTimeMillis() - TimeUnit.SECONDS.toMillis(5)
 
+            @Suppress("DEPRECATION")
+            val animationFPS = animationFPS
             val target = System.currentTimeMillis() + 1000 / animationFPS
-            val animationFrames = (target - this.systemTime).toInt() * animationFPS / 1000
+            val animationFrames = (target - this.legacyAnimationFrameTime).toInt() * animationFPS / 1000
             // If the window is sufficiently complex, it's possible for the average `animationFrame` to take so long
             // we'll start falling behind with no way to ever catch up. And the amount of frames we're behind will
             // quickly grow to the point where we'll be spending five seconds in `animationFrame` before we can get a
@@ -113,8 +138,13 @@ class Window @JvmOverloads constructor(
             // To prevent that, we limit the `animationFrame` calls we make per real frame such that we'll still be able
             // to render approximately 30 real frames per second at the cost of animations slowing down.
             repeat(animationFrames.coerceAtMost((animationFPS / 30).coerceAtLeast(1))) {
+                @Suppress("DEPRECATION")
                 animationFrame()
-                this.systemTime += 1000 / animationFPS
+                this.legacyAnimationFrameTime += 1000 / animationFPS
+
+                if (version >= ElementaVersion.v8) {
+                    invalidateCachedConstraints()
+                }
             }
 
             hoveredFloatingComponent = null
@@ -300,7 +330,7 @@ class Window @JvmOverloads constructor(
     internal var prevDraggedMouseX: Float? = null
     internal var prevDraggedMouseY: Float? = null
 
-    override fun animationFrame() {
+    private fun dispatchMouseDragging() {
         if (currentMouseButton != -1) {
             val (mouseX, mouseY) = getMousePosition()
             if (version >= ElementaVersion.v2) {
@@ -318,6 +348,21 @@ class Window @JvmOverloads constructor(
                 }
             }
         }
+    }
+
+    @Deprecated("See [ElementaVersion.V8].")
+    override fun animationFrame() {
+        if (version >= ElementaVersion.v8) {
+            // In v8, dragging and focus is handled before the UpdateFunc calls, we only need to call super to support
+            // components or effects which may still use animationFrame.
+            if (Flags.RequiresAnimationFrame in combinedFlags) {
+                @Suppress("DEPRECATION")
+                super.animationFrame()
+            }
+            return
+        }
+
+        dispatchMouseDragging()
 
         if (componentRequestingFocus != null && componentRequestingFocus != focusedComponent) {
             if (focusedComponent != null)
@@ -328,7 +373,17 @@ class Window @JvmOverloads constructor(
         }
         componentRequestingFocus = null
 
+        @Suppress("DEPRECATION")
         super.animationFrame()
+    }
+
+    // Note: Constraints are cached this way only with ElementaVersion.V8 and above,
+    //       prior version require calling `animationFrame` which may have additional side-effects.
+    fun invalidateCachedConstraints() {
+        for (constraint in cachedConstraints) {
+            constraint.recalculate = true
+        }
+        cachedConstraints.clear()
     }
 
     override fun getLeft(): Float {
@@ -442,6 +497,10 @@ class Window @JvmOverloads constructor(
         focusedComponent?.loseFocus()
         focusedComponent = null
     }
+
+    @Suppress("DEPRECATION")
+    internal val animationFPSOr1000: Int
+        get() = if (version >= ElementaVersion.v8) 1000 else animationFPS
 
     companion object {
         private val renderOperations = ConcurrentLinkedQueue<() -> Unit>()

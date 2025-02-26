@@ -1,7 +1,11 @@
 package gg.essential.elementa.components.input
 
+import gg.essential.elementa.ElementaVersion
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.components.UIBlock
+import gg.essential.elementa.components.UpdateFunc
+import gg.essential.elementa.components.Window
+import gg.essential.elementa.components.addUpdateFuncOnV8ReplacingAnimationFrame
 import gg.essential.elementa.constraints.CenterConstraint
 import gg.essential.elementa.constraints.animation.Animations
 import gg.essential.elementa.dsl.*
@@ -738,9 +742,16 @@ abstract class AbstractTextInput(
         }
     }
 
+    init { addUpdateFuncOnV8ReplacingAnimationFrame { _, _ -> update() } }
+    @Deprecated("See [ElementaVersion.V8].")
     override fun animationFrame() {
+        @Suppress("DEPRECATION")
         super.animationFrame()
+        if (versionOrV0 >= ElementaVersion.v8) return // handled by UpdateFunc
+        update()
+    }
 
+    private fun update() {
         val diff = (targetVerticalScrollingOffset - verticalScrollingOffset) * 0.1f
         if (abs(diff) < .25f)
             verticalScrollingOffset = targetVerticalScrollingOffset
