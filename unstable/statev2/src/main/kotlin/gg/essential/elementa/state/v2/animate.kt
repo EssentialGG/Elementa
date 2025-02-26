@@ -37,8 +37,7 @@ private class AnimationDriver(
     override fun setup() {
         previousDriverStateValue = driver.getUntracked()
         durationFrames = (Window.of(boundComponent).animationFPS * duration).toInt().coerceAtLeast(1)
-        driverEffect = effect(ReferenceHolder.Weak) {
-            val input = driver()
+        driverEffect = driver.onChange(ReferenceHolder.Weak) { input ->
             animationEventList.add(AnimationEvent(previousDriverStateValue, input, durationFrames))
             previousDriverStateValue = input
         }
