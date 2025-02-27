@@ -30,7 +30,8 @@ class ImageDrawable(md: MarkdownComponent, val url: URL, private val fallback: D
     private lateinit var imageX: ShiftableMDPixelConstraint
     private lateinit var imageY: ShiftableMDPixelConstraint
 
-    private val image = UIImage.ofURL(url) childOf md
+    private val image =
+        (if (md.imageCache == null) UIImage.ofURL(url) else UIImage.ofURL(url, md.imageCache)) childOf md
     private var hasLoaded = false
 
     override fun layoutImpl(x: Float, y: Float, width: Float): Layout {
