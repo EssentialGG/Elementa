@@ -30,9 +30,14 @@ class GradientEffect(
         val bottomLeft = this.bottomLeft.get()
         val bottomRight = this.bottomRight.get()
 
+        lateinit var prevBlendState: BlendState
+
         val dither = topLeft != topRight || topLeft != bottomLeft || bottomLeft != bottomRight
         if (dither) {
             shader.bind()
+        } else {
+            prevBlendState = BlendState.active()
+            BlendState.NORMAL.activate()
         }
 
         val buffer = UGraphics.getFromTessellator()
@@ -73,6 +78,8 @@ class GradientEffect(
 
         if (dither) {
             shader.unbind()
+        } else {
+            prevBlendState.activate()
         }
     }
 
