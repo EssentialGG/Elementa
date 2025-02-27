@@ -129,7 +129,7 @@ fun getStringSplitToWidth(
                     pushLine()
 
                 for (char in word.toCharArray()) {
-                    if ((currLine.toString() + char).width(textScale, fontProvider) > maxLineWidthSpace)
+                    if (currLine.isNotEmpty() && (currLine.toString() + char).width(textScale, fontProvider) > maxLineWidthSpace)
                         pushLine()
                     currLine.append(char)
                 }
