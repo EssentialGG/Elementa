@@ -32,14 +32,14 @@ class InspectorNode(private val inspector: Inspector, val targetComponent: UICom
         } childOf this
 
         override fun draw(matrixStack: UMatrixStack) {
+            super.draw(matrixStack)
+
             val isCurrentlyHidden = targetComponent.parent != targetComponent && !targetComponent.parent.children.contains(
                 targetComponent
             )
             val file = selectedSource?.let { " §7${it.fileName ?: it.className.substringAfterLast(".")}:${it.lineNumber}" } ?: ""
             val hidden = if (isCurrentlyHidden) " §7§o(Hidden)" else ""
             text.setText("§r$componentDisplayName$file$hidden")
-
-            super.draw(matrixStack)
         }
     }.constrain {
         x = SiblingConstraint()
