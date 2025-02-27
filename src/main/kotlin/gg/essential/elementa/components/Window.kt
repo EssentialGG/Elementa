@@ -23,6 +23,12 @@ class Window @JvmOverloads constructor(
     val animationFPS: Int = 244
 ) : UIComponent() {
     private var systemTime = -1L
+
+    private var lastDrawTime: Long = -1
+
+    internal var allUpdateFuncs: MutableList<UpdateFunc> = mutableListOf()
+    internal var nextUpdateFuncIndex = 0
+
     private var currentMouseButton = -1
 
     private var legacyFloatingComponents = mutableListOf<UIComponent>()
@@ -43,6 +49,7 @@ class Window @JvmOverloads constructor(
 
     init {
         super.parent = this
+        cachedWindow = this
     }
 
     override fun afterInitialization() {
@@ -74,8 +81,22 @@ class Window @JvmOverloads constructor(
 
         if (systemTime == -1L)
             systemTime = System.currentTimeMillis()
+        if (lastDrawTime == -1L)
+            lastDrawTime = System.currentTimeMillis()
+
+        val now = System.currentTimeMillis()
+        val dtMs = now - lastDrawTime
+        lastDrawTime = now
 
         try {
+
+            assertUpdateFuncInvariants()
+            nextUpdateFuncIndex = 0
+            while (true) {
+                val func = allUpdateFuncs.getOrNull(nextUpdateFuncIndex) ?: break
+                nextUpdateFuncIndex++
+                func(dtMs / 1000f, dtMs.toInt())
+            }
 
             //If this Window is more than 5 seconds behind, reset it be only 5 seconds.
             //This will drop missed frames but avoid the game freezing as the Window tries

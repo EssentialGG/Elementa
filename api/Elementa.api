@@ -24,6 +24,7 @@ public abstract class gg/essential/elementa/UIComponent : java/util/Observable, 
 	public fun <init> ()V
 	public fun addChild (Lgg/essential/elementa/UIComponent;)Lgg/essential/elementa/UIComponent;
 	public fun addChildren ([Lgg/essential/elementa/UIComponent;)Lgg/essential/elementa/UIComponent;
+	public final fun addUpdateFunc (Lkotlin/jvm/functions/Function2;)V
 	public fun afterDraw ()V
 	public fun afterDraw (Lgg/essential/universal/UMatrixStack;)V
 	public final fun afterDrawCompat (Lgg/essential/universal/UMatrixStack;)V
@@ -134,6 +135,7 @@ public abstract class gg/essential/elementa/UIComponent : java/util/Observable, 
 	public fun removeChild (Lgg/essential/elementa/UIComponent;)Lgg/essential/elementa/UIComponent;
 	public final fun removeEffect (Lgg/essential/elementa/effects/Effect;)V
 	public final fun removeEffect (Ljava/lang/Class;)V
+	public final fun removeUpdateFunc (Lkotlin/jvm/functions/Function2;)V
 	public fun replaceChild (Lgg/essential/elementa/UIComponent;Lgg/essential/elementa/UIComponent;)Lgg/essential/elementa/UIComponent;
 	protected final fun requireChildrenUnlocked ()V
 	public final fun setChildOf (Lgg/essential/elementa/UIComponent;)Lgg/essential/elementa/UIComponent;
@@ -2583,6 +2585,7 @@ public final class gg/essential/elementa/dsl/UtilitiesKt {
 public abstract class gg/essential/elementa/effects/Effect {
 	protected field boundComponent Lgg/essential/elementa/UIComponent;
 	public fun <init> ()V
+	protected final fun addUpdateFunc (Lkotlin/jvm/functions/Function2;)V
 	public fun afterDraw ()V
 	public fun afterDraw (Lgg/essential/universal/UMatrixStack;)V
 	public final fun afterDrawCompat (Lgg/essential/universal/UMatrixStack;)V
@@ -2595,6 +2598,7 @@ public abstract class gg/essential/elementa/effects/Effect {
 	public final fun beforeDrawCompat (Lgg/essential/universal/UMatrixStack;)V
 	public final fun bindComponent (Lgg/essential/elementa/UIComponent;)V
 	protected final fun getBoundComponent ()Lgg/essential/elementa/UIComponent;
+	protected final fun removeUpdateFunc (Lkotlin/jvm/functions/Function2;)V
 	protected final fun setBoundComponent (Lgg/essential/elementa/UIComponent;)V
 	public fun setup ()V
 }
