@@ -25,7 +25,12 @@ fun Modifier.fillWidth(fraction: Float = 1f, rightPadding: Float, _desc: Short =
 fun Modifier.fillWidth(fraction: Float = 1f, padding: Float = 0f) = fillWidth(fraction, padding, true)
 
 private fun Modifier.fillWidth(fraction: Float, padding: Float, doublePadding: Boolean) =
-    this then BasicWidthModifier { RelativeConstraint(fraction) - padding.pixels() * if (doublePadding) 2 else 1 }
+    this then when {
+        padding == 0f -> BasicWidthModifier { RelativeConstraint(fraction) }
+        doublePadding && padding == padding.toInt().toFloat() -> BasicWidthModifier { RelativeConstraint(fraction) - (padding * 2).pixels }
+        doublePadding -> BasicWidthModifier { RelativeConstraint(fraction) - padding.pixels * 2 }
+        else -> BasicWidthModifier { RelativeConstraint(fraction) - padding.pixels }
+    }
 
 /** Fills [fraction] of parent height minus [topPadding] and aligns [topPadding] pixels from the top */
 fun Modifier.fillHeight(fraction: Float = 1f, topPadding: Float, _desc: Int = 0) =
@@ -39,19 +44,44 @@ fun Modifier.fillHeight(fraction: Float = 1f, bottomPadding: Float, _desc: Short
 fun Modifier.fillHeight(fraction: Float = 1f, padding: Float = 0f) = fillHeight(fraction, padding, true)
 
 private fun Modifier.fillHeight(fraction: Float, padding: Float, doublePadding: Boolean) =
-    this then BasicHeightModifier { RelativeConstraint(fraction) - padding.pixels() * if (doublePadding) 2 else 1 }
+    this then when {
+        padding == 0f -> BasicHeightModifier { RelativeConstraint(fraction) }
+        doublePadding && padding == padding.toInt().toFloat() -> BasicHeightModifier { RelativeConstraint(fraction) - (padding * 2).pixels }
+        doublePadding -> BasicHeightModifier { RelativeConstraint(fraction) - padding.pixels * 2 }
+        else -> BasicHeightModifier { RelativeConstraint(fraction) - padding.pixels }
+    }
 
 fun Modifier.childBasedSize(padding: Float = 0f) = childBasedWidth(padding).childBasedHeight(padding)
 
-fun Modifier.childBasedWidth(padding: Float = 0f) = this then BasicWidthModifier { ChildBasedSizeConstraint() + (padding.pixels * 2) }
+fun Modifier.childBasedWidth(padding: Float = 0f) =
+    this then when {
+        padding == 0f -> BasicWidthModifier { ChildBasedSizeConstraint() }
+        padding == padding.toInt().toFloat() -> BasicWidthModifier { ChildBasedSizeConstraint() + (padding * 2).pixels }
+        else -> BasicWidthModifier { ChildBasedSizeConstraint() + padding.pixels * 2 }
+    }
 
-fun Modifier.childBasedHeight(padding: Float = 0f) = this then BasicHeightModifier { ChildBasedSizeConstraint() + (padding.pixels * 2) }
+fun Modifier.childBasedHeight(padding: Float = 0f) =
+    this then when {
+        padding == 0f -> BasicHeightModifier { ChildBasedSizeConstraint() }
+        padding == padding.toInt().toFloat() -> BasicHeightModifier { ChildBasedSizeConstraint() + (padding * 2).pixels }
+        else -> BasicHeightModifier { ChildBasedSizeConstraint() + padding.pixels * 2 }
+    }
 
 fun Modifier.childBasedMaxSize(padding: Float = 0f) = childBasedMaxWidth(padding).childBasedMaxHeight(padding)
 
-fun Modifier.childBasedMaxWidth(padding: Float = 0f) = this then BasicWidthModifier { ChildBasedMaxSizeConstraint() + (padding.pixels * 2) }
+fun Modifier.childBasedMaxWidth(padding: Float = 0f) =
+    this then when {
+        padding == 0f -> BasicWidthModifier { ChildBasedMaxSizeConstraint() }
+        padding == padding.toInt().toFloat() -> BasicWidthModifier { ChildBasedMaxSizeConstraint() + (padding * 2).pixels }
+        else -> BasicWidthModifier { ChildBasedMaxSizeConstraint() + padding.pixels * 2 }
+    }
 
-fun Modifier.childBasedMaxHeight(padding: Float = 0f) = this then BasicHeightModifier { ChildBasedMaxSizeConstraint() + (padding.pixels * 2) }
+fun Modifier.childBasedMaxHeight(padding: Float = 0f) =
+    this then when {
+        padding == 0f -> BasicHeightModifier { ChildBasedMaxSizeConstraint() }
+        padding == padding.toInt().toFloat() -> BasicHeightModifier { ChildBasedMaxSizeConstraint() + (padding * 2).pixels }
+        else -> BasicHeightModifier { ChildBasedMaxSizeConstraint() + padding.pixels * 2 }
+    }
 
 fun Modifier.fillRemainingWidth() = this then BasicWidthModifier { FillConstraintIncludingPadding(useSiblings = true) }
 
