@@ -23,9 +23,11 @@ class InspectorNode(private val inspector: Inspector, val targetComponent: UICom
             width = TextAspectConstraint()
         } childOf this
 
-        override fun animationFrame() {
-            super.animationFrame()
+        init {
+            addUpdateFunc { _, _ -> update() }
+        }
 
+        private fun update() {
             val isCurrentlyHidden = targetComponent.parent != targetComponent && !targetComponent.parent.children.contains(
                 targetComponent
             )
