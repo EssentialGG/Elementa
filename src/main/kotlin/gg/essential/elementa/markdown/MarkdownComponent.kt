@@ -5,6 +5,7 @@ import gg.essential.elementa.components.MarkdownNode
 import gg.essential.elementa.components.TreeListComponent
 import gg.essential.elementa.components.TreeNode
 import gg.essential.elementa.components.Window
+import gg.essential.elementa.components.image.ImageCache
 import gg.essential.elementa.constraints.HeightConstraint
 import gg.essential.elementa.dsl.pixels
 import gg.essential.elementa.events.UIEvent
@@ -34,7 +35,16 @@ class MarkdownComponent(
     private val codeFontPointSize: Float = 10f,
     private val codeFontRenderer: FontProvider = ElementaFonts.JETBRAINS_MONO,
     private val disableSelection: Boolean = false,
+    val imageCache: ImageCache? = null,
 ) : UIComponent() {
+
+    constructor(
+        text: String,
+        config: MarkdownConfig = MarkdownConfig(),
+        codeFontPointSize: Float = 10f,
+        codeFontRenderer: FontProvider = ElementaFonts.JETBRAINS_MONO,
+        disableSelection: Boolean = false,
+    ) : this(text, config, codeFontPointSize, codeFontRenderer, disableSelection, null)
 
     @JvmOverloads
     constructor(

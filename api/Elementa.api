@@ -3194,11 +3194,14 @@ public final class gg/essential/elementa/markdown/MarkdownComponent : gg/essenti
 	public synthetic fun <init> (Ljava/lang/String;Lgg/essential/elementa/markdown/MarkdownConfig;FLgg/essential/elementa/font/FontProvider;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun <init> (Ljava/lang/String;Lgg/essential/elementa/markdown/MarkdownConfig;FLgg/essential/elementa/font/FontProvider;Z)V
 	public synthetic fun <init> (Ljava/lang/String;Lgg/essential/elementa/markdown/MarkdownConfig;FLgg/essential/elementa/font/FontProvider;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/String;Lgg/essential/elementa/markdown/MarkdownConfig;FLgg/essential/elementa/font/FontProvider;ZLgg/essential/elementa/components/image/ImageCache;)V
+	public synthetic fun <init> (Ljava/lang/String;Lgg/essential/elementa/markdown/MarkdownConfig;FLgg/essential/elementa/font/FontProvider;ZLgg/essential/elementa/components/image/ImageCache;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun animationFrame ()V
 	public final fun bindText (Lgg/essential/elementa/state/State;)Lgg/essential/elementa/markdown/MarkdownComponent;
 	public fun draw (Lgg/essential/universal/UMatrixStack;)V
 	public final fun getConfig ()Lgg/essential/elementa/markdown/MarkdownConfig;
 	public final fun getDrawables ()Lgg/essential/elementa/markdown/drawables/DrawableList;
+	public final fun getImageCache ()Lgg/essential/elementa/components/image/ImageCache;
 	public final fun getMaxTextLineWidth ()F
 	public final fun getSectionOffsets ()Ljava/util/Map;
 	public final fun layout ()V
