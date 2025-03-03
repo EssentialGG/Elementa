@@ -1273,7 +1273,7 @@ abstract class UIComponent : Observable(), ReferenceHolder {
     }
 
     internal fun assertUpdateFuncInvariants() {
-        if (!ASSERT_UPDATE_FUNC_INVARINTS) return
+        if (!ASSERT_UPDATE_FUNC_INVARIANTS) return
 
         val window = cachedWindow ?: return
         val allUpdateFuncs = window.allUpdateFuncs
@@ -1524,7 +1524,7 @@ abstract class UIComponent : Observable(), ReferenceHolder {
         // Default value for componentName used as marker for lazy init.
         private val defaultComponentName = String()
 
-        private val ASSERT_UPDATE_FUNC_INVARINTS = System.getProperty("elementa.debug.assertUpdateFuncInvariants").toBoolean()
+        private val ASSERT_UPDATE_FUNC_INVARIANTS = System.getProperty("elementa.debug.assertUpdateFuncInvariants").toBoolean()
 
         val DEBUG_OUTLINE_WIDTH = System.getProperty("elementa.debug.width")?.toDoubleOrNull() ?: 2.0
 
