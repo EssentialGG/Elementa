@@ -1,6 +1,7 @@
 package gg.essential.elementa.effects
 
 import gg.essential.elementa.UIComponent
+import gg.essential.elementa.UIComponent.Flags
 import gg.essential.elementa.components.UpdateFunc
 import gg.essential.universal.UMatrixStack
 
@@ -10,6 +11,20 @@ import gg.essential.universal.UMatrixStack
  * This is where you can affect any drawing done.
  */
 abstract class Effect {
+    internal var flags: Flags = Flags.initialFor(javaClass)
+        set(newValue) {
+            val oldValue = field
+            if (oldValue == newValue) return
+            field = newValue
+            updateFuncParent?.let { parent ->
+                if (oldValue in newValue) { // merely additions?
+                    parent.effectFlags += newValue
+                } else {
+                    parent.recomputeEffectFlags()
+                }
+            }
+        }
+
     protected lateinit var boundComponent: UIComponent
 
     fun bindComponent(component: UIComponent) {

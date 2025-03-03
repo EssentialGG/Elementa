@@ -223,6 +223,9 @@ class Window @JvmOverloads constructor(
         //  2 and over. See [ElementaVersion.V2] for more info.
         val (adjustedX, adjustedY) = pixelCoordinatesToPixelCenter(mouseX, mouseY)
 
+        prevDraggedMouseX = adjustedX.toFloat()
+        prevDraggedMouseY = adjustedY.toFloat()
+
         doMouseClick(adjustedX, adjustedY, button)
     }
 
@@ -270,6 +273,9 @@ class Window @JvmOverloads constructor(
 
         super.mouseRelease()
 
+        prevDraggedMouseX = null
+        prevDraggedMouseY = null
+
         currentMouseButton = -1
     }
 
@@ -291,14 +297,25 @@ class Window @JvmOverloads constructor(
         }
     }
 
+    internal var prevDraggedMouseX: Float? = null
+    internal var prevDraggedMouseY: Float? = null
+
     override fun animationFrame() {
         if (currentMouseButton != -1) {
             val (mouseX, mouseY) = getMousePosition()
             if (version >= ElementaVersion.v2) {
-                dragMouse(mouseX, mouseY, currentMouseButton)
+                if (prevDraggedMouseX != mouseX && prevDraggedMouseY != mouseY) {
+                    prevDraggedMouseX = mouseX
+                    prevDraggedMouseY = mouseY
+                    dragMouse(mouseX, mouseY, currentMouseButton)
+                }
             } else {
-                @Suppress("DEPRECATION")
-                dragMouse(mouseX.toInt(), mouseY.toInt(), currentMouseButton)
+                if (prevDraggedMouseX != mouseX.toInt().toFloat() && prevDraggedMouseY != mouseY.toInt().toFloat()) {
+                    prevDraggedMouseX = mouseX.toInt().toFloat()
+                    prevDraggedMouseY = mouseY.toInt().toFloat()
+                    @Suppress("DEPRECATION")
+                    dragMouse(mouseX.toInt(), mouseY.toInt(), currentMouseButton)
+                }
             }
         }
 
