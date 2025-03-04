@@ -26,6 +26,7 @@ import gg.essential.universal.UResolution
 import org.lwjgl.opengl.GL11
 import java.awt.Color
 import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentLinkedDeque
 import java.util.concurrent.CopyOnWriteArrayList
 import java.util.function.BiConsumer
@@ -56,6 +57,7 @@ abstract class UIComponent : Observable(), ReferenceHolder {
     val effects: MutableList<Effect> = mutableListOf<Effect>().observable().apply {
         addObserver { _, event ->
             updateUpdateFuncsOnChangedEffect(event)
+            updateEffectFlagsOnChangedEffect(event)
         }
     }
 
@@ -66,6 +68,7 @@ abstract class UIComponent : Observable(), ReferenceHolder {
             setWindowCacheOnChangedChild(event)
             updateFloatingComponentsOnChangedChild(event)
             updateUpdateFuncsOnChangedChild(event)
+            updateCombinedFlagsOnChangedChild(event)
         }
     }
 
@@ -81,8 +84,14 @@ abstract class UIComponent : Observable(), ReferenceHolder {
             notifyObservers(constraints)
         }
 
-    var lastDraggedMouseX: Double? = null
-    var lastDraggedMouseY: Double? = null
+    @Deprecated("This property should have been private and probably does not do what you expect it to.")
+    var lastDraggedMouseX: Double?
+        get() = Window.ofOrNull(this)?.prevDraggedMouseX?.toDouble()
+        set(_) {}
+    @Deprecated("This property should have been private and probably does not do what you expect it to.")
+    var lastDraggedMouseY: Double?
+        get() = Window.ofOrNull(this)?.prevDraggedMouseY?.toDouble()
+        set(_) {}
 
     /* Bubbling Events */
     var mouseScrollListeners = mutableListOf<UIComponent.(UIScrollEvent) -> Unit>()
@@ -93,8 +102,11 @@ abstract class UIComponent : Observable(), ReferenceHolder {
     /* Non-Bubbling Events */
     val mouseReleaseListeners = mutableListOf<UIComponent.() -> Unit>()
     val mouseEnterListeners = mutableListOf<UIComponent.() -> Unit>()
+        get() = field.also { ownFlags += Flags.RequiresMouseMove }
     val mouseLeaveListeners = mutableListOf<UIComponent.() -> Unit>()
+        get() = field.also { ownFlags += Flags.RequiresMouseMove }
     val mouseDragListeners = mutableListOf<UIComponent.(mouseX: Float, mouseY: Float, button: Int) -> Unit>()
+        get() = field.also { ownFlags += Flags.RequiresMouseDrag }
     val keyTypedListeners = mutableListOf<UIComponent.(typedChar: Char, keyCode: Int) -> Unit>()
 
     private var currentlyHovered = false
@@ -142,6 +154,73 @@ abstract class UIComponent : Observable(), ReferenceHolder {
         cachedWindow = window
         children.forEach { it.recursivelySetWindowCache(window) }
     }
+
+    //region Internal flags tracking
+    /** Flags which apply to this component specifically. */
+    internal var ownFlags = Flags.initialFor(javaClass)
+        set(newValue) {
+            val oldValue = field
+            if (oldValue == newValue) return
+            field = newValue
+            if (oldValue in newValue) { // merely additions?
+                combinedFlags += newValue
+            } else {
+                recomputeCombinedFlags()
+            }
+        }
+    /** Flags which apply to one of the effects of tis component. */
+    internal var effectFlags = Flags(0u)
+        set(newValue) {
+            val oldValue = field
+            if (oldValue == newValue) return
+            field = newValue
+            if (oldValue in newValue) { // merely additions?
+                combinedFlags += newValue
+            } else {
+                recomputeCombinedFlags()
+            }
+        }
+    /** Combined flags of this component, its effects, and its children. */
+    internal var combinedFlags = ownFlags
+        set(newValue) {
+            val oldValue = field
+            if (oldValue == newValue) return
+            field = newValue
+            if (hasParent && parent != this) {
+                if (oldValue in newValue) { // merely additions?
+                    parent.combinedFlags += newValue
+                } else {
+                    parent.recomputeCombinedFlags()
+                }
+            }
+        }
+
+    internal fun recomputeEffectFlags() {
+        effectFlags = effects.fold(Flags(0u)) { acc, effect -> acc + effect.flags }
+    }
+
+    private fun recomputeCombinedFlags() {
+        combinedFlags = children.fold(ownFlags + effectFlags) { acc, child -> acc + child.combinedFlags }
+    }
+
+    private fun updateEffectFlagsOnChangedEffect(possibleEvent: Any) {
+        @Suppress("UNCHECKED_CAST")
+        when (val event = possibleEvent as? ObservableListEvent<Effect> ?: return) {
+            is ObservableAddEvent -> effectFlags += event.element.value.flags
+            is ObservableRemoveEvent -> recomputeEffectFlags()
+            is ObservableClearEvent -> recomputeEffectFlags()
+        }
+    }
+
+    private fun updateCombinedFlagsOnChangedChild(possibleEvent: Any) {
+        @Suppress("UNCHECKED_CAST")
+        when (val event = possibleEvent as? ObservableListEvent<UIComponent> ?: return) {
+            is ObservableAddEvent -> combinedFlags += event.element.value.combinedFlags
+            is ObservableRemoveEvent -> recomputeCombinedFlags()
+            is ObservableClearEvent -> recomputeCombinedFlags()
+        }
+    }
+    //endregion
 
     protected fun requireChildrenUnlocked() {
         requireState(childrenLocked == 0, "Cannot modify children while iterating over them.")
@@ -564,6 +643,16 @@ abstract class UIComponent : Observable(), ReferenceHolder {
     fun beforeChildrenDrawCompat(matrixStack: UMatrixStack) = UMatrixStack.Compat.runLegacyMethod(matrixStack) { beforeChildrenDraw() }
 
     open fun mouseMove(window: Window) {
+        if (Flags.RequiresMouseMove in ownFlags) {
+            updateCurrentlyHoveredState(window)
+        }
+
+        if (Flags.RequiresMouseMove in combinedFlags) {
+            this.forEachChild { it.mouseMove(window) }
+        }
+    }
+
+    private fun updateCurrentlyHoveredState(window: Window) {
         val hovered = isHovered() && window.hoveredFloatingComponent.let {
             it == null || it == this || isComponentInParentChain(it)
         }
@@ -577,8 +666,6 @@ abstract class UIComponent : Observable(), ReferenceHolder {
                 this.listener()
             currentlyHovered = false
         }
-
-        this.forEachChild { it.mouseMove(window) }
     }
 
     /**
@@ -589,8 +676,6 @@ abstract class UIComponent : Observable(), ReferenceHolder {
     open fun mouseClick(mouseX: Double, mouseY: Double, button: Int) {
         val clicked = hitTest(mouseX.toFloat(), mouseY.toFloat())
 
-        lastDraggedMouseX = mouseX
-        lastDraggedMouseY = mouseY
         lastClickCount = if (System.currentTimeMillis() - lastClickTime < 500) lastClickCount + 1 else 1
         lastClickTime = System.currentTimeMillis()
 
@@ -626,9 +711,6 @@ abstract class UIComponent : Observable(), ReferenceHolder {
     open fun mouseRelease() {
         for (listener in mouseReleaseListeners)
             this.listener()
-
-        lastDraggedMouseX = null
-        lastDraggedMouseY = null
 
         this.forEachChild { it.mouseRelease() }
     }
@@ -708,17 +790,17 @@ abstract class UIComponent : Observable(), ReferenceHolder {
     }
 
     private inline fun doDragMouse(mouseX: Float, mouseY: Float, button: Int, superCall: UIComponent.() -> Unit) {
-        if (lastDraggedMouseX == mouseX.toDouble() && lastDraggedMouseY == mouseY.toDouble())
+        if (Flags.RequiresMouseDrag !in combinedFlags) {
             return
+        }
 
-        lastDraggedMouseX = mouseX.toDouble()
-        lastDraggedMouseY = mouseY.toDouble()
+        if (Flags.RequiresMouseDrag in ownFlags) {
+            val relativeX = mouseX - getLeft()
+            val relativeY = mouseY - getTop()
 
-        val relativeX = mouseX - getLeft()
-        val relativeY = mouseY - getTop()
-
-        for (listener in mouseDragListeners)
-            this.listener(relativeX, relativeY, button)
+            for (listener in mouseDragListeners)
+                this.listener(relativeX, relativeY, button)
+        }
 
         this.forEachChild { it.superCall() }
     }
@@ -1538,6 +1620,47 @@ abstract class UIComponent : Observable(), ReferenceHolder {
     override fun holdOnto(listener: Any): () -> Unit {
         heldReferences.add(listener)
         return { heldReferences.remove(listener) }
+    }
+
+    @JvmInline
+    internal value class Flags(val bits: UInt) {
+        operator fun contains(element: Flags) = this.bits and element.bits == element.bits
+        infix fun and(other: Flags) = Flags(this.bits and other.bits)
+        infix fun or(other: Flags) = Flags(this.bits or other.bits)
+        operator fun plus(other: Flags) = this or other
+        operator fun minus(other: Flags) = Flags(this.bits and other.bits.inv())
+        fun inv() = Flags(bits.inv() and All.bits)
+
+        companion object {
+            private var nextBit = 0
+            private val iota: Flags
+                get() = Flags(1u shl nextBit++)
+
+            val None = Flags(0u)
+
+            val RequiresMouseMove = iota
+            val RequiresMouseDrag = iota
+
+            val All = Flags(iota.bits - 1u)
+
+            private val cache = ConcurrentHashMap<Class<*>, Flags>().apply {
+                put(Effect::class.java, Flags(0u))
+                put(UIComponent::class.java, Flags(0u))
+                put(Window::class.java, Flags(0u))
+            }
+            fun initialFor(cls: Class<*>): Flags = cache.getOrPut(cls) {
+                flagsBasedOnOverrides(cls) + initialFor(cls.superclass)
+            }
+
+            private fun flagsBasedOnOverrides(cls: Class<*>): Flags = listOf(
+                if (cls.overridesMethod("mouseMove", Window::class.java)) RequiresMouseMove else None,
+                if (cls.overridesMethod("dragMouse", Int::class.java, Int::class.java, Int::class.java)) RequiresMouseDrag else None,
+                if (cls.overridesMethod("dragMouse", Float::class.java, Float::class.java, Int::class.java)) RequiresMouseDrag else None,
+            ).reduce { acc, flags -> acc + flags }
+
+            private fun Class<*>.overridesMethod(name: String, vararg args: Class<*>) =
+                try { getDeclaredMethod(name, *args); true } catch (_: NoSuchMethodException) { false }
+        }
     }
 
     companion object {
