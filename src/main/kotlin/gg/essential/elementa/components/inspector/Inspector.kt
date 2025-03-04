@@ -10,11 +10,15 @@ import gg.essential.elementa.effects.ScissorEffect
 import gg.essential.elementa.utils.ObservableAddEvent
 import gg.essential.elementa.utils.ObservableClearEvent
 import gg.essential.elementa.utils.ObservableRemoveEvent
+import gg.essential.elementa.utils.devPropSet
 import gg.essential.elementa.utils.elementaDebug
 import gg.essential.universal.UGraphics
 import gg.essential.universal.UMatrixStack
 import org.lwjgl.opengl.GL11
 import java.awt.Color
+import java.io.FileNotFoundException
+import java.net.ConnectException
+import java.net.URL
 import java.text.NumberFormat
 
 class Inspector @JvmOverloads constructor(
@@ -201,6 +205,59 @@ class Inspector @JvmOverloads constructor(
             infoBlockScroller childOf container
         }
         selectedNode = node
+        if (node != null) {
+            val source = node.targetComponent.primarySource
+            if (source != null) {
+                node.selectedSourceIndex = node.targetComponent.filteredSource!!.indexOf(source)
+                openSourceFile(source)
+            }
+        }
+    }
+
+    init {
+        // Workaround for ScrollComponent.actualContent breaking scroll event propagation
+        var recursive = false
+        onMouseScroll { event ->
+            if (recursive) return@onMouseScroll
+            recursive = true
+            treeBlock.mouseScroll(event.delta)
+            recursive = false
+        }
+    }
+
+    internal fun scrollSource(node: InspectorNode, up: Boolean) {
+        val elements = node.targetComponent.filteredSource ?: return
+        var index = node.selectedSourceIndex
+        index = (index + if (up) 1 else -1).coerceIn(elements.indices)
+        node.selectedSourceIndex = index
+        openSourceFile(elements[index])
+    }
+
+    private fun openSourceFile(frame: StackTraceElement) {
+        val folder = frame.className.substringBeforeLast(".").replace(".", "/")
+        val file = folder + "/" + frame.fileName
+        val line = frame.lineNumber
+        try {
+            // For docs see https://www.develar.org/idea-rest-api/#api-Platform-file
+            // For impl see https://github.com/JetBrains/intellij-community/blob/d9b508478de6d3b5d2e765738d561ead77c97824/plugins/remote-control/src/org/jetbrains/ide/OpenFileHttpService.kt
+            val url = URL("$INTELLIJ_REST_API/api/file?file=$file&line=$line&focused=false")
+            val conn = url.openConnection()
+            // IntelliJ uses Origin/Referrer to determine whether to trust a given request (a JavaScript snippet in your
+            // browser could try to request this page too after all!), so we use localhost which is trusted by default.
+            // See https://github.com/JetBrains/intellij-community/blob/d9b508478de6d3b5d2e765738d561ead77c97824/platform/built-in-server/src/org/jetbrains/ide/RestService.kt#L272
+            // We can't use Origin because Java considers that a restricted header and will just ignore it.
+            conn.setRequestProperty("Referer", "http://localhost")
+            conn.connect()
+            conn.inputStream.skip(Long.MAX_VALUE)
+        } catch (ignored: ConnectException) {
+        } catch (e: FileNotFoundException) { // HTTP 404
+            if (!hintedIntelliJSupport) {
+                hintedIntelliJSupport = true
+                println("IntelliJ detected! Install JetBrain's `IDE Remote Control` plugin to automatically jump to the source of the selected component.")
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     private fun getClickSelectTarget(mouseX: Float, mouseY: Float): UIComponent? {
@@ -283,5 +340,22 @@ class Inspector @JvmOverloads constructor(
 
     companion object {
         internal val percentFormat: NumberFormat = NumberFormat.getPercentInstance()
+
+        private val INTELLIJ_REST_API = System.getProperty("elementa.intellij_rest_api", "http://localhost:63342")
+        private var hintedIntelliJSupport = false
+
+        internal val factoryMethods: MutableList<Pair<String, String?>> = mutableListOf()
+
+        fun registerComponentFactory(cls: Class<*>?, method: String? = null) {
+            if (!devPropSet) return
+            factoryMethods.add(Pair(cls?.name ?: callerClassName(), method))
+        }
+
+        private fun callerClassName(): String =
+            Throwable().stackTrace.asSequence()
+                .filterNot { it.methodName.endsWith("\$default") } // synthetic Kotlin defaults method
+                .drop(2) // this method + caller of this method
+                .first()
+                .className
     }
 }

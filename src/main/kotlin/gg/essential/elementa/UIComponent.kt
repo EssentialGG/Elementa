@@ -6,6 +6,7 @@ import gg.essential.elementa.components.UIBlock
 import gg.essential.elementa.components.UIContainer
 import gg.essential.elementa.components.UpdateFunc
 import gg.essential.elementa.components.Window
+import gg.essential.elementa.components.inspector.Inspector
 import gg.essential.elementa.constraints.*
 import gg.essential.elementa.constraints.animation.*
 import gg.essential.elementa.dsl.animate
@@ -1355,7 +1356,7 @@ abstract class UIComponent : Observable(), ReferenceHolder {
     }
 
     internal fun assertUpdateFuncInvariants() {
-        if (!ASSERT_UPDATE_FUNC_INVARINTS) return
+        if (!ASSERT_UPDATE_FUNC_INVARIANTS) return
 
         val window = cachedWindow ?: return
         val allUpdateFuncs = window.allUpdateFuncs
@@ -1390,6 +1391,25 @@ abstract class UIComponent : Observable(), ReferenceHolder {
 
         assert(indexInWindow == allUpdateFuncs.size)
     }
+    //endregion
+
+    //region Source code location
+    internal val source: Array<StackTraceElement>? = if (elementaDev) Throwable().stackTrace else null
+
+    internal val filteredSource: List<StackTraceElement>?
+        get() = source?.filterNot { it.lineNumber == 1 }
+
+    internal val primarySource: StackTraceElement?
+        get() {
+            val className = javaClass.name
+            return (source ?: return null)
+                .asSequence()
+                .dropWhile { it.methodName == "<init>" && it.className != className } // super class constructors
+                .dropWhile { it.methodName == "<init>" && it.className == className } // constructors
+                .filterNot { it.lineNumber == 1 } // ignore synthetic methods
+                .dropWhile { frame -> Inspector.factoryMethods.any { (c, m) -> c == frame.className && (m == null || m == frame.methodName) } }
+                .firstOrNull()
+        }
     //endregion
 
     /**
@@ -1647,7 +1667,7 @@ abstract class UIComponent : Observable(), ReferenceHolder {
         // Default value for componentName used as marker for lazy init.
         private val defaultComponentName = String()
 
-        private val ASSERT_UPDATE_FUNC_INVARINTS = System.getProperty("elementa.debug.assertUpdateFuncInvariants").toBoolean()
+        private val ASSERT_UPDATE_FUNC_INVARIANTS = System.getProperty("elementa.debug.assertUpdateFuncInvariants").toBoolean()
 
         val DEBUG_OUTLINE_WIDTH = System.getProperty("elementa.debug.width")?.toDoubleOrNull() ?: 2.0
 
