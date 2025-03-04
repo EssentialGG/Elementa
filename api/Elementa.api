@@ -1161,6 +1161,8 @@ public final class gg/essential/elementa/components/inspector/Inspector : gg/ess
 }
 
 public final class gg/essential/elementa/components/inspector/Inspector$Companion {
+	public final fun registerComponentFactory (Ljava/lang/Class;Ljava/lang/String;)V
+	public static synthetic fun registerComponentFactory$default (Lgg/essential/elementa/components/inspector/Inspector$Companion;Ljava/lang/Class;Ljava/lang/String;ILjava/lang/Object;)V
 }
 
 public final class gg/essential/elementa/components/inspector/InspectorNode : gg/essential/elementa/components/TreeNode {
