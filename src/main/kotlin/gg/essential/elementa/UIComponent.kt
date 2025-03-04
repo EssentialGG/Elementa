@@ -79,6 +79,18 @@ abstract class UIComponent : Observable(), ReferenceHolder {
 
     var constraints = UIConstraints(this)
         set(value) {
+            (field as? AnimatingConstraints)?.updateFunc?.let { removeUpdateFunc(it) }
+            if (value is AnimatingConstraints) {
+                addUpdateFunc(object : UpdateFunc {
+                    override fun invoke(dt: Float, dtMs: Int) {
+                        if (Window.of(this@UIComponent).version < ElementaVersion.v8) {
+                            removeUpdateFunc(this) // handled by `animationFrame`
+                            return
+                        }
+                        value.updateCompletion(dtMs)
+                    }
+                }.also { value.updateFunc = it })
+            }
             field = value
             setChanged()
             notifyObservers(constraints)
@@ -138,6 +150,9 @@ abstract class UIComponent : Observable(), ReferenceHolder {
 
     private var didCallBeforeDraw = false
     private var warnedAboutBeforeDraw = false
+
+    internal val versionOrV0: ElementaVersion
+        get() = Window.ofOrNull(this)?.version ?: ElementaVersion.v0
 
     internal var cachedWindow: Window? = null
 
@@ -810,7 +825,38 @@ abstract class UIComponent : Observable(), ReferenceHolder {
             this.listener(typedChar, keyCode)
     }
 
+    @Deprecated("See [ElementaVersion.V8].")
     open fun animationFrame() {
+        if (versionOrV0 >= ElementaVersion.v8) {
+            doSparseAnimationFrame()
+        } else {
+            doLegacyAnimationFrame()
+        }
+    }
+
+    private fun doSparseAnimationFrame() {
+        if (Flags.RequiresAnimationFrame in effectFlags) {
+            for (effect in effects) {
+                if (Flags.RequiresAnimationFrame in effect.flags) {
+                    @Suppress("DEPRECATION")
+                    effect.animationFrame()
+                }
+            }
+        }
+        for (child in children) {
+            if (Flags.RequiresAnimationFrame in child.combinedFlags) {
+                if (Flags.RequiresAnimationFrame in child.ownFlags) {
+                    @Suppress("DEPRECATION")
+                    child.animationFrame()
+                } else {
+                    child.doSparseAnimationFrame()
+                }
+            }
+        }
+    }
+
+    @Suppress("DEPRECATION")
+    private fun doLegacyAnimationFrame() {
         constraints.animationFrame()
 
         effects.forEach(Effect::animationFrame)
@@ -825,14 +871,19 @@ abstract class UIComponent : Observable(), ReferenceHolder {
         }
 
         // Process timers
-        val timerIterator = activeTimers.iterator()
-        timerIterator.forEachRemaining { (id, timer) ->
-            if (id in stoppedTimers)
-                return@forEachRemaining
-
+        updateTimers { timer ->
             val time = System.currentTimeMillis()
+            if (timer.lastTime == -1L) timer.lastTime = time
             timer.timeLeft -= (time - timer.lastTime)
             timer.lastTime = time
+        }
+    }
+
+    private inline fun updateTimers(advance: (Timer) -> Unit) {
+        for ((id, timer) in activeTimers) {
+            if (id in stoppedTimers) continue
+
+            advance(timer)
 
             if (!timer.hasDelayed && timer.timeLeft <= 0L) {
                 timer.hasDelayed = true
@@ -1425,9 +1476,10 @@ abstract class UIComponent : Observable(), ReferenceHolder {
             return
         }
 
-        val totalFrames = (time * Window.of(this@UIComponent).animationFPS).toInt()
-        val totalDelay = (delay * Window.of(this@UIComponent).animationFPS).toInt()
+        val totalFrames = (time * Window.of(this@UIComponent).animationFPSOr1000).toInt()
+        val totalDelay = (delay * Window.of(this@UIComponent).animationFPSOr1000).toInt()
 
+        scheduleFieldAnimationUpdateFunc()
         fieldAnimationQueue.removeIf { it.field == this }
         fieldAnimationQueue.addFirst(
             IntFieldAnimationComponent(
@@ -1450,9 +1502,10 @@ abstract class UIComponent : Observable(), ReferenceHolder {
             return
         }
 
-        val totalFrames = (time * Window.of(this@UIComponent).animationFPS).toInt()
-        val totalDelay = (delay * Window.of(this@UIComponent).animationFPS).toInt()
+        val totalFrames = (time * Window.of(this@UIComponent).animationFPSOr1000).toInt()
+        val totalDelay = (delay * Window.of(this@UIComponent).animationFPSOr1000).toInt()
 
+        scheduleFieldAnimationUpdateFunc()
         fieldAnimationQueue.removeIf { it.field == this }
         fieldAnimationQueue.addFirst(
             FloatFieldAnimationComponent(
@@ -1475,9 +1528,10 @@ abstract class UIComponent : Observable(), ReferenceHolder {
             return
         }
 
-        val totalFrames = (time * Window.of(this@UIComponent).animationFPS).toInt()
-        val totalDelay = (delay * Window.of(this@UIComponent).animationFPS).toInt()
+        val totalFrames = (time * Window.of(this@UIComponent).animationFPSOr1000).toInt()
+        val totalDelay = (delay * Window.of(this@UIComponent).animationFPSOr1000).toInt()
 
+        scheduleFieldAnimationUpdateFunc()
         fieldAnimationQueue.removeIf { it.field == this }
         fieldAnimationQueue.addFirst(
             LongFieldAnimationComponent(
@@ -1505,9 +1559,10 @@ abstract class UIComponent : Observable(), ReferenceHolder {
             return
         }
 
-        val totalFrames = (time * Window.of(this@UIComponent).animationFPS).toInt()
-        val totalDelay = (delay * Window.of(this@UIComponent).animationFPS).toInt()
+        val totalFrames = (time * Window.of(this@UIComponent).animationFPSOr1000).toInt()
+        val totalDelay = (delay * Window.of(this@UIComponent).animationFPSOr1000).toInt()
 
+        scheduleFieldAnimationUpdateFunc()
         fieldAnimationQueue.removeIf { it.field == this }
         fieldAnimationQueue.addFirst(
             DoubleFieldAnimationComponent(
@@ -1530,9 +1585,10 @@ abstract class UIComponent : Observable(), ReferenceHolder {
             return
         }
 
-        val totalFrames = (time * Window.of(this@UIComponent).animationFPS).toInt()
-        val totalDelay = (delay * Window.of(this@UIComponent).animationFPS).toInt()
+        val totalFrames = (time * Window.of(this@UIComponent).animationFPSOr1000).toInt()
+        val totalDelay = (delay * Window.of(this@UIComponent).animationFPSOr1000).toInt()
 
+        scheduleFieldAnimationUpdateFunc()
         fieldAnimationQueue.removeIf { it.field == this }
         fieldAnimationQueue.addFirst(
             ColorFieldAnimationComponent(
@@ -1548,6 +1604,36 @@ abstract class UIComponent : Observable(), ReferenceHolder {
 
     fun KMutableProperty0<*>.stopAnimating() {
         fieldAnimationQueue.removeIf { it.field == this }
+    }
+
+    private fun scheduleFieldAnimationUpdateFunc() {
+        if (fieldAnimationQueue.isNotEmpty()) return // should already be scheduled
+
+        addUpdateFunc(object : UpdateFunc {
+            override fun invoke(dt: Float, dtMs: Int) {
+                if (Window.of(this@UIComponent).version < ElementaVersion.v8) {
+                    // Field animations will be handled via `animationFrame`
+                    removeUpdateFunc(this)
+                    return
+                }
+
+                val queueIterator = fieldAnimationQueue.iterator()
+                queueIterator.forEachRemaining { anim ->
+                    if (!anim.animationPaused) {
+                        anim.elapsedFrames += dtMs
+                    }
+                    anim.setValue(anim.getPercentComplete())
+
+                    if (anim.isComplete()) {
+                        queueIterator.remove()
+                    }
+                }
+
+                if (fieldAnimationQueue.isEmpty()) {
+                    removeUpdateFunc(this)
+                }
+            }
+        })
     }
 
     private fun validateAnimationFields(time: Float, delay: Float): Boolean {
@@ -1578,6 +1664,7 @@ abstract class UIComponent : Observable(), ReferenceHolder {
      */
 
     fun startTimer(interval: Long, delay: Long = 0, callback: (Int) -> Unit): Int {
+        scheduleTimerUpdateFunc()
         val id = nextTimerId++
         activeTimers[id] = Timer(delay, interval, callback)
         return id
@@ -1607,7 +1694,7 @@ abstract class UIComponent : Observable(), ReferenceHolder {
     private class Timer(delay: Long, val interval: Long, val callback: (Int) -> Unit) {
         var hasDelayed = false
         var timeLeft = delay
-        var lastTime = System.currentTimeMillis()
+        var lastTime: Long = -1 // used only with `animationFrame` / pre-v8
 
         init {
             if (delay == 0L) {
@@ -1615,6 +1702,26 @@ abstract class UIComponent : Observable(), ReferenceHolder {
                 timeLeft = interval
             }
         }
+    }
+
+    private fun scheduleTimerUpdateFunc() {
+        if (activeTimers.isNotEmpty()) return // should already be scheduled
+
+        addUpdateFunc(object : UpdateFunc {
+            override fun invoke(dt: Float, dtMs: Int) {
+                if (Window.of(this@UIComponent).version < ElementaVersion.v8) {
+                    // Timers will be handled via `animationFrame`
+                    removeUpdateFunc(this)
+                    return
+                }
+
+                updateTimers { it.timeLeft -= dtMs }
+
+                if (activeTimers.isEmpty()) {
+                    removeUpdateFunc(this)
+                }
+            }
+        })
     }
 
     override fun holdOnto(listener: Any): () -> Unit {
@@ -1640,6 +1747,7 @@ abstract class UIComponent : Observable(), ReferenceHolder {
 
             val RequiresMouseMove = iota
             val RequiresMouseDrag = iota
+            val RequiresAnimationFrame = iota // only applies when ElementaVersion >= V8
 
             val All = Flags(iota.bits - 1u)
 
@@ -1656,6 +1764,7 @@ abstract class UIComponent : Observable(), ReferenceHolder {
                 if (cls.overridesMethod("mouseMove", Window::class.java)) RequiresMouseMove else None,
                 if (cls.overridesMethod("dragMouse", Int::class.java, Int::class.java, Int::class.java)) RequiresMouseDrag else None,
                 if (cls.overridesMethod("dragMouse", Float::class.java, Float::class.java, Int::class.java)) RequiresMouseDrag else None,
+                if (cls.overridesMethod("animationFrame")) RequiresAnimationFrame else None,
             ).reduce { acc, flags -> acc + flags }
 
             private fun Class<*>.overridesMethod(name: String, vararg args: Class<*>) =

@@ -8,6 +8,7 @@ public final class gg/essential/elementa/ElementaVersion : java/lang/Enum {
 	public static final field V5 Lgg/essential/elementa/ElementaVersion;
 	public static final field V6 Lgg/essential/elementa/ElementaVersion;
 	public static final field V7 Lgg/essential/elementa/ElementaVersion;
+	public static final field V8 Lgg/essential/elementa/ElementaVersion;
 	public final fun enableFor (Lkotlin/jvm/functions/Function0;)Ljava/lang/Object;
 	public static fun valueOf (Ljava/lang/String;)Lgg/essential/elementa/ElementaVersion;
 	public static fun values ()[Lgg/essential/elementa/ElementaVersion;
@@ -362,7 +363,6 @@ public final class gg/essential/elementa/components/ScrollComponent : gg/essenti
 	public synthetic fun addChild (Lgg/essential/elementa/UIComponent;)Lgg/essential/elementa/UIComponent;
 	public fun addChild (Lgg/essential/elementa/UIComponent;)Lgg/essential/elementa/components/ScrollComponent;
 	public final fun addScrollAdjustEvent (ZLkotlin/jvm/functions/Function2;)V
-	public fun afterInitialization ()V
 	public fun alwaysDrawChildren ()Z
 	public fun animationFrame ()V
 	public fun childrenOfType (Ljava/lang/Class;)Ljava/util/List;
@@ -756,6 +756,8 @@ public final class gg/essential/elementa/components/Window : gg/essential/elemen
 	public final fun drawFloatingComponents (Lgg/essential/universal/UMatrixStack;)V
 	public final fun focus (Lgg/essential/elementa/UIComponent;)V
 	public final fun getAnimationFPS ()I
+	public final fun getAnimationTimeMs ()J
+	public final fun getAnimationTimeNs ()J
 	public fun getBottom ()F
 	public final fun getFocusedComponent ()Lgg/essential/elementa/UIComponent;
 	public final fun getHasErrored ()Z
@@ -766,6 +768,7 @@ public final class gg/essential/elementa/components/Window : gg/essential/elemen
 	public fun getTop ()F
 	public fun getWidth ()F
 	public fun hitTest (FF)Lgg/essential/elementa/UIComponent;
+	public final fun invalidateCachedConstraints ()V
 	public final fun isAreaVisible (DDDD)Z
 	public fun keyType (CI)V
 	public fun mouseClick (DDI)V
@@ -1871,7 +1874,6 @@ public final class gg/essential/elementa/constraints/RainbowColorConstraint : gg
 	public fun <init> ()V
 	public fun <init> (IF)V
 	public synthetic fun <init> (IFILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public fun animationFrame ()V
 	public final fun getAlpha ()I
 	public fun getCachedValue ()Ljava/awt/Color;
 	public synthetic fun getCachedValue ()Ljava/lang/Object;
