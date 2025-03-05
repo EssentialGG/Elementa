@@ -12,6 +12,8 @@ import gg.essential.elementa.utils.roundToRealPixels
 interface Arrangement {
     fun initialize(component: UIComponent, axis: Axis)
 
+    fun arrange(containerSize: Float, children: List<Float>, accept: (Int, Float) -> Unit)
+
     companion object {
         val SpaceAround: Arrangement get() = SpaceAroundArrangement.Factory
         val SpaceBetween: Arrangement get() = SpaceBetweenArrangement.Factory
@@ -136,6 +138,19 @@ private open class SpacedArrangement(
         override fun initialize(component: UIComponent, axis: Axis) {
             SpacedArrangement(axis, spacing, floatPosition).initialize(component)
         }
+
+        override fun arrange(containerSize: Float, children: List<Float>, accept: (Int, Float) -> Unit) {
+            val childrenSize = children.sum() + spacing * (children.size - 1)
+            var nextStart = when (floatPosition) {
+                FloatPosition.START -> 0f
+                FloatPosition.CENTER -> (containerSize / 2 - childrenSize / 2).roundToRealPixels()
+                FloatPosition.END -> containerSize - childrenSize
+            }
+            for ((index, child) in children.withIndex()) {
+                accept(index, nextStart)
+                nextStart += child + spacing
+            }
+        }
     }
 
     object DefaultFactory : Arrangement by Factory(0f, FloatPosition.CENTER)
@@ -149,6 +164,16 @@ private class SpaceBetweenArrangement(axis: Axis) : SpacedArrangement(axis) {
     object Factory : Arrangement {
         override fun initialize(component: UIComponent, axis: Axis) {
             SpaceBetweenArrangement(axis).initialize(component)
+        }
+
+        override fun arrange(containerSize: Float, children: List<Float>, accept: (Int, Float) -> Unit) {
+            val spacing = ((containerSize - children.sum()) / (children.size - 1)).roundToRealPixels()
+            val childrenSize = children.sum() + spacing * (children.size - 1)
+            var nextStart = (containerSize / 2 - childrenSize / 2).roundToRealPixels()
+            for ((index, child) in children.withIndex()) {
+                accept(index, nextStart)
+                nextStart += child + spacing
+            }
         }
     }
 }
@@ -166,6 +191,15 @@ private class SpaceEvenlyArrangement(axis: Axis) : SpacedArrangement(axis) {
         override fun initialize(component: UIComponent, axis: Axis) {
             SpaceEvenlyArrangement(axis).initialize(component)
         }
+
+        override fun arrange(containerSize: Float, children: List<Float>, accept: (Int, Float) -> Unit) {
+            val spacing = ((containerSize - children.sum()) / (children.size + 1)).roundToRealPixels()
+            var nextStart = spacing
+            for ((index, child) in children.withIndex()) {
+                accept(index, nextStart)
+                nextStart += child + spacing
+            }
+        }
     }
 }
 
@@ -181,6 +215,15 @@ private class SpaceAroundArrangement(axis: Axis) : SpacedArrangement(axis) {
     object Factory : Arrangement {
         override fun initialize(component: UIComponent, axis: Axis) {
             SpaceAroundArrangement(axis).initialize(component)
+        }
+
+        override fun arrange(containerSize: Float, children: List<Float>, accept: (Int, Float) -> Unit) {
+            val spacing = ((containerSize - children.sum()) / children.size).roundToRealPixels()
+            var nextStart = (spacing / 2).roundToRealPixels()
+            for ((index, child) in children.withIndex()) {
+                accept(index, nextStart)
+                nextStart += child + spacing
+            }
         }
     }
 }
@@ -205,6 +248,10 @@ private class EqualWeightArrangement(axis: Axis, spacing: Float) : SpacedArrange
     data class Factory(val spacing: Float) : Arrangement {
         override fun initialize(component: UIComponent, axis: Axis) {
             EqualWeightArrangement(axis, spacing).initialize(component)
+        }
+
+        override fun arrange(containerSize: Float, children: List<Float>, accept: (Int, Float) -> Unit) {
+            Arrangement.spacedBy(spacing).arrange(containerSize, children, accept)
         }
     }
 }

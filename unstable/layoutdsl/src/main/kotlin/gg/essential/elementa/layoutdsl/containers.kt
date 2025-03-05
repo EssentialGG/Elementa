@@ -6,7 +6,6 @@ import gg.essential.elementa.UIComponent
 import gg.essential.elementa.components.ScrollComponent
 import gg.essential.elementa.constraints.ChildBasedMaxSizeConstraint
 import gg.essential.elementa.constraints.ChildBasedSizeConstraint
-import gg.essential.elementa.constraints.WidthConstraint
 import gg.essential.elementa.dsl.boundTo
 import gg.essential.elementa.dsl.childOf
 import gg.essential.elementa.dsl.coerceAtLeast
@@ -14,7 +13,7 @@ import gg.essential.elementa.dsl.percent
 import gg.essential.elementa.dsl.pixels
 import gg.essential.elementa.common.HollowUIContainer
 import gg.essential.elementa.common.constraints.AlternateConstraint
-import gg.essential.elementa.common.constraints.SpacedCramSiblingConstraint
+import gg.essential.elementa.common.constraints.FlowLayoutController
 import gg.essential.elementa.state.v2.*
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
@@ -83,9 +82,14 @@ fun LayoutScope.column(modifier: Modifier, verticalArrangement: Arrangement = Ar
 
 fun LayoutScope.flowContainer(
     modifier: Modifier = Modifier,
-    // TODO ideally we can make this use Arrangement on a per-row basis, currently it's just always SpaceBetween
-    minSeparation: () -> WidthConstraint = { 0.pixels },
-    verticalSeparation: () -> WidthConstraint = { 0.pixels },
+    /** Minimum spacing allocated between items in each row. Actual spacing is determined by [itemArrangement]. */
+    xSpacingMin: Float = 0f,
+    /** Spacing between rows. */
+    ySpacing: Float = 0f,
+    /** Arranges items in a row */
+    itemArrangement: Arrangement = Arrangement.spacedBy(xSpacingMin),
+    /** Aligns items within a row */
+    itemAlignment: Alignment = Alignment.Center,
     block: LayoutScope.() -> Unit = {},
 ): UIComponent {
     contract {
@@ -97,10 +101,7 @@ fun LayoutScope.flowContainer(
         setHeight(ChildBasedSizeConstraint())
     }
 
-    val childModifier = Modifier
-        .then(BasicXModifier { SpacedCramSiblingConstraint(minSeparation(), 0.pixels) })
-        .then(BasicYModifier { SpacedCramSiblingConstraint(minSeparation(), 0.pixels, verticalSeparation()) })
-    flowContainer.addChildModifier(childModifier)
+    FlowLayoutController(flowContainer, xSpacingMin, ySpacing, itemArrangement, itemAlignment)
 
     flowContainer(modifier = modifier, block = block)
 

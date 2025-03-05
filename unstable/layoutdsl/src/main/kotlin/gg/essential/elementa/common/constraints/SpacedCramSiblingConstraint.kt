@@ -9,6 +9,7 @@ import gg.essential.elementa.constraints.resolution.ConstraintVisitor
 /**
  * Note: All items are assumed to be same width
  */
+@Deprecated("Apply FlowLayoutController on container instead.")
 class SpacedCramSiblingConstraint(
     private val minSeparation: WidthConstraint,
     private val margin: WidthConstraint,
