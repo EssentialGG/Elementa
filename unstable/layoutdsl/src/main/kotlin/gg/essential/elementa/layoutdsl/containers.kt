@@ -26,7 +26,7 @@ fun LayoutScope.box(modifier: Modifier = Modifier, block: LayoutScope.() -> Unit
     }
 
     val container = TransparentBlock().apply {
-        componentName = "BoxContainer"
+        automaticComponentName("box")
         setWidth(ChildBasedSizeConstraint())
         setHeight(ChildBasedSizeConstraint())
     }
@@ -46,7 +46,7 @@ fun LayoutScope.row(modifier: Modifier, horizontalArrangement: Arrangement = Arr
     }
 
     val rowContainer = TransparentBlock().apply {
-        componentName = "RowContainer"
+        automaticComponentName("row")
         setWidth(ChildBasedSizeConstraint())
         setHeight(ChildBasedMaxSizeConstraint())
     }
@@ -68,7 +68,7 @@ fun LayoutScope.column(modifier: Modifier, verticalArrangement: Arrangement = Ar
     }
 
     val columnContainer = TransparentBlock().apply {
-        componentName = "ColumnContainer"
+        automaticComponentName("column")
         setWidth(ChildBasedMaxSizeConstraint())
         setHeight(ChildBasedSizeConstraint())
     }
@@ -93,7 +93,7 @@ fun LayoutScope.flowContainer(
     }
 
     val flowContainer = TransparentBlock().apply {
-        componentName = "FlowContainer"
+        automaticComponentName("flowContainer")
         setHeight(ChildBasedSizeConstraint())
     }
 
@@ -132,7 +132,7 @@ fun LayoutScope.scrollable(
     val content = HollowUIContainer() childOf outer // actually adds to `inner` because ScrollComponent redirects it
 
     outer.apply {
-        componentName = "scrollable"
+        automaticComponentName("scrollable")
         setWidth(ChildBasedSizeConstraint() boundTo content)
         setHeight(ChildBasedSizeConstraint() boundTo content)
     }
@@ -165,6 +165,7 @@ fun LayoutScope.floatingBox(
     }
 
     val box = box(modifier, block)
+    box.automaticComponentName("floatingBox")
     effect(box) {
         box.isFloating = floating()
     }

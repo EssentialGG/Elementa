@@ -21,6 +21,8 @@ fun LayoutScope.lazyBox(modifier: Modifier = Modifier.fillParent(), block: Layou
         } `else` {
             LazyComponent(initialized)(Modifier.fillParent())
         }
+    }.apply {
+        automaticComponentName("lazyBox")
     }
 }
 
