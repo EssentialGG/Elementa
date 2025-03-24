@@ -4,6 +4,9 @@ import gg.essential.elementa.UIComponent
 import gg.essential.elementa.dsl.toConstraint
 import gg.essential.universal.UGraphics
 import gg.essential.universal.UMatrixStack
+import gg.essential.universal.render.URenderPipeline
+import gg.essential.universal.shader.BlendState
+import gg.essential.universal.vertex.UBufferBuilder
 import org.lwjgl.opengl.GL11
 import java.awt.Color
 
@@ -41,6 +44,30 @@ open class UIShape @JvmOverloads constructor(color: Color = Color.WHITE) : UICom
         val color = this.getColor()
         if (color.alpha == 0) return super.draw(matrixStack)
 
+        if (URenderPipeline.isRequired) {
+            draw(matrixStack, color)
+        } else {
+            @Suppress("DEPRECATION")
+            drawLegacy(matrixStack, color)
+        }
+
+        super.draw(matrixStack)
+    }
+
+    private fun draw(matrixStack: UMatrixStack, color: Color) {
+        val bufferBuilder = UBufferBuilder.create(UGraphics.DrawMode.TRIANGLE_FAN, UGraphics.CommonVertexFormats.POSITION_COLOR)
+        vertices.forEach {
+            bufferBuilder
+                .pos(matrixStack, it.absoluteX.toDouble(), it.absoluteY.toDouble(), 0.0)
+                .color(color.red, color.green, color.blue, color.alpha)
+                .endVertex()
+        }
+        bufferBuilder.build()?.drawAndClose(PIPELINE)
+    }
+
+    @Deprecated("Stops working in 1.21.5, see UGraphics.Globals")
+    @Suppress("DEPRECATION")
+    private fun drawLegacy(matrixStack: UMatrixStack, color: Color) {
         UGraphics.enableBlend()
         UGraphics.disableTexture2D()
         val red = color.red.toFloat() / 255f
@@ -66,7 +93,11 @@ open class UIShape @JvmOverloads constructor(color: Color = Color.WHITE) : UICom
 
         UGraphics.enableTexture2D()
         UGraphics.disableBlend()
+    }
 
-        super.draw(matrixStack)
+    private companion object {
+        private val PIPELINE = URenderPipeline.builderWithDefaultShader("elementa:shape", UGraphics.DrawMode.TRIANGLE_FAN, UGraphics.CommonVertexFormats.POSITION_COLOR).apply {
+            blendState = BlendState.NORMAL.copy(srcAlpha = BlendState.Param.ONE, dstAlpha = BlendState.Param.ZERO)
+        }.build()
     }
 }

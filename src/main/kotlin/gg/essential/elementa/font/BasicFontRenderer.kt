@@ -7,6 +7,10 @@ import gg.essential.elementa.font.data.Font
 import gg.essential.elementa.font.data.Glyph
 import gg.essential.universal.UGraphics
 import gg.essential.universal.UMatrixStack
+import gg.essential.universal.render.URenderPipeline
+import gg.essential.universal.shader.BlendState
+import gg.essential.universal.vertex.UBufferBuilder
+import gg.essential.universal.vertex.UVertexConsumer
 import java.awt.Color
 import kotlin.math.max
 
@@ -144,8 +148,31 @@ class BasicFontRenderer(
         y: Float,
         originalPointSize: Float
     ) {
-        UGraphics.bindTexture(0, regularFont.getTexture().dynamicGlId)
+        if (URenderPipeline.isRequired) {
+            val bufferBuilder = UBufferBuilder.create(UGraphics.DrawMode.QUADS, UGraphics.CommonVertexFormats.POSITION_TEXTURE_COLOR)
+            drawStringNow(bufferBuilder, matrixStack, string, color, x, y, originalPointSize)
+            bufferBuilder.build()?.drawAndClose(PIPELINE) {
+                texture(0, regularFont.getTexture().dynamicGlId)
+            }
+        } else {
+            UGraphics.bindTexture(0, regularFont.getTexture().dynamicGlId)
+            val bufferBuilder = UGraphics.getFromTessellator()
+            @Suppress("DEPRECATION")
+            bufferBuilder.beginWithDefaultShader(UGraphics.DrawMode.QUADS, UGraphics.CommonVertexFormats.POSITION_TEXTURE_COLOR)
+            drawStringNow(bufferBuilder.asUVertexConsumer(), matrixStack, string, color, x, y, originalPointSize)
+            bufferBuilder.drawDirect()
+        }
+    }
 
+    private fun drawStringNow(
+        vertexConsumer: UVertexConsumer,
+        matrixStack: UMatrixStack,
+        string: String,
+        color: Color,
+        x: Float,
+        y: Float,
+        originalPointSize: Float
+    ) {
         var currentX = x
         var i = 0
         while (i < string.length) {
@@ -171,6 +198,7 @@ class BasicFontRenderer(
                 val height = (planeBounds.top - planeBounds.bottom) * originalPointSize
 
                 drawGlyph(
+                    vertexConsumer,
                     matrixStack,
                     glyph,
                     color,
@@ -196,6 +224,7 @@ class BasicFontRenderer(
 
 
     private fun drawGlyph(
+        worldRenderer: UVertexConsumer,
         matrixStack: UMatrixStack,
         glyph: Glyph,
         color: Color,
@@ -211,8 +240,6 @@ class BasicFontRenderer(
         val textureLeft = (atlasBounds.left / atlas.width).toDouble()
         val textureRight = (atlasBounds.right / atlas.width).toDouble()
 
-        val worldRenderer = UGraphics.getFromTessellator()
-        worldRenderer.beginWithDefaultShader(UGraphics.DrawMode.QUADS, UGraphics.CommonVertexFormats.POSITION_TEXTURE_COLOR)
         val doubleX = x.toDouble()
         val doubleY = y.toDouble()
         worldRenderer.pos(matrixStack, doubleX, doubleY + height, 0.0).tex(textureLeft, textureBottom).color(
@@ -239,11 +266,15 @@ class BasicFontRenderer(
             color.blue,
             255
         ).endVertex()
-        worldRenderer.drawDirect()
-
     }
 
     override fun visitImpl(visitor: ConstraintVisitor, type: ConstraintType) {
 
+    }
+
+    private companion object {
+        private val PIPELINE = URenderPipeline.builderWithDefaultShader("elementa:basic_font", UGraphics.DrawMode.QUADS, UGraphics.CommonVertexFormats.POSITION_COLOR).apply {
+            blendState = BlendState.NORMAL.copy(srcAlpha = BlendState.Param.ONE, dstAlpha = BlendState.Param.ZERO)
+        }.build()
     }
 }
