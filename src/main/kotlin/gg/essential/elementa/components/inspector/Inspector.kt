@@ -1,6 +1,5 @@
 package gg.essential.elementa.components.inspector
 
-import gg.essential.elementa.ElementaVersion
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.components.*
 import gg.essential.elementa.constraints.*
@@ -14,7 +13,10 @@ import gg.essential.elementa.utils.devPropSet
 import gg.essential.elementa.utils.elementaDebug
 import gg.essential.universal.UGraphics
 import gg.essential.universal.UMatrixStack
-import org.lwjgl.opengl.GL11
+import gg.essential.universal.render.DrawCallBuilder
+import gg.essential.universal.render.URenderPipeline
+import gg.essential.universal.shader.BlendState
+import gg.essential.universal.vertex.UBufferBuilder
 import java.awt.Color
 import java.io.FileNotFoundException
 import java.net.ConnectException
@@ -309,24 +311,32 @@ class Inspector @JvmOverloads constructor(
             val x2 = component.getRight().toDouble()
             val y2 = component.getBottom().toDouble()
 
+            fun drawQuad(pipeline: URenderPipeline, color: Color, configure: DrawCallBuilder.() -> Unit = {}) {
+                val builder = UBufferBuilder.create(UGraphics.DrawMode.QUADS, UGraphics.CommonVertexFormats.POSITION_COLOR)
+                UIBlock.drawBlock(builder, matrixStack, color, x1, y1, x2, y2)
+                builder.build()?.drawAndClose(pipeline, configure)
+            }
+
             // Clear the depth buffer cause we will be using it to draw our outside-of-scissor-bounds block
-            UGraphics.glClear(GL11.GL_DEPTH_BUFFER_BIT)
+            // Note that we cannot just use glClear because MC 1.21.5+ no longer has any framebuffer bound by default.
+            matrixStack.push()
+            matrixStack.translate(0f, 0f, -100f)
+            drawQuad(CLEAR_DEPTH_PIPELINE, Color.WHITE) {
+                noScissor()
+            }
+            matrixStack.pop()
 
             // Draw a highlight on the element respecting its scissor effects
             scissors.forEach { it.beforeDraw(matrixStack) }
-            UIBlock.drawBlock(matrixStack, Color(129, 212, 250, 100), x1, y1, x2, y2)
+            drawQuad(HIGHLIGHT_PIPELINE, Color(129, 212, 250, 100))
             scissors.asReversed().forEach { it.afterDraw(matrixStack) }
 
             // Then draw another highlight (with depth testing such that we do not overwrite the previous one)
             // which does not respect the scissor effects and thereby indicates where the element is drawn outside of
             // its scissor bounds.
-            UGraphics.enableDepth()
-            UGraphics.depthFunc(GL11.GL_LESS)
-            ElementaVersion.v0.enableFor { // need the custom depth testing
-                UIBlock.drawBlock(matrixStack, Color(255, 100, 100, 100), x1, y1, x2, y2)
+            drawQuad(HIGHLIGHT_PIPELINE, Color(255, 100, 100, 100)) {
+                noScissor()
             }
-            UGraphics.depthFunc(GL11.GL_LEQUAL)
-            UGraphics.disableDepth()
         }
 
         val debugState = elementaDebug
@@ -357,5 +367,23 @@ class Inspector @JvmOverloads constructor(
                 .drop(2) // this method + caller of this method
                 .first()
                 .className
+
+        private val CLEAR_DEPTH_PIPELINE = URenderPipeline.builderWithDefaultShader(
+            "elementa:inspector_clear_depth",
+            UGraphics.DrawMode.QUADS,
+            UGraphics.CommonVertexFormats.POSITION_COLOR,
+        ).apply {
+            colorMask = Pair(false, false)
+            depthTest = URenderPipeline.DepthTest.Always
+        }.build()
+
+        private val HIGHLIGHT_PIPELINE = URenderPipeline.builderWithDefaultShader(
+            "elementa:inspector_highlight",
+            UGraphics.DrawMode.QUADS,
+            UGraphics.CommonVertexFormats.POSITION_COLOR,
+        ).apply {
+            blendState = BlendState.NORMAL
+            depthTest = URenderPipeline.DepthTest.Less
+        }.build()
     }
 }

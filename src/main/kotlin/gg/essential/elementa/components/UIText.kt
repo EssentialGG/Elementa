@@ -10,6 +10,7 @@ import gg.essential.elementa.state.State
 import gg.essential.elementa.state.pixels
 import gg.essential.universal.UGraphics
 import gg.essential.universal.UMatrixStack
+import gg.essential.universal.render.URenderPipeline
 import java.awt.Color
 
 /**
@@ -117,7 +118,10 @@ constructor(
             return super.draw(matrixStack)
         }
 
-        UGraphics.enableBlend()
+        if (!URenderPipeline.isRequired) {
+            @Suppress("DEPRECATION")
+            UGraphics.enableBlend()
+        }
 
         val shadow = shadowState.get()
         val shadowColor = shadowColorState.get()

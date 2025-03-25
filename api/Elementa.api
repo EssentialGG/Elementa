@@ -554,6 +554,7 @@ public class gg/essential/elementa/components/UIBlock : gg/essential/elementa/UI
 
 public final class gg/essential/elementa/components/UIBlock$Companion {
 	public final fun drawBlock (Lgg/essential/universal/UMatrixStack;Ljava/awt/Color;DDDD)V
+	public final fun drawBlock (Lgg/essential/universal/vertex/UVertexConsumer;Lgg/essential/universal/UMatrixStack;Ljava/awt/Color;DDDD)V
 	public final fun drawBlock (Ljava/awt/Color;DDDD)V
 	public final fun drawBlockSized (Lgg/essential/universal/UMatrixStack;Ljava/awt/Color;DDDD)V
 	public final fun drawBlockSized (Ljava/awt/Color;DDDD)V

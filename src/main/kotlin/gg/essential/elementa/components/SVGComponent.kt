@@ -48,6 +48,7 @@ class SVGComponent(private var svg: SVG) : UIComponent(), ImageProvider {
 
         matrixStack.push()
 
+        @Suppress("DEPRECATION")
         UGraphics.enableBlend()
         @Suppress("DEPRECATION")
         UGraphics.disableTexture2D()

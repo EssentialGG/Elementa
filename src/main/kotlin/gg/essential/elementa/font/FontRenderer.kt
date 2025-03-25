@@ -9,6 +9,7 @@ import gg.essential.elementa.utils.readFromLegacyShader
 import gg.essential.universal.UGraphics
 import gg.essential.universal.UMatrixStack
 import gg.essential.universal.UResolution
+import gg.essential.universal.render.URenderPipeline
 import gg.essential.universal.shader.BlendState
 import gg.essential.universal.shader.Float2Uniform
 import gg.essential.universal.shader.Float4Uniform
@@ -24,6 +25,8 @@ import kotlin.math.max
 /**
  * [MSDF](https://github.com/Chlumsky/msdfgen) Font Renderer
  */
+@Deprecated("Not well maintained. Does not currently support 1.21.5+ at all.")
+@Suppress("DEPRECATION")
 class FontRenderer(
     private val regularFont: Font,
     private val boldFont: Font = regularFont
@@ -406,9 +409,11 @@ class FontRenderer(
         fun areShadersInitialized() = ::shader.isInitialized
 
         fun initShaders() {
+            if (URenderPipeline.isRequired) return
             if (areShadersInitialized())
                 return
 
+            @Suppress("DEPRECATION")
             shader = UShader.readFromLegacyShader("font", "font", BlendState.NORMAL)
             if (!shader.usable) {
                 println("Failed to load Elementa font shader")
