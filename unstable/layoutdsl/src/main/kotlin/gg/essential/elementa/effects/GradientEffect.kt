@@ -4,10 +4,10 @@ import gg.essential.elementa.effects.Effect
 import gg.essential.elementa.state.v2.State
 import gg.essential.universal.UGraphics
 import gg.essential.universal.UMatrixStack
+import gg.essential.universal.render.URenderPipeline
 import gg.essential.universal.shader.BlendState
-import gg.essential.universal.shader.UShader
+import gg.essential.universal.vertex.UBufferBuilder
 import org.intellij.lang.annotations.Language
-import org.lwjgl.opengl.GL11
 import java.awt.Color
 
 /**
@@ -30,22 +30,9 @@ class GradientEffect(
         val bottomLeft = this.bottomLeft.get()
         val bottomRight = this.bottomRight.get()
 
-        lateinit var prevBlendState: BlendState
-
         val dither = topLeft != topRight || topLeft != bottomLeft || bottomLeft != bottomRight
-        if (dither) {
-            shader.bind()
-        } else {
-            prevBlendState = BlendState.active()
-            BlendState.NORMAL.activate()
-        }
 
-        val buffer = UGraphics.getFromTessellator()
-        if (dither) {
-            buffer.beginWithActiveShader(UGraphics.DrawMode.QUADS, UGraphics.CommonVertexFormats.POSITION_COLOR)
-        } else {
-            buffer.beginWithDefaultShader(UGraphics.DrawMode.QUADS, UGraphics.CommonVertexFormats.POSITION_COLOR)
-        }
+        val buffer = UBufferBuilder.create(UGraphics.DrawMode.QUADS, UGraphics.CommonVertexFormats.POSITION_COLOR)
 
         val x1 = boundComponent.getLeft().toDouble()
         val x2 = boundComponent.getRight().toDouble()
@@ -57,30 +44,7 @@ class GradientEffect(
         buffer.pos(matrixStack, x1, y2, 0.0).color(bottomLeft).endVertex()
         buffer.pos(matrixStack, x2, y2, 0.0).color(bottomRight).endVertex()
 
-        var prevAlphaTestFunc = 0
-        var prevAlphaTestRef = 0f
-        if (!UGraphics.isCoreProfile()) {
-            prevAlphaTestFunc = GL11.glGetInteger(GL11.GL_ALPHA_TEST_FUNC)
-            prevAlphaTestRef = GL11.glGetFloat(GL11.GL_ALPHA_TEST_REF)
-            UGraphics.alphaFunc(GL11.GL_ALWAYS, 0f)
-        }
-
-        // See UIBlock.drawBlock for why we use this depth function
-        UGraphics.enableDepth()
-        UGraphics.depthFunc(GL11.GL_ALWAYS)
-        buffer.drawDirect()
-        UGraphics.disableDepth()
-        UGraphics.depthFunc(GL11.GL_LEQUAL)
-
-        if (!UGraphics.isCoreProfile()) {
-            UGraphics.alphaFunc(prevAlphaTestFunc, prevAlphaTestRef)
-        }
-
-        if (dither) {
-            shader.unbind()
-        } else {
-            prevBlendState.activate()
-        }
+        buffer.build()?.drawAndClose(if (dither) PIPELINE_DITHERED else PIPELINE_FLAT)
     }
 
     companion object {
@@ -110,8 +74,24 @@ class GradientEffect(
             }
         """.trimIndent()
 
-        private val shader: UShader by lazy {
-            UShader.fromLegacyShader(vertSource, fragSource, BlendState.NORMAL, UGraphics.CommonVertexFormats.POSITION_COLOR)
-        }
+        private val PIPELINE_DITHERED = URenderPipeline.builderWithLegacyShader(
+            "elementa:gradient_effect/dithered",
+            UGraphics.DrawMode.QUADS,
+            UGraphics.CommonVertexFormats.POSITION_COLOR,
+            vertSource,
+            fragSource,
+        ).apply {
+            blendState = BlendState.NORMAL
+            depthTest = URenderPipeline.DepthTest.Always
+        }.build()
+
+        private val PIPELINE_FLAT = URenderPipeline.builderWithDefaultShader(
+            "elementa:gradient_effect/flat",
+            UGraphics.DrawMode.QUADS,
+            UGraphics.CommonVertexFormats.POSITION_COLOR,
+        ).apply {
+            blendState = BlendState.NORMAL
+            depthTest = URenderPipeline.DepthTest.Always
+        }.build()
     }
 }
