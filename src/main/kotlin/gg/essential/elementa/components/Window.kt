@@ -334,13 +334,13 @@ class Window @JvmOverloads constructor(
         if (currentMouseButton != -1) {
             val (mouseX, mouseY) = getMousePosition()
             if (version >= ElementaVersion.v2) {
-                if (prevDraggedMouseX != mouseX && prevDraggedMouseY != mouseY) {
+                if (prevDraggedMouseX != mouseX || prevDraggedMouseY != mouseY) {
                     prevDraggedMouseX = mouseX
                     prevDraggedMouseY = mouseY
                     dragMouse(mouseX, mouseY, currentMouseButton)
                 }
             } else {
-                if (prevDraggedMouseX != mouseX.toInt().toFloat() && prevDraggedMouseY != mouseY.toInt().toFloat()) {
+                if (prevDraggedMouseX != mouseX.toInt().toFloat() || prevDraggedMouseY != mouseY.toInt().toFloat()) {
                     prevDraggedMouseX = mouseX.toInt().toFloat()
                     prevDraggedMouseY = mouseY.toInt().toFloat()
                     @Suppress("DEPRECATION")
