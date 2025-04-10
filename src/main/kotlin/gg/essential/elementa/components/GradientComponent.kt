@@ -149,6 +149,7 @@ open class GradientComponent constructor(
             startColor: Color, endColor: Color, direction: GradientDirection
         ) {
             UGraphics.disableAlpha()
+            UGraphics.enableBlend()
             UGraphics.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO)
             UGraphics.shadeModel(GL11.GL_SMOOTH)
 
