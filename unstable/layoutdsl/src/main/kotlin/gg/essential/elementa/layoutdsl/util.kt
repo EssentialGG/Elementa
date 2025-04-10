@@ -2,6 +2,7 @@ package gg.essential.elementa.layoutdsl
 
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.components.UIBlock
+import gg.essential.elementa.components.inspector.Inspector
 import gg.essential.elementa.dsl.boundTo
 import gg.essential.elementa.dsl.percent
 import gg.essential.elementa.dsl.pixels
@@ -23,6 +24,11 @@ fun LayoutScope.spacer(height: UIComponent, _desc: HeightDesc = Desc) = Spacer(0
 sealed interface WidthDesc
 sealed interface HeightDesc
 private object Desc : WidthDesc, HeightDesc
+
+@Suppress("unused")
+private val init = run {
+    Inspector.registerComponentFactory(null)
+}
 
 // How is this not in the stdlib?
 internal inline fun <T> Iterable<T>.sumOf(selector: (T) -> Float): Float {

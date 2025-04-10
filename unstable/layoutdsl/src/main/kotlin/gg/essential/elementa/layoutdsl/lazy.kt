@@ -2,6 +2,7 @@ package gg.essential.elementa.layoutdsl
 
 import gg.essential.elementa.components.UIContainer
 import gg.essential.elementa.components.Window
+import gg.essential.elementa.components.inspector.Inspector
 import gg.essential.elementa.state.v2.MutableState
 import gg.essential.elementa.state.v2.mutableStateOf
 import gg.essential.universal.UMatrixStack
@@ -34,4 +35,9 @@ private class LazyComponent(private val initialized: MutableState<Boolean>) : UI
             initialized.set(true)
         }
     }
+}
+
+@Suppress("unused")
+private val init = run {
+    Inspector.registerComponentFactory(null)
 }
