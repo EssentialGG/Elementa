@@ -21,7 +21,15 @@ dependencies {
     compileOnly(libs.versions.universalcraft.map { "gg.essential:universalcraft-1.8.9-forge:$it" }) {
         attributes { attribute(common, true) }
     }
+
+    testImplementation(kotlin("test"))
+    testImplementation(project(":"))
 }
+
+tasks.test {
+    useJUnitPlatform()
+}
+
 tasks.compileKotlin.setJvmDefault("all")
 
 kotlin.jvmToolchain {
