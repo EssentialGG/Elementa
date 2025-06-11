@@ -382,7 +382,7 @@ class Inspector @JvmOverloads constructor(
             UGraphics.DrawMode.QUADS,
             UGraphics.CommonVertexFormats.POSITION_COLOR,
         ).apply {
-            blendState = BlendState.NORMAL
+            blendState = BlendState.ALPHA
             depthTest = URenderPipeline.DepthTest.Less
         }.build()
     }

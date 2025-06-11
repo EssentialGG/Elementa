@@ -78,7 +78,19 @@ class UICircle @JvmOverloads constructor(radius: Float = 0f, color: Color = Colo
             readElementaShaderSource("rect", "vsh"),
             readElementaShaderSource("circle", "fsh"),
         ).apply {
+            @Suppress("DEPRECATION")
             blendState = BlendState.NORMAL
+            depthTest = URenderPipeline.DepthTest.Always // see UIBlock.PIPELINE
+        }.build()
+
+        private val PIPELINE2 = URenderPipeline.builderWithLegacyShader(
+            "elementa:circle",
+            UGraphics.DrawMode.QUADS,
+            UGraphics.CommonVertexFormats.POSITION_COLOR,
+            readElementaShaderSource("rect", "vsh"),
+            readElementaShaderSource("circle", "fsh"),
+        ).apply {
+            blendState = BlendState.ALPHA
             depthTest = URenderPipeline.DepthTest.Always // see UIBlock.PIPELINE
         }.build()
 
@@ -120,7 +132,7 @@ class UICircle @JvmOverloads constructor(radius: Float = 0f, color: Color = Colo
                 (centerX + radius).toDouble(),
                 (centerY + radius).toDouble()
             )
-            bufferBuilder.build()?.drawAndClose(PIPELINE) {
+            bufferBuilder.build()?.drawAndClose(if (ElementaVersion.atLeastV10Active) PIPELINE2 else PIPELINE) {
                 uniform("u_Radius", radius)
                 uniform("u_CenterPos", centerX, centerY)
             }

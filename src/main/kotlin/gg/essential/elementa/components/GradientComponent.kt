@@ -139,7 +139,7 @@ open class GradientComponent constructor(
             bufferBuilder.pos(matrixStack, x1, y1, 0.0).color(colors.topLeft).endVertex()
             bufferBuilder.pos(matrixStack, x1, y2, 0.0).color(colors.bottomLeft).endVertex()
             bufferBuilder.pos(matrixStack, x2, y2, 0.0).color(colors.bottomRight).endVertex()
-            bufferBuilder.build()?.drawAndClose(PIPELINE)
+            bufferBuilder.build()?.drawAndClose(if (ElementaVersion.atLeastV10Active) PIPELINE2 else PIPELINE)
         }
 
         @Deprecated("Stops working in 1.21.5")
@@ -169,7 +169,12 @@ open class GradientComponent constructor(
         }
 
         private val PIPELINE = URenderPipeline.builderWithDefaultShader("elementa:gradient_block", UGraphics.DrawMode.QUADS, UGraphics.CommonVertexFormats.POSITION_COLOR).apply {
+            @Suppress("DEPRECATION")
             blendState = BlendState.NORMAL.copy(srcAlpha = BlendState.Param.ONE, dstAlpha = BlendState.Param.ZERO)
+        }.build()
+
+        private val PIPELINE2 = URenderPipeline.builderWithDefaultShader("elementa:gradient_block", UGraphics.DrawMode.QUADS, UGraphics.CommonVertexFormats.POSITION_COLOR).apply {
+            blendState = BlendState.ALPHA
         }.build()
     }
 }

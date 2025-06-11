@@ -2,6 +2,7 @@ public final class gg/essential/elementa/ElementaVersion : java/lang/Enum {
 	public static final field Companion Lgg/essential/elementa/ElementaVersion$Companion;
 	public static final field V0 Lgg/essential/elementa/ElementaVersion;
 	public static final field V1 Lgg/essential/elementa/ElementaVersion;
+	public static final field V10 Lgg/essential/elementa/ElementaVersion;
 	public static final field V2 Lgg/essential/elementa/ElementaVersion;
 	public static final field V3 Lgg/essential/elementa/ElementaVersion;
 	public static final field V4 Lgg/essential/elementa/ElementaVersion;
