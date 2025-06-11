@@ -63,7 +63,7 @@ open class UIShape @JvmOverloads constructor(color: Color = Color.WHITE) : UICom
                 .color(color.red, color.green, color.blue, color.alpha)
                 .endVertex()
         }
-        bufferBuilder.build()?.drawAndClose(PIPELINE)
+        bufferBuilder.build()?.drawAndClose(if (ElementaVersion.atLeastV10Active) PIPELINE2 else PIPELINE)
     }
 
     @Deprecated("Stops working in 1.21.5, see UGraphics.Globals")
@@ -98,7 +98,11 @@ open class UIShape @JvmOverloads constructor(color: Color = Color.WHITE) : UICom
 
     private companion object {
         private val PIPELINE = URenderPipeline.builderWithDefaultShader("elementa:shape", UGraphics.DrawMode.TRIANGLE_FAN, UGraphics.CommonVertexFormats.POSITION_COLOR).apply {
+            @Suppress("DEPRECATION")
             blendState = BlendState.NORMAL.copy(srcAlpha = BlendState.Param.ONE, dstAlpha = BlendState.Param.ZERO)
+        }.build()
+        private val PIPELINE2 = URenderPipeline.builderWithDefaultShader("elementa:shape", UGraphics.DrawMode.TRIANGLE_FAN, UGraphics.CommonVertexFormats.POSITION_COLOR).apply {
+            blendState = BlendState.ALPHA
         }.build()
     }
 }

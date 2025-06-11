@@ -49,7 +49,19 @@ open class UIRoundedRectangle(radius: Float) : UIComponent() {
             readElementaShaderSource("rect", "vsh"),
             readElementaShaderSource("rounded_rect", "fsh"),
         ).apply {
+            @Suppress("DEPRECATION")
             blendState = BlendState.NORMAL
+            depthTest = URenderPipeline.DepthTest.Always // see UIBlock.PIPELINE
+        }.build()
+
+        private val PIPELINE2 = URenderPipeline.builderWithLegacyShader(
+            "elementa:rounded_rectangle",
+            UGraphics.DrawMode.QUADS,
+            UGraphics.CommonVertexFormats.POSITION_COLOR,
+            readElementaShaderSource("rect", "vsh"),
+            readElementaShaderSource("rounded_rect", "fsh"),
+        ).apply {
+            blendState = BlendState.ALPHA
             depthTest = URenderPipeline.DepthTest.Always // see UIBlock.PIPELINE
         }.build()
 
@@ -86,7 +98,7 @@ open class UIRoundedRectangle(radius: Float) : UIComponent() {
 
             val bufferBuilder = UBufferBuilder.create(UGraphics.DrawMode.QUADS, UGraphics.CommonVertexFormats.POSITION_COLOR)
             UIBlock.drawBlock(bufferBuilder, matrixStack, color, left.toDouble(), top.toDouble(), right.toDouble(), bottom.toDouble())
-            bufferBuilder.build()?.drawAndClose(PIPELINE) {
+            bufferBuilder.build()?.drawAndClose(if (ElementaVersion.atLeastV10Active) PIPELINE2 else PIPELINE) {
                 uniform("u_Radius", radius)
                 uniform("u_InnerRect", left + radius, top + radius, right - radius, bottom - radius)
             }

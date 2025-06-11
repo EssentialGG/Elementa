@@ -8,6 +8,7 @@ import gg.essential.elementa.constraints.SuperConstraint
 import gg.essential.elementa.constraints.animation.AnimationComponent
 import gg.essential.elementa.effects.Effect
 import gg.essential.universal.render.URenderPipeline
+import gg.essential.universal.shader.BlendState
 
 /**
  * Sometimes it is necessary or desirable to introduce breaking behavioral changes to Elementa. In order to maintain
@@ -180,7 +181,15 @@ enum class ElementaVersion {
      * All Minecraft versions now use [URenderPipeline] instead of modifying global GL state.
      * Additionally, [UIText] and [UIWrappedText] no longer enable (and forget to disable) blending.
      */
+    @Deprecated(DEPRECATION_MESSAGE)
     V9,
+
+    /**
+     * All components now use [BlendState.ALPHA] instead of [BlendState.NORMAL] and variants.
+     * This fixes the alpha channel of the render result, allowing it to be correctly composited with other textures.
+     * See [UniversalCraft#105](https://github.com/EssentialGG/UniversalCraft/pull/105) for more details.
+     */
+    V10,
 
     ;
 
@@ -230,10 +239,14 @@ Be sure to read through all the changes between your current version and your ne
         internal val v7 = V7
         @Suppress("DEPRECATION")
         internal val v8 = V8
+        @Suppress("DEPRECATION")
         internal val v9 = V9
+        internal val v10 = V10
 
         internal val atLeastV9Active: Boolean
             get() = active >= v9
+        internal val atLeastV10Active: Boolean
+            get() = active >= v10
 
         @PublishedApi
         internal var active: ElementaVersion = v0

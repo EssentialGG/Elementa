@@ -64,7 +64,7 @@ open class UIBlock(colorConstraint: ColorConstraint = Color.WHITE.toConstraint()
 
             val bufferBuilder = UBufferBuilder.create(UGraphics.DrawMode.QUADS, UGraphics.CommonVertexFormats.POSITION_COLOR)
             drawBlock(bufferBuilder, matrixStack, color, x1, y1, x2, y2)
-            bufferBuilder.build()?.drawAndClose(PIPELINE)
+            bufferBuilder.build()?.drawAndClose(if (ElementaVersion.atLeastV10Active) PIPELINE2 else PIPELINE)
         }
 
         @Deprecated("Stops working in 1.21.5, see UGraphics.Globals")
@@ -133,7 +133,18 @@ open class UIBlock(colorConstraint: ColorConstraint = Color.WHITE.toConstraint()
         }
 
         private val PIPELINE = URenderPipeline.builderWithDefaultShader("elementa:block", UGraphics.DrawMode.QUADS, UGraphics.CommonVertexFormats.POSITION_COLOR).apply {
+            @Suppress("DEPRECATION")
             blendState = BlendState.NORMAL.copy(srcAlpha = BlendState.Param.ONE, dstAlpha = BlendState.Param.ZERO)
+            // At some point MC started enabling its depth test during font rendering but all GUI code is
+            // essentially flat and has depth tests disabled. This can cause stuff rendered in the background of the
+            // GUI to interfere with text rendered in the foreground because none of the blocks rendered in between
+            // will actually write to the depth buffer.
+            // To work around this, we'll write depth buffer unconditionally in the area where we draw the block.
+            depthTest = URenderPipeline.DepthTest.Always
+        }.build()
+
+        private val PIPELINE2 = URenderPipeline.builderWithDefaultShader("elementa:block", UGraphics.DrawMode.QUADS, UGraphics.CommonVertexFormats.POSITION_COLOR).apply {
+            blendState = BlendState.ALPHA
             // At some point MC started enabling its depth test during font rendering but all GUI code is
             // essentially flat and has depth tests disabled. This can cause stuff rendered in the background of the
             // GUI to interfere with text rendered in the foreground because none of the blocks rendered in between
