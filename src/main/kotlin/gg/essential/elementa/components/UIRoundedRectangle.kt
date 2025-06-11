@@ -1,5 +1,6 @@
 package gg.essential.elementa.components
 
+import gg.essential.elementa.ElementaVersion
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.dsl.pixels
 import gg.essential.elementa.utils.readElementaShaderSource
@@ -78,7 +79,7 @@ open class UIRoundedRectangle(radius: Float) : UIComponent() {
          * Draws a rounded rectangle
          */
         fun drawRoundedRectangle(matrixStack: UMatrixStack, left: Float, top: Float, right: Float, bottom: Float, radius: Float, color: Color) {
-            if (!URenderPipeline.isRequired) {
+            if (!URenderPipeline.isRequired && !ElementaVersion.atLeastV9Active) {
                 @Suppress("DEPRECATION")
                 return drawRoundedRectangleLegacy(matrixStack, left, top, right, bottom, radius, color)
             }

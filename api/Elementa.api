@@ -9,6 +9,7 @@ public final class gg/essential/elementa/ElementaVersion : java/lang/Enum {
 	public static final field V6 Lgg/essential/elementa/ElementaVersion;
 	public static final field V7 Lgg/essential/elementa/ElementaVersion;
 	public static final field V8 Lgg/essential/elementa/ElementaVersion;
+	public static final field V9 Lgg/essential/elementa/ElementaVersion;
 	public final fun enableFor (Lkotlin/jvm/functions/Function0;)Ljava/lang/Object;
 	public static fun valueOf (Ljava/lang/String;)Lgg/essential/elementa/ElementaVersion;
 	public static fun values ()[Lgg/essential/elementa/ElementaVersion;

@@ -1,10 +1,13 @@
 package gg.essential.elementa
 
+import gg.essential.elementa.components.UIText
+import gg.essential.elementa.components.UIWrappedText
 import gg.essential.elementa.components.UpdateFunc
 import gg.essential.elementa.components.Window
 import gg.essential.elementa.constraints.SuperConstraint
 import gg.essential.elementa.constraints.animation.AnimationComponent
 import gg.essential.elementa.effects.Effect
+import gg.essential.universal.render.URenderPipeline
 
 /**
  * Sometimes it is necessary or desirable to introduce breaking behavioral changes to Elementa. In order to maintain
@@ -170,7 +173,14 @@ enum class ElementaVersion {
      *   The new constraint tracking will only invalidate constraints which were evaluated, and the [UpdateFunc]s
      *   are tracked intelligently at registration, such that no more full tree traversals should be necessary.
      */
+    @Deprecated(DEPRECATION_MESSAGE)
     V8,
+
+    /**
+     * All Minecraft versions now use [URenderPipeline] instead of modifying global GL state.
+     * Additionally, [UIText] and [UIWrappedText] no longer enable (and forget to disable) blending.
+     */
+    V9,
 
     ;
 
@@ -218,8 +228,12 @@ Be sure to read through all the changes between your current version and your ne
         internal val v6 = V6
         @Suppress("DEPRECATION")
         internal val v7 = V7
+        @Suppress("DEPRECATION")
         internal val v8 = V8
+        internal val v9 = V9
 
+        internal val atLeastV9Active: Boolean
+            get() = active >= v9
 
         @PublishedApi
         internal var active: ElementaVersion = v0

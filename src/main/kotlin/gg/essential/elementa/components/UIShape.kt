@@ -1,5 +1,6 @@
 package gg.essential.elementa.components
 
+import gg.essential.elementa.ElementaVersion
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.dsl.toConstraint
 import gg.essential.universal.UGraphics
@@ -44,7 +45,7 @@ open class UIShape @JvmOverloads constructor(color: Color = Color.WHITE) : UICom
         val color = this.getColor()
         if (color.alpha == 0) return super.draw(matrixStack)
 
-        if (URenderPipeline.isRequired) {
+        if (URenderPipeline.isRequired || ElementaVersion.atLeastV9Active) {
             draw(matrixStack, color)
         } else {
             @Suppress("DEPRECATION")

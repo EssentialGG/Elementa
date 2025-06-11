@@ -1,5 +1,6 @@
 package gg.essential.elementa.font
 
+import gg.essential.elementa.ElementaVersion
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.constraints.ConstraintType
 import gg.essential.elementa.constraints.resolution.ConstraintVisitor
@@ -25,7 +26,7 @@ import kotlin.math.max
 /**
  * [MSDF](https://github.com/Chlumsky/msdfgen) Font Renderer
  */
-@Deprecated("Not well maintained. Does not currently support 1.21.5+ at all.")
+@Deprecated("Not well maintained. Does not currently support 1.21.5+ or ElementaVersion.V9 at all.")
 @Suppress("DEPRECATION")
 class FontRenderer(
     private val regularFont: Font,
@@ -133,6 +134,9 @@ class FontRenderer(
         shadow: Boolean,
         shadowColor: Color?
     ) {
+        if (ElementaVersion.atLeastV9Active) {
+            return
+        }
         val effectiveSize = originalPointSize * scale * 1.3623059867f
         val adjustedY = y - effectiveSize / 5
         if (shadow) {

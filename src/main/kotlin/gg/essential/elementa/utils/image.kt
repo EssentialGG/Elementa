@@ -1,5 +1,6 @@
 package gg.essential.elementa.utils
 
+import gg.essential.elementa.ElementaVersion
 import gg.essential.universal.UGraphics
 import gg.essential.universal.UMatrixStack
 import gg.essential.universal.render.URenderPipeline
@@ -46,7 +47,7 @@ internal fun drawTexture(
         vertexConsumer.pos(matrixStack, x, y, 0.0).tex(0.0, 0.0).color(red, green, blue, alpha).endVertex()
     }
 
-    if (URenderPipeline.isRequired) {
+    if (URenderPipeline.isRequired || ElementaVersion.atLeastV9Active) {
         val bufferBuilder = UBufferBuilder.create(UGraphics.DrawMode.QUADS, UGraphics.CommonVertexFormats.POSITION_TEXTURE_COLOR)
         drawTexturedQuad(bufferBuilder)
         bufferBuilder.build()?.drawAndClose(TEXTURED_QUAD_PIPELINE) {
