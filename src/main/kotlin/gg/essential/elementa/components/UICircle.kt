@@ -1,5 +1,6 @@
 package gg.essential.elementa.components
 
+import gg.essential.elementa.ElementaVersion
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.dsl.toConstraint
 import gg.essential.elementa.dsl.pixels
@@ -104,7 +105,7 @@ class UICircle @JvmOverloads constructor(radius: Float = 0f, color: Color = Colo
             drawCircle(UMatrixStack(), centerX, centerY, radius, color)
 
         fun drawCircle(matrixStack: UMatrixStack, centerX: Float, centerY: Float, radius: Float, color: Color) {
-            if (!URenderPipeline.isRequired) {
+            if (!URenderPipeline.isRequired && !ElementaVersion.atLeastV9Active) {
                 @Suppress("DEPRECATION")
                 return drawCircleLegacy(matrixStack, centerX, centerY, radius, color)
             }

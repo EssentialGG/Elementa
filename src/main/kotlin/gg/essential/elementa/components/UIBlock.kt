@@ -57,7 +57,7 @@ open class UIBlock(colorConstraint: ColorConstraint = Color.WHITE.toConstraint()
             drawBlock(UMatrixStack(), color, x1, y1, x2, y2)
 
         fun drawBlock(matrixStack: UMatrixStack, color: Color, x1: Double, y1: Double, x2: Double, y2: Double) {
-            if (!URenderPipeline.isRequired) {
+            if (!URenderPipeline.isRequired && !ElementaVersion.atLeastV9Active) {
                 @Suppress("DEPRECATION")
                 return drawBlockLegacy(matrixStack, color, x1, y1, x2, y2)
             }

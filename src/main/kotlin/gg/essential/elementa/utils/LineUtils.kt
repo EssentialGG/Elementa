@@ -1,5 +1,6 @@
 package gg.essential.elementa.utils
 
+import gg.essential.elementa.ElementaVersion
 import gg.essential.elementa.components.UIPoint
 import gg.essential.universal.UGraphics
 import gg.essential.universal.UMatrixStack
@@ -27,7 +28,7 @@ object LineUtils {
 
     @JvmStatic
     fun drawLineStrip(matrixStack: UMatrixStack, points: List<Pair<Number, Number>>, color: Color, width: Float) {
-        if (URenderPipeline.isRequired) {
+        if (URenderPipeline.isRequired || ElementaVersion.atLeastV9Active) {
             val bufferBuilder = UBufferBuilder.create(UGraphics.DrawMode.TRIANGLE_STRIP, UGraphics.CommonVertexFormats.POSITION_COLOR)
             drawLineStrip(bufferBuilder, matrixStack, points, color, width)
             bufferBuilder.build()?.drawAndClose(PIPELINE)

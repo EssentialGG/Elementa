@@ -1,5 +1,6 @@
 package gg.essential.elementa.components
 
+import gg.essential.elementa.ElementaVersion
 import gg.essential.elementa.state.BasicState
 import gg.essential.elementa.state.MappedState
 import gg.essential.elementa.state.State
@@ -127,7 +128,7 @@ open class GradientComponent constructor(
             endColor: Color,
             direction: GradientDirection
         ) {
-            if (!URenderPipeline.isRequired) {
+            if (!URenderPipeline.isRequired && !ElementaVersion.atLeastV9Active) {
                 @Suppress("DEPRECATION")
                 return drawGradientBlockLegacy(matrixStack, x1, y1, x2, y2, startColor, endColor, direction)
             }

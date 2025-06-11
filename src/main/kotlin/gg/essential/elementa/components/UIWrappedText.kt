@@ -1,5 +1,6 @@
 package gg.essential.elementa.components
 
+import gg.essential.elementa.ElementaVersion
 import gg.essential.elementa.UIComponent
 import gg.essential.elementa.UIConstraints
 import gg.essential.elementa.constraints.CenterConstraint
@@ -152,7 +153,7 @@ open class UIWrappedText @JvmOverloads constructor(
             return super.draw(matrixStack)
         }
 
-        if (!URenderPipeline.isRequired) {
+        if (!URenderPipeline.isRequired && !ElementaVersion.atLeastV9Active) {
             @Suppress("DEPRECATION")
             UGraphics.enableBlend()
         }
